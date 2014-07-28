@@ -273,7 +273,7 @@ public class ActionActivity extends Activity {
 				scanAni.stop();
 			 }
 		});
-	}
+    }
 	
 	public void CoverAniStart() { // Cover close animation start
 		
@@ -281,12 +281,13 @@ public class ActionActivity extends Activity {
 		
     	actionLinear.post(new Runnable() {
 			public void run() {
-				
-				actionLinear.setBackgroundResource(R.drawable.ani_close_bg);
+		
 				scanImage.setBackgroundResource(R.drawable.useract4);
 				scanAni = (AnimationDrawable)scanImage.getBackground();
-//				            	Log.w("CoverAniStart", "run");
-            	scanAni.start();
+				
+				actionLinear.setBackgroundResource(R.drawable.ani_close_bg);
+				
+				scanAni.start();
 			 }
 		});
 	}
@@ -340,12 +341,11 @@ public class ActionActivity extends Activity {
 		        		errorBtnPopup.setAnimationStyle(0);
 		        							
 		        		TextView errorText = (TextView) errorBtnPopup.getContentView().findViewById(R.id.errortext);
-		        		errorText.setText("E031");
+		        		errorText.setText(R.string.e061);
 		        	}
 		        });
 		    }
 		}).start();
-		
 	}
 	
 	public void WhichIntent(TargetIntent Itn) { // Activity conversion
@@ -379,7 +379,7 @@ public class ActionActivity extends Activity {
 			escPopup.dismiss(); // Popup window close
 			
 			Intent RemoveIntent = new Intent(getApplicationContext(), RemoveActivity.class);
-			RemoveIntent.putExtra("WhichIntent", (int) RemoveActivity.COVER_ACTION_ESC);
+			RemoveIntent.putExtra("WhichIntent", (int) HomeActivity.COVER_ACTION_ESC);
 			startActivity(RemoveIntent);
 			break;
 			

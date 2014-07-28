@@ -76,57 +76,56 @@ public class HISActivity extends Activity {
 		genderText = (TextView) findViewById(R.id.gendertext);
 		ackText = (TextView) findViewById(R.id.ackText);
 		
-		sendPIDBtn = (Button)findViewById(R.id.sendpidbtn);
-		sendPIDBtn.setOnClickListener(new View.OnClickListener() {
+//		sendPIDBtn = (Button)findViewById(R.id.sendpidbtn);
+//		sendPIDBtn.setOnClickListener(new View.OnClickListener() {
+//		
+//			public void onClick(View v) {
+//		
+//				sendPIDBtn.setEnabled(false);
+//
+//				if(Flag_TCP)
+//				{
+//					PatientNum = "11";
+//					Send_message(QRYA01);
+//				}
+//				else{
+//					Flag_TCP_Start = true;
+//					while(Flag_TCP_Start == true);
+//					if(Flag_TCP != true)Toast.makeText(HISActivity.this, "Can't connect to server", Toast.LENGTH_SHORT).show();
+//					else
+//					{
+//						PatientNum = "11";
+//						Send_message(QRYA01);
+//					}
+//				}
+//			}
+//		});
 		
-			public void onClick(View v) {
-		
-				sendPIDBtn.setEnabled(false);
-
-				if(Flag_TCP)
-				{
-					PatientNum = "11";
-					Send_message(QRYA01);
-				}
-				else{
-					Flag_TCP_Start = true;
-					while(Flag_TCP_Start == true);
-					if(Flag_TCP != true)Toast.makeText(HISActivity.this, "Can't connect to server", Toast.LENGTH_SHORT).show();
-					else
-					{
-						PatientNum = "11";
-						Send_message(QRYA01);
-					}
-				}
-			}
-		});
-		
-		sendORUBtn = (Button)findViewById(R.id.sendorubtn);
-		sendORUBtn.setOnClickListener(new View.OnClickListener() {
-		
-			public void onClick(View v) {
-		
-				sendORUBtn.setEnabled(false);
-
-				if(Flag_TCP)
-				{
-					PatientNum = "11";
-					Send_message(ORUR01);
-				}
-				else{
-					Flag_TCP_Start = true;
-					while(Flag_TCP_Start == true);
-					if(Flag_TCP != true)Toast.makeText(HISActivity.this, "Can't connect to server", Toast.LENGTH_SHORT).show();
-					else
-					{
-						PatientNum = "11";
-						Send_message(ORUR01);
-					}
-				}
-			}
-		});
-		
-		
+//		sendORUBtn = (Button)findViewById(R.id.sendorubtn);
+//		sendORUBtn.setOnClickListener(new View.OnClickListener() {
+//		
+//			public void onClick(View v) {
+//		
+//				sendORUBtn.setEnabled(false);
+//
+//				if(Flag_TCP)
+//				{
+//					PatientNum = "11";
+//					Send_message(ORUR01);
+//				}
+//				else{
+//					Flag_TCP_Start = true;
+//					while(Flag_TCP_Start == true);
+//					if(Flag_TCP != true)Toast.makeText(HISActivity.this, "Can't connect to server", Toast.LENGTH_SHORT).show();
+//					else
+//					{
+//						PatientNum = "11";
+//						Send_message(ORUR01);
+//					}
+//				}
+//			}
+//		});
+				
 		cancelBtn = (Button)findViewById(R.id.cancelbtn);
 		cancelBtn.setOnClickListener(new View.OnClickListener() {
 		
@@ -387,34 +386,34 @@ public class HISActivity extends Activity {
 	}
 	
 	
-	public void Send_message(int mode){
-		time_msg = TimerDisplay.rTime[0]+TimerDisplay.rTime[1]+TimerDisplay.rTime[2]+TimerDisplay.rTime[7]+TimerDisplay.rTime[4]+TimerDisplay.rTime[6];
-		if(mode == 1)	//QRY^A19
-		{
-			MSH_msg = ("MSH|^~\\&|"+ Send_App +"|"+ Send_Facility +"|"+ Receive_App +"|"+ Receive_Facility +"|"+time_msg+"||QRY^A19|"+Control_ID+"|P|2.4");
-			QRD_msg = ("QRD|"+time_msg+"|R|I|"+Query_ID+"|||1^RD|"+ PatientNum +"|DEM|||");
-			Send_msg = (MSH_msg + s_cr + QRD_msg + s_cr);			// 메시지 헤더 vt삽입, 각 세그먼트 뒤 cr삽입, 메시지 뒤 fs + cr 삽입  -> vt + 메시지(세그먼트 cr + 세그먼트 cr...) + fs + cr
-		}
-		if(mode == 2)	//ORU^R01
-		{
-			MSH_msg = ("MSH|^~\\&|"+ Send_App +"|"+ Send_Facility +"|"+ Receive_App +"|"+ Receive_Facility +"|"+time_msg+"||ORU^R01|"+Control_ID+"|P|2.4");
-			PID_msg = Segment_array[3];
-			OBR_msg = ("OBR|1|||41995-2^Hemoglobin A1c^LN|||"+time_msg+"||||||||||||||||||F");
-			OBX_msg = ("OBX|1|ST|41995-2^Hemoglobin A1c^LN||"+RunActivity.HbA1cPctStr+"|%|||||F");		//type ST = string data, NM = Numeric
-			Send_msg = (MSH_msg + s_cr + PID_msg + s_cr + OBR_msg + s_cr + OBX_msg + s_cr);		// 메시지 헤더 vt삽입, 각 세그먼트 뒤 cr삽입, 메시지 뒤 fs + cr 삽입  -> vt + 메시지(세그먼트 cr + 세그먼트 cr...) + fs + cr
-		}
-		try	{
-			BufferedWriter out = new BufferedWriter( new OutputStreamWriter(socket.getOutputStream(),"EUC-KR"));	// *중요* 서버가 euc-kr을 사용할 경우 인코딩 해서 전송한다!!
-			out.write(s_vt);
+//	public void Send_message(int mode){
+//		time_msg = TimerDisplay.rTime[0]+TimerDisplay.rTime[1]+TimerDisplay.rTime[2]+TimerDisplay.rTime[7]+TimerDisplay.rTime[4]+TimerDisplay.rTime[6];
+//		if(mode == 1)	//QRY^A19
+//		{
+//			MSH_msg = ("MSH|^~\\&|"+ Send_App +"|"+ Send_Facility +"|"+ Receive_App +"|"+ Receive_Facility +"|"+time_msg+"||QRY^A19|"+Control_ID+"|P|2.4");
+//			QRD_msg = ("QRD|"+time_msg+"|R|I|"+Query_ID+"|||1^RD|"+ PatientNum +"|DEM|||");
+//			Send_msg = (MSH_msg + s_cr + QRD_msg + s_cr);			// 메시지 헤더 vt삽입, 각 세그먼트 뒤 cr삽입, 메시지 뒤 fs + cr 삽입  -> vt + 메시지(세그먼트 cr + 세그먼트 cr...) + fs + cr
+//		}
+//		if(mode == 2)	//ORU^R01
+//		{
+//			MSH_msg = ("MSH|^~\\&|"+ Send_App +"|"+ Send_Facility +"|"+ Receive_App +"|"+ Receive_Facility +"|"+time_msg+"||ORU^R01|"+Control_ID+"|P|2.4");
+//			PID_msg = Segment_array[3];
+//			OBR_msg = ("OBR|1|||41995-2^Hemoglobin A1c^LN|||"+time_msg+"||||||||||||||||||F");
+//			OBX_msg = ("OBX|1|ST|41995-2^Hemoglobin A1c^LN||"+RunActivity.HbA1cPctStr+"|%|||||F");		//type ST = string data, NM = Numeric
+//			Send_msg = (MSH_msg + s_cr + PID_msg + s_cr + OBR_msg + s_cr + OBX_msg + s_cr);		// 메시지 헤더 vt삽입, 각 세그먼트 뒤 cr삽입, 메시지 뒤 fs + cr 삽입  -> vt + 메시지(세그먼트 cr + 세그먼트 cr...) + fs + cr
+//		}
+//		try	{
+//			BufferedWriter out = new BufferedWriter( new OutputStreamWriter(socket.getOutputStream(),"EUC-KR"));	// *중요* 서버가 euc-kr을 사용할 경우 인코딩 해서 전송한다!!
+//			out.write(s_vt);
+////			out.flush();
+//			out.write(Send_msg);
+////			out.flush();
+//			out.write(s_fs+s_cr);
 //			out.flush();
-			out.write(Send_msg);
-//			out.flush();
-			out.write(s_fs+s_cr);
-			out.flush();
-		} catch (Exception e){
-			Log.e("TCP", "C: Send Error", e);
-		} 
-	}
+//		} catch (Exception e){
+//			Log.e("TCP", "C: Send Error", e);
+//		} 
+//	}
 	
 	public void Stop(){		// Thread와 Socket을 멈춤
 		try {

@@ -27,10 +27,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class ResultActivity extends Activity {
-	
-	final static byte ACTION_ACTIVITY = 1,
-					  HOME_ACTIVITY = 2;
-	
+		
 	private Temperature ResultTmp;
 	private SerialPort ResultSerial;
 	
@@ -69,7 +66,7 @@ public class ResultActivity extends Activity {
 		/* Popup window activation */
 		resultLinear = (RelativeLayout)findViewById(R.id.resultlinear);
 		errorPopupView = View.inflate(this, R.layout.errorbtnpopup, null);
-		errorPopup = new PopupWindow(errorPopupView, 288, 255, true);
+		errorPopup = new PopupWindow(errorPopupView, 504, 174, true);
 		
 		ResultInit();
 		
@@ -140,8 +137,6 @@ public class ResultActivity extends Activity {
 				errorPopup.dismiss();
 			}
 		});
-		
-		ErrorPopup();
 	}
 	
 	public void ResultInit() {
@@ -160,10 +155,47 @@ public class ResultActivity extends Activity {
 		AMPMText = (TextView)findViewById(R.id.r_testdate2);
 		Ref = (TextView) findViewById(R.id.ref);
 		
-		HbA1cText.setText(RunActivity.HbA1cPctStr);
+		Intent itn = getIntent();
+		ItnData = itn.getIntExtra("RunState", 0);
+		
+		switch(ItnData) {
+			
+		case HomeActivity.NORMAL_OPERATION		:
+			DecimalFormat hbA1cFormat = new DecimalFormat("0.0");
+			HbA1cText.setText(hbA1cFormat.format(RunActivity.HbA1cPctDbl) + "%");
+			break;
+			
+		case HomeActivity.tHb_LOW_ERROR			:
+			HbA1cText.setText(R.string.e101);
+			break;
+			
+		case HomeActivity.tHb_HIGH_ERROR		:
+			HbA1cText.setText(R.string.e102);
+			break;
+			
+		case HomeActivity.A1c_LOW_ERROR			:
+			HbA1cText.setText(R.string.e201);
+			break;
+			
+		case HomeActivity.A1c_HIGH_ERROR		:
+			HbA1cText.setText(R.string.e202);
+			break;
+			
+		case HomeActivity.COMMUNICATION_ERROR	:
+			HbA1cText.setText(R.string.error);
+			ErrorPopup();
+			break;
+			
+		case HomeActivity.STOP_RESULT			:
+			HbA1cText.setText(R.string.stop);
+			break;
+		}
+		
 		DateText.setText(TimerDisplay.rTime[0] + "." + TimerDisplay.rTime[1] + "." + TimerDisplay.rTime[2] + " " + TimerDisplay.rTime[4] + ":" + TimerDisplay.rTime[5]);
 		AMPMText.setText(TimerDisplay.rTime[3]);
 		Ref.setText(Barcode.RefNum);
+	
+		
 	}
 	
 	public void CurrTimeDisplay() {
@@ -181,23 +213,17 @@ public class ResultActivity extends Activity {
 	}
 	
 	public void ErrorPopup() { // E101 error pop-up window
-		
-		Intent itn = getIntent();
-		ItnData = itn.getIntExtra("RunState", 0);
-		
-		if(ItnData == (int) RunActivity.ERROR_RESULT) {
-			
-			errorPopupView.post(new Runnable() {
-		        public void run() {
-		
-		        	errorPopup.showAtLocation(resultLinear, Gravity.CENTER, 0, 0);
-					errorPopup.setAnimationStyle(0);					
-								
-					TextView errorText = (TextView)errorPopup.getContentView().findViewById(R.id.errortext);
-					errorText.setText("E101");	
-		        }
-		    });
-		}
+				
+		errorPopupView.post(new Runnable() {
+	        public void run() {
+	
+	        	errorPopup.showAtLocation(resultLinear, Gravity.CENTER, 0, 0);
+				errorPopup.setAnimationStyle(0);					
+							
+				TextView errorText = (TextView)errorPopup.getContentView().findViewById(R.id.errortext);
+				errorText.setText(R.string.e051);	
+	        }
+	    });
 	}
 	
 	public void GetCurrTime() { // getting the current date and time
@@ -220,7 +246,8 @@ public class ResultActivity extends Activity {
 	public void PrintResultData() {
 		
 		StringBuffer txData = new StringBuffer();
-		DecimalFormat dfm = new DecimalFormat("0000");
+		DecimalFormat dfm = new DecimalFormat("0000"),
+					  hbA1cFormat = new DecimalFormat("0.0");
 		
 		txData.delete(0, txData.capacity());
 		
@@ -232,7 +259,7 @@ public class ResultActivity extends Activity {
 		txData.append(getTime[5]);
 		txData.append(dfm.format(dataCnt));
 		txData.append(Barcode.RefNum);
-		txData.append(RunActivity.HbA1cPctStr);
+		txData.append(hbA1cFormat.format(RunActivity.HbA1cPctDbl));
 		
 		ResultSerial = new SerialPort();
 		ResultSerial.PrinterTxStart(SerialPort.PRINTRESULT, txData);	
@@ -241,8 +268,8 @@ public class ResultActivity extends Activity {
 	public void WhichIntent(TargetIntent Itn) { // Activity conversion after intent data deliver
 		
 		Intent DataSaveIntent = new Intent(getApplicationContext(), FileSaveActivity.class);
-		DecimalFormat photoDfm = new DecimalFormat("0.0");
-		DecimalFormat absorbDfm = new DecimalFormat("0.0000");
+		DecimalFormat photoDfm = new DecimalFormat("0.0"),
+					  absorbDfm = new DecimalFormat("0.0000");
 		
 		DataSaveIntent.putExtra("RunState", ItnData);
 		DataSaveIntent.putExtra("Year", getTime[0]);
@@ -254,7 +281,7 @@ public class ResultActivity extends Activity {
 		DataSaveIntent.putExtra("DataCnt", dataCnt);
 
 		DataSaveIntent.putExtra("RefNumber", Barcode.RefNum);
-		DataSaveIntent.putExtra("Hba1cPct", RunActivity.HbA1cPctStr);
+		DataSaveIntent.putExtra("Hba1cPct", photoDfm.format(RunActivity.HbA1cPctDbl));
 		
 		DataSaveIntent.putExtra("RunMin", (int) RunActivity.runMin);
 		DataSaveIntent.putExtra("RunSec", (int) RunActivity.runSec);
@@ -284,12 +311,12 @@ public class ResultActivity extends Activity {
 		switch(Itn) {
 		
 		case Home		:							
-			DataSaveIntent.putExtra("WhichIntent", (int) HOME_ACTIVITY);
+			DataSaveIntent.putExtra("WhichIntent", (int) HomeActivity.HOME_ACTIVITY);
 			startActivity(DataSaveIntent);
 			break;
 
 		case Run	:			
-			DataSaveIntent.putExtra("WhichIntent", (int) ACTION_ACTIVITY);
+			DataSaveIntent.putExtra("WhichIntent", (int) HomeActivity.ACTION_ACTIVITY);
 			startActivity(DataSaveIntent);
 			break;
 

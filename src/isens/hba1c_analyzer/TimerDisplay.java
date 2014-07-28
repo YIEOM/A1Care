@@ -59,18 +59,10 @@ public class TimerDisplay {
 				Runnable updater = new Runnable() {
 					public void run() {
 						
-						cnt++;
+						if(cnt++ == 100) cnt = 0;
 						
-						if(cnt == 5) {
-							
-							TimerGpio = new GpioPort();
-							TimerGpio.CartridgeSensorScan();
-							TimerGpio.DoorSensorScan();
+						if((cnt % 10) == 0) { // One second period
 						
-						} else if(cnt == 10) { // One second period
-						
-							cnt = 0;
-							
 							TimerGpio = new GpioPort();
 							TimerGpio.CartridgeSensorScan();
 							TimerGpio.DoorSensorScan();
@@ -81,6 +73,12 @@ public class TimerDisplay {
 											
 								ClockDecision();
 							}
+							
+						} else if((cnt % 2) == 0) {
+							
+							TimerGpio = new GpioPort();
+							TimerGpio.CartridgeSensorScan();
+							TimerGpio.DoorSensorScan();
 						}
 					}
 				};

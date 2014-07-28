@@ -17,10 +17,6 @@ public class RemoveActivity extends Activity {
 
 	SerialPort RemoveSerial;
 	
-	final static byte ACTION_ACTIVITY = 1,
-					  HOME_ACTIVITY = 2,
-					  COVER_ACTION_ESC = 3;
-	
 	public AnimationDrawable RemoveAni;
 	public ImageView RemoveImage;
 	
@@ -77,19 +73,15 @@ public class RemoveActivity extends Activity {
 	
 			while(ActionActivity.CartridgeCheckFlag != 0);
 			
-			while(ActionActivity.DoorCheckFlag != 1);
-
+			while((ActionActivity.DoorCheckFlag != 1) | (ActionActivity.CartridgeCheckFlag != 0));
+			
 			GpioPort.DoorActState = false;
 			GpioPort.CartridgeActState = false;
-			
-			RemoveAni.stop();
-			
-			SerialPort.Sleep(200);
 			
 			Intent itn = getIntent();
 			whichIntent = itn.getIntExtra("WhichIntent", 0);
 			
-			if(whichIntent != COVER_ACTION_ESC) {
+			if(whichIntent != HomeActivity.COVER_ACTION_ESC) {
 					 
 				if(Barcode.RefNum.substring(0, 1).equals("C")) {
 					
@@ -100,21 +92,22 @@ public class RemoveActivity extends Activity {
 					PatientDataCnt = itn.getIntExtra("DataCnt", 0);
 				}
 				
-				DataCntSave();
-			
+				DataCntSave();			
 			}
+			
+			RemoveAni.stop();
 			
 			switch(whichIntent) {
 			
-			case ACTION_ACTIVITY	:
-				WhichIntent(TargetIntent.Action);
+			case HomeActivity.ACTION_ACTIVITY	:
+				WhichIntent(TargetIntent.Blank);
 				break;
 			
-			case HOME_ACTIVITY		:	
+			case HomeActivity.HOME_ACTIVITY		:	
 				WhichIntent(TargetIntent.Home);
 				break;
 				
-			case COVER_ACTION_ESC	:
+			case HomeActivity.COVER_ACTION_ESC	:
 				WhichIntent(TargetIntent.Home);
 				break;
 				
@@ -163,9 +156,9 @@ public class RemoveActivity extends Activity {
 			startActivity(HomeIntent);
 			break;
 						
-		case Action		:				
-			Intent ActionIntent = new Intent(getApplicationContext(), ActionActivity.class);
-			startActivity(ActionIntent);
+		case Blank		:				
+			Intent BlankIntent = new Intent(getApplicationContext(), BlankActivity.class);
+			startActivity(BlankIntent);
 			break;
 			
 		default		:	

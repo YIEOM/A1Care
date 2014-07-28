@@ -2,6 +2,7 @@ package isens.hba1c_analyzer;
 
 import isens.hba1c_analyzer.CalibrationActivity.Cart1stShaking;
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
+import isens.hba1c_analyzer.RunActivity.AnalyzerState;
 import isens.hba1c_analyzer.TimerDisplay.whichClock;
 import android.app.Activity;
 import android.content.Context;
@@ -22,11 +23,11 @@ import android.widget.TextView;
 
 public class SystemCheckActivity extends Activity {
 
-	final static byte MOTOR_CHECK_NUMBER = 13,
-					  NUMBER_TEMPERATURE_CHECK = 5/5;
+	final static byte NUMBER_TEMPERATURE_CHECK = 5/5;
 	final static String SHAKING_CHECK_TIME = "0030";
+	final static double MaxPhoto = 990000,
+						MinPhoto = 800000;
 
-	private enum CheckState {Step1Position, Step1Shaking, Step2Position, Step2Shaking, MeasurePosition, Filter535nm, Filter660nm, Filter750nm, PhotoMeasure, FilterDark, CartridgeDump, HomePosition, BlankMode, ShakingMotorError, FilterMotorError, PhotoSensorError}
 	private enum AmbTmpState {FirstTmp, SecondTmp, ThirdTmp, ForthTmp, FifthTmp}
 	
 	private GpioPort SystemGpio;
@@ -44,9 +45,9 @@ public class SystemCheckActivity extends Activity {
 	private View errorPopupView;
 	private PopupWindow errorPopup;
 	
-	private static CheckState State = CheckState.Step1Position;
+	private AnalyzerState systemState;
 	
-	private byte CheckError = HomeActivity.NORMAL_OPERATION,
+	private byte checkError = HomeActivity.NORMAL_OPERATION,
 				 testNum = 0;
 	
 	@Override
@@ -90,8 +91,10 @@ public class SystemCheckActivity extends Activity {
 		
 		VolumeInit();
 		
-		SensorCheck SensorCheckObj = new SensorCheck();
-		SensorCheckObj.start();
+		WhichIntent(HomeActivity.TargetIntent.Home);
+		
+//		SensorCheck SensorCheckObj = new SensorCheck();
+//		SensorCheckObj.start();
 	}
 	
 	public class SensorCheck extends Thread {
@@ -123,160 +126,102 @@ public class SystemCheckActivity extends Activity {
 		
 		public void run() {
 			
-			BlankStep BlankStepObj = new BlankStep();
-			TemperatureCheck TemperatureCheckObj = new TemperatureCheck();
-			
-			for(int i = 0; i < MOTOR_CHECK_NUMBER; i++) {
-			
-				switch(State) {
+			for(int i = 0; i < 13; i++) {
+			Log.w("motor check", "system state : " + systemState);
+				switch(systemState) {
 				
 				case Step1Position		:
 					MotionInstruct(RunActivity.Step1st_POSITION, SerialPort.CtrTarget.PhotoSet);			
-					SerialPort.Sleep(200);
-					if(!RunActivity.OPERATE_COMPLETE.equals(SystemSerial.BoardMessageOutput())) {
-						
-						State = CheckState.ShakingMotorError;
-						
-					} else State = CheckState.Step1Shaking;
+					MotorCheck(RunActivity.OPERATE_COMPLETE, AnalyzerState.Step1Shaking, RunActivity.ERROR, AnalyzerState.ShakingMotorError, 1);
 					break;
 					
 				case Step1Shaking		:
 					MotionInstruct(SHAKING_CHECK_TIME, SerialPort.CtrTarget.MotorSet);
-					SerialPort.Sleep(6000);
-					if(!RunActivity.MOTOR_COMPLETE.equals(SystemSerial.BoardMessageOutput())) {
-						
-						State = CheckState.ShakingMotorError;
-						
-					} else State = CheckState.Step2Position;
+					MotorCheck(RunActivity.MOTOR_COMPLETE, AnalyzerState.Step2Position, RunActivity.ERROR, AnalyzerState.ShakingMotorError, 6);
 					break;
 					
 				case Step2Position		:
 					MotionInstruct(RunActivity.Step2nd_POSITION, SerialPort.CtrTarget.PhotoSet);
-					SerialPort.Sleep(200);
-					if(!RunActivity.OPERATE_COMPLETE.equals(SystemSerial.BoardMessageOutput())) {
-						
-						State = CheckState.ShakingMotorError;
-						
-					} else State = CheckState.Step2Shaking;
+					MotorCheck(RunActivity.OPERATE_COMPLETE, AnalyzerState.Step2Shaking, RunActivity.ERROR, AnalyzerState.ShakingMotorError, 2);
 					break;
 					
 				case Step2Shaking		:
 					MotionInstruct(SHAKING_CHECK_TIME, SerialPort.CtrTarget.MotorSet);
-					SerialPort.Sleep(6000);
-					if(!RunActivity.MOTOR_COMPLETE.equals(SystemSerial.BoardMessageOutput())) {
-						
-						State = CheckState.ShakingMotorError;
-						
-					} else State = CheckState.MeasurePosition;
+					MotorCheck(RunActivity.MOTOR_COMPLETE, AnalyzerState.MeasurePosition, RunActivity.ERROR, AnalyzerState.ShakingMotorError, 6);
 					break;
 					
 				case MeasurePosition	:
 					MotionInstruct(RunActivity.MEASURE_POSITION, SerialPort.CtrTarget.PhotoSet);
-					SerialPort.Sleep(1200);
-					if(!RunActivity.OPERATE_COMPLETE.equals(SystemSerial.BoardMessageOutput())) {
-						
-						State = CheckState.ShakingMotorError;
-						
-					} else State = CheckState.Filter535nm;
+					MotorCheck(RunActivity.OPERATE_COMPLETE, AnalyzerState.Filter535nm, RunActivity.ERROR, AnalyzerState.ShakingMotorError, 2);
 					break;
 					
 				case Filter535nm		:
 					MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
-					SerialPort.Sleep(1000);
-					if(!RunActivity.OPERATE_COMPLETE.equals(SystemSerial.BoardMessageOutput())) {
-						
-						State = CheckState.FilterMotorError;
-						
-					} else State = CheckState.Filter660nm;
+					MotorCheck(RunActivity.OPERATE_COMPLETE, AnalyzerState.Filter660nm, RunActivity.ERROR, AnalyzerState.FilterMotorError, 1);
 					break;
 					
 				case Filter660nm		:
 					MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
-					SerialPort.Sleep(1000);
-					if(!RunActivity.OPERATE_COMPLETE.equals(SystemSerial.BoardMessageOutput())) {
-						
-						State = CheckState.FilterMotorError;
-						
-					} else State = CheckState.Filter750nm;
+					MotorCheck(RunActivity.OPERATE_COMPLETE, AnalyzerState.Filter750nm, RunActivity.ERROR, AnalyzerState.FilterMotorError, 1);
 					break;
 					
 				case Filter750nm		:
 					MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
-					SerialPort.Sleep(1000);
-					if(!RunActivity.OPERATE_COMPLETE.equals(SystemSerial.BoardMessageOutput())) {
-						
-						State = CheckState.FilterMotorError;
-						
-					} else State = CheckState.PhotoMeasure;
+					MotorCheck(RunActivity.OPERATE_COMPLETE, AnalyzerState.PhotoMeasure, RunActivity.ERROR, AnalyzerState.FilterMotorError, 1);
 					break;
 					
 				case PhotoMeasure		:
-					RunActivity.BlankValue[0] = 0;
-					if(AbsorbanceMeasure() == 0) {
-						
-						State = CheckState.PhotoSensorError;
-						
-					} else State = CheckState.FilterDark;
+					PhotoCheck(AnalyzerState.FilterDark, AnalyzerState.PhotoSensorError, 1);
 					break;
 					
 				case FilterDark			:
 					MotionInstruct(RunActivity.FILTER_DARK, SerialPort.CtrTarget.PhotoSet);
-					SerialPort.Sleep(400);
-					if(!RunActivity.OPERATE_COMPLETE.equals(SystemSerial.BoardMessageOutput())) {
-						
-						State = CheckState.FilterMotorError;
-						
-					} else State = CheckState.CartridgeDump;
+					MotorCheck(RunActivity.OPERATE_COMPLETE, AnalyzerState.CartridgeDump, RunActivity.ERROR, AnalyzerState.FilterMotorError, 1);
 					break;
 					
 				case CartridgeDump		:
 					MotionInstruct(RunActivity.CARTRIDGE_DUMP, SerialPort.CtrTarget.PhotoSet);
-					SerialPort.Sleep(6000);
-					if(!RunActivity.OPERATE_COMPLETE.equals(SystemSerial.BoardMessageOutput())) {
-						
-						State = CheckState.ShakingMotorError;
-											
-					} else State = CheckState.HomePosition;
+					MotorCheck(RunActivity.OPERATE_COMPLETE, AnalyzerState.CartridgeHome, RunActivity.ERROR, AnalyzerState.ShakingMotorError, 6);
 					break;
 					
-				case HomePosition		:
+				case CartridgeHome		:
 					MotionInstruct(RunActivity.HOME_POSITION, SerialPort.CtrTarget.PhotoSet);
-					SerialPort.Sleep(1300);
-					if(!RunActivity.OPERATE_COMPLETE.equals(SystemSerial.BoardMessageOutput())) {
-						
-						State = CheckState.ShakingMotorError;
-						
-					} else State = CheckState.BlankMode;
+					MotorCheck(RunActivity.OPERATE_COMPLETE, AnalyzerState.Step1Position, RunActivity.ERROR, AnalyzerState.ShakingMotorError, 2);
 					break;
 					
-				case BlankMode			:
-					CheckError = HomeActivity.NORMAL_OPERATION;
+				case NormalOperation	:
+					TemperatureCheck TemperatureCheckObj = new TemperatureCheck();
 					TemperatureCheckObj.start();
-					i = MOTOR_CHECK_NUMBER;
-					State = CheckState.Step1Position;
 					break;
 					
 				case ShakingMotorError	:
-					CheckError = HomeActivity.SHAKING_MOTOR_ERROR;
-					BlankStepObj.start();
-					i = MOTOR_CHECK_NUMBER;
+					checkError = HomeActivity.SHAKING_MOTOR_ERROR;
+					systemState = AnalyzerState.NoWorking;
+					WhichIntent(HomeActivity.TargetIntent.Home);
 					break;
 					
 				case FilterMotorError	:
-					CheckError = HomeActivity.FILTER_MOTOR_ERROR;
-					BlankStepObj.start();
-					i = MOTOR_CHECK_NUMBER;
+					checkError = HomeActivity.FILTER_MOTOR_ERROR;
+					systemState = AnalyzerState.NoWorking;
+					WhichIntent(HomeActivity.TargetIntent.Home);
 					break;
 				
 				case PhotoSensorError	:
-					CheckError = HomeActivity.PHOTO_SENSOR_ERROR;
-					BlankStepObj.start();
-					i = MOTOR_CHECK_NUMBER;
+					checkError = HomeActivity.PHOTO_SENSOR_ERROR;
+					systemState = AnalyzerState.NoWorking;
+					WhichIntent(HomeActivity.TargetIntent.Home);
+					break;
+					
+				case NoResponse			:
+					checkError = HomeActivity.COMMUNICATION_ERROR;
+					systemState = AnalyzerState.NoWorking;
+					WhichIntent(HomeActivity.TargetIntent.Home);
+					break;
+					
+				default	:
 					break;
 				}
-				
-				if(i == MOTOR_CHECK_NUMBER) break;
-			}	
+			}
 		}
 	}
 	
@@ -289,8 +234,6 @@ public class SystemCheckActivity extends Activity {
 				   tempTmp = 0;
 			boolean ambTmpCheckFlag = false;
 			AmbTmpState state = AmbTmpState.FirstTmp;
-			
-			BlankStep BlankStepObj = new BlankStep();
 			
 			/* Temperature setting */
 			SystemTmp = new Temperature(); // to test
@@ -347,106 +290,144 @@ public class SystemCheckActivity extends Activity {
 				
 				if(i != NUMBER_TEMPERATURE_CHECK) {
 					
-					PhotoCheck PhotoCheckObj = new PhotoCheck();
-					PhotoCheckObj.start();
+//					PhotoCheck PhotoCheckObj = new PhotoCheck();
+//					PhotoCheckObj.start();
 				
 				} else {
 					
-					CheckError = HomeActivity.AMBIENT_TEMPERATURE_ERROR;
-					BlankStepObj.start();
+					checkError = HomeActivity.AMBIENT_TEMP_ERROR;
+					WhichIntent(HomeActivity.TargetIntent.Home);
 				}
 
 			} else {
 				
-				CheckError = HomeActivity.CELL_TEMPERATURE_ERROR;
-				BlankStepObj.start();
+				checkError = HomeActivity.CELL_TEMP_ERROR;
+				WhichIntent(HomeActivity.TargetIntent.Home);
 			}
 		}
 	}
 	
-	public class PhotoCheck extends Thread {
-		
-		public void run() {
-			
-			MotionInstruct(RunActivity.MEASURE_POSITION, SerialPort.CtrTarget.PhotoSet);			
-			while(!RunActivity.OPERATE_COMPLETE.equals(SystemSerial.BoardMessageOutput()));
-				
-			for(int i = 0; i < 5; i++) {
-			
-				MotionInstruct(RunActivity.FILTER_DARK, SerialPort.CtrTarget.PhotoSet);
-				while(!RunActivity.OPERATE_COMPLETE.equals(SystemSerial.BoardMessageOutput()));
-				
-				MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
-				while(!RunActivity.OPERATE_COMPLETE.equals(SystemSerial.BoardMessageOutput()));
-			
-				RunActivity.BlankValue[1] = AbsorbanceMeasure(); // 535nm Absorbance
-				
-//				Log.w("PhotoCheck", "535nm blank : " + RunActivity.BlankValue[1]);
-				
-				MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
-				while(!RunActivity.OPERATE_COMPLETE.equals(SystemSerial.BoardMessageOutput()));
-				
-//				AbsorbanceMeasure();
-				
-//				RunActivity.BlankValue[2] = SystemRun.AbsorbanceChange(); // 660nm Absorbance
+//	public class PhotoCheck extends Thread {
+//		
+//		public void run() {
+//			
+//			MotionInstruct(RunActivity.MEASURE_POSITION, SerialPort.CtrTarget.PhotoSet);			
+//			while(!RunActivity.OPERATE_COMPLETE.equals(SystemSerial.BoardMessageOutput()));
+//				
+//			for(int i = 0; i < 5; i++) {
+//			
+////				MotionInstruct(RunActivity.FILTER_DARK, SerialPort.CtrTarget.PhotoSet);
+////				while(!RunActivity.OPERATE_COMPLETE.equals(SystemSerial.BoardMessageOutput()));
+//				
+////				MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
+////				while(!RunActivity.OPERATE_COMPLETE.equals(SystemSerial.BoardMessageOutput()));
+//			
+//				RunActivity.BlankValue[1] = AbsorbanceMeasure(); // 535nm Absorbance
+//				
+////				Log.w("PhotoCheck", "535nm blank : " + RunActivity.BlankValue[1]);
+//				
+//				MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
+//				while(!RunActivity.OPERATE_COMPLETE.equals(SystemSerial.BoardMessageOutput()));
+//				
+////				AbsorbanceMeasure();
+//				
+////				RunActivity.BlankValue[2] = SystemRun.AbsorbanceChange(); // 660nm Absorbance
+//	
+////				Log.w("PhotoCheck", "660nm blank : " + RunActivity.BlankValue[2]);
+//				
+//				MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
+//				while(!RunActivity.OPERATE_COMPLETE.equals(SystemSerial.BoardMessageOutput()));
+//				
+////				AbsorbanceMeasure();
+//				
+////				RunActivity.BlankValue[3] = SystemRun.AbsorbanceChange(); // 750nm Absorbance
+//				
+////				Log.w("PhotoCheck", "750nm blank : " + RunActivity.BlankValue[3]);
+//			}			
+//			
+//			WhichIntent(HomeActivity.TargetIntent.Home);
+//		}
+//	}
 	
-//				Log.w("PhotoCheck", "660nm blank : " + RunActivity.BlankValue[2]);
+	public synchronized double AbsorbanceMeasure() { // Absorbance measurement
+		
+		int time = 0;
+		String rawValue;
+		double douValue = 0;
+		
+		SystemSerial.BoardTx("VH", SerialPort.CtrTarget.PhotoSet);
+		
+		rawValue = SystemSerial.BoardMessageOutput();			
+		
+		while(rawValue.length() != 8) {
+		
+			time++;
+			rawValue = SystemSerial.BoardMessageOutput();			
 				
-				MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
-				while(!RunActivity.OPERATE_COMPLETE.equals(SystemSerial.BoardMessageOutput()));
-				
-//				AbsorbanceMeasure();
-				
-//				RunActivity.BlankValue[3] = SystemRun.AbsorbanceChange(); // 750nm Absorbance
-				
-//				Log.w("PhotoCheck", "750nm blank : " + RunActivity.BlankValue[3]);
-			}			
+			if(time > 50) systemState = AnalyzerState.NoResponse;
 			
-			BlankStep BlankStepObj = new BlankStep();
-			BlankStepObj.start();
+			SerialPort.Sleep(100);
 		}
+		
+		douValue = Double.parseDouble(rawValue);
+		
+		return (douValue - RunActivity.BlankValue[0]);
 	}
 	
-	public class BlankStep extends Thread { // Blank run
+	public void BoardMessage(String rspStr, int rspTime, AnalyzerState nextState) {
 		
-		public void run() {
+		int time = 0;
+		boolean isNormalTime = true;
+	
+		rspTime = rspTime * 10;
+		
+		while(!rspStr.equals(SystemSerial.BoardMessageOutput())) {
 			
-			MotionInstruct(RunActivity.MEASURE_POSITION, SerialPort.CtrTarget.PhotoSet);			
-			while(!RunActivity.OPERATE_COMPLETE.equals(SystemSerial.BoardMessageOutput()));
+			time++;
 			
-			/* Dark filter Measurement */
-			MotionInstruct(RunActivity.FILTER_DARK, SerialPort.CtrTarget.PhotoSet);
-			while(!RunActivity.OPERATE_COMPLETE.equals(SystemSerial.BoardMessageOutput()));
-			RunActivity.BlankValue[0] = AbsorbanceMeasure(); // Dark Absorbance
+			if(time > rspTime) isNormalTime = false;
 			
-			/* 535nm filter Measurement */
-			MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
-			while(!RunActivity.OPERATE_COMPLETE.equals(SystemSerial.BoardMessageOutput()));
-			RunActivity.BlankValue[1] = AbsorbanceMeasure(); // Dark Absorbance
-			
-			/* 660nm filter Measurement */
-			MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
-			while(!RunActivity.OPERATE_COMPLETE.equals(SystemSerial.BoardMessageOutput()));
-			RunActivity.BlankValue[2] = AbsorbanceMeasure(); // Dark Absorbance
-			
-			/* 750nm filter Measurement */
-			MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
-			while(!RunActivity.OPERATE_COMPLETE.equals(SystemSerial.BoardMessageOutput()));
-			RunActivity.BlankValue[3] = AbsorbanceMeasure(); // Dark Absorbance
-			
-			/* Return to the original position */
-			MotionInstruct(RunActivity.FILTER_DARK, SerialPort.CtrTarget.PhotoSet);
-			while(!RunActivity.OPERATE_COMPLETE.equals(SystemSerial.BoardMessageOutput()));
-			
-			MotionInstruct(RunActivity.HOME_POSITION, SerialPort.CtrTarget.PhotoSet);
-			while(!RunActivity.OPERATE_COMPLETE.equals(SystemSerial.BoardMessageOutput()));
-			
-			SerialPort.Sleep(1000);
-						
-			systemCheckAni.stop();
-			
-			WhichIntent(HomeActivity.TargetIntent.Home);
+			SerialPort.Sleep(100);
 		}
+		
+		if(isNormalTime) systemState = nextState;
+		else systemState = AnalyzerState.NoResponse;
+	}
+	
+	public void MotorCheck(String colRsp, AnalyzerState nextState, String errRsp, AnalyzerState errState, int rspTime) {
+		
+		String temp = "";
+		
+		SerialPort.Sleep(rspTime * 1000);
+		
+		temp = SystemSerial.BoardMessageOutput();
+		
+		if(colRsp.equals(temp)) systemState = nextState;
+		else if(errRsp.equals(temp)) systemState = errState;
+		else systemState = AnalyzerState.NoResponse;
+	}
+	
+	public void PhotoCheck(AnalyzerState nextState, AnalyzerState errState, int rspTime) {
+		
+		String tempStr = "";
+		double tempDouble = 0.0;
+		
+		RunActivity.BlankValue[0] = 0;
+		
+		SystemSerial.BoardTx("VH", SerialPort.CtrTarget.PhotoSet);
+		
+		SerialPort.Sleep(rspTime * 1000);
+		
+		tempStr = SystemSerial.BoardMessageOutput();
+
+		if(tempStr.length() == 8) {
+			
+			tempDouble = Double.parseDouble(tempStr);
+		
+			if((MinPhoto < tempDouble) & (tempDouble < MaxPhoto)) systemState = nextState;
+			else systemState = errState;
+			
+		} else systemState = AnalyzerState.NoResponse;
 	}
 	
 	public void MotionInstruct(String str, SerialPort.CtrTarget target) { // Motion of system instruction
@@ -459,25 +440,12 @@ public class SystemCheckActivity extends Activity {
 		systemCheckImage = (ImageView)findViewById(R.id.systemcheckani);
 		systemCheckAni = (AnimationDrawable)systemCheckImage.getBackground();
 		
-		systemCheckLinear.post(new Runnable() {
+      	systemCheckLinear.post(new Runnable() {
 	        public void run() {
 
 	        	systemCheckAni.start();
 	        }
 		});
-	}
-	
-	public synchronized double AbsorbanceMeasure() { // Absorbance measurement
-		
-		String rawValue;
-		double douValue = 0;
-		
-		SystemSerial.BoardTx("VH", SerialPort.CtrTarget.PhotoSet);
-			
-		rawValue = SystemSerial.BoardMessageOutput();			
-		douValue = Double.parseDouble(rawValue);
-		
-		return (douValue - RunActivity.BlankValue[0]);
 	}
 	
 	public void VolumeInit() { 
@@ -517,6 +485,8 @@ public class SystemCheckActivity extends Activity {
 	
 	public void ParameterInit() { // Load to saved various parameter
 		
+		systemState = AnalyzerState.Step1Position;
+		
 		SharedPreferences DcntPref = getSharedPreferences("Data Counter", MODE_PRIVATE);
 		RemoveActivity.PatientDataCnt = DcntPref.getInt("PatientDataCnt", 1);
 		RemoveActivity.ControlDataCnt = DcntPref.getInt("ControlDataCnt", 1);
@@ -551,7 +521,7 @@ public class SystemCheckActivity extends Activity {
 							break;
 						
 						case	HomeActivity.CART_SENSOR_ERROR		:
-							errorText.setText(R.string.e011);
+							errorText.setText(R.string.e002);
 							break;
 						}
 		            }
@@ -566,7 +536,7 @@ public class SystemCheckActivity extends Activity {
 		
 		case Home		:				
 			Intent HomeIntent = new Intent(getApplicationContext(), HomeActivity.class);
-			HomeIntent.putExtra("System Check State", (int) CheckError);
+			HomeIntent.putExtra("System Check State", (int) checkError);
 			startActivity(HomeIntent);
 			break;
 		

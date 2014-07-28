@@ -43,19 +43,15 @@ public class RunActivity extends Activity {
 						OPERATE_COMPLETE = "DO",
 						MOTOR_COMPLETE   = "FS",
 						NEXT_FILTER		 = "FS",
-						MOTOR_STOP		 = "MS";
+						MOTOR_STOP		 = "MS",
+						ERROR = "";
+	
+	public enum AnalyzerState {Step1Position, Step1Shaking, Step2Position, Step2Shaking, MeasurePosition, FilterDark, Filter535nm, Filter660nm, Filter750nm, FilterHome, CartridgeHome, CartridgeDump, PhotoMeasure, NoResponse, NoWorking, ShakingMotorError, FilterMotorError, PhotoSensorError, NormalOperation}
 
 	private DecimalFormat ShkDf = new DecimalFormat("0000");
 	
 	final static byte FIRST_SHAKING_TIME = 105, // Motor shaking time, default : 6 * 105(sec) = 0630
 					  SECOND_SHAKING_TIME = 90; // Motor shaking time, default : 6 * 90(sec) = 0540
-	
-	final static double MinAbsorb = 160000,
-						MaxAbsorb = 175000;
-	
-	final static byte NORMAL_RESULT = 1,
-					  STOP_RESULT = 2,
-					  ERROR_RESULT = 3;
 	
 	private static boolean MotorShakeFlag = false;
 
@@ -94,21 +90,24 @@ public class RunActivity extends Activity {
 						 Step2ndAbsorb1[] = new double[3],
 						 Step2ndAbsorb2[] = new double[3],
 						 Step2ndAbsorb3[] = new double[3];
-	
-	private static boolean CartStepStopped = false;
-	
+		
 	public static byte runSec = 0,
 					   runMin = 0;
 	
 	public static double tHbDbl,
 						 HbA1cPctDbl,
 						 douValue;
-	public static String HbA1cPctStr = "0.0";
 	
 	public static float AF_Slope,
 						AF_Offset,
 						CF_Slope,
 						CF_Offset;
+	
+	public AnalyzerState runState;
+	
+	public byte checkError = HomeActivity.NORMAL_OPERATION;
+	
+	public double A;
 	
 	protected void onCreate(Bundle savedInstanceState) {
 	
@@ -153,7 +152,7 @@ public class RunActivity extends Activity {
 				
 				yesBtn.setEnabled(false);
 				
-				CartStepStopped = true;
+				checkError = HomeActivity.STOP_RESULT;
 								
 				WaitPopup();
 				
@@ -174,8 +173,7 @@ public class RunActivity extends Activity {
 			}
 		});
 	
-		Cart1stShaking Cart1stShakingObj = new Cart1stShaking(); // to test
-		Cart1stShakingObj.start(); // to test
+		RunInit();
 	}
 	
 	public void CurrTimeDisplay() {
@@ -208,33 +206,56 @@ public class RunActivity extends Activity {
 	public class Cart1stShaking extends Thread { // First shaking motion
 
 		public void run() {
-//			Log.w("Cart1stShaking", "start");
-			BarAnimation(162);
-			RunInit();
+			
 			BarAnimation(165);
 			
-			MotionInstruct(Step1st_POSITION, SerialPort.CtrTarget.PhotoSet);			
-			BarAnimation(168);
-			while(!OPERATE_COMPLETE.equals(RunSerial.BoardMessageOutput()));
-			BarAnimation(171);
-			SerialPort.Sleep(500);
+			for(int i = 0; i < 2; i++) {
+				
+				switch(runState) {
+				
+				case Step1Position	:
+					MotionInstruct(Step1st_POSITION, SerialPort.CtrTarget.PhotoSet);			
+					BarAnimation(168);
+					BoardMessage(OPERATE_COMPLETE, 5, AnalyzerState.Step1Shaking);
+					BarAnimation(171);
+					SerialPort.Sleep(500);
+					break;
+					
+				case Step1Shaking	:
+					MotionInstruct(ShkDf.format(FIRST_SHAKING_TIME * 6), SerialPort.CtrTarget.MotorSet);  // Motor shaking time, default : 6.5 * 10(sec) = 0065
+					MotorShakeFlag = true;
+					ShakingAniThread ShakingAniThreadObj = new ShakingAniThread(174, FIRST_SHAKING_TIME);
+					ShakingAniThreadObj.start();
+					BoardMessage(MOTOR_COMPLETE, 110, AnalyzerState.MeasurePosition);
+					MotorShakeFlag = false;
+					break;
+					
+				case NoResponse :
+					Log.w("Cart1stShaking", "NR");
+					runState = AnalyzerState.NoWorking;
+					WhichIntent(TargetIntent.ResultComm);
+					break;
+					
+				default	:
+					break;
+				}
+			}
 			
-			MotionInstruct(ShkDf.format(FIRST_SHAKING_TIME * 6), SerialPort.CtrTarget.MotorSet);  // Motor shaking time, default : 6.5 * 10(sec) = 0065
-			MotorShakeFlag = true;
-			ShakingAniThread ShakingAniThreadObj = new ShakingAniThread(174, FIRST_SHAKING_TIME);
-			ShakingAniThreadObj.start();
-			while(!MOTOR_COMPLETE.equals(RunSerial.BoardMessageOutput())); // temporary
-			MotorShakeFlag = false;
-			
-			if(!CartStepStopped) {
-
-				Cart1stFilter1 Cart1stFilter1Obj = new Cart1stFilter1();
-				Cart1stFilter1Obj.start();	
-			} else {
-
-				CartStop CartStopObj = new CartStop(STOP_RESULT);
-				CartStopObj.start();
-			}	
+			if(runState != AnalyzerState.NoResponse) {
+				
+				switch(checkError) {
+				
+				case HomeActivity.NORMAL_OPERATION	:
+					Cart1stFilter1 Cart1stFilter1Obj = new Cart1stFilter1();
+					Cart1stFilter1Obj.start();	
+					break;
+					
+				case HomeActivity.STOP_RESULT		:
+					CartDump CartDumpObj = new CartDump(checkError);
+					CartDumpObj.start();
+					break;
+				}
+			}
 		}
 	}
 
@@ -246,44 +267,73 @@ public class RunActivity extends Activity {
 			SerialPort.Sleep(2000);
 			BarAnimation(282);
 			
-			MotionInstruct(MEASURE_POSITION, SerialPort.CtrTarget.PhotoSet);
-			BarAnimation(285);
-			while(!OPERATE_COMPLETE.equals(RunSerial.BoardMessageOutput()));
-			BarAnimation(288);
-			
-			MotionInstruct(NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
-			BarAnimation(291);
-			while(!OPERATE_COMPLETE.equals(RunSerial.BoardMessageOutput()));
-			BarAnimation(294);
-			Step1stValue1[0] = AbsorbanceMeasure(); // 535nm Absorbance
-			
-			MotionInstruct(NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
-			BarAnimation(297);
-			while(!OPERATE_COMPLETE.equals(RunSerial.BoardMessageOutput()));
-			BarAnimation(300);
-			
-			Step1stValue1[1] = AbsorbanceMeasure(); // 660nm Absorbance
-		
-			MotionInstruct(NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
-			BarAnimation(303);
-			while(!OPERATE_COMPLETE.equals(RunSerial.BoardMessageOutput()));
-			BarAnimation(306);
-			
-			Step1stValue1[2] = AbsorbanceMeasure(); // 750nm Absorbance
-			
-			MotionInstruct(FILTER_DARK, SerialPort.CtrTarget.PhotoSet);
-			BarAnimation(309);
-			while(!OPERATE_COMPLETE.equals(RunSerial.BoardMessageOutput()));
-			BarAnimation(312);
+			for(int i = 0; i < 5; i++) {
+				
+				switch(runState) {
+				
+				case MeasurePosition	:
+					MotionInstruct(MEASURE_POSITION, SerialPort.CtrTarget.PhotoSet);
+					BarAnimation(285);
+					BoardMessage(OPERATE_COMPLETE, 5, AnalyzerState.Filter535nm);
+					BarAnimation(288);
+					break;
 					
-			if(!CartStepStopped) {
+				case Filter535nm	:
+					MotionInstruct(NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
+					BarAnimation(291);
+					BoardMessage(OPERATE_COMPLETE, 5, AnalyzerState.Filter660nm);
+					BarAnimation(294);
+					Step1stValue1[0] = AbsorbanceMeasure(); // 535nm Absorbance
+					break;
+					
+				case Filter660nm	:
+					MotionInstruct(NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
+					BarAnimation(297);
+					BoardMessage(OPERATE_COMPLETE, 5, AnalyzerState.Filter750nm);
+					BarAnimation(300);					
+					Step1stValue1[1] = AbsorbanceMeasure(); // 660nm Absorbance
+					break;
+					
+				case Filter750nm	:
+					MotionInstruct(NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
+					BarAnimation(303);
+					BoardMessage(OPERATE_COMPLETE, 5, AnalyzerState.FilterDark);
+					BarAnimation(306);
+					Step1stValue1[2] = AbsorbanceMeasure(); // 750nm Absorbance
+					break;
+					
+				case FilterDark		:
+					MotionInstruct(FILTER_DARK, SerialPort.CtrTarget.PhotoSet);
+					BarAnimation(309);
+					BoardMessage(OPERATE_COMPLETE, 5, AnalyzerState.Filter535nm);
+					BarAnimation(312);
+					break;
+					
+				case NoResponse 	:
+					Log.w("Cart1stFilter1", "NR");
+					runState = AnalyzerState.NoWorking;
+					WhichIntent(TargetIntent.ResultComm);
+					break;
+					
+				default	:
+					break;
+				}
+			}
+			
+			if(runState != AnalyzerState.NoResponse) {
 				
-				Cart1stFilter2 Cart1stFilter2Obj = new Cart1stFilter2();
-				Cart1stFilter2Obj.start();	
-			} else {
+				switch(checkError) {
 				
-				CartStop CartStopObj = new CartStop(STOP_RESULT);
-				CartStopObj.start();
+				case HomeActivity.NORMAL_OPERATION	:
+					Cart1stFilter2 Cart1stFilter2Obj = new Cart1stFilter2();
+					Cart1stFilter2Obj.start();	
+					break;
+					
+				case HomeActivity.STOP_RESULT		:
+					CartDump CartDumpObj = new CartDump(checkError);
+					CartDumpObj.start();
+					break;
+				}
 			}
 		}
 	}
@@ -295,39 +345,66 @@ public class RunActivity extends Activity {
 			SerialPort.Sleep(1000);
 			BarAnimation(315);
 			
-			MotionInstruct(NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
-			BarAnimation(318);
-			while(!OPERATE_COMPLETE.equals(RunSerial.BoardMessageOutput()));
-			BarAnimation(321);
-			Step1stValue2[0] = AbsorbanceMeasure(); // 535nm Absorbance
-			
-			MotionInstruct(NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
-			BarAnimation(324);
-			while(!OPERATE_COMPLETE.equals(RunSerial.BoardMessageOutput()));
-			BarAnimation(327);
-			
-			Step1stValue2[1] = AbsorbanceMeasure(); // 660nm Absorbance
-			
-			MotionInstruct(NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
-			BarAnimation(330);
-			while(!OPERATE_COMPLETE.equals(RunSerial.BoardMessageOutput()));
-			BarAnimation(333);
-			
-			Step1stValue2[2] = AbsorbanceMeasure(); // 750nm Absorbance
-			
-			MotionInstruct(FILTER_DARK, SerialPort.CtrTarget.PhotoSet);
-			BarAnimation(336);
-			while(!OPERATE_COMPLETE.equals(RunSerial.BoardMessageOutput()));
-			BarAnimation(339);
+			for(int i = 0; i < 4; i++) {
 				
-			if(!CartStepStopped) {
+				switch(runState) {
 				
-				Cart1stFilter3 Cart1stFilter3Obj = new Cart1stFilter3();
-				Cart1stFilter3Obj.start();	
-			} else {
+				case Filter535nm	:
+					MotionInstruct(NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
+					BarAnimation(318);
+					BoardMessage(OPERATE_COMPLETE, 5, AnalyzerState.Filter660nm);
+					BarAnimation(321);
+					Step1stValue2[0] = AbsorbanceMeasure(); // 535nm Absorbance
+					break;
+					
+				case Filter660nm	:
+					MotionInstruct(NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
+					BarAnimation(324);
+					BoardMessage(OPERATE_COMPLETE, 5, AnalyzerState.Filter750nm);
+					BarAnimation(327);
+					Step1stValue2[1] = AbsorbanceMeasure(); // 660nm Absorbance
+					break;
+					
+				case Filter750nm	:
+					MotionInstruct(NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
+					BarAnimation(330);
+					BoardMessage(OPERATE_COMPLETE, 5, AnalyzerState.FilterDark);
+					BarAnimation(333);
+					Step1stValue2[2] = AbsorbanceMeasure(); // 750nm Absorbance
+					break;
+					
+				case FilterDark		:
+					MotionInstruct(FILTER_DARK, SerialPort.CtrTarget.PhotoSet);
+					BarAnimation(336);
+					BoardMessage(OPERATE_COMPLETE, 5, AnalyzerState.Filter535nm);
+					BarAnimation(339);
+					break;
+					
+				case NoResponse 	:
+					Log.w("Cart1stFilter2", "NR");
+					runState = AnalyzerState.NoWorking;
+					WhichIntent(TargetIntent.ResultComm);
+					break;
+					
+				default	:
+					break;
+				}
+			}
+			
+			if(runState != AnalyzerState.NoResponse) {
 				
-				CartStop CartStopObj = new CartStop(STOP_RESULT);
-				CartStopObj.start();
+				switch(checkError) {
+				
+				case HomeActivity.NORMAL_OPERATION	:
+					Cart1stFilter3 Cart1stFilter3Obj = new Cart1stFilter3();
+					Cart1stFilter3Obj.start();
+					break;
+					
+				case HomeActivity.STOP_RESULT		:
+					CartDump CartDumpObj = new CartDump(checkError);
+					CartDumpObj.start();
+					break;
+				}	
 			}
 		}
 	}
@@ -339,39 +416,68 @@ public class RunActivity extends Activity {
 			SerialPort.Sleep(1000);
 			BarAnimation(342);
 			
-			MotionInstruct(NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
-			BarAnimation(345);
-			while(!OPERATE_COMPLETE.equals(RunSerial.BoardMessageOutput()));
-			BarAnimation(348);
-			Step1stValue3[0] = AbsorbanceMeasure(); // 535nm Absorbance
-			
-			MotionInstruct(NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
-			BarAnimation(351);
-			while(!OPERATE_COMPLETE.equals(RunSerial.BoardMessageOutput()));
-			BarAnimation(354);
-			
-			Step1stValue3[1] = AbsorbanceMeasure(); // 660nm Absorbance
-			
-			MotionInstruct(NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
-			BarAnimation(357);
-			while(!OPERATE_COMPLETE.equals(RunSerial.BoardMessageOutput()));
-			BarAnimation(360);
-			
-			Step1stValue3[2] = AbsorbanceMeasure(); // 750nm Absorbance
-			
-			MotionInstruct(FILTER_DARK, SerialPort.CtrTarget.PhotoSet);
-			BarAnimation(363);
-			while(!OPERATE_COMPLETE.equals(RunSerial.BoardMessageOutput()));
-			BarAnimation(366);
+			for(int i = 0; i < 4; i++) {
 				
-			if(!CartStepStopped) {
+				switch(runState) {
 				
-				Cart2ndShaking Cart2ndShakingObj = new Cart2ndShaking();
-				Cart2ndShakingObj.start();	
-			} else {
+				case Filter535nm	:
+					MotionInstruct(NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
+					BarAnimation(345);
+					BoardMessage(OPERATE_COMPLETE, 5, AnalyzerState.Filter660nm);
+					BarAnimation(348);
+					Step1stValue3[0] = AbsorbanceMeasure(); // 535nm Absorbance
+					break;
+					
+				case Filter660nm	:
+					MotionInstruct(NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
+					BarAnimation(351);
+					BoardMessage(OPERATE_COMPLETE, 5, AnalyzerState.Filter750nm);
+					BarAnimation(354);
+					Step1stValue3[1] = AbsorbanceMeasure(); // 660nm Absorbance
+					break;
+					
+				case Filter750nm	:
+					MotionInstruct(NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
+					BarAnimation(357);
+					BoardMessage(OPERATE_COMPLETE, 5, AnalyzerState.FilterDark);
+					BarAnimation(360);
+					Step1stValue3[2] = AbsorbanceMeasure(); // 750nm Absorbance
+					break;
+					
+				case FilterDark		:
+					MotionInstruct(FILTER_DARK, SerialPort.CtrTarget.PhotoSet);
+					BarAnimation(363);
+					BoardMessage(OPERATE_COMPLETE, 5, AnalyzerState.Step2Position);
+					BarAnimation(366);
+					break;
+					
+				case NoResponse 	:
+					Log.w("Cart1stFilter3", "NR");
+					runState = AnalyzerState.NoWorking;
+					WhichIntent(TargetIntent.ResultComm);
+					break;
+					
+				default	:
+					break;
+				}
+			}
+			
+			if(runState != AnalyzerState.NoResponse) {
 				
-				CartStop CartStopObj = new CartStop(STOP_RESULT);
-				CartStopObj.start();
+				checkError = tHbCalculate();
+				
+				switch(checkError) {
+				
+				case HomeActivity.NORMAL_OPERATION	:
+					Cart2ndShaking Cart2ndShakingObj = new Cart2ndShaking();
+					Cart2ndShakingObj.start();
+					break;
+					
+				default	:
+					CartDump CartDumpObj = new CartDump(checkError);
+					CartDumpObj.start();
+					break;
+				}	
 			}
 		}
 	}
@@ -380,26 +486,52 @@ public class RunActivity extends Activity {
 		
 		public void run() {			
 			
-			MotionInstruct(Step2nd_POSITION, SerialPort.CtrTarget.PhotoSet);
-			BarAnimation(369);
-			while(!OPERATE_COMPLETE.equals(RunSerial.BoardMessageOutput()));
-			BarAnimation(372);
-						
-			MotionInstruct(ShkDf.format(SECOND_SHAKING_TIME * 6), SerialPort.CtrTarget.MotorSet);  // Motor shaking time, default : 6 * 10(sec) = 0065
-			MotorShakeFlag = true;
-			ShakingAniThread ShakingAniThreadObj = new ShakingAniThread(375, SECOND_SHAKING_TIME);
-			ShakingAniThreadObj.start();
-			while(!MOTOR_COMPLETE.equals(RunSerial.BoardMessageOutput())); // temporary
-			MotorShakeFlag = false;
+			for(int i = 0; i < 2; i++) {
+				
+				switch(runState) {
+				
+				case Step2Position	:
+					MotionInstruct(Step2nd_POSITION, SerialPort.CtrTarget.PhotoSet);
+					BarAnimation(369);
+					BoardMessage(OPERATE_COMPLETE, 5, AnalyzerState.Step2Shaking);
+					BarAnimation(372);
+					SerialPort.Sleep(500);
+					break;
+					
+				case Step2Shaking	:
+					MotionInstruct(ShkDf.format(SECOND_SHAKING_TIME * 6), SerialPort.CtrTarget.MotorSet);  // Motor shaking time, default : 6 * 10(sec) = 0065
+					MotorShakeFlag = true;
+					ShakingAniThread ShakingAniThreadObj = new ShakingAniThread(375, SECOND_SHAKING_TIME);
+					ShakingAniThreadObj.start();
+					BoardMessage(MOTOR_COMPLETE, 100, AnalyzerState.MeasurePosition);
+					MotorShakeFlag = false;
+					break;
+					
+				case NoResponse :
+					Log.w("Cart2ndShaking", "NR");
+					runState = AnalyzerState.NoWorking;
+					WhichIntent(TargetIntent.ResultComm);
+					break;
+					
+				default	:
+					break;
+				}
+			}
 			
-			if(!CartStepStopped) {
+			if(runState != AnalyzerState.NoResponse) {
 				
-				Cart2ndFilter1 Cart2ndFilter1Obj = new Cart2ndFilter1();
-				Cart2ndFilter1Obj.start();	
-			} else {
+				switch(checkError) {
 				
-				CartStop CartStopObj = new CartStop(STOP_RESULT);
-				CartStopObj.start();
+				case HomeActivity.NORMAL_OPERATION	:
+					Cart2ndFilter1 Cart2ndFilter1Obj = new Cart2ndFilter1();
+					Cart2ndFilter1Obj.start();
+					break;
+					
+				case HomeActivity.STOP_RESULT		:
+					CartDump CartDumpObj = new CartDump(checkError);
+					CartDumpObj.start();
+					break;
+				}
 			}
 		}
 	}
@@ -412,42 +544,73 @@ public class RunActivity extends Activity {
 			SerialPort.Sleep(2000);
 			BarAnimation(487);
 			
-			MotionInstruct(MEASURE_POSITION, SerialPort.CtrTarget.PhotoSet);
-			BarAnimation(490);
-			while(!OPERATE_COMPLETE.equals(RunSerial.BoardMessageOutput()));
-			BarAnimation(493);
-			
-			MotionInstruct(NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
-			BarAnimation(496);
-			while(!OPERATE_COMPLETE.equals(RunSerial.BoardMessageOutput()));
-			BarAnimation(499);
-			Step2ndValue1[0] = AbsorbanceMeasure(); // 535nm Absorbance
-			
-			MotionInstruct(NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
-			BarAnimation(502);
-			while(!OPERATE_COMPLETE.equals(RunSerial.BoardMessageOutput()));
-			BarAnimation(505);
-			Step2ndValue1[1] = AbsorbanceMeasure(); // 535nm Absorbance
-			
-			MotionInstruct(NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
-			BarAnimation(508);
-			while(!OPERATE_COMPLETE.equals(RunSerial.BoardMessageOutput()));
-			BarAnimation(511);
-			Step2ndValue1[2] = AbsorbanceMeasure(); // 535nm Absorbance
-			
-			MotionInstruct(FILTER_DARK, SerialPort.CtrTarget.PhotoSet);
-			BarAnimation(514);
-			while(!OPERATE_COMPLETE.equals(RunSerial.BoardMessageOutput()));
-			BarAnimation(517);
-			
-			if(!CartStepStopped) {
+			for(int i = 0; i < 5; i++) {
 				
-				Cart2ndFilter2 Cart2ndFilter2Obj = new Cart2ndFilter2();
-				Cart2ndFilter2Obj.start();	
-			} else {
+				switch(runState) {
 				
-				CartStop CartStopObj = new CartStop(STOP_RESULT);
-				CartStopObj.start();
+				case MeasurePosition	:
+					MotionInstruct(MEASURE_POSITION, SerialPort.CtrTarget.PhotoSet);
+					BarAnimation(490);
+					BoardMessage(OPERATE_COMPLETE, 5, AnalyzerState.Filter535nm);
+					BarAnimation(493);
+					break;
+					
+				case Filter535nm	:
+					MotionInstruct(NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
+					BarAnimation(496);
+					BoardMessage(OPERATE_COMPLETE, 5, AnalyzerState.Filter660nm);
+					BarAnimation(499);
+					Step2ndValue1[0] = AbsorbanceMeasure(); // 535nm Absorbance
+					break;
+					
+				case Filter660nm	:
+					MotionInstruct(NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
+					BarAnimation(502);
+					BoardMessage(OPERATE_COMPLETE, 5, AnalyzerState.Filter750nm);
+					BarAnimation(505);
+					Step2ndValue1[1] = AbsorbanceMeasure(); // 660nm Absorbance
+					break;
+				
+				case Filter750nm	:
+					MotionInstruct(NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
+					BarAnimation(508);
+					BoardMessage(OPERATE_COMPLETE, 5, AnalyzerState.FilterDark);
+					BarAnimation(511);
+					Step2ndValue1[2] = AbsorbanceMeasure(); // 750nm Absorbance
+					break;
+				
+				case FilterDark		:
+					MotionInstruct(FILTER_DARK, SerialPort.CtrTarget.PhotoSet);
+					BarAnimation(514);
+					BoardMessage(OPERATE_COMPLETE, 5, AnalyzerState.Filter535nm);
+					BarAnimation(517);
+					break;
+					
+				case NoResponse 	:
+					Log.w("Cart2ndFilter1", "NR");
+					runState = AnalyzerState.NoWorking;
+					WhichIntent(TargetIntent.ResultComm);
+					break;
+					
+				default	:
+					break;
+				}
+			}
+			
+			if(runState != AnalyzerState.NoResponse) {
+			
+				switch(checkError) {
+				
+				case HomeActivity.NORMAL_OPERATION	:
+					Cart2ndFilter2 Cart2ndFilter2Obj = new Cart2ndFilter2();
+					Cart2ndFilter2Obj.start();
+					break;
+					
+				case HomeActivity.STOP_RESULT		:
+					CartDump CartDumpObj = new CartDump(checkError);
+					CartDumpObj.start();
+					break;
+				}
 			}
 		}
 	}
@@ -459,37 +622,66 @@ public class RunActivity extends Activity {
 			SerialPort.Sleep(1000);
 			BarAnimation(520);
 						
-			MotionInstruct(NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
-			BarAnimation(523);
-			while(!OPERATE_COMPLETE.equals(RunSerial.BoardMessageOutput()));
-			BarAnimation(526);
-			Step2ndValue2[0] = AbsorbanceMeasure(); // 535nm Absorbance
-			
-			MotionInstruct(NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
-			BarAnimation(529);
-			while(!OPERATE_COMPLETE.equals(RunSerial.BoardMessageOutput()));
-			BarAnimation(532);
-			Step2ndValue2[1] = AbsorbanceMeasure(); // 535nm Absorbance
-			
-			MotionInstruct(NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
-			BarAnimation(535);
-			while(!OPERATE_COMPLETE.equals(RunSerial.BoardMessageOutput()));
-			BarAnimation(538);
-			Step2ndValue2[2] = AbsorbanceMeasure(); // 535nm Absorbance
-			
-			MotionInstruct(FILTER_DARK, SerialPort.CtrTarget.PhotoSet);
-			BarAnimation(541);
-			while(!OPERATE_COMPLETE.equals(RunSerial.BoardMessageOutput()));
-			BarAnimation(544);
-			
-			if(!CartStepStopped) {
+			for(int i = 0; i < 4; i++) {
 				
-				Cart2ndFilter3 Cart2ndFilter3Obj = new Cart2ndFilter3();
-				Cart2ndFilter3Obj.start();	
-			} else {
+				switch(runState) {
 				
-				CartStop CartStopObj = new CartStop(STOP_RESULT);
-				CartStopObj.start();
+				case Filter535nm	:
+					MotionInstruct(NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
+					BarAnimation(523);
+					BoardMessage(OPERATE_COMPLETE, 5, AnalyzerState.Filter660nm);
+					BarAnimation(526);
+					Step2ndValue2[0] = AbsorbanceMeasure(); // 535nm Absorbance
+					break;
+					
+				case Filter660nm	:
+					MotionInstruct(NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
+					BarAnimation(529);
+					BoardMessage(OPERATE_COMPLETE, 5, AnalyzerState.Filter750nm);
+					BarAnimation(532);
+					Step2ndValue2[1] = AbsorbanceMeasure(); // 535nm Absorbance
+					break;
+					
+				case Filter750nm	:
+					MotionInstruct(NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
+					BarAnimation(535);
+					BoardMessage(OPERATE_COMPLETE, 5, AnalyzerState.FilterDark);
+					BarAnimation(538);
+					Step2ndValue2[2] = AbsorbanceMeasure(); // 535nm Absorbance
+					break;
+					
+				case FilterDark		:
+					MotionInstruct(FILTER_DARK, SerialPort.CtrTarget.PhotoSet);
+					BarAnimation(541);
+					BoardMessage(OPERATE_COMPLETE, 5, AnalyzerState.Filter535nm);
+					BarAnimation(544);
+					break;
+					
+				case NoResponse 	:
+					Log.w("Cart2ndFilter2", "NR");
+					runState = AnalyzerState.NoWorking;
+					WhichIntent(TargetIntent.ResultComm);
+					break;
+					
+				default	:
+					break;
+				}
+			}
+			
+			if(runState != AnalyzerState.NoResponse) {
+				
+				switch(checkError) {
+				
+				case HomeActivity.NORMAL_OPERATION	:
+					Cart2ndFilter3 Cart2ndFilter3Obj = new Cart2ndFilter3();
+					Cart2ndFilter3Obj.start();
+					break;
+					
+				case HomeActivity.STOP_RESULT		:
+					CartDump CartDumpObj = new CartDump(checkError);
+					CartDumpObj.start();
+					break;
+				}
 			}
 		}
 	}
@@ -501,93 +693,157 @@ public class RunActivity extends Activity {
 			SerialPort.Sleep(1000);
 			BarAnimation(547);
 			
-			MotionInstruct(NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
-			BarAnimation(550);
-			while(!OPERATE_COMPLETE.equals(RunSerial.BoardMessageOutput()));
-			BarAnimation(553);
-			Step2ndValue3[0] = AbsorbanceMeasure(); // 535nm Absorbance
-			
-			MotionInstruct(NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
-			BarAnimation(556);
-			while(!OPERATE_COMPLETE.equals(RunSerial.BoardMessageOutput()));
-			BarAnimation(559);
-			Step2ndValue3[1] = AbsorbanceMeasure(); // 535nm Absorbance
-			
-			MotionInstruct(NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
-			BarAnimation(562);
-			while(!OPERATE_COMPLETE.equals(RunSerial.BoardMessageOutput()));
-			BarAnimation(565);
-			Step2ndValue3[2] = AbsorbanceMeasure(); // 535nm Absorbance
-			
-			MotionInstruct(FILTER_DARK, SerialPort.CtrTarget.PhotoSet);
-			BarAnimation(568);
-			while(!OPERATE_COMPLETE.equals(RunSerial.BoardMessageOutput()));
-			BarAnimation(571);
-			
-			if(!CartStepStopped) {
+			for(int i = 0; i < 4; i++) {
 				
-				CartDump CartDumpObj = new CartDump();
-				CartDumpObj.start();	
-			} else {
+				switch(runState) {
 				
-				CartStop CartStopObj = new CartStop(STOP_RESULT);
-				CartStopObj.start();
+				case Filter535nm	:
+					MotionInstruct(NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
+					BarAnimation(550);
+					BoardMessage(OPERATE_COMPLETE, 5, AnalyzerState.Filter660nm);
+					BarAnimation(553);
+					Step2ndValue3[0] = AbsorbanceMeasure(); // 535nm Absorbance
+					break;
+					
+				case Filter660nm	:
+					MotionInstruct(NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
+					BarAnimation(556);
+					BoardMessage(OPERATE_COMPLETE, 5, AnalyzerState.Filter750nm);
+					BarAnimation(559);
+					Step2ndValue3[1] = AbsorbanceMeasure(); // 535nm Absorbance
+					break;
+					
+				case Filter750nm	:
+					MotionInstruct(NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
+					BarAnimation(562);
+					BoardMessage(OPERATE_COMPLETE, 5, AnalyzerState.FilterDark);
+					BarAnimation(565);
+					Step2ndValue3[2] = AbsorbanceMeasure(); // 535nm Absorbance
+					break;
+					
+				case FilterDark		:
+					MotionInstruct(FILTER_DARK, SerialPort.CtrTarget.PhotoSet);
+					BarAnimation(568);
+					BoardMessage(OPERATE_COMPLETE, 5, AnalyzerState.CartridgeDump);
+					BarAnimation(571);
+					break;
+					
+				case NoResponse 	:
+					Log.w("Cart2ndFilter3", "NR");
+					runState = AnalyzerState.NoWorking;
+					WhichIntent(TargetIntent.ResultComm);
+					break;
+					
+				default	:
+					break;
+				}
+			}			
+			
+			if(runState != AnalyzerState.NoResponse) {
+				
+				checkError = HbA1cCalculate();
+				
+				CartDump CartDumpObj = new CartDump(checkError);
+				CartDumpObj.start();
 			}
 		}
 	}
 	
 	public class CartDump extends Thread { // Cartridge dumping motion
 		
-		public void run() {
-						
-			MotionInstruct(CARTRIDGE_DUMP, SerialPort.CtrTarget.PhotoSet);
-			BarAnimation(574);
-			while(!OPERATE_COMPLETE.equals(RunSerial.BoardMessageOutput()));
-			BarAnimation(577);
-
-			MotionInstruct(HOME_POSITION, SerialPort.CtrTarget.PhotoSet);
-			BarAnimation(580);
-			while(!OPERATE_COMPLETE.equals(RunSerial.BoardMessageOutput()));
-			BarAnimation(583);
-
-			HbA1cCalculate();
-			BarAnimation(586);
-		}
-	}
-	
-	public class CartStop extends Thread { // Cartridge dumping motion
-		
 		private int whichState;
 		
-		CartStop(int whichState) {
+		CartDump(byte whichState) {
 			
 			this.whichState = whichState;
 		}
 		
 		public void run() {
-			
-			SerialPort.Sleep(500);
-			
-			MotionInstruct(FILTER_DARK, SerialPort.CtrTarget.PhotoSet);
-			while(!OPERATE_COMPLETE.equals(RunSerial.BoardMessageOutput()));
-			
-			MotionInstruct(CARTRIDGE_DUMP, SerialPort.CtrTarget.PhotoSet);		
-			while(!OPERATE_COMPLETE.equals(RunSerial.BoardMessageOutput()));
-
-			MotionInstruct(HOME_POSITION, SerialPort.CtrTarget.PhotoSet);
-			while(!OPERATE_COMPLETE.equals(RunSerial.BoardMessageOutput()));
-			
+						
 			switch(whichState) {
 			
-			case STOP_RESULT	:
-				WhichIntent(TargetIntent.ResultStop);
-				break;
+			case HomeActivity.NORMAL_OPERATION	:
+				
+				for(int i = 0; i < 2; i++) {
 					
-			case ERROR_RESULT	:
-				WhichIntent(TargetIntent.ResultError);
+					switch(runState) {
+					
+					case CartridgeDump	:
+						MotionInstruct(CARTRIDGE_DUMP, SerialPort.CtrTarget.PhotoSet);
+						BarAnimation(574);
+						BoardMessage(OPERATE_COMPLETE, 7, AnalyzerState.CartridgeHome);
+						BarAnimation(577);
+						break;
+						
+					case CartridgeHome	:
+						MotionInstruct(HOME_POSITION, SerialPort.CtrTarget.PhotoSet);
+						BarAnimation(580);
+						BoardMessage(OPERATE_COMPLETE, 5, AnalyzerState.Step1Position);
+						BarAnimation(583);
+						break;
+						
+					case NoResponse :
+						Log.w("Cart1stShaking", "NR");
+						runState = AnalyzerState.NoWorking;
+						WhichIntent(TargetIntent.ResultComm);
+						break;
+						
+					default	:
+						break;
+					}
+				}
+				
+				if(runState != AnalyzerState.NoResponse) {
+					
+					BarAnimation(586);
+					
+					WhichIntent(TargetIntent.Result);
+				}
 				break;
-			
+				
 			default	:
+				runState = AnalyzerState.FilterDark;
+				
+				for(int i = 0; i < 3; i++) {
+					
+					switch(runState) {
+					
+					case FilterDark	:
+						MotionInstruct(FILTER_DARK, SerialPort.CtrTarget.PhotoSet);
+						BoardMessage(OPERATE_COMPLETE, 5, AnalyzerState.CartridgeDump);
+						break;
+						
+					case CartridgeDump	:
+						MotionInstruct(CARTRIDGE_DUMP, SerialPort.CtrTarget.PhotoSet);
+						BarAnimation(574);
+						BoardMessage(OPERATE_COMPLETE, 7, AnalyzerState.CartridgeHome);
+						BarAnimation(577);
+						break;
+						
+					case CartridgeHome	:
+						MotionInstruct(HOME_POSITION, SerialPort.CtrTarget.PhotoSet);
+						BarAnimation(580);
+						BoardMessage(OPERATE_COMPLETE, 5, AnalyzerState.Step1Position);
+						BarAnimation(583);
+						break;
+						
+					case NoResponse :
+						Log.w("CartDump", "NR");
+						runState = AnalyzerState.NoWorking;
+						WhichIntent(TargetIntent.ResultComm);
+						break;
+						
+					default	:
+						break;
+					}
+				}
+				
+				if(runState != AnalyzerState.NoResponse) {
+				
+					BarAnimation(586);
+					
+					WhichIntent(TargetIntent.ResultError);
+				}
 				break;
 			}
 		}
@@ -601,25 +857,29 @@ public class RunActivity extends Activity {
 			runSec = 0;
 		}
 			
-		runSec++;
-		
 		RunTimeText.setText(Integer.toString(runMin) + " min " + Integer.toString(runSec) + " sec");
+
+		runSec++;
 	}
 	
 	public void RunInit() {
 		
 		runSec = 0;
 		runMin = 0;
-		HbA1cPctStr = "0.0";
 		MotorShakeFlag = false;
 		
 		TimerDisplay.timerState = whichClock.RunClock;
 		CurrTimeDisplay();
 		
+		BarAnimation(162);
 		RunTimerInit();
-		CartStepStopped = false;
+		checkError = HomeActivity.NORMAL_OPERATION;
 		
-//		SerialPort.Sleep(300);
+		runState = AnalyzerState.Step1Position;
+		
+		Cart1stShaking Cart1stShakingObj = new Cart1stShaking(); // to test
+		Cart1stShakingObj.start(); // to test
+
 	}
 	
 	public void RunTimerInit() {
@@ -649,23 +909,47 @@ public class RunActivity extends Activity {
 
 	public synchronized double AbsorbanceMeasure() { // Absorbance measurement
 		
+		int time = 0;	
 		String rawValue;
-		double douValue = 0;
 		
 		RunSerial.BoardTx("VH", SerialPort.CtrTarget.PhotoSet);
-			
-		rawValue = RunSerial.BoardMessageOutput();
-		Log.w("Absorbance measure", "raw : " + rawValue);
+		
+		rawValue = RunSerial.BoardMessageOutput();			
+		
+		while(rawValue.length() != 8) {
+		
+			time++;
+			rawValue = RunSerial.BoardMessageOutput();			
+				
+			if(time > 50) runState = AnalyzerState.NoResponse;
+		
+			SerialPort.Sleep(100);
+		}
+		
 		douValue = Double.parseDouble(rawValue);
 		
 		return (douValue - BlankValue[0]);
 	}
 	
-	public synchronized void HbA1cCalculate() { // Calculation for HbA1c percentage
+	public byte tHbCalculate() {
 		
-		double A, B, St, Bt, SLA, SHA, BLA, BHA, SLV, SHV, BLV, BHV, a3, b3, b32, a4, b4;
-					
 		A = Absorb1stHandling();
+		
+		if(A < 0.16) {
+			
+			return HomeActivity.tHb_LOW_ERROR;
+		
+		} else if(A > 0.63) {
+			
+			return HomeActivity.tHb_HIGH_ERROR;
+		
+		} else return HomeActivity.NORMAL_OPERATION;
+	}
+	
+	public byte HbA1cCalculate() { // Calculation for HbA1c percentage
+		
+		double B, St, Bt, SLA, SHA, BLA, BHA, SLV, SHV, BLV, BHV, a3, b3, b32, a4, b4;
+					
 		B = Absorb2ndHandling();
 		
 		St = (A - Barcode.b1)/Barcode.a1;
@@ -693,11 +977,15 @@ public class RunActivity extends Activity {
 		HbA1cPctDbl = (B - (St * a4 + b4)) / a3 / St * 100; // %-HbA1c(%)
 		HbA1cPctDbl = CF_Slope * (AF_Slope * HbA1cPctDbl + AF_Offset) + CF_Offset;
 		
-		DecimalFormat hbA1cFormat = new DecimalFormat("0.0");
+		if(HbA1cPctDbl < 4) {
+			
+			return HomeActivity.A1c_LOW_ERROR;
 		
-		HbA1cPctStr = hbA1cFormat.format(HbA1cPctDbl);
+		} else if(HbA1cPctDbl > 15) {
+			
+			return HomeActivity.A1c_HIGH_ERROR;
 		
-		WhichIntent(TargetIntent.Result);
+		} else return HomeActivity.NORMAL_OPERATION;
 	}
 	
 	public double Absorb1stHandling() {
@@ -811,9 +1099,31 @@ public class RunActivity extends Activity {
 	        	BarAnimation(coordinates + i*2);
 	        	SerialPort.Sleep(2000);
 	        	
-	        	if(CartStepStopped) break;
+	        	if(checkError != HomeActivity.NORMAL_OPERATION) break;
 			}
 		}
+	}
+	
+	public void BoardMessage(String rspStr, int rspTime, AnalyzerState nextState) {
+		
+		int time = 0;
+		boolean isNormalTime = true;
+		
+		rspTime = rspTime * 10;
+		
+		while(!rspStr.equals(RunSerial.BoardMessageOutput())) {
+
+			Log.w("BoardMessage", "time : " + time);
+			
+			time++;
+			
+			if(time > rspTime) isNormalTime = false;
+			
+			SerialPort.Sleep(100);
+		}
+		
+		if(isNormalTime) runState = nextState;
+		else runState = AnalyzerState.NoResponse;
 	}
 	
 	public void BarAnimation(final int x) { // running bar animation
@@ -843,21 +1153,21 @@ public class RunActivity extends Activity {
 		runTimer.cancel();
 		
 		SerialPort.Sleep(200);
-		
+				
 		switch(Itn) {
 		
-		case Result	:							
-			ResultIntent.putExtra("RunState", (int) NORMAL_RESULT); // Normal operation
+		case Result			:							
+			ResultIntent.putExtra("RunState", (int) HomeActivity.NORMAL_OPERATION); // Normal operation
 			startActivity(ResultIntent);
 			break;
 						
-		case ResultStop	:			
-			ResultIntent.putExtra("RunState", (int) STOP_RESULT); // Stop operation
+		case ResultError	:		
+			ResultIntent.putExtra("RunState", (int) checkError); // Error operation
 			startActivity(ResultIntent);
 			break;
-
-		case ResultError	:		
-			ResultIntent.putExtra("RunState", (int) ERROR_RESULT); // Error operation
+			
+		case ResultComm		:				
+			ResultIntent.putExtra("RunState", (int) HomeActivity.COMMUNICATION_ERROR);
 			startActivity(ResultIntent);
 			break;
 			

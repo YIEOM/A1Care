@@ -137,9 +137,8 @@ public class GpioPort {
 				CartridgeSensorState = (CartridgeCheck() == CartridgeInitState) ? SensorScan.StableState : SensorScan.InitialState;
 				break;
 										
-			case StableState	:
+			case StableState	:			
 				if(CartridgeCheck() == CartridgeInitState) {
-					
 					ActionActivity.CartridgeCheckFlag = CartridgeInitState;
 					
 				} else CartridgeSensorState = SensorScan.DebounceState;

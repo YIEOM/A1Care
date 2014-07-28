@@ -48,18 +48,7 @@
         android:textSize="85px"
         android:textColor="#1F3E6F"
         android:textStyle="bold" />
-	    
-   	<TextView 
-	    android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="%"
-        android:typeface="sans"
-        android:textSize="48px"
-        android:textColor="#1F3D6F"
-        android:textStyle="bold"                
-        android:layout_toRightOf="@id/hba1cPct"
-        android:layout_alignBaseline="@id/hba1cPct" />
-     
+	 
 	<RelativeLayout 
 	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"

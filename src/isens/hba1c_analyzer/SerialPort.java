@@ -469,11 +469,14 @@ public class SerialPort {
 		
 		int tmpTail;
 		
-		while(BoardMsgHead == BoardMsgTail);
-		tmpTail = (BoardMsgTail + 1) % UART_RX_MASK;
-		BoardMsgTail = tmpTail;
-		
-		return BoardMsgBuffer[tmpTail];
+		if(BoardMsgHead == BoardMsgTail) return "NR";
+		else {
+			
+			tmpTail = (BoardMsgTail + 1) % UART_RX_MASK;
+			BoardMsgTail = tmpTail;
+			
+			return BoardMsgBuffer[tmpTail];
+		}
 	}
 	
 	public void SensorMessageBuffer(String tmpData) {
@@ -548,7 +551,7 @@ public class SerialPort {
 			Log.w("BarcodeDataReceive", "BarcodeRxBuffer : " + Character.toString((char) BarcodeRxBuffer[i]));
 		}	
 		
-		if(BarcodeBufIndex > 18) {
+		if(BarcodeBufIndex > 18 | BarcodeBufIndex < 2) {
 			
 			ActionActivity.IsCorrectBarcode = false;
 			ActionActivity.BarcodeCheckFlag = true;
@@ -623,7 +626,7 @@ public class SerialPort {
 	public void PrinterSerialInit() {		
 		
 		System.loadLibrary("serial_port");
-		pFd = open("/dev/ttySAC1", 9600, 0);
+		pFd = open("/dev/ttySAC2", 9600, 0);
 	}
 	
 	public void PrinterTxStart(byte mode, StringBuffer txData) {
@@ -635,7 +638,7 @@ public class SerialPort {
 	public void BarcodeSerialInit() {
 
 		System.loadLibrary("serial_port");
-		BarcodeFd = open("/dev/ttySAC2", 115200, 0);
+		BarcodeFd = open("/dev/ttySAC1", 115200, 0);
 	}
 
 	public void BarcodeRxStart() {

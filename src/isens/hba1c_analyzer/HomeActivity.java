@@ -38,9 +38,19 @@ public class HomeActivity extends Activity {
 					  FILTER_MOTOR_ERROR = 3,
 					  SHAKING_MOTOR_ERROR = 4,
 					  PHOTO_SENSOR_ERROR = 5,
-					  CELL_TEMPERATURE_ERROR = 6,
-					  AMBIENT_TEMPERATURE_ERROR = 7;
+					  CELL_TEMP_ERROR = 6,
+					  AMBIENT_TEMP_ERROR = 7,
+					  COMMUNICATION_ERROR = 8,
+					  tHb_LOW_ERROR = 11,
+					  tHb_HIGH_ERROR = 12,
+					  A1c_LOW_ERROR = 13,
+					  A1c_HIGH_ERROR = 14,
+					  STOP_RESULT = 20;
 	
+	final static byte ACTION_ACTIVITY = 1,
+					  HOME_ACTIVITY = 2,
+					  COVER_ACTION_ESC = 3;
+
 	private SerialPort HomeSerial;
 	
 	private RelativeLayout homeLinear;
@@ -64,7 +74,7 @@ public class HomeActivity extends Activity {
 				   loginDBBtn,
 				   checkBtn;
 	
-	public enum TargetIntent {Home, HbA1c, NA, Action, Run, Blank, Memory, Result, ResultStop, ResultError, Remove, Image, Date, Setting, SystemSetting, DataSetting, Time, Display, HIS, HISSetting, Export, Maintenance, FileSave, ControlFileLoad, PatientFileLoad, NextFile, PreFile, Adjustment, Sound, Calibration, Language, Correlation, Temperature}
+	public enum TargetIntent {Home, HbA1c, NA, Action, Run, Blank, Memory, Result, ResultComm, ResultError, Remove, Image, Date, Setting, SystemSetting, DataSetting, Time, Display, HIS, HISSetting, Export, Maintenance, FileSave, ControlFileLoad, PatientFileLoad, NextFile, PreFile, Adjustment, Sound, Calibration, Language, Correlation, Temperature}
 	
 	private static TextView TimeText;
 	
@@ -109,9 +119,6 @@ public class HomeActivity extends Activity {
 				runBtn.setEnabled(false);
 				
 				WhichIntent(TargetIntent.Blank);
-				
-//				HomeSerial = new SerialPort();
-//				HomeSerial.BoardTx(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
 			}
 		});
 		
@@ -313,23 +320,27 @@ public class HomeActivity extends Activity {
 								switch(error) {
 								
 								case HomeActivity.FILTER_MOTOR_ERROR		:
-									errorText.setText(R.string.e021);
+									errorText.setText(R.string.e011);
 									break;
 									
 								case HomeActivity.SHAKING_MOTOR_ERROR		:
-									errorText.setText(R.string.e031);
+									errorText.setText(R.string.e021);
 									break;
 									
 								case HomeActivity.PHOTO_SENSOR_ERROR		:
+									errorText.setText(R.string.e031);
+									break;
+								
+								case HomeActivity.CELL_TEMP_ERROR	:
 									errorText.setText(R.string.e041);
 									break;
 								
-								case HomeActivity.CELL_TEMPERATURE_ERROR	:
-									errorText.setText(R.string.e051);
+								case HomeActivity.AMBIENT_TEMP_ERROR	:
+									errorText.setText(R.string.e042);
 									break;
-								
-								case HomeActivity.AMBIENT_TEMPERATURE_ERROR	:
-									errorText.setText(R.string.e061);
+									
+								case HomeActivity.COMMUNICATION_ERROR		:
+									errorText.setText(R.string.e051);
 									break;
 								}
 							}
