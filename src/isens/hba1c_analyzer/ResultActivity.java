@@ -167,23 +167,37 @@ public class ResultActivity extends Activity {
 			
 		case HomeActivity.tHb_LOW_ERROR			:
 			HbA1cText.setText(R.string.e101);
+			ErrorPopup("");
 			break;
 			
 		case HomeActivity.tHb_HIGH_ERROR		:
 			HbA1cText.setText(R.string.e102);
+			ErrorPopup("");
 			break;
 			
 		case HomeActivity.A1c_LOW_ERROR			:
 			HbA1cText.setText(R.string.e201);
+			ErrorPopup("");
 			break;
 			
 		case HomeActivity.A1c_HIGH_ERROR		:
 			HbA1cText.setText(R.string.e202);
+			ErrorPopup("");
+			break;
+			
+		case HomeActivity.FILTER_MOTOR_ERROR		:
+			HbA1cText.setText(R.string.e011);
+			ErrorPopup("");
+			break;
+			
+		case HomeActivity.SHAKING_MOTOR_ERROR		:
+			HbA1cText.setText(R.string.e021);
+			ErrorPopup("");
 			break;
 			
 		case HomeActivity.COMMUNICATION_ERROR	:
-			HbA1cText.setText(R.string.error);
-			ErrorPopup();
+			HbA1cText.setText(R.string.e051);
+			ErrorPopup("");
 			break;
 			
 		case HomeActivity.STOP_RESULT			:
@@ -212,7 +226,7 @@ public class ResultActivity extends Activity {
 		}).start();	
 	}
 	
-	public void ErrorPopup() { // E101 error pop-up window
+	public void ErrorPopup(final String str) { // E101 error pop-up window
 				
 		errorPopupView.post(new Runnable() {
 	        public void run() {
@@ -221,7 +235,7 @@ public class ResultActivity extends Activity {
 				errorPopup.setAnimationStyle(0);					
 							
 				TextView errorText = (TextView)errorPopup.getContentView().findViewById(R.id.errortext);
-				errorText.setText(R.string.e051);	
+				errorText.setText(str);	
 	        }
 	    });
 	}

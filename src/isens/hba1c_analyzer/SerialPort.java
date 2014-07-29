@@ -101,7 +101,7 @@ public class SerialPort {
 				BoardFileOutputStream = new FileOutputStream(BoardFd);				
 
 				if (BoardFileOutputStream != null) {
-//					Log.w("BoardTxThread", "message : " + message);
+					Log.w("BoardTxThread", "message : " + message);
 					BoardFileOutputStream.write(STX);
 
 					switch(target) {
@@ -356,7 +356,7 @@ public class SerialPort {
 
 						BoardInputBuffer = new byte[BOARD_INPUT_BUFFER];
 						size = BoardFileInputStream.read(BoardInputBuffer);
-//						Log.w("BoardRxThread", "BoardInputBuffer : " + new String(BoardInputBuffer));
+						Log.w("BoardRxThread", "BoardInputBuffer : " + new String(BoardInputBuffer));
 						BoardRxData(size);
 					}
 					

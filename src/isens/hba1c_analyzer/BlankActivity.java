@@ -2,14 +2,20 @@ package isens.hba1c_analyzer;
 
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
 import isens.hba1c_analyzer.RunActivity.AnalyzerState;
+import isens.hba1c_analyzer.SystemCheckActivity.MotorCheck;
+import isens.hba1c_analyzer.SystemCheckActivity.TemperatureCheck;
 import isens.hba1c_analyzer.TimerDisplay.whichClock;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -19,16 +25,28 @@ public class BlankActivity extends Activity {
 	private SerialPort BlankSerial;
 	private RunActivity BlankRun;
 	
+	private RelativeLayout blankLinear;
+	
+	private View errorPopupView;
+	private PopupWindow errorPopup;
+	
 	private static TextView TimeText;
 	private ImageView barani;
 	
 	private RunActivity.AnalyzerState blankState;
+	
+	private byte checkError = HomeActivity.NORMAL_OPERATION;
 	
 	protected void onCreate(Bundle savedInstanceState) {
 		
 		super.onCreate(savedInstanceState);
 		overridePendingTransition(R.anim.fade, R.anim.hold);
 		setContentView(R.layout.blank);
+		
+		/* Error Pop-up window */
+		blankLinear = (RelativeLayout)findViewById(R.id.blanklinear);		
+		errorPopupView = View.inflate(getApplicationContext(), R.layout.errorpopup, null);
+		errorPopup = new PopupWindow(errorPopupView, 478, 155, true);
 		
 		TimeText = (TextView) findViewById(R.id.timeText);
 		
@@ -45,10 +63,10 @@ public class BlankActivity extends Activity {
 		BlankSerial = new SerialPort();
 		BlankRun = new RunActivity();
 		
-		blankState = RunActivity.AnalyzerState.MeasurePosition;
+		blankState = RunActivity.AnalyzerState.InitPosition;
 		
-		BlankStep BlankBlank = new BlankStep();
-		BlankBlank.start();
+		SensorCheck SensorCheckObj = new SensorCheck();
+		SensorCheckObj.start();
 	}
 	
 	public void CurrTimeDisplay() {
@@ -65,64 +83,117 @@ public class BlankActivity extends Activity {
 		}).start();	
 	}
 	
+	public class SensorCheck extends Thread {
+		
+		public void run() {
+			
+			GpioPort.DoorActState = true;			
+			GpioPort.CartridgeActState = true;
+			
+			SerialPort.Sleep(1000);
+			
+			if(ActionActivity.CartridgeCheckFlag != 0) ErrorPopup(HomeActivity.CART_SENSOR_ERROR);
+			while(ActionActivity.CartridgeCheckFlag != 0);
+			errorPopup.dismiss();
+			
+			if(ActionActivity.DoorCheckFlag != 1) ErrorPopup(HomeActivity.DOOR_SENSOR_ERROR);
+			while(ActionActivity.DoorCheckFlag != 1);
+			errorPopup.dismiss();
+			 
+			GpioPort.DoorActState = false;			
+			GpioPort.CartridgeActState = false;
+
+			BlankStep BlankStepObj = new BlankStep();
+			BlankStepObj.start();
+		}
+	}
+	
 	public class BlankStep extends Thread { // Blank run
 		
 		public void run() {
 			
-			for(int i = 0; i < 7; i++) {
+			for(int i = 0; i < 9; i++) {
 				
 				switch(blankState) {
 				
+				case InitPosition		:
+					MotionInstruct(RunActivity.HOME_POSITION, SerialPort.CtrTarget.PhotoSet);			
+					BoardMessage(RunActivity.HOME_POSITION, AnalyzerState.MeasurePosition, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 6);
+					break; 
+				
 				case MeasurePosition :
 					MotionInstruct(RunActivity.MEASURE_POSITION, SerialPort.CtrTarget.PhotoSet);			
-					BoardMessage(RunActivity.OPERATE_COMPLETE, 5, RunActivity.AnalyzerState.FilterDark);
+					BoardMessage(RunActivity.MEASURE_POSITION, AnalyzerState.FilterDark, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 5);
 					BarAnimation(178);
 					break;
 					
 				case FilterDark :
 					MotionInstruct(RunActivity.FILTER_DARK, SerialPort.CtrTarget.PhotoSet);
-					BoardMessage(RunActivity.OPERATE_COMPLETE, 5, RunActivity.AnalyzerState.Filter535nm);
+					BoardMessage(RunActivity.FILTER_DARK, AnalyzerState.Filter535nm, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 5);
 					BarAnimation(206);
 					RunActivity.BlankValue[0] = 0;
-					RunActivity.BlankValue[0] = AbsorbanceMeasure(); // Dark Absorbance
+					RunActivity.BlankValue[0] = AbsorbanceMeasure(HomeActivity.MinDark, HomeActivity.MaxDark); // Dark Absorbance
 					break;
 					
 				case Filter535nm :
 					/* 535nm filter Measurement */
 					MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
-					BoardMessage(RunActivity.OPERATE_COMPLETE, 5, RunActivity.AnalyzerState.Filter660nm);
+					BoardMessage(RunActivity.NEXT_FILTER, AnalyzerState.Filter660nm, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 5);
 					BarAnimation(290);
-					RunActivity.BlankValue[1] = AbsorbanceMeasure(); // Dark Absorbance
+					RunActivity.BlankValue[1] = AbsorbanceMeasure(HomeActivity.Min535, HomeActivity.Max535); // Dark Absorbance
 					break;
 				
 				case Filter660nm :
 					MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
-					BoardMessage(RunActivity.OPERATE_COMPLETE, 5, RunActivity.AnalyzerState.Filter750nm);
+					BoardMessage(RunActivity.NEXT_FILTER, AnalyzerState.Filter750nm, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 5);
 					BarAnimation(374);
-					RunActivity.BlankValue[2] = AbsorbanceMeasure(); // Dark Absorbance
+					RunActivity.BlankValue[2] = AbsorbanceMeasure(HomeActivity.Min660, HomeActivity.Max660); // Dark Absorbance
 					break;
 				
 				case Filter750nm :
 					MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
-					BoardMessage(RunActivity.OPERATE_COMPLETE, 5, RunActivity.AnalyzerState.FilterHome);
+					BoardMessage(RunActivity.NEXT_FILTER, AnalyzerState.FilterHome, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 5);
 					BarAnimation(458);
-					RunActivity.BlankValue[3] = AbsorbanceMeasure(); // Dark Absorbance
+					RunActivity.BlankValue[3] = AbsorbanceMeasure(HomeActivity.Min750, HomeActivity.Max750); // Dark Absorbance
 					break;
 				
 				case FilterHome :
 					MotionInstruct(RunActivity.FILTER_DARK, SerialPort.CtrTarget.PhotoSet);
-					BoardMessage(RunActivity.OPERATE_COMPLETE, 5, RunActivity.AnalyzerState.CartridgeHome);
+					BoardMessage(RunActivity.FILTER_DARK, AnalyzerState.CartridgeHome, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 5);
 					BarAnimation(542);
 					break;
 				
 				case CartridgeHome :
 					MotionInstruct(RunActivity.HOME_POSITION, SerialPort.CtrTarget.PhotoSet);
-					BoardMessage(RunActivity.OPERATE_COMPLETE, 5, RunActivity.AnalyzerState.NoResponse);
+					BoardMessage(RunActivity.HOME_POSITION, AnalyzerState.NormalOperation, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 5);
 					BarAnimation(579);
+					break;
+					
+				case NormalOperation	:
 					SerialPort.Sleep(1000);
 					WhichIntent(TargetIntent.Action);
 					break;
 				
+				case ShakingMotorError	:
+					checkError = HomeActivity.SHAKING_MOTOR_ERROR;
+					blankState = AnalyzerState.NoWorking;
+					WhichIntent(TargetIntent.Home);
+					break;
+					
+				case FilterMotorError	:
+					checkError = HomeActivity.FILTER_MOTOR_ERROR;
+					MotionInstruct(RunActivity.HOME_POSITION, SerialPort.CtrTarget.PhotoSet);			
+					BoardMessage(RunActivity.HOME_POSITION, AnalyzerState.NoWorking, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 6);
+					WhichIntent(TargetIntent.Home);
+					break;
+				
+				case PhotoSensorError	:
+					checkError = HomeActivity.PHOTO_SENSOR_ERROR;
+					MotionInstruct(RunActivity.HOME_POSITION, SerialPort.CtrTarget.PhotoSet);			
+					BoardMessage(RunActivity.HOME_POSITION, AnalyzerState.NoWorking, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 6);
+					WhichIntent(TargetIntent.Home);
+					break;
+					
 				case NoResponse :
 					Log.w("BlankStep", "NR");
 					blankState = AnalyzerState.NoWorking;
@@ -133,7 +204,6 @@ public class BlankActivity extends Activity {
 					break;
 				}
 			}
-			
 		}
 	}
 	
@@ -142,7 +212,7 @@ public class BlankActivity extends Activity {
 		BlankSerial.BoardTx(str, target);
 	}
 	
-	public synchronized double AbsorbanceMeasure() { // Absorbance measurement
+	public synchronized double AbsorbanceMeasure(double min, double max) { // Absorbance measurement
 	
 		int time = 0;
 		String rawValue;
@@ -154,37 +224,61 @@ public class BlankActivity extends Activity {
 		
 		while(rawValue.length() != 8) {
 		
-			time++;
 			rawValue = BlankSerial.BoardMessageOutput();			
 				
-			if(time > 50) blankState = AnalyzerState.NoResponse;
+			if(time++ > 50) {
+				
+				blankState = AnalyzerState.NoResponse;
+			
+				break;
+			}
 		
 			SerialPort.Sleep(100);
 		}	
 		
-		douValue = Double.parseDouble(rawValue);
+		if(blankState != AnalyzerState.NoResponse) {
+
+			douValue = Double.parseDouble(rawValue);
+			
+			if((min < douValue) & (douValue < max)) {
+				
+				return (douValue - RunActivity.BlankValue[0]);
+			}
+		}
 		
-		return (douValue - RunActivity.BlankValue[0]);
+		return 0.0;
 	}
 	
-	public void BoardMessage(String rspStr, int rspTime, AnalyzerState nextState) {
+	public void BoardMessage(String colRsp, AnalyzerState nextState, String errRsp, AnalyzerState errState, int rspTime) {
 		
 		int time = 0;
-		boolean isNormalTime = true;
+		String temp = "";
 		
 		rspTime = rspTime * 10;
 		
-		while(!rspStr.equals(BlankSerial.BoardMessageOutput())) {
+		while(true) {
 			
-			time++;
+			temp = BlankSerial.BoardMessageOutput();
 			
-			if(time > rspTime) isNormalTime = false;
+			if(colRsp.equals(temp)) {
+				
+				blankState = nextState;
+				break;
+			
+			} else if(errRsp.equals(temp)) {
+				
+				blankState = errState;
+				break;
+			}
+					
+			if(time++ > rspTime) {
+				
+				blankState = AnalyzerState.NoResponse;
+				break;
+			}
 			
 			SerialPort.Sleep(100);
 		}
-		
-		if(isNormalTime) blankState = nextState;
-		else blankState = AnalyzerState.NoResponse;
 	}
 	
 	public void BarAnimation(final int x) {
@@ -203,13 +297,41 @@ public class BlankActivity extends Activity {
 		}).start();	
 	}
 	
+	public void ErrorPopup(final byte error) {
+		
+		new Thread(new Runnable() {
+		    public void run() {    
+		        runOnUiThread(new Runnable(){
+		            public void run() {
+		            			            	
+		            	errorPopup.showAtLocation(blankLinear, Gravity.CENTER, 0, 0);
+						errorPopup.setAnimationStyle(0);
+											
+						TextView errorText = (TextView) errorPopup.getContentView().findViewById(R.id.errortext);
+						
+						switch(error) {
+						
+						case HomeActivity.DOOR_SENSOR_ERROR		:
+							errorText.setText(R.string.e001);
+							break;
+						
+						case HomeActivity.CART_SENSOR_ERROR		:
+							errorText.setText(R.string.e002);
+							break;
+						}
+		            }
+		        });
+		    }
+		}).start();
+	}
+	
 	public void WhichIntent(TargetIntent Itn) { // Activity conversion
 		
 		switch(Itn) {
 		
 		case Home	:				
 			Intent HomeIntent = new Intent(getApplicationContext(), HomeActivity.class);
-			HomeIntent.putExtra("System Check State", (int) HomeActivity.COMMUNICATION_ERROR);
+			HomeIntent.putExtra("System Check State", (int) checkError);
 			startActivity(HomeIntent);
 			break;
 			

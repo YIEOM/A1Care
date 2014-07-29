@@ -51,6 +51,16 @@ public class HomeActivity extends Activity {
 					  HOME_ACTIVITY = 2,
 					  COVER_ACTION_ESC = 3;
 
+	final static double MaxDark = 4500,
+						MinDark = 3000,
+						Max535  = 400000,
+						Min535  = 300000,
+						Max660  = 700000,
+						Min660  = 600000,
+						Max750  = 990000,
+						Min750  = 900000;
+
+	
 	private SerialPort HomeSerial;
 	
 	private RelativeLayout homeLinear;
@@ -74,7 +84,7 @@ public class HomeActivity extends Activity {
 				   loginDBBtn,
 				   checkBtn;
 	
-	public enum TargetIntent {Home, HbA1c, NA, Action, Run, Blank, Memory, Result, ResultComm, ResultError, Remove, Image, Date, Setting, SystemSetting, DataSetting, Time, Display, HIS, HISSetting, Export, Maintenance, FileSave, ControlFileLoad, PatientFileLoad, NextFile, PreFile, Adjustment, Sound, Calibration, Language, Correlation, Temperature}
+	public enum TargetIntent {Home, HbA1c, NA, Action, Run, Blank, Memory, Result, ResultError, Remove, Image, Date, Setting, SystemSetting, DataSetting, Time, Display, HIS, HISSetting, Export, Maintenance, FileSave, ControlFileLoad, PatientFileLoad, NextFile, PreFile, Adjustment, Sound, Calibration, Language, Correlation, Temperature}
 	
 	private static TextView TimeText;
 	
@@ -319,19 +329,19 @@ public class HomeActivity extends Activity {
 								
 								switch(error) {
 								
-								case HomeActivity.FILTER_MOTOR_ERROR		:
+								case HomeActivity.FILTER_MOTOR_ERROR	:
 									errorText.setText(R.string.e011);
 									break;
 									
-								case HomeActivity.SHAKING_MOTOR_ERROR		:
+								case HomeActivity.SHAKING_MOTOR_ERROR	:
 									errorText.setText(R.string.e021);
 									break;
 									
-								case HomeActivity.PHOTO_SENSOR_ERROR		:
+								case HomeActivity.PHOTO_SENSOR_ERROR	:
 									errorText.setText(R.string.e031);
 									break;
 								
-								case HomeActivity.CELL_TEMP_ERROR	:
+								case HomeActivity.CELL_TEMP_ERROR		:
 									errorText.setText(R.string.e041);
 									break;
 								
@@ -339,7 +349,7 @@ public class HomeActivity extends Activity {
 									errorText.setText(R.string.e042);
 									break;
 									
-								case HomeActivity.COMMUNICATION_ERROR		:
+								case HomeActivity.COMMUNICATION_ERROR	:
 									errorText.setText(R.string.e051);
 									break;
 								}
