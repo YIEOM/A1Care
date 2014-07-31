@@ -34,6 +34,7 @@ public class BlankActivity extends Activity {
 	private ImageView barani;
 	
 	private RunActivity.AnalyzerState blankState;
+	private byte photoCheck;
 	
 	private byte checkError = HomeActivity.NORMAL_OPERATION;
 	
@@ -64,6 +65,7 @@ public class BlankActivity extends Activity {
 		BlankRun = new RunActivity();
 		
 		blankState = RunActivity.AnalyzerState.InitPosition;
+		photoCheck = 0;
 		
 		SensorCheck SensorCheckObj = new SensorCheck();
 		SensorCheckObj.start();
@@ -132,7 +134,8 @@ public class BlankActivity extends Activity {
 					BoardMessage(RunActivity.FILTER_DARK, AnalyzerState.Filter535nm, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 5);
 					BarAnimation(206);
 					RunActivity.BlankValue[0] = 0;
-					RunActivity.BlankValue[0] = AbsorbanceMeasure(HomeActivity.MinDark, HomeActivity.MaxDark); // Dark Absorbance
+					RunActivity.BlankValue[0] = AbsorbanceMeasure(HomeActivity.MinDark, HomeActivity.MaxDark, HomeActivity.ERROR_DARK); // Dark Absorbance
+					PhotoErrorCheck();
 					break;
 					
 				case Filter535nm :
@@ -140,21 +143,22 @@ public class BlankActivity extends Activity {
 					MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
 					BoardMessage(RunActivity.NEXT_FILTER, AnalyzerState.Filter660nm, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 5);
 					BarAnimation(290);
-					RunActivity.BlankValue[1] = AbsorbanceMeasure(HomeActivity.Min535, HomeActivity.Max535); // Dark Absorbance
+					RunActivity.BlankValue[1] = AbsorbanceMeasure(HomeActivity.Min535, HomeActivity.Max535, HomeActivity.ERROR_535nm); // Dark Absorbance
 					break;
 				
 				case Filter660nm :
 					MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
 					BoardMessage(RunActivity.NEXT_FILTER, AnalyzerState.Filter750nm, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 5);
 					BarAnimation(374);
-					RunActivity.BlankValue[2] = AbsorbanceMeasure(HomeActivity.Min660, HomeActivity.Max660); // Dark Absorbance
+					RunActivity.BlankValue[2] = AbsorbanceMeasure(HomeActivity.Min660, HomeActivity.Max660, HomeActivity.ERROR_660nm); // Dark Absorbance
 					break;
 				
 				case Filter750nm :
 					MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
 					BoardMessage(RunActivity.NEXT_FILTER, AnalyzerState.FilterHome, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 5);
 					BarAnimation(458);
-					RunActivity.BlankValue[3] = AbsorbanceMeasure(HomeActivity.Min750, HomeActivity.Max750); // Dark Absorbance
+					RunActivity.BlankValue[3] = AbsorbanceMeasure(HomeActivity.Min750, HomeActivity.Max750, HomeActivity.ERROR_750nm); // Dark Absorbance
+					PhotoErrorCheck();
 					break;
 				
 				case FilterHome :
@@ -189,6 +193,8 @@ public class BlankActivity extends Activity {
 				
 				case PhotoSensorError	:
 					checkError = HomeActivity.PHOTO_SENSOR_ERROR;
+					MotionInstruct(RunActivity.FILTER_DARK, SerialPort.CtrTarget.PhotoSet);
+					BoardMessage(RunActivity.FILTER_DARK, AnalyzerState.CartridgeHome, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 5);
 					MotionInstruct(RunActivity.HOME_POSITION, SerialPort.CtrTarget.PhotoSet);			
 					BoardMessage(RunActivity.HOME_POSITION, AnalyzerState.NoWorking, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 6);
 					WhichIntent(TargetIntent.Home);
@@ -212,7 +218,7 @@ public class BlankActivity extends Activity {
 		BlankSerial.BoardTx(str, target);
 	}
 	
-	public synchronized double AbsorbanceMeasure(double min, double max) { // Absorbance measurement
+	public synchronized double AbsorbanceMeasure(double min, double max, byte errBits) { // Absorbance measurement
 	
 		int time = 0;
 		String rawValue;
@@ -243,10 +249,45 @@ public class BlankActivity extends Activity {
 			if((min < douValue) & (douValue < max)) {
 				
 				return (douValue - RunActivity.BlankValue[0]);
-			}
+				
+			} else photoCheck += errBits;
 		}
 		
 		return 0.0;
+	}
+	
+	public void PhotoErrorCheck() {
+		
+		switch(photoCheck) {
+		
+		case 1	:
+			blankState = AnalyzerState.PhotoSensorError;
+			checkError = HomeActivity.PHOTO_SENSOR_ERROR;
+			break;
+			
+		case 2	:
+			blankState = AnalyzerState.PhotoSensorError;
+			checkError = HomeActivity.FILTER_535nm_ERROR;
+			break;
+			
+		case 4	:
+			blankState = AnalyzerState.PhotoSensorError;
+			checkError = HomeActivity.FILTER_660nm_ERROR;
+			break;
+			
+		case 8	:
+			blankState = AnalyzerState.PhotoSensorError;
+			checkError = HomeActivity.FILTER_750nm_ERROR;
+			break;
+			
+		case 14	:
+			blankState = AnalyzerState.LampError;
+			checkError = HomeActivity.LAMP_ERROR;
+			break;
+			
+		default	:
+			break;
+		}
 	}
 	
 	public void BoardMessage(String colRsp, AnalyzerState nextState, String errRsp, AnalyzerState errState, int rspTime) {

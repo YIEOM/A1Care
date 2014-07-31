@@ -38,14 +38,23 @@ public class HomeActivity extends Activity {
 					  FILTER_MOTOR_ERROR = 3,
 					  SHAKING_MOTOR_ERROR = 4,
 					  PHOTO_SENSOR_ERROR = 5,
-					  CELL_TEMP_ERROR = 6,
-					  AMBIENT_TEMP_ERROR = 7,
-					  COMMUNICATION_ERROR = 8,
-					  tHb_LOW_ERROR = 11,
-					  tHb_HIGH_ERROR = 12,
-					  A1c_LOW_ERROR = 13,
-					  A1c_HIGH_ERROR = 14,
-					  STOP_RESULT = 20;
+					  LAMP_ERROR = 6,
+					  FILTER_535nm_ERROR = 7,
+					  FILTER_660nm_ERROR = 8,
+					  FILTER_750nm_ERROR = 9,
+					  CELL_TEMP_ERROR = 10,
+					  AMBIENT_TEMP_ERROR = 11,
+					  COMMUNICATION_ERROR = 12,
+					  STOP_RESULT = 20,
+					  tHb_LOW_ERROR = 21,
+					  tHb_HIGH_ERROR = 22,
+					  A1c_LOW_ERROR = 23,
+					  A1c_HIGH_ERROR = 24;
+	
+	final static byte ERROR_DARK  = 1,
+					  ERROR_535nm = 2,
+					  ERROR_660nm = 4,
+					  ERROR_750nm = 8;				  
 	
 	final static byte ACTION_ACTIVITY = 1,
 					  HOME_ACTIVITY = 2,
@@ -57,10 +66,9 @@ public class HomeActivity extends Activity {
 						Min535  = 300000,
 						Max660  = 700000,
 						Min660  = 600000,
-						Max750  = 990000,
+						Max750  = 1000000,
 						Min750  = 900000;
 
-	
 	private SerialPort HomeSerial;
 	
 	private RelativeLayout homeLinear;
@@ -315,50 +323,58 @@ public class HomeActivity extends Activity {
 	
 	public void ErrorPopup(final byte error) {
 		
-//		new Thread(new Runnable() {
-//		    public void run() {    
-//		        runOnUiThread(new Runnable(){
-//		            public void run() {
-		            	homeLinear.post(new Runnable() {
-		        			public void run() {
-				        
-		        				errorPopup.showAtLocation(homeLinear, Gravity.CENTER, 0, 0);
-								errorPopup.setAnimationStyle(0);
-								
-								TextView errorText = (TextView) errorPopup.getContentView().findViewById(R.id.errortext);
-								
-								switch(error) {
-								
-								case HomeActivity.FILTER_MOTOR_ERROR	:
-									errorText.setText(R.string.e011);
-									break;
-									
-								case HomeActivity.SHAKING_MOTOR_ERROR	:
-									errorText.setText(R.string.e021);
-									break;
-									
-								case HomeActivity.PHOTO_SENSOR_ERROR	:
-									errorText.setText(R.string.e031);
-									break;
-								
-								case HomeActivity.CELL_TEMP_ERROR		:
-									errorText.setText(R.string.e041);
-									break;
-								
-								case HomeActivity.AMBIENT_TEMP_ERROR	:
-									errorText.setText(R.string.e042);
-									break;
-									
-								case HomeActivity.COMMUNICATION_ERROR	:
-									errorText.setText(R.string.e051);
-									break;
-								}
-							}
-		        		});
-//		            }
-//		        });
-//		    }
-//		}).start();
+    	homeLinear.post(new Runnable() {
+			public void run() {
+        
+				errorPopup.showAtLocation(homeLinear, Gravity.CENTER, 0, 0);
+				errorPopup.setAnimationStyle(0);
+				
+				TextView errorText = (TextView) errorPopup.getContentView().findViewById(R.id.errortext);
+				
+				switch(error) {
+				
+				case FILTER_MOTOR_ERROR		:
+					errorText.setText(R.string.e011);
+					break;
+					
+				case SHAKING_MOTOR_ERROR	:
+					errorText.setText(R.string.e021);
+					break;
+					
+				case PHOTO_SENSOR_ERROR		:
+					errorText.setText(R.string.e031);
+					break;
+				
+				case LAMP_ERROR				:
+					errorText.setText("Lamp");
+					break;
+				
+				case FILTER_535nm_ERROR		:
+					errorText.setText("535nm");
+					break;
+				
+				case FILTER_660nm_ERROR		:
+					errorText.setText("660nm");
+					break;
+				
+				case FILTER_750nm_ERROR		:
+					errorText.setText("750nm");
+					break;
+					
+				case CELL_TEMP_ERROR		:
+					errorText.setText(R.string.e041);
+					break;
+				
+				case AMBIENT_TEMP_ERROR		:
+					errorText.setText(R.string.e042);
+					break;
+					
+				case COMMUNICATION_ERROR	:
+					errorText.setText(R.string.e051);
+					break;
+				}
+			}
+		});
 	}
 	
 	public void CheckFlagSave() { // Saving number of user define parameter

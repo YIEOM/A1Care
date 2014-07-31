@@ -548,7 +548,7 @@ public class SerialPort {
 		for(int i = 0; i < size; i++) {
 
 			BarcodeAppendBuffer[BarcodeBufCnt][BarcodeBufIndex++] = BarcodeRxBuffer[i]; // bufCnt : number of each buffer, bufIndex : bit index of one buffer
-			Log.w("BarcodeDataReceive", "BarcodeRxBuffer : " + Character.toString((char) BarcodeRxBuffer[i]));
+//			Log.w("BarcodeDataReceive", "BarcodeRxBuffer : " + Character.toString((char) BarcodeRxBuffer[i]));
 		}	
 		
 		if(BarcodeBufIndex > 18 | BarcodeBufIndex < 2) {

@@ -45,7 +45,8 @@ public class SystemCheckActivity extends Activity {
 	
 	private AnalyzerState systemState;
 	
-	private byte checkError = HomeActivity.NORMAL_OPERATION;
+	private byte checkError;
+	private byte photoCheck;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -121,7 +122,7 @@ public class SystemCheckActivity extends Activity {
 		
 		public void run() {
 			
-			for(int i = 0; i < 14; i++) {
+			for(int i = 0; i < 17; i++) {
 				
 				switch(systemState) {
 				
@@ -152,26 +153,40 @@ public class SystemCheckActivity extends Activity {
 					
 				case MeasurePosition	:
 					MotionInstruct(RunActivity.MEASURE_POSITION, SerialPort.CtrTarget.PhotoSet);
-					MotorCheck(RunActivity.MEASURE_POSITION, AnalyzerState.Filter535nm, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 2);
+					MotorCheck(RunActivity.MEASURE_POSITION, AnalyzerState.MeasureDark, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 2);
+					break;
+					
+				case MeasureDark		:
+					PhotoCheck(AnalyzerState.Filter535nm, HomeActivity.MaxDark, HomeActivity.MinDark, HomeActivity.ERROR_DARK, 1);
+					PhotoErrorCheck();
 					break;
 					
 				case Filter535nm		:
 					MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
-					MotorCheck(RunActivity.NEXT_FILTER, AnalyzerState.Filter660nm, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 2);
+					MotorCheck(RunActivity.NEXT_FILTER, AnalyzerState.Measure535nm, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 2);
+					break;
+					
+				case Measure535nm		:
+					PhotoCheck(AnalyzerState.Filter660nm, HomeActivity.Max535, HomeActivity.Min535, HomeActivity.ERROR_535nm, 1);
 					break;
 					
 				case Filter660nm		:
 					MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
-					MotorCheck(RunActivity.NEXT_FILTER, AnalyzerState.Filter750nm, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 2);
+					MotorCheck(RunActivity.NEXT_FILTER, AnalyzerState.Measure660nm, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 2);
+					break;
+					
+				case Measure660nm		:
+					PhotoCheck(AnalyzerState.Filter750nm, HomeActivity.Max660, HomeActivity.Min660, HomeActivity.ERROR_660nm, 1);
 					break;
 					
 				case Filter750nm		:
 					MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
-					MotorCheck(RunActivity.NEXT_FILTER, AnalyzerState.PhotoMeasure, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 2);
+					MotorCheck(RunActivity.NEXT_FILTER, AnalyzerState.Measure750nm, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 2);
 					break;
 					
-				case PhotoMeasure		:
-					PhotoCheck(AnalyzerState.FilterDark, AnalyzerState.PhotoSensorError, 1);
+				case Measure750nm		:
+					PhotoCheck(AnalyzerState.FilterDark, HomeActivity.Max750, HomeActivity.Min750, HomeActivity.ERROR_750nm, 1);
+					PhotoErrorCheck();
 					break;
 					
 				case FilterDark			:
@@ -208,7 +223,17 @@ public class SystemCheckActivity extends Activity {
 					break;
 				
 				case PhotoSensorError	:
-					checkError = HomeActivity.PHOTO_SENSOR_ERROR;
+					MotionInstruct(RunActivity.FILTER_DARK, SerialPort.CtrTarget.PhotoSet);
+					MotorCheck(RunActivity.FILTER_DARK, AnalyzerState.NoWorking, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 3);
+					MotionInstruct(RunActivity.HOME_POSITION, SerialPort.CtrTarget.PhotoSet);			
+					MotorCheck(RunActivity.HOME_POSITION, AnalyzerState.NoWorking, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 6);
+					WhichIntent(HomeActivity.TargetIntent.Home);
+					break;
+					
+				case LampError			:
+					checkError = HomeActivity.LAMP_ERROR;
+					MotionInstruct(RunActivity.FILTER_DARK, SerialPort.CtrTarget.PhotoSet);
+					MotorCheck(RunActivity.FILTER_DARK, AnalyzerState.NoWorking, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 3);
 					MotionInstruct(RunActivity.HOME_POSITION, SerialPort.CtrTarget.PhotoSet);			
 					MotorCheck(RunActivity.HOME_POSITION, AnalyzerState.NoWorking, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 6);
 					WhichIntent(HomeActivity.TargetIntent.Home);
@@ -232,10 +257,7 @@ public class SystemCheckActivity extends Activity {
 		public void run() {
 			
 			int i;
-			double tmp, 
-				   tempTmp = 0;
-			boolean ambTmpCheckFlag = false;
-			AmbTmpState state = AmbTmpState.FirstTmp;
+			double tmp;
 			
 			/* Temperature setting */
 			SystemTmp = new Temperature(); // to test
@@ -252,45 +274,17 @@ public class SystemCheckActivity extends Activity {
 			
 			if(i != NUMBER_TEMPERATURE_CHECK) {
 			
+				tmp = 0;
+				
 				for(i = 0; i < NUMBER_TEMPERATURE_CHECK; i++) {
 					
-					tmp = SystemTmp.AmbTmpRead();
+					tmp += SystemTmp.AmbTmpRead();
 					Log.w("TemperatureCheck", "Amb Temperature : " + tmp);
-					
-					switch(state) {
-					
-					case FirstTmp	:
-						tempTmp = tmp;
-						state = AmbTmpState.SecondTmp;
-						break;
-						
-					case SecondTmp	:
-						if(tempTmp == tmp) state = AmbTmpState.ThirdTmp;
-						else state = AmbTmpState.FirstTmp;
-						break;
-
-					case ThirdTmp	:
-						if(tempTmp == tmp) state = AmbTmpState.ForthTmp;
-						else state = AmbTmpState.FirstTmp;
-						break;
-						
-					case ForthTmp	:
-						if(tempTmp == tmp) state = AmbTmpState.FifthTmp;
-						else state = AmbTmpState.FirstTmp;
-						break;
-						
-					case FifthTmp	:
-						if(tempTmp == tmp) ambTmpCheckFlag = true;
-						else state = AmbTmpState.FirstTmp;
-						break;
-					}
-					
-					if(ambTmpCheckFlag) break;
 					
 					SerialPort.Sleep(5000);
 				}
 				
-				if(i != NUMBER_TEMPERATURE_CHECK) {
+				if((Temperature.MinAmbTmp < tmp/NUMBER_TEMPERATURE_CHECK) & (tmp/NUMBER_TEMPERATURE_CHECK < Temperature.MaxAmbTmp)) {
 					
 					WhichIntent(TargetIntent.Home);
 				
@@ -382,26 +376,6 @@ public class SystemCheckActivity extends Activity {
 		return 0.0;
 	}
 	
-	public void BoardMessage(String rspStr, int rspTime, AnalyzerState nextState) {
-		
-		int time = 0;
-		boolean isNormalTime = true;
-	
-		rspTime = rspTime * 10;
-		
-		while(!rspStr.equals(SystemSerial.BoardMessageOutput())) {
-			
-			time++;
-			
-			if(time > rspTime) isNormalTime = false;
-			
-			SerialPort.Sleep(100);
-		}
-		
-		if(isNormalTime) systemState = nextState;
-		else systemState = AnalyzerState.NoResponse;
-	}
-	
 	public void MotorCheck(String colRsp, AnalyzerState nextState, String errRsp, AnalyzerState errState, int rspTime) {
 		
 		String temp = "";
@@ -415,7 +389,7 @@ public class SystemCheckActivity extends Activity {
 		else systemState = AnalyzerState.NoResponse;
 	}
 	
-	public void PhotoCheck(AnalyzerState nextState, AnalyzerState errState, int rspTime) {
+	public void PhotoCheck(AnalyzerState nextState, double max, double min, byte errBits, int rspTime) {
 		
 		String tempStr = "";
 		double tempDouble = 0.0;
@@ -431,11 +405,45 @@ public class SystemCheckActivity extends Activity {
 		if(tempStr.length() == 8) {
 			
 			tempDouble = Double.parseDouble(tempStr);
-			Log.w("PhotoCheck", "" + tempDouble);
-			if((HomeActivity.Min750 < tempDouble) & (tempDouble < HomeActivity.Max750)) systemState = nextState;
-			else systemState = errState;
+			
+			if((min < tempDouble) & (tempDouble < max)) systemState = nextState;
+			else photoCheck += errBits;
 			
 		} else systemState = AnalyzerState.NoResponse;
+	}
+	
+	public void PhotoErrorCheck() {
+		
+		switch(photoCheck) {
+		
+		case 1	:
+			systemState = AnalyzerState.PhotoSensorError;
+			checkError = HomeActivity.PHOTO_SENSOR_ERROR;
+			break;
+			
+		case 2	:
+			systemState = AnalyzerState.PhotoSensorError;
+			checkError = HomeActivity.FILTER_535nm_ERROR;
+			break;
+			
+		case 4	:
+			systemState = AnalyzerState.PhotoSensorError;
+			checkError = HomeActivity.FILTER_660nm_ERROR;
+			break;
+			
+		case 8	:
+			systemState = AnalyzerState.PhotoSensorError;
+			checkError = HomeActivity.FILTER_750nm_ERROR;
+			break;
+			
+		case 14	:
+			systemState = AnalyzerState.LampError;
+			checkError = HomeActivity.LAMP_ERROR;
+			break;
+			
+		default	:
+			break;
+		}
 	}
 	
 	public void MotionInstruct(String str, SerialPort.CtrTarget target) { // Motion of system instruction
@@ -493,7 +501,9 @@ public class SystemCheckActivity extends Activity {
 	
 	public void ParameterInit() { // Load to saved various parameter
 		
+		photoCheck = 0;
 		systemState = AnalyzerState.InitPosition;
+		checkError = HomeActivity.NORMAL_OPERATION;
 		
 		SharedPreferences DcntPref = getSharedPreferences("Data Counter", MODE_PRIVATE);
 		RemoveActivity.PatientDataCnt = DcntPref.getInt("PatientDataCnt", 1);

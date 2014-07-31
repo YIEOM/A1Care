@@ -47,7 +47,7 @@ public class RunActivity extends Activity {
 						FILTER_ERROR 	 = "FE1",
 						CARTRIDGE_ERROR	 = "CE1";
 	
-	public enum AnalyzerState {InitPosition, Step1Position, Step1Shaking, Step2Position, Step2Shaking, MeasurePosition, FilterDark, Filter535nm, Filter660nm, Filter750nm, FilterHome, CartridgeHome, CartridgeDump, PhotoMeasure, NoResponse, NoWorking, ShakingMotorError, FilterMotorError, PhotoSensorError, NormalOperation}
+	public enum AnalyzerState {InitPosition, Step1Position, Step1Shaking, Step2Position, Step2Shaking, MeasurePosition, FilterDark, Filter535nm, Filter660nm, Filter750nm, FilterHome, CartridgeHome, CartridgeDump, MeasureDark, Measure535nm, Measure660nm, Measure750nm, NoResponse, NoWorking, ShakingMotorError, FilterMotorError, PhotoSensorError, LampError, NormalOperation}
 
 	private DecimalFormat ShkDf = new DecimalFormat("0000");
 	
@@ -1069,7 +1069,7 @@ public class RunActivity extends Activity {
 		
 		douValue = Double.parseDouble(rawValue);
 		
-		return (douValue - BlankValue[0]);
+		return (douValue - BlankValue[0]);	
 	}
 	
 	public byte tHbCalculate() {
