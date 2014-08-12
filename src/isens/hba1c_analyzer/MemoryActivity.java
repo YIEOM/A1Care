@@ -24,6 +24,8 @@ public class MemoryActivity extends Activity {
 	
 	public static int DataPage;
 	
+	public boolean btnState = false;
+	
 	protected void onCreate(Bundle savedInstanceState) {
 		
 		super.onCreate(savedInstanceState);
@@ -40,9 +42,14 @@ public class MemoryActivity extends Activity {
 		
 			public void onClick(View v) {
 		
-				patientBtn.setEnabled(false);
-				
-				WhichIntent(TargetIntent.PatientFileLoad);
+				if(!btnState) {
+					
+					btnState = true;
+					
+					patientBtn.setEnabled(false);
+					
+					WhichIntent(TargetIntent.PatientFileLoad);
+				}
 			}
 		});
 		
@@ -52,9 +59,14 @@ public class MemoryActivity extends Activity {
 		
 			public void onClick(View v) {
 		
-				controlBtn.setEnabled(false);
+				if(!btnState) {
+					
+					btnState = true;
+					
+					controlBtn.setEnabled(false);
 				
-				WhichIntent(TargetIntent.ControlFileLoad);
+					WhichIntent(TargetIntent.ControlFileLoad);
+				}
 			}
 		});
 	
@@ -64,9 +76,14 @@ public class MemoryActivity extends Activity {
 		
 			public void onClick(View v) {
 		
-				backIcon.setEnabled(false);
+				if(!btnState) {
+					
+					btnState = true;
+					
+					backIcon.setEnabled(false);
 				
-				WhichIntent(TargetIntent.Home);
+					WhichIntent(TargetIntent.Home);
+				}
 			}
 		});
 	}	

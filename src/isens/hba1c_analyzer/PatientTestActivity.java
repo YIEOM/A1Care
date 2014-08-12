@@ -65,7 +65,8 @@ public class PatientTestActivity extends Activity {
 				   hbA1c   [] = new String[5],
 				   typeStr [] = new String[5];
 	
-	private boolean checkFlag = false;
+	private boolean checkFlag = false,
+					btnState = false;
 	private ImageButton whichBox = null;
 	
 	private int boxNum = 0;
@@ -171,9 +172,14 @@ public class PatientTestActivity extends Activity {
 		
 			public void onClick(View v) {
 		
-				homeIcon.setEnabled(false);
+				if(!btnState) {
+					
+					btnState = true;
+					
+					homeIcon.setEnabled(false);
 				
-				WhichIntent(TargetIntent.Home);
+					WhichIntent(TargetIntent.Home);
+				}
 			}
 		});
 		
@@ -183,9 +189,14 @@ public class PatientTestActivity extends Activity {
 		
 			public void onClick(View v) {
 		
-				backIcon.setEnabled(false);
+				if(!btnState) {
+					
+					btnState = true;
 				
-				WhichIntent(TargetIntent.Memory);
+					backIcon.setEnabled(false);
+					
+					WhichIntent(TargetIntent.Memory);
+				}
 			}
 		});
 		
@@ -194,9 +205,14 @@ public class PatientTestActivity extends Activity {
 			
 			public void onClick(View v) {
 			
-				preViewBtn.setEnabled(true);
+				if(!btnState) {
+					
+					btnState = true;
 				
-				WhichIntent(TargetIntent.PreFile);
+					preViewBtn.setEnabled(false);
+				
+					WhichIntent(TargetIntent.PreFile);
+				}
 			}
 		});
 		
@@ -206,8 +222,13 @@ public class PatientTestActivity extends Activity {
 			
 			public void onClick(View v) {
 			
-				DisplayDetailView();
-				cancleBtn.setEnabled(true);
+				if(!btnState) {
+					
+					btnState = true;
+				
+					DisplayDetailView();
+					cancleBtn.setEnabled(true);
+				}
 			}
 		});
 		
@@ -216,9 +237,14 @@ public class PatientTestActivity extends Activity {
 			
 			public void onClick(View v) {
 			
-				nextViewBtn.setEnabled(true);
+				if(!btnState) {
+					
+					btnState = true;
 				
-				WhichIntent(TargetIntent.NextFile);
+					nextViewBtn.setEnabled(false);
+				
+					WhichIntent(TargetIntent.NextFile);
+				}
 			}
 		});
 		
@@ -228,7 +254,12 @@ public class PatientTestActivity extends Activity {
 			
 			public void onClick(View v) {
 				
-				PrintRecordData();
+				if(!btnState) {
+					
+					btnState = true;
+				
+					PrintRecordData();
+				}
 			}
 		});
 		
@@ -238,11 +269,18 @@ public class PatientTestActivity extends Activity {
 			
 			public void onClick(View v) {
 				
-				cancleBtn.setEnabled(false);
+				if(!btnState) {
+					
+					btnState = true;
 				
-				detailPopup.dismiss();
+					cancleBtn.setEnabled(false);
+					
+					detailPopup.dismiss();
+					
+					detailViewBtn.setEnabled(true);
 				
-				detailViewBtn.setEnabled(true);
+					btnState = false;
+				}
 			}
 		});
 	}	
@@ -368,6 +406,8 @@ public class PatientTestActivity extends Activity {
 			detailPopup.showAtLocation(pTestLayout, Gravity.CENTER, 0, 0);
 			detailPopup.setAnimationStyle(0);
 		}
+		
+		btnState = false;
 	}
 	
 	public void PrintRecordData() {
@@ -387,7 +427,9 @@ public class PatientTestActivity extends Activity {
 		txData.append(hbA1c[boxNum - 1]);
 		
 		PatientSerial = new SerialPort();
-		PatientSerial.PrinterTxStart(SerialPort.PRINTRECORD, txData);	
+		PatientSerial.PrinterTxStart(SerialPort.PRINTRECORD, txData);
+		
+		btnState = false;
 	}
 	
 	public void WhichIntent(TargetIntent Itn) { // Activity conversion
@@ -415,7 +457,7 @@ public class PatientTestActivity extends Activity {
 				NextFileIntent.putExtra("Type", (int) FileLoadActivity.PATIENT);
 				startActivity(NextFileIntent);
 				finish();
-			}
+			} else nextViewBtn.setEnabled(true);
 			break;
 		
 		case PreFile	:
@@ -427,12 +469,14 @@ public class PatientTestActivity extends Activity {
 				PreFileIntent.putExtra("Type", (int) FileLoadActivity.PATIENT);
 				startActivity(PreFileIntent);
 				finish();
-			}
+			} else preViewBtn.setEnabled(true);
 			break;
 			
 		default		:	
 			break;			
-		}		
+		}
+		
+		btnState = false;
 	}
 	
 	public void finish() {

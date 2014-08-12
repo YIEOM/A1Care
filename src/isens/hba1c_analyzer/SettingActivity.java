@@ -20,6 +20,8 @@ public class SettingActivity extends Activity {
 	
 	private static TextView TimeText;
 	
+	public boolean btnState = false;
+	
 	protected void onCreate(Bundle savedInstanceState) {
 		
 		super.onCreate(savedInstanceState);
@@ -36,9 +38,14 @@ public class SettingActivity extends Activity {
 		
 			public void onClick(View v) {
 				
-				systemBtn.setEnabled(false);
-	
-				WhichIntent(TargetIntent.SystemSetting);
+				if(!btnState) {
+					
+					btnState = true;
+					
+					systemBtn.setEnabled(false);
+					
+					WhichIntent(TargetIntent.SystemSetting);
+				}
 			}
 		});
 		
@@ -48,9 +55,14 @@ public class SettingActivity extends Activity {
 		
 			public void onClick(View v) {
 				
-				dataBtn.setEnabled(false);
+				if(!btnState) {
+					
+					btnState = true;
 				
-				WhichIntent(TargetIntent.DataSetting);
+					dataBtn.setEnabled(false);
+				
+					WhichIntent(TargetIntent.DataSetting);
+				}
 			}
 		});
 		
@@ -72,9 +84,14 @@ public class SettingActivity extends Activity {
 		
 			public void onClick(View v) {
 			
-				escIcon.setEnabled(false);
+				if(!btnState) {
+					
+					btnState = true;
+					
+					escIcon.setEnabled(false);
 				
-				WhichIntent(TargetIntent.Home);
+					WhichIntent(TargetIntent.Home);
+				}
 			}
 		});
 	}

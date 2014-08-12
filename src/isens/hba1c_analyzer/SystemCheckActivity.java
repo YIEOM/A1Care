@@ -23,10 +23,11 @@ import android.widget.TextView;
 
 public class SystemCheckActivity extends Activity {
 
-	final static byte NUMBER_TEMPERATURE_CHECK = 25/5;
+	static byte NUMBER_CELL_BLOCK_TEMP_CHECK = 60;
+	static final byte NUMBER_AMBIENT_TEMP_CHECK = 30/5;
 	final static String SHAKING_CHECK_TIME = "0030";
 	
-	private enum AmbTmpState {FirstTmp, SecondTmp, ThirdTmp, ForthTmp, FifthTmp}
+	private enum TmpState {FirstTmp, SecondTmp, ThirdTmp, ForthTmp, FifthTmp}
 	
 	private GpioPort SystemGpio;
 	private SerialPort SystemSerial;
@@ -44,6 +45,8 @@ public class SystemCheckActivity extends Activity {
 	private PopupWindow errorPopup;
 	
 	private AnalyzerState systemState;
+	
+	public TmpState tmpNumber;
 	
 	private byte checkError;
 	private byte photoCheck;
@@ -85,12 +88,18 @@ public class SystemCheckActivity extends Activity {
 		
 		ParameterInit();
 
+		/* Temperature setting */
+		SystemTmp = new Temperature(); // to test
+		SystemTmp.TmpInit(); // to test
+		
 		BrightnessInit();
 		
 		VolumeInit();
 		
 		SensorCheck SensorCheckObj = new SensorCheck();
 		SensorCheckObj.start();
+		
+//		WhichIntent(TargetIntent.Home);
 	}
 	
 	public class SensorCheck extends Thread {
@@ -258,33 +267,59 @@ public class SystemCheckActivity extends Activity {
 			
 			int i;
 			double tmp;
+			tmpNumber = TmpState.FirstTmp;
 			
-			/* Temperature setting */
-			SystemTmp = new Temperature(); // to test
-			SystemTmp.TmpInit(); // to test
-			
-			for(i = 0; i < NUMBER_TEMPERATURE_CHECK; i++) {
+			for(i = 0; i < NUMBER_CELL_BLOCK_TEMP_CHECK; i++) {
 				
 				tmp = SystemTmp.CellTmpRead();
-//				Log.w("TemperatureCheck", "Cell Temperature : " + tmp);
+				Log.w("TemperatureCheck", "Cell Temperature : " + tmp);
 				
-				if((tmp < (Temperature.InitTmp - 1)) || ((Temperature.InitTmp + 1) < tmp)) SerialPort.Sleep(5000);
-				else break;
+				switch(tmpNumber) {
+				
+				case FirstTmp	:
+					if(((Temperature.InitTmp - 1) < tmp) || (tmp < (Temperature.InitTmp + 1))) tmpNumber = TmpState.SecondTmp;
+					break;
+					
+				case SecondTmp	:
+					if(((Temperature.InitTmp - 1) < tmp) || (tmp < (Temperature.InitTmp + 1))) tmpNumber = TmpState.ThirdTmp;
+					else tmpNumber = TmpState.FirstTmp;
+					break;
+					
+				case ThirdTmp	:
+					if(((Temperature.InitTmp - 1) < tmp) || (tmp < (Temperature.InitTmp + 1))) tmpNumber = TmpState.ForthTmp;
+					else tmpNumber = TmpState.FirstTmp;
+					break;
+					
+				case ForthTmp	:
+					if(((Temperature.InitTmp - 1) < tmp) || (tmp < (Temperature.InitTmp + 1))) tmpNumber = TmpState.FifthTmp;
+					else tmpNumber = TmpState.FirstTmp;
+					break;
+					
+				case FifthTmp	:
+					if(((Temperature.InitTmp - 1) < tmp) || (tmp < (Temperature.InitTmp + 1))) NUMBER_CELL_BLOCK_TEMP_CHECK = 0;
+					else tmpNumber = TmpState.FirstTmp;
+					break;
+				
+				default	:
+					break;
+				}
+				
+				 SerialPort.Sleep(1000);
 			}
 			
-			if(i != NUMBER_TEMPERATURE_CHECK) {
+			if(i != NUMBER_CELL_BLOCK_TEMP_CHECK) {
 			
 				tmp = 0;
 				
-				for(i = 0; i < NUMBER_TEMPERATURE_CHECK; i++) {
+				for(i = 0; i < NUMBER_AMBIENT_TEMP_CHECK; i++) {
 					
 					tmp += SystemTmp.AmbTmpRead();
-					Log.w("TemperatureCheck", "Amb Temperature : " + tmp);
+//					Log.w("TemperatureCheck", "Amb Temperature : " + tmp);
 					
 					SerialPort.Sleep(5000);
 				}
 				
-				if((Temperature.MinAmbTmp < tmp/NUMBER_TEMPERATURE_CHECK) & (tmp/NUMBER_TEMPERATURE_CHECK < Temperature.MaxAmbTmp)) {
+				if((Temperature.MinAmbTmp < tmp/NUMBER_AMBIENT_TEMP_CHECK) & (tmp/NUMBER_AMBIENT_TEMP_CHECK < Temperature.MaxAmbTmp)) {
 					
 					WhichIntent(TargetIntent.Home);
 				
@@ -406,8 +441,9 @@ public class SystemCheckActivity extends Activity {
 			
 			tempDouble = Double.parseDouble(tempStr);
 			
-			if((min < tempDouble) & (tempDouble < max)) systemState = nextState;
-			else photoCheck += errBits;
+			if(!(min < tempDouble) | !(tempDouble < max)) photoCheck += errBits;
+			
+			systemState = nextState;
 			
 		} else systemState = AnalyzerState.NoResponse;
 	}
@@ -518,6 +554,9 @@ public class SystemCheckActivity extends Activity {
 		SharedPreferences LoginPref = getSharedPreferences("Log in", MODE_PRIVATE);
 		HomeActivity.LoginFlag = LoginPref.getBoolean("Activation", true);
 		HomeActivity.CheckFlag = LoginPref.getBoolean("Check Box", false);
+		
+		SharedPreferences temperaturePref = getSharedPreferences("Temperature", MODE_PRIVATE);
+		Temperature.InitTmp = temperaturePref.getInt("Cell Block", 27);
 	}
 	
 	public void ErrorPopup(final byte error) {

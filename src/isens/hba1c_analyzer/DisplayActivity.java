@@ -25,6 +25,8 @@ public class DisplayActivity extends Activity {
 	
 	private static TextView TimeText;
 	
+	private boolean btnState = false;
+	
 	protected void onCreate(Bundle savedInstanceState) {
 		
 		super.onCreate(savedInstanceState);
@@ -40,9 +42,14 @@ public class DisplayActivity extends Activity {
 		
 			public void onClick(View v) {
 			
-				escBtn.setEnabled(false);
-				
-				WhichIntent(TargetIntent.SystemSetting);
+				if(!btnState) {
+					
+					btnState = true;
+					
+					escBtn.setEnabled(false);
+					
+					WhichIntent(TargetIntent.SystemSetting);
+				}
 			}
 		});
 		
@@ -51,7 +58,12 @@ public class DisplayActivity extends Activity {
 		
 			public void onClick(View v) {
 				
-				BrightnessDown();
+				if(!btnState) {
+					
+					btnState = true;
+					
+					BrightnessDown();
+				}
 			}
 		});
 		
@@ -60,7 +72,12 @@ public class DisplayActivity extends Activity {
 		
 			public void onClick(View v) {
 			
-				BrightnessUp();
+				if(!btnState) {
+					
+					btnState = true;
+					
+					BrightnessUp();
+				}
 			}
 		});
 				
@@ -104,27 +121,25 @@ public class DisplayActivity extends Activity {
 		
 		case 51		:
 			brightnessValue = 102;
-			GaugeDisplay();
 			break;
 
 		case 102		:
 			brightnessValue = 153;
-			GaugeDisplay();
 			break;
 			
 		case 153		:
 			brightnessValue = 204;
-			GaugeDisplay();
 			break;
 			
 		case 204	:
 			brightnessValue = 255;
-			GaugeDisplay();
 			break;
 			
 		default		:
 			break;
 		}
+		
+		GaugeDisplay();
 		
 		SetBrightness();
 	}
@@ -135,27 +150,25 @@ public class DisplayActivity extends Activity {
 		
 		case 102		:
 			brightnessValue = 51;
-			GaugeDisplay();
 			break;
 			
 		case 153		:
 			brightnessValue = 102;
-			GaugeDisplay();
 			break;
 			
 		case 204	:
 			brightnessValue = 153;
-			GaugeDisplay();
 			break;
 		
 		case 255		:
 			brightnessValue = 204;
-			GaugeDisplay();
 			break;
 			
 		default		:
 			break;
 		}
+		
+		GaugeDisplay();
 		
 		SetBrightness();
 	}
@@ -200,6 +213,8 @@ public class DisplayActivity extends Activity {
 			getWindow().setAttributes(params);
 			
 			android.provider.Settings.System.putInt(getContentResolver(), android.provider.Settings.System.SCREEN_BRIGHTNESS, brightnessValue);
+			
+			btnState = false;
 			
 		} catch(Exception e) {
 			

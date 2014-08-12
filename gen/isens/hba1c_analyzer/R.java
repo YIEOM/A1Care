@@ -283,13 +283,12 @@ public final class R {
     public static final class id {
         public static final int HbA1cText=0x7f0b0020;
         public static final int ackText=0x7f0b0063;
-        public static final int action_settings=0x7f0b00ae;
+        public static final int action_settings=0x7f0b00b0;
         public static final int actionlinear=0x7f0b0000;
         public static final int adjustbtn=0x7f0b00a1;
-        public static final int ambienttemptext=0x7f0b00a6;
-        public static final int ampmdownbtn=0x7f0b00a9;
-        public static final int ampmtext=0x7f0b00a8;
-        public static final int ampmupbtn=0x7f0b00a7;
+        public static final int ampmdownbtn=0x7f0b00ab;
+        public static final int ampmtext=0x7f0b00aa;
+        public static final int ampmupbtn=0x7f0b00a9;
         public static final int backicon=0x7f0b0023;
         public static final int bargauge=0x7f0b005a;
         public static final int birthtext=0x7f0b0066;
@@ -298,7 +297,6 @@ public final class R {
         public static final int calibrationbtn=0x7f0b00a3;
         public static final int cancelbtn=0x7f0b006a;
         public static final int canclebtn=0x7f0b0058;
-        public static final int cellblocktemptext=0x7f0b00a5;
         public static final int chdckbox1=0x7f0b0025;
         public static final int chdckbox2=0x7f0b002a;
         public static final int chdckbox3=0x7f0b002f;
@@ -336,11 +334,11 @@ public final class R {
         public static final int fullbtn=0x7f0b0021;
         public static final int gendertext=0x7f0b0067;
         public static final int hba1cPct=0x7f0b008e;
-        public static final int hminusbtn=0x7f0b00ac;
+        public static final int hminusbtn=0x7f0b00ae;
         public static final int homeicon=0x7f0b0024;
         public static final int homelinear=0x7f0b007c;
-        public static final int hourtext=0x7f0b00ab;
-        public static final int hplusbtn=0x7f0b00aa;
+        public static final int hourtext=0x7f0b00ad;
+        public static final int hplusbtn=0x7f0b00ac;
         public static final int ipaddretext=0x7f0b006c;
         public static final int languagebtn=0x7f0b00a0;
         public static final int languagetext=0x7f0b0081;
@@ -350,7 +348,7 @@ public final class R {
         public static final int loginoid=0x7f0b0083;
         public static final int loginpass=0x7f0b0084;
         public static final int maintenancebtn=0x7f0b0098;
-        public static final int mintext=0x7f0b00ad;
+        public static final int mintext=0x7f0b00af;
         public static final int minusbtn=0x7f0b0059;
         public static final int mminusbtn=0x7f0b004a;
         public static final int monthtext=0x7f0b0049;
@@ -384,6 +382,7 @@ public final class R {
         public static final int r_testdate1=0x7f0b0090;
         public static final int r_testdate2=0x7f0b0091;
         public static final int range=0x7f0b0052;
+        public static final int readbtn=0x7f0b00a7;
         public static final int receiveappetext=0x7f0b0070;
         public static final int receivefacilityetext=0x7f0b0078;
         public static final int recordbtn=0x7f0b007f;
@@ -408,6 +407,7 @@ public final class R {
         public static final int sendorubtn=0x7f0b0069;
         public static final int sendpidbtn=0x7f0b0068;
         public static final int servicebtn=0x7f0b008a;
+        public static final int setbtn=0x7f0b00a5;
         public static final int settingbtn=0x7f0b007e;
         public static final int sixone=0x7f0b001b;
         public static final int sixthree=0x7f0b001d;
@@ -441,6 +441,8 @@ public final class R {
         public static final int threetwo=0x7f0b0013;
         public static final int timeText=0x7f0b0001;
         public static final int timebtn=0x7f0b009e;
+        public static final int tmpetext=0x7f0b00a6;
+        public static final int tmptext=0x7f0b00a8;
         public static final int twoone=0x7f0b000f;
         public static final int twothree=0x7f0b0011;
         public static final int twotwo=0x7f0b0010;
@@ -499,7 +501,8 @@ public final class R {
         public static final int home=0x7f0a0000;
     }
     public static final class raw {
-        public static final int win=0x7f060000;
+        public static final int jump=0x7f060000;
+        public static final int win=0x7f060001;
     }
     public static final class string {
         public static final int action_settings=0x7f080001;

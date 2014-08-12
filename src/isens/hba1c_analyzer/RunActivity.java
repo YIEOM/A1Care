@@ -110,6 +110,8 @@ public class RunActivity extends Activity {
 	
 	public double A;
 	
+	public boolean btnState = false;
+	
 	protected void onCreate(Bundle savedInstanceState) {
 	
 		super.onCreate(savedInstanceState);
@@ -136,12 +138,19 @@ public class RunActivity extends Activity {
 		
 			public void onClick(View v) {
 			
-				escIcon.setEnabled(false);
-				noBtn.setEnabled(true);
+				if(!btnState) {
+					
+					btnState = true;
 				
-				escPopup.showAtLocation(runLinear, Gravity.CENTER, 0, 0);
-				escPopup.setAnimationStyle(0);
-				escPopup.showAsDropDown(escIcon);
+					escIcon.setEnabled(false);
+					noBtn.setEnabled(true);
+					
+					escPopup.showAtLocation(runLinear, Gravity.CENTER, 0, 0);
+					escPopup.setAnimationStyle(0);
+					escPopup.showAsDropDown(escIcon);
+			
+					btnState = false;
+				}
 			}
 		});
 		
@@ -151,13 +160,20 @@ public class RunActivity extends Activity {
 			
 			public void onClick(View v) {
 				
-				yesBtn.setEnabled(false);
-								
-				WaitPopup();
+				if(!btnState) {
+					
+					btnState = true;
 				
-				if(MotorShakeFlag) MotionInstruct(MOTOR_STOP, SerialPort.CtrTarget.MotorStop);
-
-				checkError = HomeActivity.STOP_RESULT;
+					yesBtn.setEnabled(false);
+								
+					WaitPopup();
+					
+					if(MotorShakeFlag) MotionInstruct(MOTOR_STOP, SerialPort.CtrTarget.MotorStop);
+	
+					checkError = HomeActivity.STOP_RESULT;
+					
+					btnState = false;
+				}
 			}
 		});
 		
@@ -167,10 +183,17 @@ public class RunActivity extends Activity {
 			
 			public void onClick(View v) {
 				
-				noBtn.setEnabled(false);
-				escIcon.setEnabled(true);
-				
-				escPopup.dismiss();
+				if(!btnState) {
+					
+					btnState = true;
+					
+					noBtn.setEnabled(false);
+					escIcon.setEnabled(true);
+					
+					escPopup.dismiss();
+					
+					btnState = false;
+				}
 			}
 		});
 	
@@ -260,7 +283,7 @@ public class RunActivity extends Activity {
 				}
 			}
 			
-			if(runState != AnalyzerState.NoResponse) {
+			if(runState == AnalyzerState.MeasurePosition) {
 				
 				switch(checkError) {
 				
@@ -352,7 +375,7 @@ public class RunActivity extends Activity {
 				}
 			}
 			
-			if(runState != AnalyzerState.NoResponse) {
+			if(runState == AnalyzerState.Filter535nm) {
 				
 				switch(checkError) {
 				
@@ -436,7 +459,7 @@ public class RunActivity extends Activity {
 				}
 			}
 			
-			if(runState != AnalyzerState.NoResponse) {
+			if(runState == AnalyzerState.Filter535nm) {
 				
 				switch(checkError) {
 				
@@ -520,7 +543,7 @@ public class RunActivity extends Activity {
 				}
 			}
 			
-			if(runState != AnalyzerState.NoResponse) {
+			if(runState == AnalyzerState.Step2Position) {
 				
 				checkError = tHbCalculate();
 				
@@ -589,7 +612,7 @@ public class RunActivity extends Activity {
 				}
 			}
 			
-			if(runState != AnalyzerState.NoResponse) {
+			if(runState == AnalyzerState.MeasurePosition) {
 				
 				switch(checkError) {
 				
@@ -681,7 +704,7 @@ public class RunActivity extends Activity {
 				}
 			}
 			
-			if(runState != AnalyzerState.NoResponse) {
+			if(runState == AnalyzerState.Filter535nm) {
 			
 				switch(checkError) {
 				
@@ -765,7 +788,7 @@ public class RunActivity extends Activity {
 				}
 			}
 			
-			if(runState != AnalyzerState.NoResponse) {
+			if(runState == AnalyzerState.Filter535nm) {
 				
 				switch(checkError) {
 				
@@ -849,7 +872,7 @@ public class RunActivity extends Activity {
 				}
 			}			
 			
-			if(runState != AnalyzerState.NoResponse) {
+			if(runState == AnalyzerState.CartridgeDump) {
 				
 				checkError = HbA1cCalculate();
 				
@@ -916,7 +939,7 @@ public class RunActivity extends Activity {
 					}
 				}
 				
-				if(runState != AnalyzerState.NoResponse) {
+				if(runState == AnalyzerState.Step1Position) {
 					
 					BarAnimation(586);
 					
@@ -974,7 +997,7 @@ public class RunActivity extends Activity {
 					}
 				}
 				
-				if(runState != AnalyzerState.NoResponse) {
+				if(runState == AnalyzerState.Step1Position) {
 				
 					BarAnimation(586);
 					
@@ -1047,6 +1070,8 @@ public class RunActivity extends Activity {
 		
 		int time = 0;	
 		String rawValue;
+		
+//		SerialPort.Sleep(1000);
 		
 		RunSerial.BoardTx("VH", SerialPort.CtrTarget.PhotoSet);
 		
@@ -1268,7 +1293,7 @@ public class RunActivity extends Activity {
 			
 			} else if(MOTOR_STOP.equals(temp)) {
 				
-				runState = AnalyzerState.NoWorking;;
+				runState = AnalyzerState.MeasurePosition;;
 				break;
 			}
 					

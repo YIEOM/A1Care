@@ -27,6 +27,8 @@ public class AdjustmentFactorActivity extends Activity {
 		
 	private static TextView TimeText;
 	
+	private boolean btnState = false;
+	
 	protected void onCreate(Bundle savedInstanceState) {
 		
 		super.onCreate(savedInstanceState);
@@ -43,11 +45,16 @@ public class AdjustmentFactorActivity extends Activity {
 		
 			public void onClick(View v) {
 		
-				escBtn.setEnabled(false);
+				if(!btnState) {
+					
+					btnState = true;
 				
-				AdjustmentSave(Float.valueOf(slopeEText.getText().toString()).floatValue(), Float.valueOf(offsetEText.getText().toString()).floatValue());
-				
-				WhichIntent(TargetIntent.SystemSetting);
+					escBtn.setEnabled(false);
+					
+					AdjustmentSave(Float.valueOf(slopeEText.getText().toString()).floatValue(), Float.valueOf(offsetEText.getText().toString()).floatValue());
+					
+					WhichIntent(TargetIntent.SystemSetting);
+				}
 			}
 		});
 		

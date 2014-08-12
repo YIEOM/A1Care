@@ -32,6 +32,8 @@ public class SoundActivity extends Activity {
 	
 	private static TextView TimeText;
 	
+	public boolean btnState = false;
+	
 	protected void onCreate(Bundle savedInstanceState) {
 		
 		super.onCreate(savedInstanceState);
@@ -47,9 +49,14 @@ public class SoundActivity extends Activity {
 		
 			public void onClick(View v) {
 			
-				escBtn.setEnabled(false);
+				if(!btnState) {
+					
+					btnState = true;
+					
+					escBtn.setEnabled(false);
 				
-				WhichIntent(TargetIntent.SystemSetting);
+					WhichIntent(TargetIntent.SystemSetting);
+				}
 			}
 		});
 		
@@ -59,7 +66,12 @@ public class SoundActivity extends Activity {
 		
 			public void onClick(View v) {
 				
-				SoundVolumeDown();
+				if(!btnState) {
+					
+					btnState = true;
+					
+					SoundVolumeDown();
+				}
 			}
 		});
 		
@@ -68,7 +80,12 @@ public class SoundActivity extends Activity {
 		
 			public void onClick(View v) {
 			
-				SoundVolumeUp();
+				if(!btnState) {
+					
+					btnState = true;
+					
+					SoundVolumeUp();
+				}
 			}
 		});
 		
@@ -121,32 +138,29 @@ public class SoundActivity extends Activity {
 		
 		case 0	:
 			volume = 3;
-			GaugeDisplay();
 			break;
 
 		case 3	:
 			volume = 6;
-			GaugeDisplay();
 			break;
 			
 		case 6	:
 			volume = 9;
-			GaugeDisplay();
 			break;
 			
 		case 9	:
 			volume = 12;
-			GaugeDisplay();
 			break;
 		
 		case 12	:
 			volume = 15;
-			GaugeDisplay();
 			break;
 			
 		default		:
 			break;
 		}
+		
+		GaugeDisplay();
 		
 		SetSoundVolume();
 	}
@@ -157,32 +171,29 @@ public class SoundActivity extends Activity {
 		
 		case 3	:
 			volume = 0;
-			GaugeDisplay();
 			break;
 
 		case 6	:
 			volume = 3;
-			GaugeDisplay();
 			break;
 			
 		case 9	:
 			volume = 6;
-			GaugeDisplay();
 			break;
 			
 		case 12	:
 			volume = 9;
-			GaugeDisplay();
 			break;
 		
 		case 15	:
 			volume = 12;
-			GaugeDisplay();
 			break;
 			
 		default		:
 			break;
 		}
+		
+		GaugeDisplay();
 		
 		SetSoundVolume();
 	}
@@ -206,6 +217,8 @@ public class SoundActivity extends Activity {
 			  		mPool.play(mWin, 1, 1, 0, 0, 1); // playing sound
 			      }
 			});
+
+			btnState = false;
 			
 		} catch(Exception e) {
 			

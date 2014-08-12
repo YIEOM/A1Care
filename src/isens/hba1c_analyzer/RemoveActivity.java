@@ -71,6 +71,8 @@ public class RemoveActivity extends Activity {
 			GpioPort.DoorActState = true;
 			GpioPort.CartridgeActState = true;
 	
+			SerialPort.Sleep(1500);
+			
 			while(ActionActivity.CartridgeCheckFlag != 0);
 			
 			while((ActionActivity.DoorCheckFlag != 1) | (ActionActivity.CartridgeCheckFlag != 0));

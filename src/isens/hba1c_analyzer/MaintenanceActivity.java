@@ -29,6 +29,8 @@ public class MaintenanceActivity extends Activity {
 		
 	private static TextView TimeText;
 	
+	public boolean btnState = false;
+	
 	protected void onCreate(Bundle savedInstanceState) {
 		
 		super.onCreate(savedInstanceState);
@@ -45,9 +47,14 @@ public class MaintenanceActivity extends Activity {
 		
 			public void onClick(View v) {
 			
-				backBtn.setEnabled(false);
-				
-				WhichIntent(TargetIntent.Setting);
+				if(!btnState) {
+					
+					btnState = true;
+					
+					backBtn.setEnabled(false);
+					
+					WhichIntent(TargetIntent.Setting);	
+				}
 			}
 		});
 		
@@ -57,9 +64,14 @@ public class MaintenanceActivity extends Activity {
 		
 			public void onClick(View v) {
 			
-				homeBtn.setEnabled(false);
-
-				WhichIntent(TargetIntent.Home);
+				if(!btnState) {
+					
+					btnState = true;
+					
+					homeBtn.setEnabled(false);
+		
+					WhichIntent(TargetIntent.Home);
+				}
 			}
 		});
 	}

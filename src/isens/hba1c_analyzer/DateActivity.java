@@ -8,6 +8,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.provider.ContactsContract.CommonDataKinds.Event;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -39,6 +40,8 @@ public class DateActivity extends Activity {
 				month,
 				day;
 	
+	private boolean btnState = false;
+	
 	protected void onCreate(Bundle savedInstanceState) {
 		
 		super.onCreate(savedInstanceState);
@@ -56,11 +59,16 @@ public class DateActivity extends Activity {
 		
 			public void onClick(View v) {
 			
-				escBtn.setEnabled(false);
+				if(!btnState) {
+					
+					btnState = true;
 				
-				DateSave();
-				
-				WhichIntent(TargetIntent.SystemSetting);
+					escBtn.setEnabled(false);
+					
+					DateSave();
+					
+					WhichIntent(TargetIntent.SystemSetting);
+				}
 			}
 		});
 		
@@ -69,16 +77,37 @@ public class DateActivity extends Activity {
 			
 			public void onClick(View v) {
 				
-				YearChange(AddSub.PLUS);
+				if(!btnState) {
+					
+					btnState = true;
+				
+					YearChange(AddSub.PLUS);
+				}
 			}
 		});
+		
+//		yPlusBtn.setOnLongClickListener(new View.OnLongClickListener() {
+//			
+//			@Override
+//			public boolean onLongClick(View v) {
+//			
+//				switch()
+//				
+//				return false;
+//			}
+//		});
 		
 		yMinusBtn = (Button) findViewById(R.id.yminusbtn);
 		yMinusBtn.setOnClickListener(new View.OnClickListener() {
 			
 			public void onClick(View v) {
 
-				YearChange(AddSub.MINUS);
+				if(!btnState) {
+					
+					btnState = true;
+					
+					YearChange(AddSub.MINUS);
+				}
 			}
 		});
 		
@@ -87,7 +116,12 @@ public class DateActivity extends Activity {
 			
 			public void onClick(View v) {
 
-				MonthChange(AddSub.PLUS);
+				if(!btnState) {
+					
+					btnState = true;
+					
+					MonthChange(AddSub.PLUS);
+				}
 			}
 		});
 		
@@ -96,7 +130,12 @@ public class DateActivity extends Activity {
 			
 			public void onClick(View v) {
 			
-				MonthChange(AddSub.MINUS);
+				if(!btnState) {
+					
+					btnState = true;
+					
+					MonthChange(AddSub.MINUS);
+				}	
 			}
 		});
 		
@@ -105,7 +144,12 @@ public class DateActivity extends Activity {
 			
 			public void onClick(View v) {
 			
-				DayChange(AddSub.PLUS);
+				if(!btnState) {
+					
+					btnState = true;
+				
+					DayChange(AddSub.PLUS);
+				}
 			}
 		});
 
@@ -114,7 +158,12 @@ public class DateActivity extends Activity {
 			
 			public void onClick(View v) {
 				
-				DayChange(AddSub.MINUS);
+				if(!btnState) {
+					
+					btnState = true;
+					
+					DayChange(AddSub.MINUS);
+				}
 			}
 		});
 		
@@ -144,18 +193,11 @@ public class DateActivity extends Activity {
 		
 	public synchronized void DateDisplay() { // displaying date parameter
 		
-//		new Thread(new Runnable() {
-//		    public void run() {    
-//		        runOnUiThread(new Runnable(){
-//		            public void run() {
-
-		        		yearText.setText(Integer.toString(year));
-		        		monthText.setText(Integer.toString(month));
-		        		dayText.setText(Integer.toString(day));
-//		            }
-//		        });
-//		    }
-//		}).start();
+		yearText.setText(Integer.toString(year));
+		monthText.setText(Integer.toString(month));
+		dayText.setText(Integer.toString(day));
+		
+		btnState = false;
 	}
 	
 	public void GetCurrDate() { // acquiring date parameter displayed

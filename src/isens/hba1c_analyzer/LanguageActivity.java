@@ -37,6 +37,7 @@ public class LanguageActivity extends Activity {
 	private String[] languageTable = new String[] {"ko", "en"};
 	
 	private int idx = 0;
+	public boolean btnState = false;
 	
 	protected void onCreate(Bundle savedInstanceState) {
 		
@@ -53,11 +54,16 @@ public class LanguageActivity extends Activity {
 		
 			public void onClick(View v) {
 			
-				escBtn.setEnabled(false);
-				
-				SetLocale();
-				
-				WhichIntent(TargetIntent.SystemSetting);
+				if(!btnState) {
+					
+					btnState = true;
+
+					escBtn.setEnabled(false);
+					
+					SetLocale();
+					
+					WhichIntent(TargetIntent.SystemSetting);
+				}
 			}
 		});
 		
@@ -66,7 +72,12 @@ public class LanguageActivity extends Activity {
 		
 			public void onClick(View v) {
 				
-				LanguageFront();
+				if(!btnState) {
+					
+					btnState = true;
+
+					LanguageFront();
+				}
 			}
 		});
 			
@@ -75,7 +86,12 @@ public class LanguageActivity extends Activity {
 		
 			public void onClick(View v) {
 				
-				LanguageBack();
+				if(!btnState) {
+					
+					btnState = true;
+
+					LanguageBack();
+				}
 			}
 		});
 		
@@ -136,6 +152,8 @@ public class LanguageActivity extends Activity {
 		default	:
 			break;
 		}
+		
+		btnState = false;
 	}
 	
 	public void LanguageFront() {

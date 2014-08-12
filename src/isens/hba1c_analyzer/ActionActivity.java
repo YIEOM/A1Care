@@ -11,6 +11,9 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.BitmapDrawable;
+import android.media.AudioManager;
+import android.media.SoundPool;
+import android.media.SoundPool.OnLoadCompleteListener;
 import android.os.Bundle;
 import android.os.Debug;
 import android.os.Handler;
@@ -58,6 +61,12 @@ public class ActionActivity extends Activity {
 	public static byte CartridgeCheckFlag, 
 					   DoorCheckFlag;
 	
+	private AudioManager audioManager;
+	private SoundPool mPool;
+	private int mWin;
+	
+	private boolean btnState = false;
+	
 	protected void onCreate(Bundle savedInstanceState) {
 			
 		super.onCreate(savedInstanceState);
@@ -75,18 +84,28 @@ public class ActionActivity extends Activity {
 		errorBtnPopupView = View.inflate(getApplicationContext(), R.layout.errorbtnpopup, null);
 		errorBtnPopup = new PopupWindow(errorBtnPopupView, 504, 174, true);
 		
+		mPool = new SoundPool(1, AudioManager.STREAM_MUSIC, 0);
+		mWin = mPool.load(this, R.raw.jump, 1);
+		
 		/* Esc Pop-up window activation */
 		escBtn = (Button)findViewById(R.id.escicon);
 		escBtn.setOnClickListener(new View.OnClickListener() {
 		
 			public void onClick(View v) {
 			
-				escBtn.setEnabled(false);
-				noBtn.setEnabled(true);
-				
-				escPopup.showAtLocation(actionLinear, Gravity.CENTER, 0, 0);
-				escPopup.setAnimationStyle(0);
-				escPopup.showAsDropDown(escBtn);
+				if(!btnState) {
+					
+					btnState = true;
+					
+					escBtn.setEnabled(false);
+					noBtn.setEnabled(true);
+					
+					escPopup.showAtLocation(actionLinear, Gravity.CENTER, 0, 0);
+					escPopup.setAnimationStyle(0);
+					escPopup.showAsDropDown(escBtn);
+
+					btnState = false;
+				}
 			}
 		});
 		
@@ -96,10 +115,15 @@ public class ActionActivity extends Activity {
 			
 			public void onClick(View v) {
 				
-				yesBtn.setEnabled(false);
-				
-				if(GpioPort.DoorActState) WhichIntent(TargetIntent.Remove);
-				else WhichIntent(TargetIntent.Home);
+				if(!btnState) {
+					
+					btnState = true;
+
+					yesBtn.setEnabled(false);
+					
+					if(GpioPort.DoorActState) WhichIntent(TargetIntent.Remove);
+					else WhichIntent(TargetIntent.Home);
+				}
 			}
 		});
 		
@@ -122,12 +146,17 @@ public class ActionActivity extends Activity {
 			
 			public void onClick(View v) {
 				
-				errorBtn.setEnabled(false);
+				if(!btnState) {
+					
+					btnState = true;
 				
-				errorBtnPopup.dismiss();
-				errorBtn.setEnabled(true);
-				
-				ActionInit();
+					errorBtn.setEnabled(false);
+					
+					errorBtnPopup.dismiss();
+					errorBtn.setEnabled(true);
+					
+					ActionInit();
+				}
 			}
 		});
 		
@@ -147,6 +176,7 @@ public class ActionActivity extends Activity {
 		ActionSerial.BarcodeRxStart();
 		
 		ESCButtonFlag = false;
+		btnState = false;
 		
 		actionLinear.post(new Runnable() {
 	        public void run() {
@@ -222,6 +252,13 @@ public class ActionActivity extends Activity {
 			if(!ESCButtonFlag) {  // to test
 				
 				ActionActivity.DoorCheckFlag = 0;
+				
+				mPool.setOnLoadCompleteListener(new OnLoadCompleteListener() {
+				      public void onLoadComplete(SoundPool mPool, int sampleId, int status) {
+
+				  		mPool.play(mWin, 1, 1, 0, 0, 1); // playing sound
+				      }
+				});
 				
 				CollectorCover CollectorCoverObj = new CollectorCover();
 				CollectorCoverObj.start();

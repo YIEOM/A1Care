@@ -55,6 +55,8 @@ public class ResultActivity extends Activity {
 	public int dataCnt;
 	private double cellBlockEndTmp;
 	
+	public boolean btnState = false;
+	
 	protected void onCreate(Bundle savedInstanceState) {
 		
 		super.onCreate(savedInstanceState);
@@ -76,9 +78,14 @@ public class ResultActivity extends Activity {
 		
 			public void onClick(View v) {
 				
-				homeIcon.setEnabled(false);
-				
-				WhichIntent(TargetIntent.Home);
+				if(!btnState) {
+					
+					btnState = true;
+					
+					homeIcon.setEnabled(false);
+					
+					WhichIntent(TargetIntent.Home);
+				}
 			}
 		});
 		
@@ -87,7 +94,12 @@ public class ResultActivity extends Activity {
 		
 			public void onClick(View v) {
 			
-				PrintResultData();
+				if(!btnState) {
+					
+					btnState = true;
+					
+					PrintResultData();
+				}
 			}
 		});
 		
@@ -122,9 +134,14 @@ public class ResultActivity extends Activity {
 		
 			public void onClick(View v) {
 
-				nextSampleBtn.setEnabled(false);
+				if(!btnState) {
+					
+					btnState = true;
+					
+					nextSampleBtn.setEnabled(false);
 				
-				WhichIntent(TargetIntent.Run);
+					WhichIntent(TargetIntent.Run);
+				}
 			}
 		});
 		
@@ -134,7 +151,14 @@ public class ResultActivity extends Activity {
 			
 			public void onClick(View v) {
 				
-				errorPopup.dismiss();
+				if(!btnState) {
+					
+					btnState = true;
+					
+					errorPopup.dismiss();
+				
+					btnState = false;
+				}
 			}
 		});
 	}
@@ -276,7 +300,9 @@ public class ResultActivity extends Activity {
 		txData.append(hbA1cFormat.format(RunActivity.HbA1cPctDbl));
 		
 		ResultSerial = new SerialPort();
-		ResultSerial.PrinterTxStart(SerialPort.PRINTRESULT, txData);	
+		ResultSerial.PrinterTxStart(SerialPort.PRINTRESULT, txData);
+		
+		btnState = false;
 	}
 	
 	public void WhichIntent(TargetIntent Itn) { // Activity conversion after intent data deliver

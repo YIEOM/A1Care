@@ -60,14 +60,14 @@ public class HomeActivity extends Activity {
 					  HOME_ACTIVITY = 2,
 					  COVER_ACTION_ESC = 3;
 
-	final static double MaxDark = 4500,
+	final static double MaxDark = 5000,
 						MinDark = 3000,
-						Max535  = 400000,
-						Min535  = 300000,
-						Max660  = 700000,
-						Min660  = 600000,
-						Max750  = 1000000,
-						Min750  = 900000;
+						Max535  = 300000,
+						Min535  = 100000,
+						Max660  = 500000,
+						Min660  = 200000,
+						Max750  = 700000,
+						Min750  = 400000;
 
 	private SerialPort HomeSerial;
 	
@@ -98,6 +98,8 @@ public class HomeActivity extends Activity {
 	
 	public static boolean LoginFlag,
 						  CheckFlag;
+	
+	public boolean btnState = false;
 	
 	private int mWin;
 	
@@ -134,9 +136,14 @@ public class HomeActivity extends Activity {
 		
 			public void onClick(View v) {
 			
-				runBtn.setEnabled(false);
+				if(!btnState) {
+					
+					btnState = true;
+					
+					runBtn.setEnabled(false);
 				
-				WhichIntent(TargetIntent.Blank);
+					WhichIntent(TargetIntent.Blank);
+				}
 			}
 		});
 		
@@ -146,9 +153,14 @@ public class HomeActivity extends Activity {
 		
 			public void onClick(View v) {
 				
-				settingBtn.setEnabled(false);
-				
-				WhichIntent(TargetIntent.Setting);				
+				if(!btnState) {
+					
+					btnState = true;
+
+					settingBtn.setEnabled(false);
+					
+					WhichIntent(TargetIntent.Setting);				
+				}
 			}
 		});
 		
@@ -158,9 +170,14 @@ public class HomeActivity extends Activity {
 		
 			public void onClick(View v) {
 			
-				recordBtn.setEnabled(false);
+				if(!btnState) {
+					
+					btnState = true;
+					
+					recordBtn.setEnabled(false);
 				
-				WhichIntent(TargetIntent.Memory);
+					WhichIntent(TargetIntent.Memory);
+				}
 			}
 		});
 		
@@ -170,11 +187,16 @@ public class HomeActivity extends Activity {
 		
 			public void onClick(View v) {
 			
-				errorBtn.setEnabled(false);
+				if(!btnState) {
+					
+					btnState = true;
+					
+					errorBtn.setEnabled(false);
 				
-				errorPopup.dismiss();
+					errorPopup.dismiss();
 				
-				Login();
+					Login();
+				}
 			}
 		});
 		
@@ -184,7 +206,12 @@ public class HomeActivity extends Activity {
 		
 			public void onClick(View v) {
 				
-				LoginCheck();
+				if(!btnState) {
+					
+					btnState = true;
+					
+					LoginCheck();
+				}
 			}
 		});
 		
@@ -201,15 +228,22 @@ public class HomeActivity extends Activity {
 			
 			public void onClick(View v) {
 	
-				if(CheckFlag) {
+				if(!btnState) {
 					
-					CheckFlag = false;
-					checkBtn.setBackgroundResource(R.drawable.login_checkbox);
+					btnState = true;
+				
+					if(CheckFlag) {
+						
+						CheckFlag = false;
+						checkBtn.setBackgroundResource(R.drawable.login_checkbox);
+						
+					} else {
+						
+						CheckFlag = true;
+						checkBtn.setBackgroundResource(R.drawable.login_checkbox_check);
+					}
 					
-				} else {
-					
-					CheckFlag = true;
-					checkBtn.setBackgroundResource(R.drawable.login_checkbox_check);
+					btnState = false;
 				}
 			}
 		});
@@ -265,6 +299,8 @@ public class HomeActivity extends Activity {
 	
 //			Log.w("Log in", "log");
 		}
+		
+		btnState = false;
 	}
 	
 	public void LoginPopup() {
@@ -301,6 +337,8 @@ public class HomeActivity extends Activity {
 		} else {
 						
 		}
+		
+		btnState = false;
 	}
 	
 	public void PasswordDisplay() {

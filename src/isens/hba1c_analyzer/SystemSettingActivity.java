@@ -53,6 +53,8 @@ public class SystemSettingActivity extends Activity {
 		
 	public static TextView TimeText;
 	
+	public boolean btnState = false;
+	
 	protected void onCreate(Bundle savedInstanceState) {
 		
 		super.onCreate(savedInstanceState);
@@ -74,9 +76,14 @@ public class SystemSettingActivity extends Activity {
 		
 			public void onClick(View v) {
 			
-				escBtn.setEnabled(false);
+				if(!btnState) {
+					
+					btnState = true;
 				
-				WhichIntent(TargetIntent.Home);
+					escBtn.setEnabled(false);
+					
+					WhichIntent(TargetIntent.Home);
+				}
 			}
 		});
 		
@@ -86,9 +93,14 @@ public class SystemSettingActivity extends Activity {
 		
 			public void onClick(View v) {
 			
-				displayBtn.setEnabled(false);
-				
-				WhichIntent(TargetIntent.Display);
+				if(!btnState) {
+					
+					btnState = true;
+					
+					displayBtn.setEnabled(false);
+
+					WhichIntent(TargetIntent.Display);
+				}
 			}
 		});
 		
@@ -98,9 +110,14 @@ public class SystemSettingActivity extends Activity {
 		
 			public void onClick(View v) {
 				
-				dateBtn.setEnabled(false);
+				if(!btnState) {
+					
+					btnState = true;
+					
+					dateBtn.setEnabled(false);
 				
-				WhichIntent(TargetIntent.Date);
+					WhichIntent(TargetIntent.Date);
+				}
 			}
 		});
 		
@@ -110,9 +127,14 @@ public class SystemSettingActivity extends Activity {
 		
 			public void onClick(View v) {
 				
-				timeBtn.setEnabled(false);
+				if(!btnState) {
+					
+					btnState = true;
+					
+					timeBtn.setEnabled(false);
 				
-				WhichIntent(TargetIntent.Time);
+					WhichIntent(TargetIntent.Time);
+				}
 			}
 		});
 		
@@ -122,9 +144,14 @@ public class SystemSettingActivity extends Activity {
 		
 			public void onClick(View v) {
 				
-				adjustBtn.setEnabled(false);
+				if(!btnState) {
+					
+					btnState = true;
+					
+					adjustBtn.setEnabled(false);
 				
-				WhichIntent(TargetIntent.Adjustment);
+					WhichIntent(TargetIntent.Adjustment);
+				}
 			}
 		});
 		
@@ -134,9 +161,14 @@ public class SystemSettingActivity extends Activity {
 		
 			public void onClick(View v) {
 				
-				collelationBtn.setEnabled(false);
+				if(!btnState) {
+					
+					btnState = true;
+					
+					collelationBtn.setEnabled(false);
 				
-				WhichIntent(TargetIntent.Correlation);
+					WhichIntent(TargetIntent.Correlation);
+				}
 			}
 		});
 		
@@ -146,9 +178,14 @@ public class SystemSettingActivity extends Activity {
 		
 			public void onClick(View v) {
 				
-				soundBtn.setEnabled(false);
+				if(!btnState) {
+					
+					btnState = true;
+					
+					soundBtn.setEnabled(false);
 				
-				WhichIntent(TargetIntent.Sound);
+					WhichIntent(TargetIntent.Sound);
+				}
 			}
 		});
 		
@@ -158,9 +195,14 @@ public class SystemSettingActivity extends Activity {
 		
 			public void onClick(View v) {
 				
-				calibrationBtn.setEnabled(false);
+				if(!btnState) {
+					
+					btnState = true;
+					
+					calibrationBtn.setEnabled(false);
 				
-				WhichIntent(TargetIntent.Calibration);
+					WhichIntent(TargetIntent.Calibration);
+				}
 			}
 		});
 		
@@ -170,9 +212,14 @@ public class SystemSettingActivity extends Activity {
 		
 			public void onClick(View v) {
 				
-				languageBtn.setEnabled(false);
+				if(!btnState) {
+					
+					btnState = true;
+					
+					languageBtn.setEnabled(false);
 				
-				WhichIntent(TargetIntent.Language);
+					WhichIntent(TargetIntent.Language);
+				}
 			}
 		});
 		
@@ -182,9 +229,14 @@ public class SystemSettingActivity extends Activity {
 		
 			public void onClick(View v) {
 				
-				tempBtn.setEnabled(false);
+				if(!btnState) {
+					
+					btnState = true;
+					
+					tempBtn.setEnabled(false);
 				
-				WhichIntent(TargetIntent.Temperature);
+					WhichIntent(TargetIntent.Temperature);
+				}
 			}
 		});
 		
@@ -194,11 +246,18 @@ public class SystemSettingActivity extends Activity {
 		
 			public void onClick(View v) {
 				
-				resetBtn.setEnabled(false);
+				if(!btnState) {
+					
+					btnState = true;
+					
+					resetBtn.setEnabled(false);
 				
-				resetPopup.showAtLocation(systemSettingLinear, Gravity.CENTER, 0, 0);
-				resetPopup.setAnimationStyle(0);
-				resetPopup.showAsDropDown(resetBtn);
+					resetPopup.showAtLocation(systemSettingLinear, Gravity.CENTER, 0, 0);
+					resetPopup.setAnimationStyle(0);
+					resetPopup.showAsDropDown(resetBtn);
+				
+					btnState = false;	
+				}
 			}
 		});
 		
@@ -207,11 +266,18 @@ public class SystemSettingActivity extends Activity {
 		
 			public void onClick(View v) {
 				
-				SettingParameterInit();
+				if(!btnState) {
+					
+					btnState = true;
 				
-				resetBtn.setEnabled(true);
-				
-				resetPopup.dismiss();
+					SettingParameterInit();
+					
+					resetBtn.setEnabled(true);
+					
+					resetPopup.dismiss();
+					
+					btnState = false;
+				}
 			}
 		});
 		
@@ -220,9 +286,16 @@ public class SystemSettingActivity extends Activity {
 		
 			public void onClick(View v) {
 				
-				resetBtn.setEnabled(true);
+				if(!btnState) {
+					
+					btnState = true;
 				
-				resetPopup.dismiss();
+					resetBtn.setEnabled(true);
+				
+					resetPopup.dismiss();
+				
+					btnState = false;
+				}
 			}
 		});
 	}

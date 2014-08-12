@@ -110,40 +110,7 @@ public class DataStorage extends Activity {
 			return;
 		}		
 	}
-	
-	public synchronized void TemperatureSave(String Data, StringBuffer sData1, StringBuffer sData2) { // Save data to uSD card
 		
-		String sdPath = SDCardState();
-//		Log.w("Temperature save", "save");
-		File file = new File(sdPath + SAVE_DIRECTORY + "/Temperature Test.txt"); // File
-				
-		try {
-
-			FileOutputStream fos = new FileOutputStream(file, true);
-//			Log.w("Temperature save", Data);
-			fos.write((Data + "\r\n").getBytes());
-			fos.write("Cell Block :\t".getBytes());
-			fos.write(sData1.toString().getBytes());
-			fos.write("\r\n".getBytes());
-			fos.write("Ambient :\t".getBytes());
-			fos.write(sData2.toString().getBytes());
-			fos.write("\r\n".getBytes());
-			fos.close();
-			
-			while(!file.exists()); // Wait until file is created
-			
-		} catch(FileNotFoundException e) {
-			
-			e.printStackTrace();					
-			return;
-			
-		} catch (IOException e) {
-			
-			e.printStackTrace();
-			return;
-		}		
-	}
-	
 	public String FileCheck(int num, int type) { // Checking specific file 
 		
 		String sdPath = SDCardState(),

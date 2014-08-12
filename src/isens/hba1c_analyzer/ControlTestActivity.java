@@ -64,7 +64,8 @@ public class ControlTestActivity extends Activity {
 				   hbA1c   [] = new String[5],
 				   typeStr [] = new String[5];
 	
-	private boolean checkFlag = false;
+	private boolean checkFlag = false,
+					btnState = false;
 	private ImageButton whichBox = null;
 	
 	private int boxNum = 0;
@@ -170,9 +171,14 @@ public class ControlTestActivity extends Activity {
 		
 			public void onClick(View v) {
 		
-				homeIcon.setEnabled(false);
+				if(!btnState) {
+					
+					btnState = true;
 				
-				WhichIntent(TargetIntent.Home);
+					homeIcon.setEnabled(false);
+					
+					WhichIntent(TargetIntent.Home);
+				}
 			}
 		});
 		
@@ -182,9 +188,14 @@ public class ControlTestActivity extends Activity {
 		
 			public void onClick(View v) {
 		
-				backIcon.setEnabled(false);
+				if(!btnState) {
+					
+					btnState = true;
 				
-				WhichIntent(TargetIntent.Memory);
+					backIcon.setEnabled(false);
+					
+					WhichIntent(TargetIntent.Memory);
+				}
 			}
 		});
 		
@@ -193,9 +204,14 @@ public class ControlTestActivity extends Activity {
 			
 			public void onClick(View v) {
 			
-				preViewBtn.setEnabled(true);
+				if(!btnState) {
+					
+					btnState = true;
 				
-				WhichIntent(TargetIntent.PreFile);
+					preViewBtn.setEnabled(false);
+					
+					WhichIntent(TargetIntent.PreFile);
+				}
 			}
 		});
 		
@@ -204,9 +220,14 @@ public class ControlTestActivity extends Activity {
 		detailViewBtn.setOnClickListener(new View.OnClickListener() {
 			
 			public void onClick(View v) {
+				
+				if(!btnState) {
 			
-				DisplayDetailView();
-				cancleBtn.setEnabled(true);
+					btnState = true;
+					
+					DisplayDetailView();
+					cancleBtn.setEnabled(true);
+				}
 			}
 		});
 		
@@ -215,9 +236,14 @@ public class ControlTestActivity extends Activity {
 			
 			public void onClick(View v) {
 			
-				nextViewBtn.setEnabled(true);
-				
-				WhichIntent(TargetIntent.NextFile);
+				if(!btnState) {
+					
+					btnState = true;
+					
+					nextViewBtn.setEnabled(false);
+					
+					WhichIntent(TargetIntent.NextFile);
+				}
 			}
 		});
 		
@@ -227,7 +253,12 @@ public class ControlTestActivity extends Activity {
 			
 			public void onClick(View v) {
 				
-				PrintRecordData();
+				if(!btnState) {
+					
+					btnState = true;
+					
+					PrintRecordData();
+				}
 			}
 		});
 		
@@ -237,11 +268,18 @@ public class ControlTestActivity extends Activity {
 			
 			public void onClick(View v) {
 				
-				cancleBtn.setEnabled(false);
-				
-				detailPopup.dismiss();
-				
-				detailViewBtn.setEnabled(true);
+				if(!btnState) {
+					
+					btnState = true;
+					
+					cancleBtn.setEnabled(false);
+
+					detailPopup.dismiss();
+					
+					detailViewBtn.setEnabled(true);
+					
+					btnState = false;
+				}
 			}
 		});
 	}	
@@ -369,6 +407,8 @@ public class ControlTestActivity extends Activity {
 			detailPopup.showAtLocation(cTestLayout, Gravity.CENTER, 0, 0);
 			detailPopup.setAnimationStyle(0);
 		}
+		
+		btnState = false;
 	}
 		            		
 	public void PrintRecordData() {
@@ -388,7 +428,9 @@ public class ControlTestActivity extends Activity {
 		txData.append(hbA1c[boxNum - 1]);
 		
 		ControlSerial = new SerialPort();
-		ControlSerial.PrinterTxStart(SerialPort.PRINTRECORD, txData);	
+		ControlSerial.PrinterTxStart(SerialPort.PRINTRECORD, txData);
+		
+		btnState = false;
 	}
 	
 	public void WhichIntent(TargetIntent Itn) { // Activity conversion
@@ -416,7 +458,7 @@ public class ControlTestActivity extends Activity {
 				NextFileIntent.putExtra("Type", (int) FileLoadActivity.CONTROL);
 				startActivity(NextFileIntent);
 				finish();
-			}
+			} else nextViewBtn.setEnabled(true);
 			break;
 		
 		case PreFile	:
@@ -428,12 +470,14 @@ public class ControlTestActivity extends Activity {
 				PreFileIntent.putExtra("Type", (int) FileLoadActivity.CONTROL);
 				startActivity(PreFileIntent);
 				finish();
-			}
+			} else preViewBtn.setEnabled(true);
 			break;
 			
 		default		:	
 			break;			
-		}		
+		}
+		
+		btnState = false;
 	}
 
 	public void finish() {

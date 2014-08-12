@@ -92,7 +92,7 @@ public class BlankActivity extends Activity {
 			GpioPort.DoorActState = true;			
 			GpioPort.CartridgeActState = true;
 			
-			SerialPort.Sleep(1000);
+			SerialPort.Sleep(1500);
 			
 			if(ActionActivity.CartridgeCheckFlag != 0) ErrorPopup(HomeActivity.CART_SENSOR_ERROR);
 			while(ActionActivity.CartridgeCheckFlag != 0);
@@ -200,6 +200,14 @@ public class BlankActivity extends Activity {
 					WhichIntent(TargetIntent.Home);
 					break;
 					
+				case LampError			:
+					checkError = HomeActivity.LAMP_ERROR;MotionInstruct(RunActivity.FILTER_DARK, SerialPort.CtrTarget.PhotoSet);
+					BoardMessage(RunActivity.FILTER_DARK, AnalyzerState.CartridgeHome, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 5);
+					MotionInstruct(RunActivity.HOME_POSITION, SerialPort.CtrTarget.PhotoSet);			
+					BoardMessage(RunActivity.HOME_POSITION, AnalyzerState.NoWorking, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 6);
+					WhichIntent(TargetIntent.Home);
+					break;
+					
 				case NoResponse :
 					Log.w("BlankStep", "NR");
 					blankState = AnalyzerState.NoWorking;
@@ -223,6 +231,8 @@ public class BlankActivity extends Activity {
 		int time = 0;
 		String rawValue;
 		double douValue = 0;
+		
+//		SerialPort.Sleep(1000);
 		
 		BlankSerial.BoardTx("VH", SerialPort.CtrTarget.PhotoSet);
 		

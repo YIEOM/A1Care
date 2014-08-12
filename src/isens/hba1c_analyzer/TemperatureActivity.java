@@ -25,35 +25,28 @@ import android.widget.Toast;
 
 public class TemperatureActivity extends Activity {
 	
-	private SerialPort TemperatureSerial;
 	private Temperature TemperatureTemp;
-	private DataStorage TemperatureData;
 	
-	private Handler handler = new Handler();
-	private TimerTask OneSecondPeriod;
-	private Timer timer;
+	private Button escBtn,
+				   setBtn,
+				   readBtn;	
 	
-	private Button escBtn;
+	private TextView tmptext;
 	
-	private TextView cellBlockTempText, 
-					 ambientTempText;
+	private EditText tmpEText;
 		
 	public static TextView TimeText;
 	
-	private String cellBlockTempData[] = new String[256],
-				   ambientTempData[] = new String[256];
-	
-	private int dataIndex = 0;
-	
-	protected void onCreate(Bundle savedInstanceState) {
+		protected void onCreate(Bundle savedInstanceState) {
 		
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.temperature);
 		
 		TimeText = (TextView)findViewById(R.id.timeText);
-				
-		cellBlockTempText = (TextView) findViewById(R.id.cellblocktemptext);
-		ambientTempText = (TextView) findViewById(R.id.ambienttemptext);
+		tmptext =  (TextView)findViewById(R.id.tmptext);
+		
+		tmpEText = (EditText) findViewById(R.id.tmpetext);
+		
 		
 		/*System setting Activity activation*/
 		escBtn = (Button)findViewById(R.id.escicon);
@@ -67,6 +60,28 @@ public class TemperatureActivity extends Activity {
 			}
 		});
 		
+		setBtn = (Button)findViewById(R.id.setbtn);
+		setBtn.setOnClickListener(new View.OnClickListener() {
+		
+			public void onClick(View v) {
+		
+				setBtn.setEnabled(false);
+				
+				TmpSave(Integer.valueOf(tmpEText.getText().toString()).intValue());
+			}
+		});
+		
+		readBtn = (Button)findViewById(R.id.readbtn);
+		readBtn.setOnClickListener(new View.OnClickListener() {
+		
+			public void onClick(View v) {
+		
+				readBtn.setEnabled(false);
+				
+				TmpDisplay();
+			}
+		});
+		
 		TemperatureInit();
 	}
 	
@@ -75,12 +90,7 @@ public class TemperatureActivity extends Activity {
 		TimerDisplay.timerState = whichClock.TemperatureClock;		
 		CurrTimeDisplay();
 		
-		cellBlockTempData = new String[256];
-		ambientTempData = new String[256];
-		
-		dataIndex = 0;
-		
-		TimerInit();
+		tmpEText.setText(Integer.toString(Temperature.InitTmp));
 	}
 	
 	public void CurrTimeDisplay() {
@@ -90,7 +100,6 @@ public class TemperatureActivity extends Activity {
 		        runOnUiThread(new Runnable(){
 		            public void run() {
 		            	
-//		            	Log.w("SettingTimeDisplay", "run");
 		            	TimeText.setText(TimerDisplay.rTime[3] + " " + TimerDisplay.rTime[4] + ":" + TimerDisplay.rTime[5]);
 		            }
 		        });
@@ -98,81 +107,42 @@ public class TemperatureActivity extends Activity {
 		}).start();	
 	}
 	
-	public void TimerInit() {
+	public void TmpSave(int tmp) {
 		
-		OneSecondPeriod = new TimerTask() {
-			
-			public void run() {
-				Runnable updater = new Runnable() {
-					public void run() {
-						
-						TemperatureDisplay();
-					}
-				};
-				
-				handler.post(updater);		
-			}
-		};
+		SharedPreferences temperaturePref = getSharedPreferences("Temperature", MODE_PRIVATE);
+		SharedPreferences.Editor temperatureedit = temperaturePref.edit();
 		
-		timer = new Timer();
-		timer.schedule(OneSecondPeriod, 0, 1000); // Timer period : 1sec
-	}
-	
-	public void TemperatureDisplay() {
+		temperatureedit.putInt("Cell Block", tmp);
+		temperatureedit.commit();
 		
-		double cellBlock, 
-			   ambient;
-		DecimalFormat dfm = new DecimalFormat("#.0");		
-		final String cellBlockStr, 
-					 ambientStr;		
+		Temperature.InitTmp = tmp;
 		
 		TemperatureTemp = new Temperature();
-		cellBlock = TemperatureTemp.CellTmpRead();
-		ambient = TemperatureTemp.AmbTmpRead();
-		cellBlockStr = dfm.format(cellBlock);
-		ambientStr = dfm.format(ambient);
+		TemperatureTemp.TmpInit();
 		
-		new Thread(new Runnable() {
-			public void run() {    
-				runOnUiThread(new Runnable(){
-					public void run() {
-						
-						cellBlockTempText.setText(cellBlockStr);
-						ambientTempText.setText(ambientStr);
-					}
-				});
-			}
-		}).start();
-
-		cellBlockTempData[dataIndex] = cellBlockStr;
-		ambientTempData[dataIndex++] = ambientStr;
+		setBtn.setEnabled(true);
+	}
+	
+	public void TmpDisplay() {
 		
-		if(dataIndex == 256) {
-			
-			WhichIntent(TargetIntent.FileSave);
-		}
+		DecimalFormat tmpdfm = new DecimalFormat("0.0");
+		double tmpDouble;
+		
+		TemperatureTemp = new Temperature();
+		tmpDouble = TemperatureTemp.CellTmpRead();
+		
+		tmptext.setText(tmpdfm.format(tmpDouble));
+		
+		readBtn.setEnabled(true);
 	}
 	
 	public void WhichIntent(TargetIntent Itn) { // Activity conversion
-		
-		timer.cancel();
 		
 		switch(Itn) {
 		
 		case SystemSetting	:
 			Intent SystemSettingIntent = new Intent(getApplicationContext(), SystemSettingActivity.class);
 			startActivity(SystemSettingIntent);
-			break;
-						
-		case FileSave		:
-			Intent TempFileSaveIntent = new Intent(getApplicationContext(), TempFileSaveActivity.class);
-			TempFileSaveIntent.putExtra("Test Time", TimerDisplay.rTime[3] + " " + TimerDisplay.rTime[4] + ":" + TimerDisplay.rTime[5]);
-			for(int i = 0; i < 256; i ++) {
-				
-				TempFileSaveIntent.putExtra("Cell Block Temp Data" + Integer.toString(i), cellBlockTempData[i]);
-				TempFileSaveIntent.putExtra("Ambient Temp Data" + Integer.toString(i), ambientTempData[i]);
-			}
-			startActivity(TempFileSaveIntent);
 			break;
 			
 		default		:	

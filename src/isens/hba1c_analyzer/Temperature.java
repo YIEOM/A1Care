@@ -4,6 +4,7 @@ import isens.hba1c_analyzer.SerialPort.CtrTarget;
 
 import java.text.DecimalFormat;
 
+import android.content.SharedPreferences;
 import android.util.Log;
 import android.widget.TextView;
 
@@ -14,10 +15,11 @@ public class Temperature extends SerialPort {
 	
 	public TextView TmpText;
 	
-	final static double InitTmp = 27, // Celsius temperature
-						MaxAmbTmp = 39,
-						MinAmbTmp = 23;
-			
+	public static int InitTmp = 27;
+
+	static final int MaxAmbTmp = 39,
+					 MinAmbTmp = 23;
+	
 	public void TmpInit() { // Initial temperature of cell block set-up
 		
 		double tmpDouble;
@@ -31,7 +33,7 @@ public class Temperature extends SerialPort {
 		else tmpString = tmpFormat.format(tmpDouble);
 		
 		BoardTx("R" + tmpString, CtrTarget.TmpSet);
-		BoardMessageOutput();
+		while(!BoardMessageOutput().equals(tmpFormat.format(tmpDouble)));
 	}
 	
 	public double CellTmpRead() { // Read current temperature of cell block

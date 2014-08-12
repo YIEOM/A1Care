@@ -42,8 +42,11 @@ public class TimeActivity extends Activity {
 				currMin,
 				min,
 				ampm;
+	
 	private String minStr,
 				   ampmStr;
+	
+	public boolean btnState = false;
 	
 	protected void onCreate(Bundle savedInstanceState) {
 		
@@ -62,11 +65,16 @@ public class TimeActivity extends Activity {
 		
 			public void onClick(View v) {
 			
-				escBtn.setEnabled(false);
+				if(!btnState) {
+					
+					btnState = true;
+					
+					escBtn.setEnabled(false);
 				
-				TimeSave();
-				
-				WhichIntent(TargetIntent.SystemSetting);
+					TimeSave();
+					
+					WhichIntent(TargetIntent.SystemSetting);
+				}
 			}
 		});
 		
@@ -75,7 +83,12 @@ public class TimeActivity extends Activity {
 			
 			public void onClick(View v) {
 				
-				HourChange(AddSub.PLUS);
+				if(!btnState) {
+					
+					btnState = true;
+					
+					HourChange(AddSub.PLUS);
+				}
 			}
 		});
 		
@@ -84,7 +97,12 @@ public class TimeActivity extends Activity {
 			
 			public void onClick(View v) {
 
-				HourChange(AddSub.MINUS);
+				if(!btnState) {
+					
+					btnState = true;
+					
+					HourChange(AddSub.MINUS);
+				}
 			}
 		});
 		
@@ -93,7 +111,12 @@ public class TimeActivity extends Activity {
 			
 			public void onClick(View v) {
 
-				MinChange(AddSub.PLUS);
+				if(!btnState) {
+					
+					btnState = true;
+					
+					MinChange(AddSub.PLUS);
+				}
 			}
 		});
 		
@@ -102,7 +125,12 @@ public class TimeActivity extends Activity {
 			
 			public void onClick(View v) {
 			
-				MinChange(AddSub.MINUS);
+				if(!btnState) {
+					
+					btnState = true;
+					
+					MinChange(AddSub.MINUS);
+				}
 			}
 		});
 
@@ -111,7 +139,12 @@ public class TimeActivity extends Activity {
 			
 			public void onClick(View v) {
 			
-				AmPmChange();
+				if(!btnState) {
+					
+					btnState = true;
+					
+					AmPmChange();
+				}
 			}
 		});
 
@@ -120,7 +153,12 @@ public class TimeActivity extends Activity {
 			
 			public void onClick(View v) {
 				
-				AmPmChange();
+				if(!btnState) {
+					
+					btnState = true;
+					
+					AmPmChange();
+				}
 			}
 		});
 		
@@ -174,6 +212,8 @@ public class TimeActivity extends Activity {
 		        		hourText.setText(Integer.toString(hour));
 		        		minText.setText(minStr);
 		        		ampmText.setText(ampmStr);
+		        		
+		        		btnState = false;
 		            }
 		        });
 		    }
