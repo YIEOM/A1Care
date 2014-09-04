@@ -1,5 +1,10 @@
 package isens.hba1c_analyzer;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
 import isens.hba1c_analyzer.CalibrationActivity.Cart1stShaking;
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
 import isens.hba1c_analyzer.RunActivity.AnalyzerState;
@@ -121,7 +126,7 @@ public class SystemCheckActivity extends Activity {
 			 
 			GpioPort.DoorActState = false;			
 			GpioPort.CartridgeActState = false;
-			
+
 			MotorCheck MotorCheckObj = new MotorCheck();
 			MotorCheckObj.start();
 		}
@@ -320,6 +325,8 @@ public class SystemCheckActivity extends Activity {
 				}
 				
 				if((Temperature.MinAmbTmp < tmp/NUMBER_AMBIENT_TEMP_CHECK) & (tmp/NUMBER_AMBIENT_TEMP_CHECK < Temperature.MaxAmbTmp)) {
+					
+					SerialPort.Sleep(300000);
 					
 					WhichIntent(TargetIntent.Home);
 				
@@ -556,7 +563,7 @@ public class SystemCheckActivity extends Activity {
 		HomeActivity.CheckFlag = LoginPref.getBoolean("Check Box", false);
 		
 		SharedPreferences temperaturePref = getSharedPreferences("Temperature", MODE_PRIVATE);
-		Temperature.InitTmp = temperaturePref.getInt("Cell Block", 27);
+		Temperature.InitTmp = temperaturePref.getFloat("Cell Block", 27.0f);
 	}
 	
 	public void ErrorPopup(final byte error) {

@@ -2,6 +2,9 @@ package isens.hba1c_analyzer;
 
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.text.DecimalFormat;
 import java.util.Calendar;
 import java.util.Timer;
@@ -48,6 +51,7 @@ public class TimerDisplay {
 	private GpioPort TimerGpio;
 	private CorrelationFactorActivity TimerCorrelation;
 	private TemperatureActivity	TimerTemperature;
+	private SerialPort TimerSerial;
 	
 	public void TimerInit() {
 		
@@ -74,6 +78,8 @@ public class TimerDisplay {
 								ClockDecision();
 							}
 							
+							ExternalDeviceCheck();
+							
 						} else if((cnt % 2) == 0) {
 							
 							TimerGpio = new GpioPort();
@@ -89,6 +95,47 @@ public class TimerDisplay {
 		
 		timer = new Timer();
 		timer.schedule(OneHundredmsPeriod, 0, 100); // Timer period : 100msec
+	}
+	
+	public void ExternalDeviceCheck() {
+		
+		try {
+		    
+			Process chmod = Runtime.getRuntime().exec("/system/bin/busybox ls /dev/ttyACM0");
+
+			BufferedReader br = new BufferedReader(new InputStreamReader(chmod.getInputStream()));
+			String line = "";
+			
+			while((line = br.readLine()) != null) {
+			
+//				Log.w("shell", "line : " + line);
+				
+				if(line.equals("/dev/ttyACM0")) {
+					
+					if(HomeActivity.ExternalDevice == false) {
+						
+						HomeActivity.ExternalDevice = true;
+						
+						TimerSerial = new SerialPort();
+						TimerSerial.HHBarcodeSerialInit();
+						TimerSerial.HHBarcodeRxStart();
+						
+						Log.w("shell", "line : " + line);
+					}
+					
+					if(HomeActivity.ExternalDevice == true) {
+					
+						TimerSerial.close();
+					}
+				}
+			}
+			
+			br.close(); 
+			
+		} catch (IOException e) {
+	
+			throw new RuntimeException(e);
+		}
 	}
 	
 	public void RealTime() { // Get current date and time

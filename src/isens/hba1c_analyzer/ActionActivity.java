@@ -170,6 +170,7 @@ public class ActionActivity extends Activity {
 		
 		IsCorrectBarcode = false;	
 		BarcodeCheckFlag = false;
+		SerialPort.BarcodeReadStart = false;
 		
 		ActionSerial = new SerialPort();
 		ActionSerial.BarcodeSerialInit();
@@ -378,7 +379,7 @@ public class ActionActivity extends Activity {
 		        		errorBtnPopup.setAnimationStyle(0);
 		        							
 		        		TextView errorText = (TextView) errorBtnPopup.getContentView().findViewById(R.id.errortext);
-		        		errorText.setText(R.string.e061);
+		        		errorText.setText(R.string.e313);
 		        	}
 		        });
 		    }

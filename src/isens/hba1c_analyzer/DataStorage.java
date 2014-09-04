@@ -85,10 +85,18 @@ public class DataStorage extends Activity {
 		
 		String sdPath = SDCardState();
 		
+		File dir = new File(sdPath + SAVE_DIRECTORY);
+				
 		File file = new File(sdPath + SAVE_DIRECTORY + SAVE_HIS_FILENAME + ".txt"); // File
 				
 		try {
 
+			if(!dir.isDirectory()) { // if directory doesn't exist 
+
+				dir.mkdirs();
+				file.createNewFile();
+			}
+			
 			FileOutputStream fos = new FileOutputStream(file, true);
 			
 			fos.write(sData1.toString().getBytes());

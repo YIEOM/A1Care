@@ -1071,8 +1071,6 @@ public class RunActivity extends Activity {
 		int time = 0;	
 		String rawValue;
 		
-//		SerialPort.Sleep(1000);
-		
 		RunSerial.BoardTx("VH", SerialPort.CtrTarget.PhotoSet);
 		
 		rawValue = RunSerial.BoardMessageOutput();			
@@ -1341,7 +1339,7 @@ public class RunActivity extends Activity {
 			ResultIntent.putExtra("RunState", (int) HomeActivity.NORMAL_OPERATION); // Normal operation
 			startActivity(ResultIntent);
 			break;
-						
+
 		case ResultError	:		
 			ResultIntent.putExtra("RunState", (int) checkError); // Error operation
 			startActivity(ResultIntent);

@@ -124,16 +124,16 @@ public class RemoveActivity extends Activity {
 		RemoveImage = (ImageView)findViewById(R.id.removeAct1);
 		RemoveAni = (AnimationDrawable)RemoveImage.getBackground();
 		
-//		new Thread(new Runnable() {
-//		    public void run() {    
-//		        runOnUiThread(new Runnable(){
-//		            public void run() {
+		new Thread(new Runnable() {
+		    public void run() {    
+		        runOnUiThread(new Runnable(){
+		            public void run() {
 		            	
 		            	RemoveAni.start();
-//		            }
-//		        });
-//		    }
-//		}).start();	
+		            }
+		        });
+		    }
+		}).start();	
 	}
 	
 	public void DataCntSave() { // Saving data number

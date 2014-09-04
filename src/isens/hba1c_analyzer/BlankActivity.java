@@ -192,7 +192,6 @@ public class BlankActivity extends Activity {
 					break;
 				
 				case PhotoSensorError	:
-					checkError = HomeActivity.PHOTO_SENSOR_ERROR;
 					MotionInstruct(RunActivity.FILTER_DARK, SerialPort.CtrTarget.PhotoSet);
 					BoardMessage(RunActivity.FILTER_DARK, AnalyzerState.CartridgeHome, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 5);
 					MotionInstruct(RunActivity.HOME_POSITION, SerialPort.CtrTarget.PhotoSet);			
@@ -201,7 +200,8 @@ public class BlankActivity extends Activity {
 					break;
 					
 				case LampError			:
-					checkError = HomeActivity.LAMP_ERROR;MotionInstruct(RunActivity.FILTER_DARK, SerialPort.CtrTarget.PhotoSet);
+					checkError = HomeActivity.LAMP_ERROR;
+					MotionInstruct(RunActivity.FILTER_DARK, SerialPort.CtrTarget.PhotoSet);
 					BoardMessage(RunActivity.FILTER_DARK, AnalyzerState.CartridgeHome, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 5);
 					MotionInstruct(RunActivity.HOME_POSITION, SerialPort.CtrTarget.PhotoSet);			
 					BoardMessage(RunActivity.HOME_POSITION, AnalyzerState.NoWorking, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 6);
@@ -231,8 +231,6 @@ public class BlankActivity extends Activity {
 		int time = 0;
 		String rawValue;
 		double douValue = 0;
-		
-//		SerialPort.Sleep(1000);
 		
 		BlankSerial.BoardTx("VH", SerialPort.CtrTarget.PhotoSet);
 		

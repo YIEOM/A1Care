@@ -63,7 +63,8 @@ public class PatientTestActivity extends Activity {
 				   testNum [] = new String[5],
 				   refNum  [] = new String[5],
 				   hbA1c   [] = new String[5],
-				   typeStr [] = new String[5];
+				   typeStr [] = new String[5],
+				   pID     [] = new String[5];
 	
 	private boolean checkFlag = false,
 					btnState = false;
@@ -317,6 +318,7 @@ public class PatientTestActivity extends Activity {
 		testNum  = itn.getStringArrayExtra("TestNum");
 		refNum   = itn.getStringArrayExtra("RefNumber");
 		hbA1c    = itn.getStringArrayExtra("HbA1c");
+		pID      = itn.getStringArrayExtra("PatientID");
 		
 //		Log.w("GetItnData", "Cartridge Lot : " + refNum[0] + " HbA1c : " + hbA1c[0]);
 	}
@@ -392,7 +394,7 @@ public class PatientTestActivity extends Activity {
 
 		if(checkFlag == true && testNum[boxNum - 1] != null) {
 				
-			patientID.setText("001");
+			patientID.setText(pID[boxNum - 1]);
 			testDate.setText(dateTime[boxNum - 1].substring(2, 4) + "." + dateTime[boxNum - 1].substring(4, 6) + "." + dateTime[boxNum - 1].substring(6, 8) + " " + dateTime[boxNum - 1].substring(8, 10) + " " + dateTime[boxNum - 1].substring(10, 12) + ":" + dateTime[boxNum - 1].substring(12, 14));
 			typeDetailText.setText(typeStr[boxNum - 1]);
 			primary.setText("NGSP");
@@ -412,6 +414,8 @@ public class PatientTestActivity extends Activity {
 	
 	public void PrintRecordData() {
 		
+		DecimalFormat pIDLenDfm = new DecimalFormat("00");
+		
 		StringBuffer txData = new StringBuffer();
 		
 		txData.delete(0, txData.capacity());
@@ -424,6 +428,8 @@ public class PatientTestActivity extends Activity {
 		txData.append(dateTime[boxNum - 1].substring(8, 10));
 		txData.append(testNum[boxNum - 1]);
 		txData.append(refNum[boxNum - 1]);
+		txData.append(pIDLenDfm.format(pID[boxNum - 1].length()));
+		txData.append(pID[boxNum - 1]);
 		txData.append(hbA1c[boxNum - 1]);
 		
 		PatientSerial = new SerialPort();

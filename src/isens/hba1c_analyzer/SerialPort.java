@@ -1,15 +1,22 @@
 package isens.hba1c_analyzer;
 
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.File;
 import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 public class SerialPort {
 	
-	Barcode SerialBarcode;
+	public Barcode SerialBarcode;
+	public ResultActivity SerialResult;
 	
 	/* Board Serial set-up */
 	private static FileDescriptor BoardFd;
@@ -26,11 +33,15 @@ public class SerialPort {
 	private PrinterTxThread pPrinterTxThread;
 	
 	/* Barcode Serial set-up */
-	private static FileDescriptor BarcodeFd;
+	public static FileDescriptor BarcodeFd;
 	private static FileInputStream BarcodeFileInputStream;
 	private FileOutputStream BarcodeFileOutputStream;
-	
 	public static BarcodeRxThread bBarcodeRxThread;
+	
+	public FileDescriptor mFd;
+	private static FileInputStream HHBarcodeFileInputStream;
+	public static HHBarcodeRxThread hBarcodeRxThread;
+	
 	
 	public enum CtrTarget {PhotoSet, TmpSet, TmpCall, MotorSet, AmbientTmpCall, CartCall, DoorCall, MotorStop}
 	public enum RxTarget {Board, Barcode}
@@ -81,7 +92,7 @@ public class SerialPort {
 	
 	public static String AmpTemperature = "0";
 	
-	private static boolean BarcodeReadStart = false;
+	public static boolean BarcodeReadStart = false;
 	
 	private class BoardTxThread extends Thread { // Instruction for a board
 
@@ -278,7 +289,7 @@ public class SerialPort {
 					
 					/* HbA1c percentage */
 					pFileOutputStream.write(CR);
-					pFileOutputStream.write(txData.substring(28).getBytes());
+					pFileOutputStream.write(txData.substring(30 + Integer.parseInt(txData.substring(28, 30))).getBytes());
 					pFileOutputStream.write(" %".getBytes());
 					
 					/* Reference Range */
@@ -322,6 +333,21 @@ public class SerialPort {
 					/* Lot number */
 					pFileOutputStream.write(CR);
 					pFileOutputStream.write(txData.substring(18, 28).getBytes());
+					
+					/* PID */
+					pFileOutputStream.write(LF);
+					pFileOutputStream.write(CR);
+					pFileOutputStream.write("Patient ID".getBytes());
+					
+					pFileOutputStream.write(ESC);
+					pFileOutputStream.write(36);
+					pFileOutputStream.write(200);
+					pFileOutputStream.write(0);
+					
+					/* Patient ID */
+					pFileOutputStream.write(CR);
+					pFileOutputStream.write(txData.substring(30, 30 + Integer.parseInt(txData.substring(28, 30))).getBytes());
+					
 					
 					/* End Line */
 					pFileOutputStream.write(LF);
@@ -544,11 +570,12 @@ public class SerialPort {
 			BarcodeBufIndex = 0;
 			BarcodeAppendBuffer[BarcodeBufCnt] = new byte[BARCODE_BUFFER_INDEX_SIZE];
 		}
-//		Log.w("BarcodeDataReceive", "size : " + size);
+		Log.w("BarcodeDataReceive", "index : " + BarcodeBufIndex);
 		for(int i = 0; i < size; i++) {
 
 			BarcodeAppendBuffer[BarcodeBufCnt][BarcodeBufIndex++] = BarcodeRxBuffer[i]; // bufCnt : number of each buffer, bufIndex : bit index of one buffer
-//			Log.w("BarcodeDataReceive", "BarcodeRxBuffer : " + Character.toString((char) BarcodeRxBuffer[i]));
+			Log.w("BarcodeDataReceive", "BarcodeRxBuffer : " + Character.toString((char) BarcodeRxBuffer[i]));
+			Log.w("BarcodeDataReceive", "BarcodeRxBuffer : " + BarcodeRxBuffer[i]);
 		}	
 		
 		if(BarcodeBufIndex > 18 | BarcodeBufIndex < 2) {
@@ -559,15 +586,45 @@ public class SerialPort {
 		
 		} else {
 			
-			if(BarcodeRxBuffer[size-2] == CR && BarcodeRxBuffer[size-1] == LF) { // Whether or not end bit
+			switch(TimerDisplay.timerState) {
+			
+			case ActionClock	:
+				if(BarcodeRxBuffer[size-2] == CR && BarcodeRxBuffer[size-1] == LF) { // Whether or not end bit
 
-				BarcodeReadStart = false;
+					BarcodeReadStart = false;
+					
+					BarcodeDataAppend(BarcodeBufCnt, BarcodeBufIndex);
+					
+					BarcodeBufCnt++;
+					if(BarcodeBufCnt == BARCODE_BUFFER_CNT_SIZE) BarcodeBufCnt = 0;
+				}
+				break;
 				
-				BarcodeDataAppend(BarcodeBufCnt, BarcodeBufIndex);
+			case CalibrationClock	:
+				if(BarcodeRxBuffer[size-2] == CR && BarcodeRxBuffer[size-1] == LF) { // Whether or not end bit
+
+					BarcodeReadStart = false;
+					
+					BarcodeDataAppend(BarcodeBufCnt, BarcodeBufIndex);
+					
+					BarcodeBufCnt++;
+					if(BarcodeBufCnt == BARCODE_BUFFER_CNT_SIZE) BarcodeBufCnt = 0;
+				}
+				break;
 				
-				BarcodeBufCnt++;
-				if(BarcodeBufCnt == BARCODE_BUFFER_CNT_SIZE) BarcodeBufCnt = 0;
+			case ResultClock	:
+				if(BarcodeRxBuffer[size-1] == CR) { // Whether or not end bit
+
+					BarcodeReadStart = false;
+					
+					BarcodeDataAppend(BarcodeBufCnt, BarcodeBufIndex);
+					
+					BarcodeBufCnt++;
+					if(BarcodeBufCnt == BARCODE_BUFFER_CNT_SIZE) BarcodeBufCnt = 0;
+				}
+				break;
 			}
+
 		}
 	}
 	
@@ -575,12 +632,38 @@ public class SerialPort {
 		
 		try {
 			
-			StringBuffer barcodeReception  = new StringBuffer();
+			final StringBuffer barcodeReception  = new StringBuffer();
 			
 			barcodeReception.append(new String(BarcodeAppendBuffer[num], 0, len));
-//			Log.w("BarcodeDataAppend", "" + barcodeReception.toString());
-			SerialBarcode = new Barcode();
-			SerialBarcode.BarcodeCheck(barcodeReception);
+			
+			switch(TimerDisplay.timerState) {
+				
+			case ActionClock	:
+				SerialBarcode = new Barcode();
+				SerialBarcode.BarcodeCheck(barcodeReception);
+				break;
+				
+			case CalibrationClock	:
+				SerialBarcode = new Barcode();
+				SerialBarcode.BarcodeCheck(barcodeReception);
+				break;
+				
+			case ResultClock	:
+				
+				Handler mHandler = new Handler(Looper.getMainLooper());
+
+				mHandler.postDelayed(new Runnable() {
+
+				public void run() {
+
+					SerialResult = new ResultActivity();
+					SerialResult.PatientIDDisplay(barcodeReception);
+				}
+
+				}, 0);
+
+				break;
+			}
 				
 		} catch(ArrayIndexOutOfBoundsException e) {
 			
@@ -590,9 +673,40 @@ public class SerialPort {
 		}		
 	}
 	
+	public class HHBarcodeRxThread extends Thread { // Receiving from a barcode sensor
+		
+		public void run() {
+
+			while(!isInterrupted()) {
+				
+				int size;
+				
+				try {
+					
+					if(HHBarcodeFileInputStream != null) {
+						
+						BarcodeRxBuffer = new byte[BARCODE_RX_BUFFER_SIZE];
+						size = HHBarcodeFileInputStream.read(BarcodeRxBuffer);
+//						Log.w("HHBarcodeRxThread", "HHBarcodeInputBuffer : " + new String(BarcodeRxBuffer));
+						if(size > 0) {
+							
+							BarcodeDataReceive(size);
+						}
+					} else {
+						
+						return;
+					}
+				} catch (IOException e) {
+					
+					e.printStackTrace();
+					return;
+				}
+			}
+		}
+	}
+	
 	public void BoardSerialInit() {
 		
-		System.loadLibrary("serial_port");
 		BoardFd = open("/dev/ttySAC3", 9600, 0);
 	}
 	
@@ -624,8 +738,7 @@ public class SerialPort {
 	}
 	
 	public void PrinterSerialInit() {		
-		
-		System.loadLibrary("serial_port");
+	
 		pFd = open("/dev/ttySAC2", 9600, 0);
 	}
 	
@@ -637,7 +750,6 @@ public class SerialPort {
 	
 	public void BarcodeSerialInit() {
 
-		System.loadLibrary("serial_port");
 		BarcodeFd = open("/dev/ttySAC1", 115200, 0);
 	}
 
@@ -646,6 +758,18 @@ public class SerialPort {
 		BarcodeFileInputStream = new FileInputStream(BarcodeFd);
 		bBarcodeRxThread = new BarcodeRxThread();
 		bBarcodeRxThread.start();
+	}
+	
+	public void HHBarcodeSerialInit() {
+			
+		mFd = open("/dev/ttyACM0", 9600, 0);
+	}
+	
+	public void HHBarcodeRxStart() {
+		
+		HHBarcodeFileInputStream = new FileInputStream(mFd);
+		hBarcodeRxThread = new HHBarcodeRxThread();
+		hBarcodeRxThread.start();
 	}
 	
 	public static void Sleep(int t) { // t : msec

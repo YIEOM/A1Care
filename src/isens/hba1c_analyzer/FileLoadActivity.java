@@ -27,7 +27,8 @@ public class FileLoadActivity extends Activity {
 	private String fileTestNum[] = new String[5],
 				   fileRefNum[] = new String[5],
 				   fileHbA1c[] = new String[5],
-				   fileDateTime[] = new String[5];
+				   fileDateTime[] = new String[5],
+				   filePatientID[] = new String[5];
 	
 	String filePath = "",
 		   loadData;
@@ -51,22 +52,27 @@ public class FileLoadActivity extends Activity {
 		fileRefNum[0] = null;
 		fileHbA1c[0] = null;
 		fileDateTime[0] = null;
+		filePatientID[0] = null;
 		fileTestNum[1] = null;
 		fileRefNum[1] = null;
 		fileHbA1c[1] = null;
 		fileDateTime[1] = null;
+		filePatientID[1] = null;
 		fileTestNum[2] = null;
 		fileRefNum[2] = null;
 		fileHbA1c[2] = null;
 		fileDateTime[2] = null;
+		filePatientID[2] = null;
 		fileTestNum[3] = null;
 		fileRefNum[3] = null;
 		fileHbA1c[3] = null;
 		fileDateTime[3] = null;
+		filePatientID[3] = null;
 		fileTestNum[4] = null;
 		fileRefNum[4] = null;
 		fileHbA1c[4] = null;
 		fileDateTime[4] = null;
+		filePatientID[4] = null;
 	}
 	
 	public void FileLoad() { // loading 10 recently saved data
@@ -90,11 +96,12 @@ public class FileLoadActivity extends Activity {
 				
 				loadData = LoadData.DataLoad(filePath);
 				
-				fileDateTime[i] = loadData.substring(0, 4) + loadData.substring(4, 6) + loadData.substring(6, 8) + loadData.substring(8, 10) + 
+				fileDateTime [i] = loadData.substring(0, 4) + loadData.substring(4, 6) + loadData.substring(6, 8) + loadData.substring(8, 10) + 
 								loadData.substring(10, 12) + loadData.substring(12, 14);
-				fileTestNum [i] = loadData.substring(14, 18);
-				fileRefNum  [i] = loadData.substring(18, 28);
-				fileHbA1c   [i] = loadData.substring(28);
+				fileTestNum  [i] = loadData.substring(14, 18);
+				fileRefNum   [i] = loadData.substring(18, 28);
+				filePatientID[i] = loadData.substring(30, 30 + Integer.parseInt(loadData.substring(28, 30)));
+				fileHbA1c    [i] = loadData.substring(30 + Integer.parseInt(loadData.substring(28, 30)));
 			}
 		}
 		
@@ -111,6 +118,7 @@ public class FileLoadActivity extends Activity {
 			ControlIntent.putExtra("TestNum", fileTestNum);
 			ControlIntent.putExtra("RefNumber", fileRefNum);
 			ControlIntent.putExtra("HbA1c", fileHbA1c);
+			ControlIntent.putExtra("PatientID", filePatientID);
 			startActivity(ControlIntent);
 			break;
 			
@@ -120,6 +128,7 @@ public class FileLoadActivity extends Activity {
 			PatientIntent.putExtra("TestNum", fileTestNum);
 			PatientIntent.putExtra("RefNumber", fileRefNum);
 			PatientIntent.putExtra("HbA1c", fileHbA1c);
+			PatientIntent.putExtra("PatientID", filePatientID);
 			startActivity(PatientIntent);
 			break;
 			

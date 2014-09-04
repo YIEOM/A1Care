@@ -17,7 +17,7 @@ import android.widget.TextView;
 
 public class FileSaveActivity extends Activity {
 
-	public static byte NORMAL_RESULT = 1,
+	public static byte NORMAL_RESULT = 0,
 					   CONTROL_TEST = 1,
 					   PATIENT_TEST = 2;
 	
@@ -53,6 +53,7 @@ public class FileSaveActivity extends Activity {
 		
 		itn = getIntent();
 		dataType = itn.getStringExtra("RefNumber").substring(0, 1);
+		Log.w("DataInit", "Data : " + dataType);
 		
 		if(itn.getIntExtra("RunState", 0) == (int) NORMAL_RESULT) {
 
@@ -91,6 +92,8 @@ public class FileSaveActivity extends Activity {
 		overallData.append(itn.getStringExtra("Minute"));
 		overallData.append(dfm.format(DataCnt));
 		overallData.append(itn.getStringExtra("RefNumber"));
+		overallData.append(itn.getStringExtra("PatientIDLen"));
+		overallData.append(itn.getStringExtra("PatientID"));
 		overallData.append(itn.getStringExtra("Hba1cPct"));
 		
 		historyData.append(itn.getIntExtra("RunMin", 0) + "\t");

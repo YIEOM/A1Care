@@ -66,7 +66,7 @@ public class HomeActivity extends Activity {
 						Min535  = 100000,
 						Max660  = 500000,
 						Min660  = 200000,
-						Max750  = 700000,
+						Max750  = 800000,
 						Min750  = 400000;
 
 	private SerialPort HomeSerial;
@@ -98,6 +98,8 @@ public class HomeActivity extends Activity {
 	
 	public static boolean LoginFlag,
 						  CheckFlag;
+		
+	public static boolean ExternalDevice = false;
 	
 	public boolean btnState = false;
 	
@@ -137,7 +139,7 @@ public class HomeActivity extends Activity {
 			public void onClick(View v) {
 			
 				if(!btnState) {
-					
+		
 					btnState = true;
 					
 					runBtn.setEnabled(false);
@@ -305,10 +307,10 @@ public class HomeActivity extends Activity {
 	
 	public void LoginPopup() {
 		
-//		new Thread(new Runnable() {
-//		    public void run() {    
-//		        runOnUiThread(new Runnable(){
-//		            public void run() {
+		new Thread(new Runnable() {
+		    public void run() {    
+		        runOnUiThread(new Runnable(){
+		            public void run() {
 		            	homeLinear.post(new Runnable() {
 		        			public void run() {
 				        
@@ -319,10 +321,10 @@ public class HomeActivity extends Activity {
 								loginPopup.setAnimationStyle(0);
 							}
 		        		});
-//		            }
-//		        });
-//		    }
-//		}).start();
+		            }
+		        });
+		    }
+		}).start();
 	}
 	
 	public void LoginCheck() {
@@ -372,43 +374,43 @@ public class HomeActivity extends Activity {
 				switch(error) {
 				
 				case FILTER_MOTOR_ERROR		:
-					errorText.setText(R.string.e011);
+					errorText.setText(R.string.e212);
 					break;
 					
 				case SHAKING_MOTOR_ERROR	:
-					errorText.setText(R.string.e021);
+					errorText.setText(R.string.e211);
 					break;
 					
 				case PHOTO_SENSOR_ERROR		:
-					errorText.setText(R.string.e031);
+					errorText.setText(R.string.e231);
 					break;
 				
 				case LAMP_ERROR				:
-					errorText.setText("Lamp");
+					errorText.setText(R.string.e232);
 					break;
 				
 				case FILTER_535nm_ERROR		:
-					errorText.setText("535nm");
+					errorText.setText(R.string.e233);
 					break;
 				
 				case FILTER_660nm_ERROR		:
-					errorText.setText("660nm");
+					errorText.setText(R.string.e234);
 					break;
 				
 				case FILTER_750nm_ERROR		:
-					errorText.setText("750nm");
+					errorText.setText(R.string.e235);
 					break;
 					
 				case CELL_TEMP_ERROR		:
-					errorText.setText(R.string.e041);
+					errorText.setText(R.string.e222);
 					break;
 				
 				case AMBIENT_TEMP_ERROR		:
-					errorText.setText(R.string.e042);
+					errorText.setText(R.string.e221);
 					break;
 					
 				case COMMUNICATION_ERROR	:
-					errorText.setText(R.string.e051);
+					errorText.setText(R.string.e241);
 					break;
 				}
 			}

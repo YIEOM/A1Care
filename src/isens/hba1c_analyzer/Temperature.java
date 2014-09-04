@@ -15,7 +15,7 @@ public class Temperature extends SerialPort {
 	
 	public TextView TmpText;
 	
-	public static int InitTmp = 27;
+	public static float InitTmp;
 
 	static final int MaxAmbTmp = 39,
 					 MinAmbTmp = 23;
@@ -26,7 +26,7 @@ public class Temperature extends SerialPort {
 		String tmpString;
 		DecimalFormat tmpFormat;
 		
-		tmpDouble = InitTmp * (double) 1670.17 + (double) 25891.34;
+		tmpDouble = (double) InitTmp * (double) 1670.17 + (double) 25891.34;
 		tmpFormat = new DecimalFormat("#####0");
 		
 		if(tmpFormat.format(tmpDouble).length() == 5) tmpString = "0" + tmpFormat.format(tmpDouble);

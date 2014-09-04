@@ -67,7 +67,7 @@ public class TemperatureActivity extends Activity {
 		
 				setBtn.setEnabled(false);
 				
-				TmpSave(Integer.valueOf(tmpEText.getText().toString()).intValue());
+				TmpSave(Float.valueOf(tmpEText.getText().toString()).floatValue());
 			}
 		});
 		
@@ -90,7 +90,7 @@ public class TemperatureActivity extends Activity {
 		TimerDisplay.timerState = whichClock.TemperatureClock;		
 		CurrTimeDisplay();
 		
-		tmpEText.setText(Integer.toString(Temperature.InitTmp));
+		tmpEText.setText(Float.toString(Temperature.InitTmp));
 	}
 	
 	public void CurrTimeDisplay() {
@@ -107,12 +107,12 @@ public class TemperatureActivity extends Activity {
 		}).start();	
 	}
 	
-	public void TmpSave(int tmp) {
+	public void TmpSave(float tmp) {
 		
 		SharedPreferences temperaturePref = getSharedPreferences("Temperature", MODE_PRIVATE);
 		SharedPreferences.Editor temperatureedit = temperaturePref.edit();
 		
-		temperatureedit.putInt("Cell Block", tmp);
+		temperatureedit.putFloat("Cell Block", tmp);
 		temperatureedit.commit();
 		
 		Temperature.InitTmp = tmp;

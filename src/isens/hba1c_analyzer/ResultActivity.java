@@ -11,6 +11,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -19,6 +20,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
@@ -33,6 +35,8 @@ public class ResultActivity extends Activity {
 	
 	public static TextView TimeText;
 	
+	public static EditText PatientIDText;
+	
 	private TextView HbA1cText,
 					 DateText,
 					 AMPMText,
@@ -44,8 +48,6 @@ public class ResultActivity extends Activity {
 	
 	private Button homeIcon,
 				   printBtn,
-				   patientIDScanBtn,
-				   hisBtn,
 				   nextSampleBtn,
 				   errorBtn;
 	
@@ -64,6 +66,7 @@ public class ResultActivity extends Activity {
 		setContentView(R.layout.result);
 		
 		TimeText = (TextView) findViewById(R.id.timeText);		
+		PatientIDText = (EditText) findViewById(R.id.patientidtext);
 		
 		/* Popup window activation */
 		resultLinear = (RelativeLayout)findViewById(R.id.resultlinear);
@@ -102,31 +105,6 @@ public class ResultActivity extends Activity {
 				}
 			}
 		});
-		
-		patientIDScanBtn = (Button)findViewById(R.id.patientidscanbtn);
-		patientIDScanBtn.setOnClickListener(new View.OnClickListener() {
-		
-			public void onClick(View v) {
-			
-//				patientIDScanBtn.setEnabled(false);
-			}
-		});
-		
-		/*Test Activity activation*/
-//		hisBtn = (Button)findViewById(R.id.hisbtn);
-//		hisBtn.setOnClickListener(new View.OnClickListener() {
-//		
-//			public void onClick(View v) {
-
-//				hisBtn.setEnabled(false);
-//				
-////				Log.w("Response time", "start");
-//				
-//				HL7Intent();
-//				
-//				hisBtn.setEnabled(true);
-//			}
-//		});
 		
 		/*Test Activity activation*/
 		nextSampleBtn = (Button)findViewById(R.id.nextsamplebtn);
@@ -178,7 +156,7 @@ public class ResultActivity extends Activity {
 		DateText = (TextView)findViewById(R.id.r_testdate1);
 		AMPMText = (TextView)findViewById(R.id.r_testdate2);
 		Ref = (TextView) findViewById(R.id.ref);
-		
+				
 		Intent itn = getIntent();
 		ItnData = itn.getIntExtra("RunState", 0);
 		
@@ -190,37 +168,37 @@ public class ResultActivity extends Activity {
 			break;
 			
 		case HomeActivity.tHb_LOW_ERROR			:
-			HbA1cText.setText(R.string.e101);
+			HbA1cText.setText(R.string.e111);
 			ErrorPopup("");
 			break;
 			
 		case HomeActivity.tHb_HIGH_ERROR		:
-			HbA1cText.setText(R.string.e102);
+			HbA1cText.setText(R.string.e112);
 			ErrorPopup("");
 			break;
 			
 		case HomeActivity.A1c_LOW_ERROR			:
-			HbA1cText.setText(R.string.e201);
+			HbA1cText.setText(R.string.e121);
 			ErrorPopup("");
 			break;
 			
 		case HomeActivity.A1c_HIGH_ERROR		:
-			HbA1cText.setText(R.string.e202);
+			HbA1cText.setText(R.string.e122);
 			ErrorPopup("");
 			break;
 			
 		case HomeActivity.FILTER_MOTOR_ERROR		:
-			HbA1cText.setText(R.string.e011);
+			HbA1cText.setText(R.string.e212);
 			ErrorPopup("");
 			break;
 			
 		case HomeActivity.SHAKING_MOTOR_ERROR		:
-			HbA1cText.setText(R.string.e021);
+			HbA1cText.setText(R.string.e221);
 			ErrorPopup("");
 			break;
 			
 		case HomeActivity.COMMUNICATION_ERROR	:
-			HbA1cText.setText(R.string.e051);
+			HbA1cText.setText(R.string.e241);
 			ErrorPopup("");
 			break;
 			
@@ -232,8 +210,6 @@ public class ResultActivity extends Activity {
 		DateText.setText(TimerDisplay.rTime[0] + "." + TimerDisplay.rTime[1] + "." + TimerDisplay.rTime[2] + " " + TimerDisplay.rTime[4] + ":" + TimerDisplay.rTime[5]);
 		AMPMText.setText(TimerDisplay.rTime[3]);
 		Ref.setText(Barcode.RefNum);
-	
-		
 	}
 	
 	public void CurrTimeDisplay() {
@@ -248,6 +224,20 @@ public class ResultActivity extends Activity {
 		        });
 		    }
 		}).start();	
+	}
+	
+	public void PatientIDDisplay(final StringBuffer str) {
+		
+		new Thread(new Runnable() {
+		    public void run() {    
+		        runOnUiThread(new Runnable(){
+		            public void run() {
+		            	
+		            	PatientIDText.setText(str.substring(0, str.length() - 1));
+		            }
+		        });
+		    }
+		}).start();
 	}
 	
 	public void ErrorPopup(final String str) { // E101 error pop-up window
@@ -285,7 +275,8 @@ public class ResultActivity extends Activity {
 		
 		StringBuffer txData = new StringBuffer();
 		DecimalFormat dfm = new DecimalFormat("0000"),
-					  hbA1cFormat = new DecimalFormat("0.0");
+					  hbA1cFormat = new DecimalFormat("0.0"),
+					  pIDLenDfm = new DecimalFormat("00");
 		
 		txData.delete(0, txData.capacity());
 		
@@ -297,6 +288,8 @@ public class ResultActivity extends Activity {
 		txData.append(getTime[5]);
 		txData.append(dfm.format(dataCnt));
 		txData.append(Barcode.RefNum);
+		txData.append(pIDLenDfm.format(PatientIDText.getText().toString().length()));
+		txData.append(PatientIDText.getText().toString());
 		txData.append(hbA1cFormat.format(RunActivity.HbA1cPctDbl));
 		
 		ResultSerial = new SerialPort();
@@ -309,7 +302,8 @@ public class ResultActivity extends Activity {
 		
 		Intent DataSaveIntent = new Intent(getApplicationContext(), FileSaveActivity.class);
 		DecimalFormat photoDfm = new DecimalFormat("0.0"),
-					  absorbDfm = new DecimalFormat("0.0000");
+					  absorbDfm = new DecimalFormat("0.0000"),
+					  pIDLenDfm = new DecimalFormat("00");
 		
 		DataSaveIntent.putExtra("RunState", ItnData);
 		DataSaveIntent.putExtra("Year", getTime[0]);
@@ -319,8 +313,9 @@ public class ResultActivity extends Activity {
 		DataSaveIntent.putExtra("Hour", getTime[4]);
 		DataSaveIntent.putExtra("Minute", getTime[5]);
 		DataSaveIntent.putExtra("DataCnt", dataCnt);
-
 		DataSaveIntent.putExtra("RefNumber", Barcode.RefNum);
+		DataSaveIntent.putExtra("PatientIDLen", pIDLenDfm.format(PatientIDText.getText().toString().length()));
+		DataSaveIntent.putExtra("PatientID", PatientIDText.getText().toString());
 		DataSaveIntent.putExtra("Hba1cPct", photoDfm.format(RunActivity.HbA1cPctDbl));
 		
 		DataSaveIntent.putExtra("RunMin", (int) RunActivity.runMin);
@@ -348,6 +343,8 @@ public class ResultActivity extends Activity {
 		DataSaveIntent.putExtra("St2Abs3by1", absorbDfm.format(RunActivity.Step2ndAbsorb3[1]));
 		DataSaveIntent.putExtra("St2Abs3by2", absorbDfm.format(RunActivity.Step2ndAbsorb3[2]));
 
+		if(HomeActivity.ExternalDevice) SerialPort.hBarcodeRxThread.interrupt();
+		
 		switch(Itn) {
 		
 		case Home		:							
