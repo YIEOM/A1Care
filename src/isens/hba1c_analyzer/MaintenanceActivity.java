@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
@@ -28,6 +29,7 @@ public class MaintenanceActivity extends Activity {
 				   serviceBtn;
 		
 	private static TextView TimeText;
+	private static ImageView deviceImage;
 	
 	public boolean btnState = false;
 	
@@ -38,6 +40,7 @@ public class MaintenanceActivity extends Activity {
 		setContentView(R.layout.maintenance);
 		
 		TimeText = (TextView) findViewById(R.id.timeText);
+		deviceImage = (ImageView) findViewById(R.id.device);
 		
 		MaintenanceInit();
 					
@@ -80,6 +83,7 @@ public class MaintenanceActivity extends Activity {
 		
 		TimerDisplay.timerState = whichClock.MaintenanceClock;		
 		CurrTimeDisplay();
+		ExternalDeviceDisplay();
 	}
 
 	public void CurrTimeDisplay() {
@@ -89,7 +93,6 @@ public class MaintenanceActivity extends Activity {
 		        runOnUiThread(new Runnable(){
 		            public void run() {
 		            	
-//		            	Log.w("SettingTimeDisplay", "run");
 		            	TimeText.setText(TimerDisplay.rTime[3] + " " + TimerDisplay.rTime[4] + ":" + TimerDisplay.rTime[5]);
 		            }
 		        });
@@ -97,6 +100,21 @@ public class MaintenanceActivity extends Activity {
 		}).start();	
 	}
 	
+	public void ExternalDeviceDisplay() {
+		
+		new Thread(new Runnable() {
+		    public void run() {    
+		        runOnUiThread(new Runnable(){
+		            public void run() {
+		           
+		            	if(HomeActivity.ExternalDevice == true) deviceImage.setBackgroundResource(R.drawable.main_usb_c);
+		            	else deviceImage.setBackgroundResource(R.drawable.main_usb);
+		            }
+		        });
+		    }
+		}).start();
+	}
+
 	public void WhichIntent(TargetIntent Itn) { // Activity conversion
 		
 		switch(Itn) {

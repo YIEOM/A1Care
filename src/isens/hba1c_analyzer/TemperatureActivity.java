@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
@@ -36,6 +37,7 @@ public class TemperatureActivity extends Activity {
 	private EditText tmpEText;
 		
 	public static TextView TimeText;
+	private static ImageView deviceImage;
 	
 		protected void onCreate(Bundle savedInstanceState) {
 		
@@ -43,6 +45,8 @@ public class TemperatureActivity extends Activity {
 		setContentView(R.layout.temperature);
 		
 		TimeText = (TextView)findViewById(R.id.timeText);
+		deviceImage = (ImageView) findViewById(R.id.device);
+		
 		tmptext =  (TextView)findViewById(R.id.tmptext);
 		
 		tmpEText = (EditText) findViewById(R.id.tmpetext);
@@ -89,6 +93,7 @@ public class TemperatureActivity extends Activity {
 		
 		TimerDisplay.timerState = whichClock.TemperatureClock;		
 		CurrTimeDisplay();
+		ExternalDeviceDisplay();
 		
 		tmpEText.setText(Float.toString(Temperature.InitTmp));
 	}
@@ -107,6 +112,21 @@ public class TemperatureActivity extends Activity {
 		}).start();	
 	}
 	
+	public void ExternalDeviceDisplay() {
+		
+		new Thread(new Runnable() {
+		    public void run() {    
+		        runOnUiThread(new Runnable(){
+		            public void run() {
+		           
+		            	if(HomeActivity.ExternalDevice == true) deviceImage.setBackgroundResource(R.drawable.main_usb_c);
+		            	else deviceImage.setBackgroundResource(R.drawable.main_usb);
+		            }
+		        });
+		    }
+		}).start();
+	}
+
 	public void TmpSave(float tmp) {
 		
 		SharedPreferences temperaturePref = getSharedPreferences("Temperature", MODE_PRIVATE);

@@ -31,7 +31,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="523px"
         android:layout_marginTop="10px"
-        android:src="@drawable/deviceicon2"
+        android:src="@drawable/main_usb"
         android:background="#00000000" />
     
    	<TextView

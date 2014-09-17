@@ -40,6 +40,8 @@ public class ActionActivity extends Activity {
 	private Timer timer;
 	
 	private static TextView TimeText;
+	private static ImageView deviceImage;
+	
 	private AnimationDrawable scanAni;
 	private ImageView scanImage;
 		
@@ -74,15 +76,16 @@ public class ActionActivity extends Activity {
 		setContentView(R.layout.action);
 		
 		TimeText = (TextView)findViewById(R.id.timeText);
+		deviceImage = (ImageView) findViewById(R.id.device);
 		
 		/* Esc Pop-up window */
 		actionLinear = (RelativeLayout)findViewById(R.id.actionlinear);
 		escPopupView = View.inflate(getApplicationContext(), R.layout.escpopup, null);
-		escPopup = new PopupWindow(escPopupView, 504, 174, true);
+		escPopup = new PopupWindow(escPopupView, 800, 480, true);
 		
 		/* Error Pop-up window */
 		errorBtnPopupView = View.inflate(getApplicationContext(), R.layout.errorbtnpopup, null);
-		errorBtnPopup = new PopupWindow(errorBtnPopupView, 504, 174, true);
+		errorBtnPopup = new PopupWindow(errorBtnPopupView, 800, 480, true);
 		
 		mPool = new SoundPool(1, AudioManager.STREAM_MUSIC, 0);
 		mWin = mPool.load(this, R.raw.jump, 1);
@@ -167,6 +170,7 @@ public class ActionActivity extends Activity {
 		
 		TimerDisplay.timerState = whichClock.ActionClock;		
 		CurrTimeDisplay();
+		ExternalDeviceDisplay();
 		
 		IsCorrectBarcode = false;	
 		BarcodeCheckFlag = false;
@@ -200,6 +204,21 @@ public class ActionActivity extends Activity {
 		        });
 		    }
 		}).start();	
+	}
+	
+	public void ExternalDeviceDisplay() {
+		
+		new Thread(new Runnable() {
+		    public void run() {    
+		        runOnUiThread(new Runnable(){
+		            public void run() {
+		           
+		            	if(HomeActivity.ExternalDevice == true) deviceImage.setBackgroundResource(R.drawable.main_usb_c);
+		            	else deviceImage.setBackgroundResource(R.drawable.main_usb);
+		            }
+		        });
+		    }
+		}).start();
 	}
 	
 	public class BarcodeScan extends Thread {

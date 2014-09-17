@@ -22,6 +22,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
@@ -34,6 +35,7 @@ public class ResultActivity extends Activity {
 	private SerialPort ResultSerial;
 	
 	public static TextView TimeText;
+	private static ImageView deviceImage;
 	
 	public static EditText PatientIDText;
 	
@@ -66,12 +68,15 @@ public class ResultActivity extends Activity {
 		setContentView(R.layout.result);
 		
 		TimeText = (TextView) findViewById(R.id.timeText);		
+		deviceImage = (ImageView) findViewById(R.id.device);
+		
 		PatientIDText = (EditText) findViewById(R.id.patientidtext);
+		deviceImage = (ImageView) findViewById(R.id.device);
 		
 		/* Popup window activation */
 		resultLinear = (RelativeLayout)findViewById(R.id.resultlinear);
 		errorPopupView = View.inflate(this, R.layout.errorbtnpopup, null);
-		errorPopup = new PopupWindow(errorPopupView, 504, 174, true);
+		errorPopup = new PopupWindow(errorPopupView, 800, 480, true);
 		
 		ResultInit();
 		
@@ -145,6 +150,7 @@ public class ResultActivity extends Activity {
 		
 		TimerDisplay.timerState = whichClock.ResultClock;		
 		CurrTimeDisplay();
+		ExternalDeviceDisplay();
 		
 		GetCurrTime();
 		GetDataCnt();
@@ -169,37 +175,37 @@ public class ResultActivity extends Activity {
 			
 		case HomeActivity.tHb_LOW_ERROR			:
 			HbA1cText.setText(R.string.e111);
-			ErrorPopup("");
+			ErrorPopup("E111");
 			break;
 			
 		case HomeActivity.tHb_HIGH_ERROR		:
 			HbA1cText.setText(R.string.e112);
-			ErrorPopup("");
+			ErrorPopup("E112");
 			break;
 			
 		case HomeActivity.A1c_LOW_ERROR			:
 			HbA1cText.setText(R.string.e121);
-			ErrorPopup("");
+			ErrorPopup("E121");
 			break;
 			
 		case HomeActivity.A1c_HIGH_ERROR		:
 			HbA1cText.setText(R.string.e122);
-			ErrorPopup("");
+			ErrorPopup("E122");
 			break;
 			
 		case HomeActivity.FILTER_MOTOR_ERROR		:
 			HbA1cText.setText(R.string.e212);
-			ErrorPopup("");
+			ErrorPopup("E212");
 			break;
 			
 		case HomeActivity.SHAKING_MOTOR_ERROR		:
 			HbA1cText.setText(R.string.e221);
-			ErrorPopup("");
+			ErrorPopup("E221");
 			break;
 			
 		case HomeActivity.COMMUNICATION_ERROR	:
 			HbA1cText.setText(R.string.e241);
-			ErrorPopup("");
+			ErrorPopup("E241");
 			break;
 			
 		case HomeActivity.STOP_RESULT			:
@@ -226,6 +232,21 @@ public class ResultActivity extends Activity {
 		}).start();	
 	}
 	
+	public void ExternalDeviceDisplay() {
+		
+		new Thread(new Runnable() {
+		    public void run() {    
+		        runOnUiThread(new Runnable(){
+		            public void run() {
+		           
+		            	if(HomeActivity.ExternalDevice == true) deviceImage.setBackgroundResource(R.drawable.main_usb_c);
+		            	else deviceImage.setBackgroundResource(R.drawable.main_usb);
+		            }
+		        });
+		    }
+		}).start();
+	}
+
 	public void PatientIDDisplay(final StringBuffer str) {
 		
 		new Thread(new Runnable() {
@@ -342,8 +363,6 @@ public class ResultActivity extends Activity {
 		DataSaveIntent.putExtra("St2Abs3by0", absorbDfm.format(RunActivity.Step2ndAbsorb3[0]));
 		DataSaveIntent.putExtra("St2Abs3by1", absorbDfm.format(RunActivity.Step2ndAbsorb3[1]));
 		DataSaveIntent.putExtra("St2Abs3by2", absorbDfm.format(RunActivity.Step2ndAbsorb3[2]));
-
-		if(HomeActivity.ExternalDevice) SerialPort.hBarcodeRxThread.interrupt();
 		
 		switch(Itn) {
 		

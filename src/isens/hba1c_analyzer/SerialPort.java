@@ -1,5 +1,7 @@
 package isens.hba1c_analyzer;
 
+import isens.hba1c_analyzer.TimerDisplay.whichClock;
+
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -39,7 +41,7 @@ public class SerialPort {
 	public static BarcodeRxThread bBarcodeRxThread;
 	
 	public FileDescriptor mFd;
-	private static FileInputStream HHBarcodeFileInputStream;
+	public static FileInputStream HHBarcodeFileInputStream;
 	public static HHBarcodeRxThread hBarcodeRxThread;
 	
 	
@@ -88,11 +90,19 @@ public class SerialPort {
 						BarcodeBufCnt = 0,
 						BarcodeAppendCnt = 0;
 
+	private static byte HHBarcodeRxBuffer[] = new byte[BARCODE_RX_BUFFER_SIZE],
+						HHBarcodeAppendBuffer[][] = new byte[BARCODE_BUFFER_CNT_SIZE][BARCODE_BUFFER_INDEX_SIZE],
+						HHBarcodeBufCnt = 0,
+						HHBarcodeAppendCnt = 0;
+
+	
 	public static byte BarcodeBufIndex = 0;
+	public static byte HHBarcodeBufIndex = 0;
 	
 	public static String AmpTemperature = "0";
 	
 	public static boolean BarcodeReadStart = false;
+	public static boolean HHBarcodeReadStart = false;
 	
 	private class BoardTxThread extends Thread { // Instruction for a board
 
@@ -169,7 +179,7 @@ public class SerialPort {
 					/* i-SENS */
 					pFileOutputStream.write(LF);
 					pFileOutputStream.write(CR);
-					pFileOutputStream.write("i-sens. Inc.".getBytes());
+					pFileOutputStream.write("i-SENS, Inc.".getBytes());
 					
 					/* i-CON */
 					pFileOutputStream.write(LF);
@@ -225,11 +235,6 @@ public class SerialPort {
 					pFileOutputStream.write(txData.substring(6, 8).getBytes());
 					pFileOutputStream.write(" ".getBytes());
 					
-					/* AM/PM */
-					pFileOutputStream.write(CR);
-					pFileOutputStream.write(txData.substring(8, 10).getBytes());
-					pFileOutputStream.write(" ".getBytes());
-					
 					/* Hour */
 					pFileOutputStream.write(CR);
 					pFileOutputStream.write(txData.substring(10, 12).getBytes());
@@ -238,6 +243,11 @@ public class SerialPort {
 					/* Minute */
 					pFileOutputStream.write(CR);
 					pFileOutputStream.write(txData.substring(12, 14).getBytes());
+					pFileOutputStream.write(" ".getBytes());
+					
+					/* AM/PM */
+					pFileOutputStream.write(CR);
+					pFileOutputStream.write(txData.substring(8, 10).getBytes());
 					
 					/* Type */
 					pFileOutputStream.write(LF);
@@ -255,7 +265,7 @@ public class SerialPort {
 					if(type.equals("OT")) type = "Optical Test";
 					else if(type.equals("CH")) type = "Control A1c";
 					else if(type.equals("CA")) type = "Control A/C";
-					else if(type.equals("HS")) type = "A1c Sale";
+					else if(type.equals("HS")) type = "HbA1c";
 					else if(type.equals("HT")) type = "A1c Stock";
 					else if(type.equals("AS")) type = "A/C Sale";
 					else if(type.equals("AT")) type = "A/C Stock";
@@ -544,7 +554,9 @@ public class SerialPort {
 						
 						BarcodeRxBuffer = new byte[BARCODE_RX_BUFFER_SIZE];
 						size = BarcodeFileInputStream.read(BarcodeRxBuffer);
+	
 						Log.w("BarcodeRxThread", "BarcodeInputBuffer : " + new String(BarcodeRxBuffer));
+						
 						if(size > 0) {
 							
 							BarcodeDataReceive(size);
@@ -570,12 +582,12 @@ public class SerialPort {
 			BarcodeBufIndex = 0;
 			BarcodeAppendBuffer[BarcodeBufCnt] = new byte[BARCODE_BUFFER_INDEX_SIZE];
 		}
-		Log.w("BarcodeDataReceive", "index : " + BarcodeBufIndex);
+//		Log.w("BarcodeDataReceive", "index : " + BarcodeBufIndex);
+		
 		for(int i = 0; i < size; i++) {
 
 			BarcodeAppendBuffer[BarcodeBufCnt][BarcodeBufIndex++] = BarcodeRxBuffer[i]; // bufCnt : number of each buffer, bufIndex : bit index of one buffer
-			Log.w("BarcodeDataReceive", "BarcodeRxBuffer : " + Character.toString((char) BarcodeRxBuffer[i]));
-			Log.w("BarcodeDataReceive", "BarcodeRxBuffer : " + BarcodeRxBuffer[i]);
+//			Log.w("BarcodeDataReceive", "BarcodeRxBuffer : " + Character.toString((char) BarcodeRxBuffer[i]));
 		}	
 		
 		if(BarcodeBufIndex > 18 | BarcodeBufIndex < 2) {
@@ -586,45 +598,15 @@ public class SerialPort {
 		
 		} else {
 			
-			switch(TimerDisplay.timerState) {
-			
-			case ActionClock	:
-				if(BarcodeRxBuffer[size-2] == CR && BarcodeRxBuffer[size-1] == LF) { // Whether or not end bit
+			if(BarcodeRxBuffer[size-2] == CR && BarcodeRxBuffer[size-1] == LF) { // Whether or not end bit
 
-					BarcodeReadStart = false;
-					
-					BarcodeDataAppend(BarcodeBufCnt, BarcodeBufIndex);
-					
-					BarcodeBufCnt++;
-					if(BarcodeBufCnt == BARCODE_BUFFER_CNT_SIZE) BarcodeBufCnt = 0;
-				}
-				break;
+				BarcodeReadStart = false;
 				
-			case CalibrationClock	:
-				if(BarcodeRxBuffer[size-2] == CR && BarcodeRxBuffer[size-1] == LF) { // Whether or not end bit
-
-					BarcodeReadStart = false;
-					
-					BarcodeDataAppend(BarcodeBufCnt, BarcodeBufIndex);
-					
-					BarcodeBufCnt++;
-					if(BarcodeBufCnt == BARCODE_BUFFER_CNT_SIZE) BarcodeBufCnt = 0;
-				}
-				break;
+				BarcodeDataAppend(BarcodeBufCnt, BarcodeBufIndex);
 				
-			case ResultClock	:
-				if(BarcodeRxBuffer[size-1] == CR) { // Whether or not end bit
-
-					BarcodeReadStart = false;
-					
-					BarcodeDataAppend(BarcodeBufCnt, BarcodeBufIndex);
-					
-					BarcodeBufCnt++;
-					if(BarcodeBufCnt == BARCODE_BUFFER_CNT_SIZE) BarcodeBufCnt = 0;
-				}
-				break;
+				BarcodeBufCnt++;
+				if(BarcodeBufCnt == BARCODE_BUFFER_CNT_SIZE) BarcodeBufCnt = 0;
 			}
-
 		}
 	}
 	
@@ -632,38 +614,12 @@ public class SerialPort {
 		
 		try {
 			
-			final StringBuffer barcodeReception  = new StringBuffer();
+			final StringBuffer barcodeReception = new StringBuffer();
 			
 			barcodeReception.append(new String(BarcodeAppendBuffer[num], 0, len));
-			
-			switch(TimerDisplay.timerState) {
-				
-			case ActionClock	:
-				SerialBarcode = new Barcode();
-				SerialBarcode.BarcodeCheck(barcodeReception);
-				break;
-				
-			case CalibrationClock	:
-				SerialBarcode = new Barcode();
-				SerialBarcode.BarcodeCheck(barcodeReception);
-				break;
-				
-			case ResultClock	:
-				
-				Handler mHandler = new Handler(Looper.getMainLooper());
-
-				mHandler.postDelayed(new Runnable() {
-
-				public void run() {
-
-					SerialResult = new ResultActivity();
-					SerialResult.PatientIDDisplay(barcodeReception);
-				}
-
-				}, 0);
-
-				break;
-			}
+		
+			SerialBarcode = new Barcode();
+			SerialBarcode.BarcodeCheck(barcodeReception);
 				
 		} catch(ArrayIndexOutOfBoundsException e) {
 			
@@ -685,17 +641,21 @@ public class SerialPort {
 					
 					if(HHBarcodeFileInputStream != null) {
 						
-						BarcodeRxBuffer = new byte[BARCODE_RX_BUFFER_SIZE];
-						size = HHBarcodeFileInputStream.read(BarcodeRxBuffer);
-//						Log.w("HHBarcodeRxThread", "HHBarcodeInputBuffer : " + new String(BarcodeRxBuffer));
+						HHBarcodeRxBuffer = new byte[BARCODE_RX_BUFFER_SIZE];
+						size = HHBarcodeFileInputStream.read(HHBarcodeRxBuffer);
+						
+						Log.w("HHBarcodeRxThread", "HHBarcodeInputBuffer : " + new String(HHBarcodeRxBuffer));
+						
 						if(size > 0) {
-							
-							BarcodeDataReceive(size);
+								
+							HHBarcodeDataReceive(size);
 						}
+						
 					} else {
 						
 						return;
 					}
+					
 				} catch (IOException e) {
 					
 					e.printStackTrace();
@@ -703,6 +663,63 @@ public class SerialPort {
 				}
 			}
 		}
+	}
+	
+	public synchronized void HHBarcodeDataReceive(int size) { // making a buffer of received data from a barcode sensor
+		
+		if(HHBarcodeReadStart == false) {
+		
+			HHBarcodeReadStart = true;
+			HHBarcodeBufIndex = 0;
+			HHBarcodeAppendBuffer[BarcodeBufCnt] = new byte[BARCODE_BUFFER_INDEX_SIZE];
+		}
+//		Log.w("HHBarcodeDataReceive", "index : " + HHBarcodeBufIndex);
+		
+		for(int i = 0; i < size; i++) {
+
+			HHBarcodeAppendBuffer[HHBarcodeBufCnt][HHBarcodeBufIndex++] = HHBarcodeRxBuffer[i]; // bufCnt : number of each buffer, bufIndex : bit index of one buffer
+//			Log.w("HHBarcodeDataReceive", "HHBarcodeRxBuffer : " + Character.toString((char) HHBarcodeRxBuffer[i]));
+		}	
+		
+		if(HHBarcodeRxBuffer[size-1] == CR) { // Whether or not end bit
+
+			HHBarcodeReadStart = false;
+			
+			HHBarcodeDataAppend(HHBarcodeBufCnt, HHBarcodeBufIndex);
+			
+			HHBarcodeBufCnt++;
+			if(HHBarcodeBufCnt == BARCODE_BUFFER_CNT_SIZE) HHBarcodeBufCnt = 0;
+		}
+	}
+	
+	public synchronized void HHBarcodeDataAppend(byte num, byte len) {
+		
+		try {
+			
+			final StringBuffer HHbarcodeReception = new StringBuffer();
+			
+			HHbarcodeReception.append(new String(HHBarcodeAppendBuffer[num], 0, len));
+			
+			if(TimerDisplay.timerState == whichClock.ResultClock) {
+				
+				Handler mHandler = new Handler(Looper.getMainLooper());
+
+				mHandler.postDelayed(new Runnable() {
+
+					public void run() {
+	
+						SerialResult = new ResultActivity();
+						SerialResult.PatientIDDisplay(HHbarcodeReception);
+					}
+				}, 0);
+			}
+				
+		} catch(ArrayIndexOutOfBoundsException e) {
+			
+			e.printStackTrace();
+			HHBarcodeBufCnt = 0;
+			return;
+		}		
 	}
 	
 	public void BoardSerialInit() {
@@ -770,6 +787,26 @@ public class SerialPort {
 		HHBarcodeFileInputStream = new FileInputStream(mFd);
 		hBarcodeRxThread = new HHBarcodeRxThread();
 		hBarcodeRxThread.start();
+	}
+	
+	public void HHBarcodeSerialClose(boolean isConnect) {
+	
+		try {
+			
+			hBarcodeRxThread.interrupt();
+			
+			HHBarcodeFileInputStream.close();
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		SerialPort.Sleep(500); // Time that takes to close file
+
+		Log.w("HHBarcodeSerialClose", "RX Thread : " + hBarcodeRxThread + " Input Stream : " + HHBarcodeFileInputStream);
+		
+		close();
 	}
 	
 	public static void Sleep(int t) { // t : msec

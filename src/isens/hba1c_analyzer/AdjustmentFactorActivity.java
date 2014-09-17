@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
@@ -26,6 +27,7 @@ public class AdjustmentFactorActivity extends Activity {
 					 offsetEText;
 		
 	private static TextView TimeText;
+	private static ImageView deviceImage;
 	
 	private boolean btnState = false;
 	
@@ -35,6 +37,7 @@ public class AdjustmentFactorActivity extends Activity {
 		setContentView(R.layout.adjustment);
 		
 		TimeText = (TextView)findViewById(R.id.timeText);
+		deviceImage = (ImageView) findViewById(R.id.device);
 				
 		slopeEText = (EditText) findViewById(R.id.slopeetext);
 		offsetEText = (EditText) findViewById(R.id.offsetetext);
@@ -65,9 +68,25 @@ public class AdjustmentFactorActivity extends Activity {
 		
 		TimerDisplay.timerState = whichClock.AdjustmentClock;		
 		CurrTimeDisplay();
+		ExternalDeviceDisplay();
 		
 		slopeEText.setText(Float.toString(RunActivity.AF_Slope));
 		offsetEText.setText(Float.toString(RunActivity.AF_Offset));
+	}
+	
+	public void ExternalDeviceDisplay() {
+		
+		new Thread(new Runnable() {
+		    public void run() {    
+		        runOnUiThread(new Runnable(){
+		            public void run() {
+		           
+		            	if(HomeActivity.ExternalDevice == true) deviceImage.setBackgroundResource(R.drawable.main_usb_c);
+		            	else deviceImage.setBackgroundResource(R.drawable.main_usb);
+		            }
+		        });
+		    }
+		}).start();
 	}
 	
 	public void CurrTimeDisplay() {

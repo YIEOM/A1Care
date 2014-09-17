@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class DateActivity extends Activity {
@@ -35,6 +36,7 @@ public class DateActivity extends Activity {
 				   dMinusBtn;
 	
 	private static TextView TimeText;
+	private static ImageView deviceImage;
 	
 	private int year,
 				month,
@@ -49,6 +51,7 @@ public class DateActivity extends Activity {
 		setContentView(R.layout.date);
 		
 		TimeText  = (TextView) findViewById(R.id.timeText);
+		deviceImage = (ImageView) findViewById(R.id.device);
 		yearText  = (TextView) findViewById(R.id.yeartext);
 		monthText = (TextView) findViewById(R.id.monthtext);
 		dayText   = (TextView) findViewById(R.id.daytext);
@@ -170,6 +173,14 @@ public class DateActivity extends Activity {
 		DateInit();
 	}
 	
+	public void DateInit() {
+		
+		TimerDisplay.timerState = whichClock.DateClock;		
+		CurrTimeDisplay();
+		ExternalDeviceDisplay();
+		GetCurrDate();
+	}
+		
 	public void CurrTimeDisplay() {
 		
 		new Thread(new Runnable() {
@@ -184,13 +195,21 @@ public class DateActivity extends Activity {
 		}).start();	
 	}
 	
-	public void DateInit() {
+	public void ExternalDeviceDisplay() {
 		
-		TimerDisplay.timerState = whichClock.DateClock;		
-		CurrTimeDisplay();
-		GetCurrDate();
+		new Thread(new Runnable() {
+		    public void run() {    
+		        runOnUiThread(new Runnable(){
+		            public void run() {
+		           
+		            	if(HomeActivity.ExternalDevice == true) deviceImage.setBackgroundResource(R.drawable.main_usb_c);
+		            	else deviceImage.setBackgroundResource(R.drawable.main_usb);
+		            }
+		        });
+		    }
+		}).start();
 	}
-		
+	
 	public synchronized void DateDisplay() { // displaying date parameter
 		
 		yearText.setText(Integer.toString(year));

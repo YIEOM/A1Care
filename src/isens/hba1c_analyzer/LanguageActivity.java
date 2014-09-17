@@ -20,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class LanguageActivity extends Activity {
@@ -32,6 +33,7 @@ public class LanguageActivity extends Activity {
 				   rightBtn;
 	
 	private static TextView TimeText;
+	private static ImageView deviceImage;
 	private TextView languageText;
 	
 	private String[] languageTable = new String[] {"ko", "en"};
@@ -46,6 +48,8 @@ public class LanguageActivity extends Activity {
 		setContentView(R.layout.language);
 		
 		TimeText = (TextView) findViewById(R.id.timeText);
+		deviceImage = (ImageView) findViewById(R.id.device);
+		
 		languageText = (TextView) findViewById(R.id.languagetext);
 		
 		/*SystemSetting Activity activation*/
@@ -102,6 +106,7 @@ public class LanguageActivity extends Activity {
 		
 		TimerDisplay.timerState = whichClock.LanguageClock;		
 		CurrTimeDisplay();
+		ExternalDeviceDisplay();
 		
 		GetLanguage();
 	}
@@ -120,6 +125,21 @@ public class LanguageActivity extends Activity {
 		}).start();	
 	}
 	
+	public void ExternalDeviceDisplay() {
+		
+		new Thread(new Runnable() {
+		    public void run() {    
+		        runOnUiThread(new Runnable(){
+		            public void run() {
+		           
+		            	if(HomeActivity.ExternalDevice == true) deviceImage.setBackgroundResource(R.drawable.main_usb_c);
+		            	else deviceImage.setBackgroundResource(R.drawable.main_usb);
+		            }
+		        });
+		    }
+		}).start();
+	}
+
 	public void GetLanguage() {
 		
 		int i;

@@ -31,6 +31,7 @@ public class SoundActivity extends Activity {
 	private int volume = 0;
 	
 	private static TextView TimeText;
+	private static ImageView deviceImage;
 	
 	public boolean btnState = false;
 	
@@ -41,6 +42,8 @@ public class SoundActivity extends Activity {
 		setContentView(R.layout.sound);
 		
 		TimeText  = (TextView) findViewById(R.id.timeText);
+		deviceImage = (ImageView) findViewById(R.id.device);
+		
 		barGauge = (ImageView) findViewById(R.id.bargauge);
 		
 		/*System Setting Activity activation*/
@@ -96,6 +99,7 @@ public class SoundActivity extends Activity {
 		
 		TimerDisplay.timerState = whichClock.SoundClock;		
 		CurrTimeDisplay();
+		ExternalDeviceDisplay();
 	
 		audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 		
@@ -118,6 +122,21 @@ public class SoundActivity extends Activity {
 		}).start();	
 	}
 	
+	public void ExternalDeviceDisplay() {
+		
+		new Thread(new Runnable() {
+		    public void run() {    
+		        runOnUiThread(new Runnable(){
+		            public void run() {
+		           
+		            	if(HomeActivity.ExternalDevice == true) deviceImage.setBackgroundResource(R.drawable.main_usb_c);
+		            	else deviceImage.setBackgroundResource(R.drawable.main_usb);
+		            }
+		        });
+		    }
+		}).start();
+	}
+
 	public void WhichIntent(TargetIntent Itn) { // Activity conversion
 		
 		switch(Itn) {

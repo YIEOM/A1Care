@@ -9,10 +9,6 @@
 	<string name="datetime">날짜 및 시간</string>
 	<string name="testnum">테스트 번호</string>
 	<string name="type">형식</string>
-	<string name="barcode">카트리지 본체를 바코드 스캔하세요</string>
-	<string name="cartridge">스캔이 완료된 카트리지를 셀 블록에 삽입하세요</string>	        	
-	<string name="collector">콜렉터를 이용하여 샘플을 채취하세요</string>
-	<string name="door">1. 콜렉터를 카트리지에 눌러주세요\n2. 도어를 닫으면 자동으로 측정이 시작됩니다</string>
 	<string name="e001">도어를 닫아주세요</string>
 	<string name="e002">카트리지를 제거해 주세요</string>
 	<string name="e212">E212</string>

@@ -21,6 +21,8 @@ public class RemoveActivity extends Activity {
 	public ImageView RemoveImage;
 	
 	public static TextView TimeText;
+	private static ImageView deviceImage;
+	
 	public static int PatientDataCnt,
 					  ControlDataCnt;
 	
@@ -33,6 +35,7 @@ public class RemoveActivity extends Activity {
 		RemoveSerial = new SerialPort();
 		
 		TimeText = (TextView) findViewById(R.id.timeText);
+		deviceImage = (ImageView) findViewById(R.id.device);
 		
 		RemoveInit();
 	}
@@ -41,6 +44,7 @@ public class RemoveActivity extends Activity {
 		
 		TimerDisplay.timerState = whichClock.RemoveClock;		
 		CurrTimeDisplay();
+		ExternalDeviceDisplay();
 		
 		UserAction UserActionObj = new UserAction();
 		UserActionObj.start();
@@ -60,6 +64,21 @@ public class RemoveActivity extends Activity {
 		}).start();	
 	}
 	
+	public void ExternalDeviceDisplay() {
+		
+		new Thread(new Runnable() {
+		    public void run() {    
+		        runOnUiThread(new Runnable(){
+		            public void run() {
+		           
+		            	if(HomeActivity.ExternalDevice == true) deviceImage.setBackgroundResource(R.drawable.main_usb_c);
+		            	else deviceImage.setBackgroundResource(R.drawable.main_usb);
+		            }
+		        });
+		    }
+		}).start();
+	}
+
 	public class UserAction extends Thread {
 		
 		public void run() {

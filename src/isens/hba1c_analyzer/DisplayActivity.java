@@ -24,6 +24,7 @@ public class DisplayActivity extends Activity {
 	private int brightnessValue = 0;
 	
 	private static TextView TimeText;
+	private static ImageView deviceImage;
 	
 	private boolean btnState = false;
 	
@@ -34,6 +35,7 @@ public class DisplayActivity extends Activity {
 		setContentView(R.layout.display);
 		
 		TimeText  = (TextView) findViewById(R.id.timeText);
+		deviceImage = (ImageView) findViewById(R.id.device);
 		barGauge = (ImageView) findViewById(R.id.bargauge);
 		
 		/*SystemSetting Activity activation*/
@@ -87,7 +89,8 @@ public class DisplayActivity extends Activity {
 	public void DisplayInit() {
 		
 		TimerDisplay.timerState = whichClock.DisplayClock;		
-		CurrTimeDisplay();
+		CurrTimeDisplay();	
+		ExternalDeviceDisplay();
 		
 		try {
 			
@@ -115,6 +118,21 @@ public class DisplayActivity extends Activity {
 		}).start();	
 	}
 	
+	public void ExternalDeviceDisplay() {
+		
+		new Thread(new Runnable() {
+		    public void run() {    
+		        runOnUiThread(new Runnable(){
+		            public void run() {
+		           
+		            	if(HomeActivity.ExternalDevice == true) deviceImage.setBackgroundResource(R.drawable.main_usb_c);
+		            	else deviceImage.setBackgroundResource(R.drawable.main_usb);
+		            }
+		        });
+		    }
+		}).start();
+	}
+
 	public synchronized void BrightnessUp() {
 		
 		switch(brightnessValue) {

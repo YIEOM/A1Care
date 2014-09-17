@@ -17,11 +17,11 @@
         android:src="@drawable/time_title" />
     
     <ImageView
+        android:id="@+id/device" 
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="531px"
-        android:layout_marginTop="18px"
-        android:src="@drawable/main_usb" />
+        android:layout_marginLeft="520px"
+        android:layout_marginTop="12px" />
     
    	<TextView
         android:id="@+id/timeText" 

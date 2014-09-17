@@ -66,7 +66,7 @@ public class SystemCheckActivity extends Activity {
 		/* Error Pop-up window */
 		systemCheckLinear = (RelativeLayout)findViewById(R.id.systemchecklinear);		
 		errorPopupView = View.inflate(getApplicationContext(), R.layout.errorpopup, null);
-		errorPopup = new PopupWindow(errorPopupView, 478, 155, true);
+		errorPopup = new PopupWindow(errorPopupView, 800, 480, true);
 				
 		SystemCheckInit();
 	}
@@ -80,7 +80,7 @@ public class SystemCheckActivity extends Activity {
 		SystemSerial.BoardSerialInit();
 		SystemSerial.BoardRxStart();
 		SystemSerial.PrinterSerialInit();
-		
+			
 		/* Timer start */
 		TimerDisplay.timerState = whichClock.SystemCheckClock;
 		SystemTimer = new TimerDisplay();
@@ -326,7 +326,7 @@ public class SystemCheckActivity extends Activity {
 				
 				if((Temperature.MinAmbTmp < tmp/NUMBER_AMBIENT_TEMP_CHECK) & (tmp/NUMBER_AMBIENT_TEMP_CHECK < Temperature.MaxAmbTmp)) {
 					
-					SerialPort.Sleep(300000);
+//					SerialPort.Sleep(300000);
 					
 					WhichIntent(TargetIntent.Home);
 				

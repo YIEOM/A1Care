@@ -31,6 +31,7 @@ public class BlankActivity extends Activity {
 	private PopupWindow errorPopup;
 	
 	private static TextView TimeText;
+	private static ImageView deviceImage;
 	private ImageView barani;
 	
 	private RunActivity.AnalyzerState blankState;
@@ -47,9 +48,10 @@ public class BlankActivity extends Activity {
 		/* Error Pop-up window */
 		blankLinear = (RelativeLayout)findViewById(R.id.blanklinear);		
 		errorPopupView = View.inflate(getApplicationContext(), R.layout.errorpopup, null);
-		errorPopup = new PopupWindow(errorPopupView, 478, 155, true);
+		errorPopup = new PopupWindow(errorPopupView, 800, 480, true);
 		
 		TimeText = (TextView) findViewById(R.id.timeText);
+		deviceImage = (ImageView) findViewById(R.id.device);
 		
 		barani = (ImageView) findViewById(R.id.progressBar);
 		
@@ -60,6 +62,7 @@ public class BlankActivity extends Activity {
 		
 		TimerDisplay.timerState = whichClock.BlankClock;		
 		CurrTimeDisplay();
+		ExternalDeviceDisplay();
 				
 		BlankSerial = new SerialPort();
 		BlankRun = new RunActivity();
@@ -85,6 +88,21 @@ public class BlankActivity extends Activity {
 		}).start();	
 	}
 	
+	public void ExternalDeviceDisplay() {
+		
+		new Thread(new Runnable() {
+		    public void run() {    
+		        runOnUiThread(new Runnable(){
+		            public void run() {
+		           
+		            	if(HomeActivity.ExternalDevice == true) deviceImage.setBackgroundResource(R.drawable.main_usb_c);
+		            	else deviceImage.setBackgroundResource(R.drawable.main_usb);
+		            }
+		        });
+		    }
+		}).start();
+	}
+
 	public class SensorCheck extends Thread {
 		
 		public void run() {
@@ -135,7 +153,7 @@ public class BlankActivity extends Activity {
 					BarAnimation(206);
 					RunActivity.BlankValue[0] = 0;
 					RunActivity.BlankValue[0] = AbsorbanceMeasure(HomeActivity.MinDark, HomeActivity.MaxDark, HomeActivity.ERROR_DARK); // Dark Absorbance
-					PhotoErrorCheck();
+//					PhotoErrorCheck();
 					break;
 					
 				case Filter535nm :
@@ -158,7 +176,7 @@ public class BlankActivity extends Activity {
 					BoardMessage(RunActivity.NEXT_FILTER, AnalyzerState.FilterHome, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 5);
 					BarAnimation(458);
 					RunActivity.BlankValue[3] = AbsorbanceMeasure(HomeActivity.Min750, HomeActivity.Max750, HomeActivity.ERROR_750nm); // Dark Absorbance
-					PhotoErrorCheck();
+//					PhotoErrorCheck();
 					break;
 				
 				case FilterHome :

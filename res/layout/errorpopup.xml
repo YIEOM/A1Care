@@ -9,7 +9,7 @@
         android:id="@+id/errortext"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="28px"
+        android:layout_marginTop="160px"
         android:layout_centerHorizontal="true"
         android:typeface="sans"
         android:textSize="28px"

@@ -95,6 +95,7 @@ public class HomeActivity extends Activity {
 	public enum TargetIntent {Home, HbA1c, NA, Action, Run, Blank, Memory, Result, ResultError, Remove, Image, Date, Setting, SystemSetting, DataSetting, Time, Display, HIS, HISSetting, Export, Maintenance, FileSave, ControlFileLoad, PatientFileLoad, NextFile, PreFile, Adjustment, Sound, Calibration, Language, Correlation, Temperature}
 	
 	private static TextView TimeText;
+	private static ImageView deviceImage;
 	
 	public static boolean LoginFlag,
 						  CheckFlag;
@@ -117,13 +118,15 @@ public class HomeActivity extends Activity {
 		/* Error Pop-up window */
 		homeLinear = (RelativeLayout)findViewById(R.id.homelinear);		
 		errorPopupView = View.inflate(getApplicationContext(), R.layout.errorbtnpopup, null);
-		errorPopup = new PopupWindow(errorPopupView, 504, 174, true);
+		errorPopup = new PopupWindow(errorPopupView, 800, 480, true);
 		
 		/* Log in Pop-up window */
 		loginPopupView = View.inflate(getApplicationContext(), R.layout.loginpopup, null);
 		loginPopup = new PopupWindow(loginPopupView, 800, 480, true);
 		
 		TimeText = (TextView) findViewById(R.id.timeText);
+		deviceImage = (ImageView) findViewById(R.id.device);
+		
 		oIDEText = (EditText) loginPopupView.findViewById(R.id.loginoid);
 		passEText = (EditText) loginPopupView.findViewById(R.id.loginpass);
 		
@@ -257,6 +260,7 @@ public class HomeActivity extends Activity {
 		
 		TimerDisplay.timerState = whichClock.HomeClock;		
 		CurrTimeDisplay();
+		ExternalDeviceDisplay();
 		
 		mPool.setOnLoadCompleteListener(new OnLoadCompleteListener() {
 		      public void onLoadComplete(SoundPool mPool, int sampleId, int status) {
@@ -290,6 +294,21 @@ public class HomeActivity extends Activity {
 		        });
 		    }
 		}).start();	
+	}
+	
+	public void ExternalDeviceDisplay() {
+		
+		new Thread(new Runnable() {
+		    public void run() {    
+		        runOnUiThread(new Runnable(){
+		            public void run() {
+		           
+		            	if(HomeActivity.ExternalDevice == true) deviceImage.setBackgroundResource(R.drawable.main_usb_c);
+		            	else deviceImage.setBackgroundResource(R.drawable.main_usb);
+		            }
+		        });
+		    }
+		}).start();
 	}
 
 	public void Login() {

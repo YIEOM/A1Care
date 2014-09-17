@@ -22,6 +22,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,6 +32,7 @@ public class ExportActivity extends Activity {
 	private Reader mNFCReader;
 	
 	public static TextView TimeText;
+	private static ImageView deviceImage;
 	public TextView explain;
 	
 	private Button nextBtn;
@@ -42,7 +44,8 @@ public class ExportActivity extends Activity {
 		overridePendingTransition(R.anim.fade, R.anim.hold);
 		setContentView(R.layout.export);
 		
-		TimeText = (TextView) findViewById(R.id.timeText);				
+		TimeText = (TextView) findViewById(R.id.timeText);
+		deviceImage = (ImageView) findViewById(R.id.device);				
 		explain = (TextView) findViewById(R.id.explain);
 		
 		MemoryInit();
@@ -75,6 +78,7 @@ public class ExportActivity extends Activity {
 		
 		TimerDisplay.timerState = whichClock.ExportClock;		
 		CurrTimeDisplay();
+		ExternalDeviceDisplay();
 		
 		Check();
 		
@@ -95,6 +99,21 @@ public class ExportActivity extends Activity {
 		}).start();	
 	}
 	
+	public void ExternalDeviceDisplay() {
+		
+		new Thread(new Runnable() {
+		    public void run() {    
+		        runOnUiThread(new Runnable(){
+		            public void run() {
+		           
+		            	if(HomeActivity.ExternalDevice == true) deviceImage.setBackgroundResource(R.drawable.main_usb_c);
+		            	else deviceImage.setBackgroundResource(R.drawable.main_usb);
+		            }
+		        });
+		    }
+		}).start();
+	}
+
 	public void WhichIntent() { // Activity conversion
 			
 		Intent CancleIntent = new Intent(getApplicationContext(), DataSettingActivity.class);

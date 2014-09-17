@@ -75,6 +75,7 @@ public class RunActivity extends Activity {
 
 	public static TextView TimeText,
 						   RunTimeText;
+	private static ImageView deviceImage;
 	
 	public ImageView barani;
 	
@@ -119,6 +120,8 @@ public class RunActivity extends Activity {
 		setContentView(R.layout.run);
 		
 		TimeText = (TextView) findViewById(R.id.timeText);
+		deviceImage = (ImageView) findViewById(R.id.device);
+		
 		RunTimeText = (TextView) findViewById(R.id.runTimeText);
 		
 		RunSerial = new SerialPort(); // to test
@@ -126,11 +129,11 @@ public class RunActivity extends Activity {
 		/* Esc Pop-up window */
 		runLinear = (RelativeLayout)findViewById(R.id.runlinear);
 		escPopupView = View.inflate(this, R.layout.escpopup, null);
-		escPopup = new PopupWindow(escPopupView, 504, 174, true);
+		escPopup = new PopupWindow(escPopupView, 800, 480, true);
 		
 		/* Error Pop-up window */
 		errorPopupView = View.inflate(this, R.layout.errorbtnpopup, null);
-		errorPopup = new PopupWindow(errorPopupView, 504, 174, true);
+		errorPopup = new PopupWindow(errorPopupView, 800, 480, true);
 		
 		/* esc pop-up window activation */
 		escIcon = (Button)findViewById(R.id.escicon);
@@ -167,6 +170,8 @@ public class RunActivity extends Activity {
 					yesBtn.setEnabled(false);
 								
 					WaitPopup();
+					
+					runState = AnalyzerState.NormalOperation;
 					
 					if(MotorShakeFlag) MotionInstruct(MOTOR_STOP, SerialPort.CtrTarget.MotorStop);
 	
@@ -214,13 +219,28 @@ public class RunActivity extends Activity {
 		}).start();	
 	}
 	
+	public void ExternalDeviceDisplay() {
+		
+		new Thread(new Runnable() {
+		    public void run() {    
+		        runOnUiThread(new Runnable(){
+		            public void run() {
+		           
+		            	if(HomeActivity.ExternalDevice == true) deviceImage.setBackgroundResource(R.drawable.main_usb_c);
+		            	else deviceImage.setBackgroundResource(R.drawable.main_usb);
+		            }
+		        });
+		    }
+		}).start();
+	}
+
 	public void WaitPopup() { // Waiting popup window activation
 		
 		escPopup.dismiss();
 		
 		runLinear = (RelativeLayout)findViewById(R.id.runlinear);
 		escPopupView = View.inflate(this, R.layout.waitpopup, null);
-		escPopup = new PopupWindow(escPopupView, 478, 155, true);
+		escPopup = new PopupWindow(escPopupView, 800, 480, true);
 		
 		escPopup.showAtLocation(runLinear, Gravity.CENTER, 0, 0);
 		escPopup.setAnimationStyle(0);
@@ -238,12 +258,12 @@ public class RunActivity extends Activity {
 				switch(runState) {
 				
 				case InitPosition		:
-					MotionInstruct(HOME_POSITION, SerialPort.CtrTarget.PhotoSet);			
+					MotionInstruct(HOME_POSITION, SerialPort.CtrTarget.PhotoSet);
 					BoardMessage(HOME_POSITION, AnalyzerState.Step1Position, CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 6);
 					break;
 				
 				case Step1Position	:
-					MotionInstruct(Step1st_POSITION, SerialPort.CtrTarget.PhotoSet);			
+					MotionInstruct(Step1st_POSITION, SerialPort.CtrTarget.PhotoSet);
 					BarAnimation(168);
 					BoardMessage(Step1st_POSITION, AnalyzerState.Step1Shaking, CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 5);
 					BarAnimation(171);
@@ -276,6 +296,10 @@ public class RunActivity extends Activity {
 					checkError = HomeActivity.COMMUNICATION_ERROR;
 					runState = AnalyzerState.NoWorking;
 					WhichIntent(TargetIntent.ResultError);
+					break;
+					
+				case NormalOperation :
+					runState = AnalyzerState.MeasurePosition;
 					break;
 					
 				default	:
@@ -369,7 +393,11 @@ public class RunActivity extends Activity {
 					runState = AnalyzerState.NoWorking;
 					WhichIntent(TargetIntent.ResultError);
 					break;
-					
+				
+				case NormalOperation :
+					runState = AnalyzerState.Filter535nm;
+					break;
+				
 				default	:
 					break;
 				}
@@ -452,6 +480,10 @@ public class RunActivity extends Activity {
 					checkError = HomeActivity.COMMUNICATION_ERROR;
 					runState = AnalyzerState.NoWorking;
 					WhichIntent(TargetIntent.ResultError);
+					break;
+					
+				case NormalOperation :
+					runState = AnalyzerState.Filter535nm;
 					break;
 					
 				default	:
@@ -538,6 +570,10 @@ public class RunActivity extends Activity {
 					WhichIntent(TargetIntent.ResultError);
 					break;
 					
+				case NormalOperation :
+					runState = AnalyzerState.Step2Position;
+					break;
+					
 				default	:
 					break;
 				}
@@ -605,6 +641,10 @@ public class RunActivity extends Activity {
 					checkError = HomeActivity.COMMUNICATION_ERROR;
 					runState = AnalyzerState.NoWorking;
 					WhichIntent(TargetIntent.ResultError);
+					break;
+					
+				case NormalOperation :
+					runState = AnalyzerState.MeasurePosition;
 					break;
 					
 				default	:
@@ -699,6 +739,10 @@ public class RunActivity extends Activity {
 					WhichIntent(TargetIntent.ResultError);
 					break;
 					
+				case NormalOperation :
+					runState = AnalyzerState.Filter535nm;
+					break;
+					
 				default	:
 					break;
 				}
@@ -783,6 +827,10 @@ public class RunActivity extends Activity {
 					WhichIntent(TargetIntent.ResultError);
 					break;
 					
+				case NormalOperation :
+					runState = AnalyzerState.Filter535nm;
+					break;
+					
 				default	:
 					break;
 				}
@@ -865,6 +913,10 @@ public class RunActivity extends Activity {
 					checkError = HomeActivity.COMMUNICATION_ERROR;
 					runState = AnalyzerState.NoWorking;
 					WhichIntent(TargetIntent.ResultError);
+					break;
+					
+				case NormalOperation :
+					runState = AnalyzerState.CartridgeDump;
 					break;
 					
 				default	:
@@ -1029,6 +1081,7 @@ public class RunActivity extends Activity {
 		
 		TimerDisplay.timerState = whichClock.RunClock;
 		CurrTimeDisplay();
+		ExternalDeviceDisplay();
 		
 		BarAnimation(162);
 		RunTimerInit();
@@ -1107,7 +1160,8 @@ public class RunActivity extends Activity {
 			
 			return HomeActivity.tHb_HIGH_ERROR;
 		
-		} else return HomeActivity.NORMAL_OPERATION;
+		} else 
+			return HomeActivity.NORMAL_OPERATION;
 	}
 	
 	public byte HbA1cCalculate() { // Calculation for HbA1c percentage
@@ -1149,7 +1203,8 @@ public class RunActivity extends Activity {
 			
 			return HomeActivity.A1c_HIGH_ERROR;
 		
-		} else return HomeActivity.NORMAL_OPERATION;
+		} else
+			return HomeActivity.NORMAL_OPERATION;
 	}
 	
 	public double Absorb1stHandling() {

@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class TimeActivity extends Activity {
@@ -36,6 +37,7 @@ public class TimeActivity extends Activity {
 				   ampmDownBtn;
 	
 	private static TextView TimeText;
+	private static ImageView deviceImage;
 	
 	private int currHour,
 				hour,
@@ -55,6 +57,8 @@ public class TimeActivity extends Activity {
 		setContentView(R.layout.time);
 		
 		TimeText  = (TextView) findViewById(R.id.timeText);
+		deviceImage = (ImageView) findViewById(R.id.device);
+		
 		hourText  = (TextView) findViewById(R.id.hourtext);
 		minText   = (TextView) findViewById(R.id.mintext);
 		ampmText   = (TextView) findViewById(R.id.ampmtext);
@@ -169,6 +173,7 @@ public class TimeActivity extends Activity {
 		
 		TimerDisplay.timerState = whichClock.TimeClock;		
 		CurrTimeDisplay();
+		ExternalDeviceDisplay();
 		GetCurrTime();
 	}
 	
@@ -183,7 +188,22 @@ public class TimeActivity extends Activity {
 		            }
 		        });
 		    }
-		}).start();	
+		}).start();
+	}
+	
+	public void ExternalDeviceDisplay() {
+		
+		new Thread(new Runnable() {
+		    public void run() {    
+		        runOnUiThread(new Runnable(){
+		            public void run() {
+		           
+		            	if(HomeActivity.ExternalDevice == true) deviceImage.setBackgroundResource(R.drawable.main_usb_c);
+		            	else deviceImage.setBackgroundResource(R.drawable.main_usb);
+		            }
+		        });
+		    }
+		}).start();
 	}
 	
 	public void WhichIntent(TargetIntent Itn) { // Activity conversion

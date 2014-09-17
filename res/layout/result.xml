@@ -11,11 +11,11 @@
         android:src="@drawable/main_top_bg" />
             
     <ImageView
+        android:id="@+id/device" 
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="531px"
-        android:layout_marginTop="18px"
-        android:src="@drawable/main_usb" />
+        android:layout_marginLeft="520px"
+        android:layout_marginTop="12px" />
     
    	<TextView
         android:id="@+id/timeText" 
@@ -120,8 +120,8 @@
 		
 		<EditText
 	        android:id="@+id/patientidtext"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
+	        android:layout_width="168px"
+	        android:layout_height="30px"
 	        android:layout_marginTop="120px"
 	        android:paddingLeft="10px"
 	        android:ems="10"

@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.View.OnTouchListener;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
@@ -44,6 +45,7 @@ public class PatientTestActivity extends Activity {
 					 result;
 	
 	public static TextView TimeText;
+	private static ImageView deviceImage;
 	
 	private Button homeIcon,
 				   backIcon,
@@ -79,6 +81,7 @@ public class PatientTestActivity extends Activity {
 		setContentView(R.layout.patienttest);
 		
 		TimeText = (TextView) findViewById(R.id.timeText);
+		deviceImage = (ImageView) findViewById(R.id.device);
 		
 		/* Popup window activation */
 		pTestLayout = (RelativeLayout)findViewById(R.id.ptestlayout);
@@ -290,6 +293,7 @@ public class PatientTestActivity extends Activity {
 		
 		TimerDisplay.timerState = whichClock.PatientClock;		
 		CurrTimeDisplay();
+		ExternalDeviceDisplay();
 		
 		GetItnData();
 		PatientText();
@@ -310,6 +314,21 @@ public class PatientTestActivity extends Activity {
 		}).start();	
 	}
 	
+	public void ExternalDeviceDisplay() {
+		
+		new Thread(new Runnable() {
+		    public void run() {    
+		        runOnUiThread(new Runnable(){
+		            public void run() {
+		           
+		            	if(HomeActivity.ExternalDevice == true) deviceImage.setBackgroundResource(R.drawable.main_usb_c);
+		            	else deviceImage.setBackgroundResource(R.drawable.main_usb);
+		            }
+		        });
+		    }
+		}).start();
+	}
+
 	public void GetItnData() { // getting the intent data
 		
 		Intent itn = getIntent();
@@ -358,7 +377,7 @@ public class PatientTestActivity extends Activity {
     		if(testNum[i] != null) {
     		
     			TestNumText [i].setText(testNum[i]);
-    			typeStr     [i] = "A1c Sale";
+    			typeStr     [i] = "HbA1c";
 				TypeText    [i].setText(typeStr[i]);
     			ResultText  [i].setText(hbA1c[i] + "%"); // 17 - 48
             	DateTimeText[i].setText(dateTime[i].substring(0, 4) + "." + dateTime[i].substring(4, 6) + "." + dateTime[i].substring(6, 8) + " " + dateTime[i].substring(8, 10) + " " + dateTime[i].substring(10, 12) + ":" + dateTime[i].substring(12, 14));	
@@ -423,9 +442,9 @@ public class PatientTestActivity extends Activity {
 		txData.append(dateTime[boxNum - 1].substring(0, 4));
 		txData.append(dateTime[boxNum - 1].substring(4, 6));
 		txData.append(dateTime[boxNum - 1].substring(6, 8));
+		txData.append(dateTime[boxNum - 1].substring(8, 10));
 		txData.append(dateTime[boxNum - 1].substring(10, 12));
 		txData.append(dateTime[boxNum - 1].substring(12, 14));
-		txData.append(dateTime[boxNum - 1].substring(8, 10));
 		txData.append(testNum[boxNum - 1]);
 		txData.append(refNum[boxNum - 1]);
 		txData.append(pIDLenDfm.format(pID[boxNum - 1].length()));

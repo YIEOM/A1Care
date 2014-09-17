@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
@@ -26,6 +27,7 @@ public class CorrelationFactorActivity extends Activity {
 					 offsetEText;
 	
 	private static TextView TimeText;
+	private static ImageView deviceImage;
 	
 	private boolean btnState = false;
 	
@@ -35,6 +37,7 @@ public class CorrelationFactorActivity extends Activity {
 		setContentView(R.layout.correlation);
 		
 		TimeText = (TextView)findViewById(R.id.timeText);
+		deviceImage = (ImageView) findViewById(R.id.device);
 				
 		slopeEText = (EditText) findViewById(R.id.slopeetext);
 		offsetEText = (EditText) findViewById(R.id.offsetetext);
@@ -65,6 +68,7 @@ public class CorrelationFactorActivity extends Activity {
 		
 		TimerDisplay.timerState = whichClock.CorrelationClock;		
 		CurrTimeDisplay();
+		ExternalDeviceDisplay();
 		
 		slopeEText.setText(Float.toString(RunActivity.CF_Slope));
 		offsetEText.setText(Float.toString(RunActivity.CF_Offset));
@@ -85,6 +89,20 @@ public class CorrelationFactorActivity extends Activity {
 		}).start();	
 	}
 	
+	public void ExternalDeviceDisplay() {
+		
+		new Thread(new Runnable() {
+		    public void run() {    
+		        runOnUiThread(new Runnable(){
+		            public void run() {
+		           
+		            	if(HomeActivity.ExternalDevice == true) deviceImage.setBackgroundResource(R.drawable.main_usb_c);
+		            	else deviceImage.setBackgroundResource(R.drawable.main_usb);
+		            }
+		        });
+		    }
+		}).start();
+	}	
 	public void CorrelationSave(float slope, float offset) { // Saving number of user define parameter
 		
 		SharedPreferences correlationPref = getSharedPreferences("User Define", MODE_PRIVATE);

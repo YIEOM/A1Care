@@ -9,10 +9,6 @@
     <string name="datetime">Date/Time</string>
     <string name="testnum">Test No.</string>
     <string name="type">Type</string>
-    <string name="barcode">Please scan the barcode of cartridge</string>
-    <string name="cartridge">Please insert the scanned cartridge into cell block</string>
-    <string name="collector">Please take a sample using the collector</string>
-    <string name="door">1. Please push the collector into cartridge\n2. When door is closed, Measurement is automatically started</string>
     <string name="e001">Please close the door</string>
 	<string name="e002">Please remove the cartridge</string>
     <string name="e212">E212</string>
@@ -39,7 +35,7 @@
     <string name="print">Print</string>
     <string name="ok">Ok</string>
     <string name="cancel">Cancel</string>
-    <string name="esc">Are you exit this test?</string>
+    <string name="esc">Do you exit this test?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="wait">Please wait.</string>

@@ -18,6 +18,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -52,6 +53,7 @@ public class SystemSettingActivity extends Activity {
 				   tempBtn;
 		
 	public static TextView TimeText;
+	private static ImageView deviceImage;
 	
 	public boolean btnState = false;
 	
@@ -62,11 +64,12 @@ public class SystemSettingActivity extends Activity {
 		setContentView(R.layout.systemsetting);
 		
 		TimeText = (TextView) findViewById(R.id.timeText);
+		deviceImage = (ImageView) findViewById(R.id.device);
 		
 		/* Reset Pop-up window */
 		systemSettingLinear = (RelativeLayout)findViewById(R.id.systemsettinglinear);
 		resetPopupView = View.inflate(getApplicationContext(), R.layout.resetpopup, null);
-		resetPopup = new PopupWindow(resetPopupView, 504, 174, true);
+		resetPopup = new PopupWindow(resetPopupView, 800, 480, true);
 		
 		SystemSettingInit();
 		
@@ -304,6 +307,7 @@ public class SystemSettingActivity extends Activity {
 		
 		TimerDisplay.timerState = whichClock.SystemSettingClock;		
 		CurrTimeDisplay();
+		ExternalDeviceDisplay();
 	}
 	
 	public void CurrTimeDisplay() {
@@ -313,7 +317,6 @@ public class SystemSettingActivity extends Activity {
 		        runOnUiThread(new Runnable(){
 		            public void run() {
 		            	
-//		            	Log.w("SettingTimeDisplay", "run");
 		            	TimeText.setText(TimerDisplay.rTime[3] + " " + TimerDisplay.rTime[4] + ":" + TimerDisplay.rTime[5]);
 		            }
 		        });
@@ -321,6 +324,21 @@ public class SystemSettingActivity extends Activity {
 		}).start();	
 	}
 	
+	public void ExternalDeviceDisplay() {
+		
+		new Thread(new Runnable() {
+		    public void run() {    
+		        runOnUiThread(new Runnable(){
+		            public void run() {
+		           
+		            	if(HomeActivity.ExternalDevice == true) deviceImage.setBackgroundResource(R.drawable.main_usb_c);
+		            	else deviceImage.setBackgroundResource(R.drawable.main_usb);
+		            }
+		        });
+		    }
+		}).start();
+	}
+
 	public void SettingParameterInit() {
 		
 		/* Adjustment factor parameter Initialization */
