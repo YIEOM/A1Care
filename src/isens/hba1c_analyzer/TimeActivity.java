@@ -2,16 +2,21 @@ package isens.hba1c_analyzer;
 
 import java.text.DecimalFormat;
 import java.util.Calendar;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
 import isens.hba1c_analyzer.TimerDisplay.whichClock;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -20,7 +25,10 @@ public class TimeActivity extends Activity {
 
 	private TimerDisplay TimeTimer;
 	
-	public enum AddSub {PLUS, MINUS}
+	public Handler handler = new Handler();
+	public TimerTask oneHundredmsPeriod;
+
+	public Timer timer;
 	
 	private TextView hourText,
 					 minText,
@@ -83,58 +91,146 @@ public class TimeActivity extends Activity {
 		});
 		
 		hPlusBtn = (Button) findViewById(R.id.hplusbtn);
-		hPlusBtn.setOnClickListener(new View.OnClickListener() {
+		hPlusBtn.setOnTouchListener(new OnTouchListener() {
 			
-			public void onClick(View v) {
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+
+				switch(event.getAction()) {
 				
-				if(!btnState) {
-					
-					btnState = true;
-					
-					HourChange(AddSub.PLUS);
+				case MotionEvent.ACTION_DOWN	:
+					if(!btnState) {
+						
+						btnState = true;
+						
+						TimeChange(HomeActivity.HOUR_UP);
+					}
+					break;
+
+				case MotionEvent.ACTION_UP		:
+					if(timer != null) timer.cancel();
+					break;
 				}
+				// TODO Auto-generated method stub
+				return false;
+			}
+		});
+
+		hPlusBtn.setOnLongClickListener(new View.OnLongClickListener() {
+			
+			public boolean onLongClick(View v) {
+			
+				TimerInit(HomeActivity.HOUR_UP);
+				
+				return true;
 			}
 		});
 		
 		hMinusBtn = (Button) findViewById(R.id.hminusbtn);
-		hMinusBtn.setOnClickListener(new View.OnClickListener() {
+		hMinusBtn.setOnTouchListener(new OnTouchListener() {
 			
-			public void onClick(View v) {
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
 
-				if(!btnState) {
-					
-					btnState = true;
-					
-					HourChange(AddSub.MINUS);
+				switch(event.getAction()) {
+				
+				case MotionEvent.ACTION_DOWN	:
+					if(!btnState) {
+						
+						btnState = true;
+						
+						TimeChange(HomeActivity.HOUR_DOWN);
+					}
+					break;
+
+				case MotionEvent.ACTION_UP		:
+					if(timer != null) timer.cancel();
+					break;
 				}
+				// TODO Auto-generated method stub
+				return false;
+			}
+		});
+
+		hMinusBtn.setOnLongClickListener(new View.OnLongClickListener() {
+			
+			public boolean onLongClick(View v) {
+			
+				TimerInit(HomeActivity.HOUR_DOWN);
+				
+				return true;
 			}
 		});
 		
 		mPlusBtn = (Button) findViewById(R.id.mplusbtn);
-		mPlusBtn.setOnClickListener(new View.OnClickListener() {
+		mPlusBtn.setOnTouchListener(new OnTouchListener() {
 			
-			public void onClick(View v) {
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
 
-				if(!btnState) {
-					
-					btnState = true;
-					
-					MinChange(AddSub.PLUS);
+				switch(event.getAction()) {
+				
+				case MotionEvent.ACTION_DOWN	:
+					if(!btnState) {
+						
+						btnState = true;
+						
+						TimeChange(HomeActivity.MINUTE_UP);
+					}
+					break;
+
+				case MotionEvent.ACTION_UP		:
+					if(timer != null) timer.cancel();
+					break;
 				}
+				// TODO Auto-generated method stub
+				return false;
+			}
+		});
+
+		mPlusBtn.setOnLongClickListener(new View.OnLongClickListener() {
+			
+			public boolean onLongClick(View v) {
+			
+				TimerInit(HomeActivity.MINUTE_UP);
+				
+				return true;
 			}
 		});
 		
 		mMinusBtn = (Button) findViewById(R.id.mminusbtn);
-		mMinusBtn.setOnClickListener(new View.OnClickListener() {
+		mMinusBtn.setOnTouchListener(new OnTouchListener() {
 			
-			public void onClick(View v) {
-			
-				if(!btnState) {
-					
-					btnState = true;
-					
-					MinChange(AddSub.MINUS);
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+
+				switch(event.getAction()) {
+				
+				case MotionEvent.ACTION_DOWN	:
+					if(!btnState) {
+						
+						btnState = true;
+						
+						TimeChange(HomeActivity.MINUTE_DOWN);
+					}
+					break;
+
+				case MotionEvent.ACTION_UP		:
+					if(timer != null) timer.cancel();
+					break;
 				}
+				// TODO Auto-generated method stub
+				return false;
+			}
+		});
+
+		mMinusBtn.setOnLongClickListener(new View.OnLongClickListener() {
+			
+			public boolean onLongClick(View v) {
+			
+				TimerInit(HomeActivity.MINUTE_DOWN);
+				
+				return true;
 			}
 		});
 
@@ -175,6 +271,26 @@ public class TimeActivity extends Activity {
 		CurrTimeDisplay();
 		ExternalDeviceDisplay();
 		GetCurrTime();
+	}
+	
+	public void TimerInit(final int whichTime) {
+		
+		oneHundredmsPeriod = new TimerTask() {
+			
+			public void run() {
+				Runnable updater = new Runnable() {
+					public void run() {
+		
+						TimeChange(whichTime);
+					}
+				};
+				
+				handler.post(updater);		
+			}
+		};
+		
+		timer = new Timer();
+		timer.schedule(oneHundredmsPeriod, 0, 100); // Timer period : 100msec
 	}
 	
 	public void CurrTimeDisplay() {
@@ -271,11 +387,13 @@ public class TimeActivity extends Activity {
 		TimeDisplay();
 	}
 	
-	public void HourChange(AddSub i) { // increasing or decreasing the hour value one by one
+	public void TimeChange(int whichTime) {
 		
-		switch(i) {
+		DecimalFormat dfm = new DecimalFormat("00");
 		
-		case PLUS	:
+		switch(whichTime) {
+		
+		case HomeActivity.HOUR_UP		:
 			if(hour < 12) {
 				hour += 1;
 			} else {
@@ -283,7 +401,7 @@ public class TimeActivity extends Activity {
 			}
 			break;
 			
-		case MINUS	:
+		case HomeActivity.HOUR_DOWN		:
 			if(hour > 1) {
 				hour -= 1;
 			} else {
@@ -291,40 +409,27 @@ public class TimeActivity extends Activity {
 			}
 			break;
 			
-		default		:
-			break;
-		}
-		
-		TimeDisplay();
-	}
-	
-	public void MinChange(AddSub i) { // increasing or decreasing the minute value one by one
-		
-		DecimalFormat dfm = new DecimalFormat("00"); 
-		
-		switch(i) {
-		
-		case PLUS	:
+		case HomeActivity.MINUTE_UP		:
 			if(min < 59) {
 				min += 1;
 			} else {
 				min = 0;
 			}
+			minStr = dfm.format(min);
 			break;
 			
-		case MINUS	:
+		case HomeActivity.MINUTE_DOWN	:
 			if(min > 0) {
 				min -= 1;
 			} else {
 				min = 59;
 			}
+			minStr = dfm.format(min);
 			break;
 			
 		default		:
 			break;
 		}
-		
-		minStr = dfm.format(min);
 		
 		TimeDisplay();
 	}

@@ -1,17 +1,22 @@
 package isens.hba1c_analyzer;
 
 import java.util.Calendar;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
 import isens.hba1c_analyzer.TimerDisplay.whichClock;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.SystemClock;
 import android.provider.ContactsContract.CommonDataKinds.Event;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -20,11 +25,15 @@ public class DateActivity extends Activity {
 
 	private TimerDisplay DateTimer;
 	
-	private enum AddSub {PLUS, MINUS}
+	public Handler handler = new Handler();
+	public TimerTask oneHundredmsPeriod;
+	
+	public Timer timer;
 	
 	private TextView yearText,
 					 monthText,
 					 dayText;
+	
 	private Calendar c;
 	
 	private Button escBtn,
@@ -37,6 +46,8 @@ public class DateActivity extends Activity {
 	
 	private static TextView TimeText;
 	private static ImageView deviceImage;
+	
+	public static int WhichDate = 0;
 	
 	private int year,
 				month,
@@ -76,97 +87,218 @@ public class DateActivity extends Activity {
 		});
 		
 		yPlusBtn = (Button) findViewById(R.id.yplusbtn);
-		yPlusBtn.setOnClickListener(new View.OnClickListener() {
+		yPlusBtn.setOnTouchListener(new OnTouchListener() {
 			
-			public void onClick(View v) {
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+
+				switch(event.getAction()) {
 				
-				if(!btnState) {
-					
-					btnState = true;
-				
-					YearChange(AddSub.PLUS);
+				case MotionEvent.ACTION_DOWN	:
+					if(!btnState) {
+						
+						btnState = true;
+						
+						DateChange(HomeActivity.YEAR_UP);
+					}
+					break;
+
+				case MotionEvent.ACTION_UP		:
+					if(timer != null) timer.cancel();
+					break;
 				}
+				// TODO Auto-generated method stub
+				return false;
+			}
+		});
+
+		yPlusBtn.setOnLongClickListener(new View.OnLongClickListener() {
+			
+			public boolean onLongClick(View v) {
+			
+				TimerInit(HomeActivity.YEAR_UP);
+				
+				return true;
 			}
 		});
 		
-//		yPlusBtn.setOnLongClickListener(new View.OnLongClickListener() {
-//			
-//			@Override
-//			public boolean onLongClick(View v) {
-//			
-//				switch()
-//				
-//				return false;
-//			}
-//		});
-		
 		yMinusBtn = (Button) findViewById(R.id.yminusbtn);
-		yMinusBtn.setOnClickListener(new View.OnClickListener() {
+		yMinusBtn.setOnTouchListener(new OnTouchListener() {
 			
-			public void onClick(View v) {
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
 
-				if(!btnState) {
-					
-					btnState = true;
-					
-					YearChange(AddSub.MINUS);
+				switch(event.getAction()) {
+				
+				case MotionEvent.ACTION_DOWN	:
+					if(!btnState) {
+						
+						btnState = true;
+						
+						DateChange(HomeActivity.YEAR_DOWN);
+					}
+					break;
+
+				case MotionEvent.ACTION_UP		:
+					if(timer != null) timer.cancel();
+					break;
 				}
+				// TODO Auto-generated method stub
+				return false;
+			}
+		});
+
+		yMinusBtn.setOnLongClickListener(new View.OnLongClickListener() {
+			
+			public boolean onLongClick(View v) {
+			
+				TimerInit(HomeActivity.YEAR_DOWN);
+				
+				return true;
 			}
 		});
 		
 		mPlusBtn = (Button) findViewById(R.id.mplusbtn);
-		mPlusBtn.setOnClickListener(new View.OnClickListener() {
+		mPlusBtn.setOnTouchListener(new OnTouchListener() {
 			
-			public void onClick(View v) {
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
 
-				if(!btnState) {
-					
-					btnState = true;
-					
-					MonthChange(AddSub.PLUS);
+				switch(event.getAction()) {
+				
+				case MotionEvent.ACTION_DOWN	:
+					if(!btnState) {
+						
+						btnState = true;
+						
+						DateChange(HomeActivity.MONTH_UP);
+					}
+					break;
+
+				case MotionEvent.ACTION_UP		:
+					if(timer != null) timer.cancel();
+					break;
 				}
+				// TODO Auto-generated method stub
+				return false;
+			}
+		});
+
+		mPlusBtn.setOnLongClickListener(new View.OnLongClickListener() {
+			
+			public boolean onLongClick(View v) {
+			
+				TimerInit(HomeActivity.MONTH_UP);
+				
+				return true;
 			}
 		});
 		
 		mMinusBtn = (Button) findViewById(R.id.mminusbtn);
-		mMinusBtn.setOnClickListener(new View.OnClickListener() {
+		mMinusBtn.setOnTouchListener(new OnTouchListener() {
 			
-			public void onClick(View v) {
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+
+				switch(event.getAction()) {
+				
+				case MotionEvent.ACTION_DOWN	:
+					if(!btnState) {
+						
+						btnState = true;
+						
+						DateChange(HomeActivity.MONTH_DOWN);
+					}
+					break;
+
+				case MotionEvent.ACTION_UP		:
+					if(timer != null) timer.cancel();
+					break;
+				}
+				// TODO Auto-generated method stub
+				return false;
+			}
+		});
+
+		mMinusBtn.setOnLongClickListener(new View.OnLongClickListener() {
 			
-				if(!btnState) {
-					
-					btnState = true;
-					
-					MonthChange(AddSub.MINUS);
-				}	
+			public boolean onLongClick(View v) {
+			
+				TimerInit(HomeActivity.MONTH_DOWN);
+				
+				return true;
 			}
 		});
 		
 		dPlusBtn = (Button) findViewById(R.id.dplusbtn);
-		dPlusBtn.setOnClickListener(new View.OnClickListener() {
+		dPlusBtn.setOnTouchListener(new OnTouchListener() {
 			
-			public void onClick(View v) {
-			
-				if(!btnState) {
-					
-					btnState = true;
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+
+				switch(event.getAction()) {
 				
-					DayChange(AddSub.PLUS);
+				case MotionEvent.ACTION_DOWN	:
+					if(!btnState) {
+						
+						btnState = true;
+						
+						DateChange(HomeActivity.DAY_UP);
+					}
+					break;
+
+				case MotionEvent.ACTION_UP		:
+					if(timer != null) timer.cancel();
+					break;
 				}
+				// TODO Auto-generated method stub
+				return false;
+			}
+		});
+
+		dPlusBtn.setOnLongClickListener(new View.OnLongClickListener() {
+			
+			public boolean onLongClick(View v) {
+			
+				TimerInit(HomeActivity.DAY_UP);
+				
+				return true;
 			}
 		});
 
 		dMinusBtn = (Button) findViewById(R.id.dminusbtn);
-		dMinusBtn.setOnClickListener(new View.OnClickListener() {
+		dMinusBtn.setOnTouchListener(new OnTouchListener() {
 			
-			public void onClick(View v) {
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+
+				switch(event.getAction()) {
 				
-				if(!btnState) {
-					
-					btnState = true;
-					
-					DayChange(AddSub.MINUS);
+				case MotionEvent.ACTION_DOWN	:
+					if(!btnState) {
+						
+						btnState = true;
+						
+						DateChange(HomeActivity.DAY_DOWN);
+					}
+					break;
+
+				case MotionEvent.ACTION_UP		:
+					if(timer != null) timer.cancel();
+					break;
 				}
+				// TODO Auto-generated method stub
+				return false;
+			}
+		});
+
+		dMinusBtn.setOnLongClickListener(new View.OnLongClickListener() {
+			
+			public boolean onLongClick(View v) {
+			
+				TimerInit(HomeActivity.DAY_DOWN);
+				
+				return true;
 			}
 		});
 		
@@ -181,6 +313,26 @@ public class DateActivity extends Activity {
 		GetCurrDate();
 	}
 		
+	public void TimerInit(final int whichDate) {
+		
+		oneHundredmsPeriod = new TimerTask() {
+			
+			public void run() {
+				Runnable updater = new Runnable() {
+					public void run() {
+		
+						DateChange(whichDate);
+					}
+				};
+				
+				handler.post(updater);		
+			}
+		};
+		
+		timer = new Timer();
+		timer.schedule(oneHundredmsPeriod, 0, 100); // Timer period : 100msec
+	}
+	
 	public void CurrTimeDisplay() {
 		
 		new Thread(new Runnable() {
@@ -238,60 +390,38 @@ public class DateActivity extends Activity {
 		DateDisplay();
 	}
 	
-	private void YearChange(AddSub i) { // increasing or decreasing the year value one by one
+	private void DateChange(int whichDate) {
 		
-		switch(i) {
+		switch(whichDate) {
 		
-		case PLUS	:
+		case HomeActivity.YEAR_UP		:
 			c.add(Calendar.YEAR, 1);
 			break;
 			
-		case MINUS	:
+		case HomeActivity.YEAR_DOWN		:
 			c.add(Calendar.YEAR, -1);
 			break;
-			
-		default		:
-			break;
-		}
 		
-		GetDate();
-	}
-	
-	private void MonthChange(AddSub i) { // increasing or decreasing the month value one by one
-		
-		switch(i) {
-		
-		case PLUS	:
+		case HomeActivity.MONTH_UP		:
 			c.add(Calendar.MONTH, 1);
 			break;
 			
-		case MINUS	:
+		case HomeActivity.MONTH_DOWN	:
 			c.add(Calendar.MONTH, -1);
 			break;
-			
-		default		:
-			break;
-		}
 		
-		GetDate();
-	}
-	
-	private void DayChange(AddSub i) { // increasing or decreasing the day value one by one
-		
-		switch(i) {
-		
-		case PLUS	:
+		case HomeActivity.DAY_UP		:
 			c.add(Calendar.DAY_OF_MONTH, 1);
 			break;
 			
-		case MINUS	:
+		case HomeActivity.DAY_DOWN		:
 			c.add(Calendar.DAY_OF_MONTH, -1);
 			break;
 			
 		default		:
 			break;
 		}
-	
+		
 		GetDate();
 	}
 	

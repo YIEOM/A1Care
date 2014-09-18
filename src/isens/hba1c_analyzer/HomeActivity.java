@@ -58,9 +58,21 @@ public class HomeActivity extends Activity {
 					  ERROR_660nm = 4,
 					  ERROR_750nm = 8;				  
 	
-	final static byte ACTION_ACTIVITY = 1,
-					  HOME_ACTIVITY = 2,
+	final static byte ACTION_ACTIVITY  = 1,
+					  HOME_ACTIVITY    = 2,
 					  COVER_ACTION_ESC = 3;
+	
+	final static byte NONE        = 0,
+					  YEAR_UP     = 1,
+					  YEAR_DOWN   = 2,
+					  MONTH_UP    = 3,
+					  MONTH_DOWN  = 4,
+					  DAY_UP      = 5,
+					  DAY_DOWN    = 6,
+					  HOUR_UP     = 7,
+					  HOUR_DOWN   = 8,
+					  MINUTE_UP   = 9,
+					  MINUTE_DOWN = 10;
 
 	final static double MaxDark = 5000,
 						MinDark = 3000,

@@ -55,8 +55,8 @@ public class TimerDisplay {
 	
 	public void TimerInit() {
 		
-		
 		TimerSerial = new SerialPort();
+		TimerGpio = new GpioPort();
 		
 		OneHundredmsPeriod = new TimerTask() {
 			
@@ -70,7 +70,6 @@ public class TimerDisplay {
 						
 						if((cnt % 10) == 0) { // One second period
 						
-							TimerGpio = new GpioPort();
 							TimerGpio.CartridgeSensorScan();
 							TimerGpio.DoorSensorScan();
 						
@@ -85,7 +84,6 @@ public class TimerDisplay {
 							
 						} else if((cnt % 2) == 0) {
 							
-							TimerGpio = new GpioPort();
 							TimerGpio.CartridgeSensorScan();
 							TimerGpio.DoorSensorScan();
 						}

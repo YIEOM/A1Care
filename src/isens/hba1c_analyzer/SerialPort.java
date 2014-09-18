@@ -186,7 +186,7 @@ public class SerialPort {
 					pFileOutputStream.write(CR);
 					pFileOutputStream.write(GS); 
 					pFileOutputStream.write(0x21); // size of character 
-					pFileOutputStream.write(0x0); // 2 times of width and 2 times of height
+					pFileOutputStream.write(0x01); // 2 times of width and 2 times of height
 					pFileOutputStream.write("A1Care".getBytes());
 					
 					/* Start Line */
