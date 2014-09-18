@@ -28,6 +28,8 @@ import android.graphics.drawable.AnimationDrawable;
 
 public class HomeActivity extends Activity {
 
+	final static boolean TEST = true;
+	
 	final static double MAX_TEMP = 39.7, // 36.7 max Temperature
 						MIN_TEMP = 36.3; // 36.3 min Temperature
 	final static int BLANK_PERIOD = 600/5; // Period/5sec

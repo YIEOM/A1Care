@@ -271,6 +271,10 @@ public class RunActivity extends Activity {
 					break;
 					
 				case Step1Shaking	:
+					/* TEST Mode */
+					if(HomeActivity.TEST) MotionInstruct(ShkDf.format(30), SerialPort.CtrTarget.MotorSet);
+					else
+					
 					MotionInstruct(ShkDf.format(FIRST_SHAKING_TIME * 6), SerialPort.CtrTarget.MotorSet);  // Motor shaking time, default : 6.5 * 10(sec) = 0065
 					MotorShakeFlag = true;
 					ShakingAniThread ShakingAniThreadObj = new ShakingAniThread(174, FIRST_SHAKING_TIME);
@@ -616,6 +620,10 @@ public class RunActivity extends Activity {
 					break;
 					
 				case Step2Shaking	:
+					/* TEST Mode */
+					if(HomeActivity.TEST) MotionInstruct(ShkDf.format(30), SerialPort.CtrTarget.MotorSet);
+					else
+						
 					MotionInstruct(ShkDf.format(SECOND_SHAKING_TIME * 6), SerialPort.CtrTarget.MotorSet);  // Motor shaking time, default : 6 * 10(sec) = 0065
 					MotorShakeFlag = true;
 					ShakingAniThread ShakingAniThreadObj = new ShakingAniThread(375, SECOND_SHAKING_TIME);
@@ -1152,6 +1160,11 @@ public class RunActivity extends Activity {
 		
 		A = Absorb1stHandling();
 		
+		/* TEST Mode */
+		if(HomeActivity.TEST) return HomeActivity.NORMAL_OPERATION;
+		else {
+		
+			
 		if(A < 0.16) {
 			
 			return HomeActivity.tHb_LOW_ERROR;
@@ -1160,8 +1173,10 @@ public class RunActivity extends Activity {
 			
 			return HomeActivity.tHb_HIGH_ERROR;
 		
-		} else 
-			return HomeActivity.NORMAL_OPERATION;
+		} else return HomeActivity.NORMAL_OPERATION;
+		
+		
+		}
 	}
 	
 	public byte HbA1cCalculate() { // Calculation for HbA1c percentage
@@ -1195,6 +1210,11 @@ public class RunActivity extends Activity {
 		HbA1cPctDbl = (B - (St * a4 + b4)) / a3 / St * 100; // %-HbA1c(%)
 		HbA1cPctDbl = CF_Slope * (AF_Slope * HbA1cPctDbl + AF_Offset) + CF_Offset;
 		
+		/* TEST Mode */
+		if(HomeActivity.TEST) return HomeActivity.NORMAL_OPERATION;
+		else {
+		
+		
 		if(HbA1cPctDbl < 4) {
 			
 			return HomeActivity.A1c_LOW_ERROR;
@@ -1205,6 +1225,9 @@ public class RunActivity extends Activity {
 		
 		} else
 			return HomeActivity.NORMAL_OPERATION;
+		
+		
+		}
 	}
 	
 	public double Absorb1stHandling() {

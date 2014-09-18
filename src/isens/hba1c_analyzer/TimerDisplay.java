@@ -120,12 +120,12 @@ public class TimerDisplay {
 					if(HomeActivity.ExternalDevice == false) {
 					
 						Log.w("shell", "line : " + line);
-						
+
+						HomeActivity.ExternalDevice = true;
+
 						TimerSerial.HHBarcodeSerialInit();
 						TimerSerial.HHBarcodeRxStart();
 						
-						HomeActivity.ExternalDevice = true;
-
 						ExternalDeviceDecision(); 
 					}
 				}

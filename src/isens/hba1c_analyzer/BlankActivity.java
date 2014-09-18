@@ -153,7 +153,11 @@ public class BlankActivity extends Activity {
 					BarAnimation(206);
 					RunActivity.BlankValue[0] = 0;
 					RunActivity.BlankValue[0] = AbsorbanceMeasure(HomeActivity.MinDark, HomeActivity.MaxDark, HomeActivity.ERROR_DARK); // Dark Absorbance
-//					PhotoErrorCheck();
+
+					/* TEST Mode */
+					if(!HomeActivity.TEST)
+						
+					PhotoErrorCheck();
 					break;
 					
 				case Filter535nm :
@@ -176,7 +180,11 @@ public class BlankActivity extends Activity {
 					BoardMessage(RunActivity.NEXT_FILTER, AnalyzerState.FilterHome, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 5);
 					BarAnimation(458);
 					RunActivity.BlankValue[3] = AbsorbanceMeasure(HomeActivity.Min750, HomeActivity.Max750, HomeActivity.ERROR_750nm); // Dark Absorbance
-//					PhotoErrorCheck();
+				
+					/* TEST Mode */
+					if(!HomeActivity.TEST)
+					
+					PhotoErrorCheck();
 					break;
 				
 				case FilterHome :

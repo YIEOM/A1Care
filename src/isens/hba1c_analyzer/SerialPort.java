@@ -99,10 +99,10 @@ public class SerialPort {
 	public static byte BarcodeBufIndex = 0;
 	public static byte HHBarcodeBufIndex = 0;
 	
-	public static String AmpTemperature = "0";
-	
 	public static boolean BarcodeReadStart = false;
 	public static boolean HHBarcodeReadStart = false;
+	
+	public static String AmpTemperature = "0";
 	
 	private class BoardTxThread extends Thread { // Instruction for a board
 
@@ -181,20 +181,20 @@ public class SerialPort {
 					pFileOutputStream.write(CR);
 					pFileOutputStream.write("i-SENS, Inc.".getBytes());
 					
-					/* i-CON */
+					/* A1Care */
 					pFileOutputStream.write(LF);
 					pFileOutputStream.write(CR);
 					pFileOutputStream.write(GS); 
-					pFileOutputStream.write(33); // size of character 
-					pFileOutputStream.write(17); // 2 times of width and 2 times of height
+					pFileOutputStream.write(0x21); // size of character 
+					pFileOutputStream.write(0x0); // 2 times of width and 2 times of height
 					pFileOutputStream.write("A1Care".getBytes());
 					
 					/* Start Line */
 					pFileOutputStream.write(LF);
 					pFileOutputStream.write(CR);
 					pFileOutputStream.write(GS); 
-					pFileOutputStream.write(33); // size of character 
-					pFileOutputStream.write(0); // 1 times of width and 1 times of height
+					pFileOutputStream.write(0x21); // size of character 
+					pFileOutputStream.write(0x00); // 1 times of width and 1 times of height
 					pFileOutputStream.write("------------------------------------".getBytes());
 					
 					if(mode == PRINTRESULT) {
@@ -216,9 +216,9 @@ public class SerialPort {
 					pFileOutputStream.write("Test Date".getBytes());
 					
 					pFileOutputStream.write(ESC);
-					pFileOutputStream.write(36);
-					pFileOutputStream.write(200);
-					pFileOutputStream.write(0);
+					pFileOutputStream.write(0x24);
+					pFileOutputStream.write(0xC8);
+					pFileOutputStream.write(0x00);
 					
 					/* Year */
 					pFileOutputStream.write(CR);
@@ -255,9 +255,9 @@ public class SerialPort {
 					pFileOutputStream.write("Type".getBytes());
 					
 					pFileOutputStream.write(ESC);
-					pFileOutputStream.write(36);
-					pFileOutputStream.write(200);
-					pFileOutputStream.write(0);
+					pFileOutputStream.write(0x24);
+					pFileOutputStream.write(0xC8);
+					pFileOutputStream.write(0x00);
 					
 					/* HbA1c */
 					type = txData.substring(18, 20);
@@ -279,9 +279,9 @@ public class SerialPort {
 					pFileOutputStream.write("Primary".getBytes());
 					
 					pFileOutputStream.write(ESC);
-					pFileOutputStream.write(36);
-					pFileOutputStream.write(200);
-					pFileOutputStream.write(0);
+					pFileOutputStream.write(0x24);
+					pFileOutputStream.write(0xC8);
+					pFileOutputStream.write(0x00);
 					
 					/* HbA1c percentage */
 					pFileOutputStream.write(CR);
@@ -293,9 +293,9 @@ public class SerialPort {
 					pFileOutputStream.write("Result".getBytes());
 					
 					pFileOutputStream.write(ESC);
-					pFileOutputStream.write(36);
-					pFileOutputStream.write(200);
-					pFileOutputStream.write(0);
+					pFileOutputStream.write(0x24);
+					pFileOutputStream.write(0xC8);
+					pFileOutputStream.write(0x00);
 					
 					/* HbA1c percentage */
 					pFileOutputStream.write(CR);
@@ -308,9 +308,9 @@ public class SerialPort {
 					pFileOutputStream.write("Reference Range".getBytes());
 					
 					pFileOutputStream.write(ESC);
-					pFileOutputStream.write(36);
-					pFileOutputStream.write(200);
-					pFileOutputStream.write(0);
+					pFileOutputStream.write(0x24);
+					pFileOutputStream.write(0xC8);
+					pFileOutputStream.write(0x00);
 					
 					/* 4.0 - 6.0% */
 					pFileOutputStream.write(CR);
@@ -322,9 +322,9 @@ public class SerialPort {
 					pFileOutputStream.write("Test No.".getBytes());
 					
 					pFileOutputStream.write(ESC);
-					pFileOutputStream.write(36);
-					pFileOutputStream.write(200);
-					pFileOutputStream.write(0);
+					pFileOutputStream.write(0x24);
+					pFileOutputStream.write(0xC8);
+					pFileOutputStream.write(0x00);
 					
 					/* Test number */
 					pFileOutputStream.write(CR);
@@ -336,9 +336,9 @@ public class SerialPort {
 					pFileOutputStream.write("Ref#".getBytes());
 					
 					pFileOutputStream.write(ESC);
-					pFileOutputStream.write(36);
-					pFileOutputStream.write(200);
-					pFileOutputStream.write(0);
+					pFileOutputStream.write(0x24);
+					pFileOutputStream.write(0xC8);
+					pFileOutputStream.write(0x00);
 					
 					/* Lot number */
 					pFileOutputStream.write(CR);
@@ -350,9 +350,9 @@ public class SerialPort {
 					pFileOutputStream.write("Patient ID".getBytes());
 					
 					pFileOutputStream.write(ESC);
-					pFileOutputStream.write(36);
-					pFileOutputStream.write(200);
-					pFileOutputStream.write(0);
+					pFileOutputStream.write(0x24);
+					pFileOutputStream.write(0xC8);
+					pFileOutputStream.write(0x00);
 					
 					/* Patient ID */
 					pFileOutputStream.write(CR);
@@ -365,8 +365,8 @@ public class SerialPort {
 					pFileOutputStream.write("------------------------------------".getBytes());
 					
 					pFileOutputStream.write(ESC);
-					pFileOutputStream.write(100); // print and feed n lines
-					pFileOutputStream.write(10); // lines of number
+					pFileOutputStream.write(0x64); // print and feed n lines
+					pFileOutputStream.write(0x0A); // lines of number
 					pFileOutputStream.write(ETX);
 				}					
 						
@@ -561,6 +561,7 @@ public class SerialPort {
 							
 							BarcodeDataReceive(size);
 						}
+						
 					} else {
 						
 						return;
@@ -633,8 +634,8 @@ public class SerialPort {
 		
 		public void run() {
 
-			while(!isInterrupted()) {
-				
+			while(HomeActivity.ExternalDevice) {
+						
 				int size;
 				
 				try {

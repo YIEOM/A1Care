@@ -67,7 +67,7 @@ public class DataStorage extends Activity {
 			
 			while(!file.exists()); // Wait until file is created
 			
-			FileSaveActivity.DataCnt++; // increasing the count of the data stored
+			if(FileSaveActivity.DataCnt++ == 9999) FileSaveActivity.DataCnt = 1; // increasing the count of the data stored
 			
 		} catch(FileNotFoundException e) {
 			
@@ -124,13 +124,21 @@ public class DataStorage extends Activity {
 		String sdPath = SDCardState(),
 			   filePath = null;
 		
+		int dataCnt;
+		
 		if(type == (int) FileSaveActivity.CONTROL_TEST) {
 			
-			filePath = sdPath + SAVE_DIRECTORY + SAVE_CONTROL_FILENAME + (FileSaveActivity.DataCnt - num) +".txt"; // File number : the latest data - number
+			if((FileSaveActivity.DataCnt - num) > 0) dataCnt = FileSaveActivity.DataCnt - num;
+			else dataCnt = FileSaveActivity.DataCnt + 9999 - num;
+				 
+			filePath = sdPath + SAVE_DIRECTORY + SAVE_CONTROL_FILENAME + dataCnt +".txt"; // File number : the latest data - number
 		
 		} else if(type == (int) FileSaveActivity.PATIENT_TEST) {
 			
-			filePath = sdPath + SAVE_DIRECTORY + SAVE_PATIENT_FILENAME + (FileSaveActivity.DataCnt - num) +".txt"; // File number : the latest data - number
+			if((FileSaveActivity.DataCnt - num) > 0) dataCnt = FileSaveActivity.DataCnt - num;
+			else dataCnt = FileSaveActivity.DataCnt + 9999 - num;
+			
+			filePath = sdPath + SAVE_DIRECTORY + SAVE_PATIENT_FILENAME + dataCnt +".txt"; // File number : the latest data - number
 		}
 		
 		File file = new File(filePath);
@@ -147,15 +155,19 @@ public class DataStorage extends Activity {
 	
 	public synchronized String DataLoad(String filePath) { // Loading to specific file
 		
-		String line = "";
+		String curline = "",
+			   line = "";
 		
 		try {
 			
 			FileReader fr = new FileReader(filePath);			
 			BufferedReader br = new BufferedReader(fr);
 			
-			line = br.readLine(); // Reading one line
-
+			while((curline = br.readLine()) != null) {
+				
+				line = curline;
+			}
+			
 			fr.close();			
 			
 		} catch (FileNotFoundException e) {

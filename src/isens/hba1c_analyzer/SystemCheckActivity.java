@@ -101,10 +101,17 @@ public class SystemCheckActivity extends Activity {
 		
 		VolumeInit();
 		
+		/* TEST Mode */
+		if(HomeActivity.TEST) WhichIntent(TargetIntent.Home);
+		
+		else {
+			
+		
 		SensorCheck SensorCheckObj = new SensorCheck();
 		SensorCheckObj.start();
 		
-//		WhichIntent(TargetIntent.Home);
+		
+		}
 	}
 	
 	public class SensorCheck extends Thread {
@@ -326,7 +333,7 @@ public class SystemCheckActivity extends Activity {
 				
 				if((Temperature.MinAmbTmp < tmp/NUMBER_AMBIENT_TEMP_CHECK) & (tmp/NUMBER_AMBIENT_TEMP_CHECK < Temperature.MaxAmbTmp)) {
 					
-//					SerialPort.Sleep(300000);
+					SerialPort.Sleep(300000);
 					
 					WhichIntent(TargetIntent.Home);
 				
