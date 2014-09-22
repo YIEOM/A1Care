@@ -226,7 +226,7 @@ public class RunActivity extends Activity {
 		        runOnUiThread(new Runnable(){
 		            public void run() {
 		           
-		            	if(HomeActivity.ExternalDevice == true) deviceImage.setBackgroundResource(R.drawable.main_usb_c);
+		            	if(HomeActivity.ExternalDevice == HomeActivity.FILE_OPEN) deviceImage.setBackgroundResource(R.drawable.main_usb_c);
 		            	else deviceImage.setBackgroundResource(R.drawable.main_usb);
 		            }
 		        });
@@ -1159,7 +1159,7 @@ public class RunActivity extends Activity {
 	public byte tHbCalculate() {
 		
 		A = Absorb1stHandling();
-		
+		Log.w("tHb Calucation", "thb A : " + A);
 		/* TEST Mode */
 		if(HomeActivity.TEST) return HomeActivity.NORMAL_OPERATION;
 		else {
@@ -1184,7 +1184,7 @@ public class RunActivity extends Activity {
 		double B, St, Bt, SLA, SHA, BLA, BHA, SLV, SHV, BLV, BHV, a3, b3, b32, a4, b4;
 					
 		B = Absorb2ndHandling();
-		
+		Log.w("tHb Calucation", "thb B : " + B);
 		St = (A - Barcode.b1)/Barcode.a1;
 		tHbDbl = St;
 		Bt = (A - Barcode.b1)/Barcode.a1 + 1;
@@ -1209,6 +1209,8 @@ public class RunActivity extends Activity {
 		
 		HbA1cPctDbl = (B - (St * a4 + b4)) / a3 / St * 100; // %-HbA1c(%)
 		HbA1cPctDbl = CF_Slope * (AF_Slope * HbA1cPctDbl + AF_Offset) + CF_Offset;
+		
+		Log.w("tHb Calucation", "HbA1cPctDbl : " + HbA1cPctDbl);
 		
 		/* TEST Mode */
 		if(HomeActivity.TEST) return HomeActivity.NORMAL_OPERATION;

@@ -99,8 +99,8 @@ public class SerialPort {
 	public static byte BarcodeBufIndex = 0;
 	public static byte HHBarcodeBufIndex = 0;
 	
-	public static boolean BarcodeReadStart = false;
-	public static boolean HHBarcodeReadStart = false;
+	public static boolean BarcodeReadStart = false,
+						  HHBarcodeReadStart = false;
 	
 	public static String AmpTemperature = "0";
 	
@@ -260,15 +260,15 @@ public class SerialPort {
 					pFileOutputStream.write(0x00);
 					
 					/* HbA1c */
-					type = txData.substring(18, 20);
+					type = txData.substring(18, 19);
 					
-					if(type.equals("OT")) type = "Optical Test";
-					else if(type.equals("CH")) type = "Control A1c";
-					else if(type.equals("CA")) type = "Control A/C";
-					else if(type.equals("HS")) type = "HbA1c";
-					else if(type.equals("HT")) type = "A1c Stock";
-					else if(type.equals("AS")) type = "A/C Sale";
-					else if(type.equals("AT")) type = "A/C Stock";
+					if(type.equals("A")) type = "Optical Test";
+					else if(type.equals("B")) type = "Control A1c";
+					else if(type.equals("C")) type = "Control A/C";
+					else if(type.equals("D")) type = "HbA1c";
+					else if(type.equals("E")) type = "HbA1c";
+					else if(type.equals("F")) type = "HbA1c";
+					else if(type.equals("G")) type = "ACR";
 					
 					pFileOutputStream.write(CR);
 					pFileOutputStream.write(type.getBytes());
@@ -299,7 +299,7 @@ public class SerialPort {
 					
 					/* HbA1c percentage */
 					pFileOutputStream.write(CR);
-					pFileOutputStream.write(txData.substring(30 + Integer.parseInt(txData.substring(28, 30))).getBytes());
+					pFileOutputStream.write(txData.substring(25 + Integer.parseInt(txData.substring(23, 25))).getBytes());
 					pFileOutputStream.write(" %".getBytes());
 					
 					/* Reference Range */
@@ -342,7 +342,7 @@ public class SerialPort {
 					
 					/* Lot number */
 					pFileOutputStream.write(CR);
-					pFileOutputStream.write(txData.substring(18, 28).getBytes());
+					pFileOutputStream.write(txData.substring(18, 23).getBytes());
 					
 					/* PID */
 					pFileOutputStream.write(LF);
@@ -356,9 +356,8 @@ public class SerialPort {
 					
 					/* Patient ID */
 					pFileOutputStream.write(CR);
-					pFileOutputStream.write(txData.substring(30, 30 + Integer.parseInt(txData.substring(28, 30))).getBytes());
-					
-					
+					pFileOutputStream.write(txData.substring(25, 25 + Integer.parseInt(txData.substring(23, 25))).getBytes());
+										
 					/* End Line */
 					pFileOutputStream.write(LF);
 					pFileOutputStream.write(CR);
@@ -634,7 +633,7 @@ public class SerialPort {
 		
 		public void run() {
 
-			while(HomeActivity.ExternalDevice) {
+			while(HomeActivity.ExternalDevice == HomeActivity.FILE_OPEN) {
 						
 				int size;
 				
@@ -785,12 +784,21 @@ public class SerialPort {
 	
 	public void HHBarcodeRxStart() {
 		
-		HHBarcodeFileInputStream = new FileInputStream(mFd);
-		hBarcodeRxThread = new HHBarcodeRxThread();
-		hBarcodeRxThread.start();
+		try {
+			
+			HHBarcodeFileInputStream = new FileInputStream(mFd);
+			hBarcodeRxThread = new HHBarcodeRxThread();
+			hBarcodeRxThread.start();
+			
+			HomeActivity.ExternalDevice = HomeActivity.FILE_OPEN;
+				
+		} catch(NullPointerException e) {
+			
+			HomeActivity.ExternalDevice = HomeActivity.FILE_NOT_OPEN;
+		}
 	}
 	
-	public void HHBarcodeSerialClose(boolean isConnect) {
+	public void HHBarcodeSerialClose() {
 	
 		try {
 			
@@ -798,16 +806,19 @@ public class SerialPort {
 			
 			HHBarcodeFileInputStream.close();
 
+			Log.w("HHBarcodeSerialClose", "RX Thread : " + hBarcodeRxThread + " Input Stream : " + HHBarcodeFileInputStream);
+			
+			if(HomeActivity.ExternalDevice == HomeActivity.FILE_OPEN) {
+				
+				close();
+			}
+
+			HomeActivity.ExternalDevice = HomeActivity.FILE_CLOSE;
+			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		SerialPort.Sleep(500); // Time that takes to close file
-
-		Log.w("HHBarcodeSerialClose", "RX Thread : " + hBarcodeRxThread + " Input Stream : " + HHBarcodeFileInputStream);
-		
-		close();
 	}
 	
 	public static void Sleep(int t) { // t : msec

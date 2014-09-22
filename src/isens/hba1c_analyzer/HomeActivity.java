@@ -28,7 +28,7 @@ import android.graphics.drawable.AnimationDrawable;
 
 public class HomeActivity extends Activity {
 
-	final static boolean TEST = true;
+	final static boolean TEST = false;
 	
 	final static double MAX_TEMP = 39.7, // 36.7 max Temperature
 						MIN_TEMP = 36.3; // 36.3 min Temperature
@@ -61,6 +61,10 @@ public class HomeActivity extends Activity {
 	final static byte ACTION_ACTIVITY  = 1,
 					  HOME_ACTIVITY    = 2,
 					  COVER_ACTION_ESC = 3;
+	
+	final static byte FILE_CLOSE 	= 0,
+			  		  FILE_OPEN 	= 1,
+			  		  FILE_NOT_OPEN = 2;
 	
 	final static byte NONE        = 0,
 					  YEAR_UP     = 1,
@@ -114,7 +118,7 @@ public class HomeActivity extends Activity {
 	public static boolean LoginFlag,
 						  CheckFlag;
 		
-	public static boolean ExternalDevice = false;
+	public static byte ExternalDevice = FILE_CLOSE;
 	
 	public boolean btnState = false;
 	
@@ -317,7 +321,7 @@ public class HomeActivity extends Activity {
 		        runOnUiThread(new Runnable(){
 		            public void run() {
 		           
-		            	if(HomeActivity.ExternalDevice == true) deviceImage.setBackgroundResource(R.drawable.main_usb_c);
+		            	if(HomeActivity.ExternalDevice == HomeActivity.FILE_OPEN) deviceImage.setBackgroundResource(R.drawable.main_usb_c);
 		            	else deviceImage.setBackgroundResource(R.drawable.main_usb);
 		            }
 		        });

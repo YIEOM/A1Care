@@ -29,7 +29,8 @@ public class FileSaveActivity extends Activity {
 	private StringBuffer overallData = new StringBuffer(),
 						 historyData = new StringBuffer();
 
-	public static int DataCnt;
+	public static int DataCnt,
+					  TempDataCnt;
 	private int runState,
 				whichState;
 	private String dataType;
@@ -57,11 +58,19 @@ public class FileSaveActivity extends Activity {
 		
 		if(itn.getIntExtra("RunState", 0) == (int) NORMAL_RESULT) {
 
-			if(dataType.equals("C")) {
+			if(dataType.equals("B")) {
 				
 				SaveData.DataSave(CONTROL_TEST, overallData);
 
-			} else if(dataType.equals("H")) {
+			} else if(dataType.equals("D")) {
+				
+				SaveData.DataSave(PATIENT_TEST, overallData); // if HbA1c test is normal, the Result data is saved
+			
+			} else if(dataType.equals("E")) {
+				
+				SaveData.DataSave(PATIENT_TEST, overallData); // if HbA1c test is normal, the Result data is saved
+			
+			} else if(dataType.equals("F")) {
 				
 				SaveData.DataSave(PATIENT_TEST, overallData); // if HbA1c test is normal, the Result data is saved
 			}
@@ -75,13 +84,16 @@ public class FileSaveActivity extends Activity {
 	public void DataArray() { // Enumerating data
 		
 		DecimalFormat dfm = new DecimalFormat("0000");
-		
+
 		overallData.delete(0, overallData.capacity());
 		historyData.delete(0, historyData.capacity());
 		
 		itn = getIntent();
 		whichState = itn.getIntExtra("WhichIntent", 0);
 		DataCnt = itn.getIntExtra("DataCnt", 0);
+		TempDataCnt = DataCnt % 9999;
+		if(TempDataCnt == 0) TempDataCnt = 9999;
+		Log.w("DataArray", "Temp Data Cnt : " + TempDataCnt);
 		dataType = itn.getStringExtra("RefNumber").substring(0, 1);
 
 		overallData.append(itn.getStringExtra("Year"));
@@ -90,7 +102,7 @@ public class FileSaveActivity extends Activity {
 		overallData.append(itn.getStringExtra("AmPm"));
 		overallData.append(itn.getStringExtra("Hour"));
 		overallData.append(itn.getStringExtra("Minute"));
-		overallData.append(dfm.format(DataCnt));
+		overallData.append(dfm.format(TempDataCnt));
 		overallData.append(itn.getStringExtra("RefNumber"));
 		overallData.append(itn.getStringExtra("PatientIDLen"));
 		overallData.append(itn.getStringExtra("PatientID"));

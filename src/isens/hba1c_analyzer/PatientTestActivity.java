@@ -321,7 +321,7 @@ public class PatientTestActivity extends Activity {
 		        runOnUiThread(new Runnable(){
 		            public void run() {
 		           
-		            	if(HomeActivity.ExternalDevice == true) deviceImage.setBackgroundResource(R.drawable.main_usb_c);
+		            	if(HomeActivity.ExternalDevice == HomeActivity.FILE_OPEN) deviceImage.setBackgroundResource(R.drawable.main_usb_c);
 		            	else deviceImage.setBackgroundResource(R.drawable.main_usb);
 		            }
 		        });
@@ -474,6 +474,7 @@ public class PatientTestActivity extends Activity {
 			break;
 			
 		case NextFile	:
+			Log.w("Which Intent", "Patient : " + RemoveActivity.PatientDataCnt + "Data Page : " + MemoryActivity.DataPage);
 			if((RemoveActivity.PatientDataCnt-2)/5 > MemoryActivity.DataPage) {
 			
 				Intent NextFileIntent = new Intent(getApplicationContext(), FileLoadActivity.class);

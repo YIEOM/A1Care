@@ -79,7 +79,7 @@ public class TimerDisplay {
 											
 								ClockDecision();
 							}
-							
+
 							ExternalDeviceCheck();
 							
 						} else if((cnt % 2) == 0) {
@@ -115,12 +115,10 @@ public class TimerDisplay {
 					
 					isConnect = true;
 					
-					if(HomeActivity.ExternalDevice == false) {
+					if(HomeActivity.ExternalDevice != HomeActivity.FILE_OPEN) {
 					
 						Log.w("shell", "line : " + line);
-
-						HomeActivity.ExternalDevice = true;
-
+						
 						TimerSerial.HHBarcodeSerialInit();
 						TimerSerial.HHBarcodeRxStart();
 						
@@ -131,13 +129,22 @@ public class TimerDisplay {
 			
 			br.close(); 
 
-			if(isConnect == false & HomeActivity.ExternalDevice == true) {
+			if(isConnect == false) {
 			
-				HomeActivity.ExternalDevice = false;
+				if(HomeActivity.ExternalDevice == HomeActivity.FILE_OPEN) {
 					
-				TimerSerial.HHBarcodeSerialClose(isConnect);
+					TimerSerial.HHBarcodeSerialClose();
+						
+					SerialPort.Sleep(500);
 					
-				ExternalDeviceDecision();
+					ExternalDeviceDecision();	
+				
+				} else if(HomeActivity.ExternalDevice == HomeActivity.FILE_NOT_OPEN) {
+					
+					TimerSerial.HHBarcodeSerialClose();
+						
+					SerialPort.Sleep(500);
+				}
 			}
 			
 		} catch (IOException e) {

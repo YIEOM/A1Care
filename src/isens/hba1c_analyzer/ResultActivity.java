@@ -239,7 +239,7 @@ public class ResultActivity extends Activity {
 		        runOnUiThread(new Runnable(){
 		            public void run() {
 		           
-		            	if(HomeActivity.ExternalDevice == true) deviceImage.setBackgroundResource(R.drawable.main_usb_c);
+		            	if(HomeActivity.ExternalDevice == HomeActivity.FILE_OPEN) deviceImage.setBackgroundResource(R.drawable.main_usb_c);
 		            	else deviceImage.setBackgroundResource(R.drawable.main_usb);
 		            }
 		        });
@@ -288,8 +288,10 @@ public class ResultActivity extends Activity {
 	
 	public void GetDataCnt() {
 		
-		if(Barcode.RefNum.substring(0, 1).equals("C")) dataCnt = RemoveActivity.ControlDataCnt;
-		else if(Barcode.RefNum.substring(0, 1).equals("H")) dataCnt = RemoveActivity.PatientDataCnt;		
+		if(Barcode.RefNum.substring(0, 1).equals("B")) dataCnt = RemoveActivity.ControlDataCnt;
+		else if(Barcode.RefNum.substring(0, 1).equals("D")) dataCnt = RemoveActivity.PatientDataCnt;		
+		else if(Barcode.RefNum.substring(0, 1).equals("E")) dataCnt = RemoveActivity.PatientDataCnt;		
+		else if(Barcode.RefNum.substring(0, 1).equals("F")) dataCnt = RemoveActivity.PatientDataCnt;		
 	}
 	
 	public void PrintResultData() {

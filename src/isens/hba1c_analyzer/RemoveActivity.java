@@ -71,7 +71,7 @@ public class RemoveActivity extends Activity {
 		        runOnUiThread(new Runnable(){
 		            public void run() {
 		           
-		            	if(HomeActivity.ExternalDevice == true) deviceImage.setBackgroundResource(R.drawable.main_usb_c);
+		            	if(HomeActivity.ExternalDevice == HomeActivity.FILE_OPEN) deviceImage.setBackgroundResource(R.drawable.main_usb_c);
 		            	else deviceImage.setBackgroundResource(R.drawable.main_usb);
 		            }
 		        });
@@ -104,11 +104,19 @@ public class RemoveActivity extends Activity {
 			
 			if(whichIntent != HomeActivity.COVER_ACTION_ESC) {
 					 
-				if(Barcode.RefNum.substring(0, 1).equals("C")) {
+				if(Barcode.RefNum.substring(0, 1).equals("B")) {
 					
 					ControlDataCnt = itn.getIntExtra("DataCnt", 0);	
 				
-				} else if(Barcode.RefNum.substring(0, 1).equals("H")) {
+				} else if(Barcode.RefNum.substring(0, 1).equals("D")) {
+					
+					PatientDataCnt = itn.getIntExtra("DataCnt", 0);
+				
+				} else if(Barcode.RefNum.substring(0, 1).equals("E")) {
+					
+					PatientDataCnt = itn.getIntExtra("DataCnt", 0);
+				
+				} else if(Barcode.RefNum.substring(0, 1).equals("F")) {
 					
 					PatientDataCnt = itn.getIntExtra("DataCnt", 0);
 				}

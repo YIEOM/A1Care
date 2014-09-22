@@ -99,9 +99,9 @@ public class FileLoadActivity extends Activity {
 				fileDateTime [i] = loadData.substring(0, 4) + loadData.substring(4, 6) + loadData.substring(6, 8) + loadData.substring(8, 10) + 
 								loadData.substring(10, 12) + loadData.substring(12, 14);
 				fileTestNum  [i] = loadData.substring(14, 18);
-				fileRefNum   [i] = loadData.substring(18, 28);
-				filePatientID[i] = loadData.substring(30, 30 + Integer.parseInt(loadData.substring(28, 30)));
-				fileHbA1c    [i] = loadData.substring(30 + Integer.parseInt(loadData.substring(28, 30)));
+				fileRefNum   [i] = loadData.substring(18, 23);
+				filePatientID[i] = loadData.substring(25, 25 + Integer.parseInt(loadData.substring(23, 25)));
+				fileHbA1c    [i] = loadData.substring(25 + Integer.parseInt(loadData.substring(23, 25)));
 			}
 		}
 		

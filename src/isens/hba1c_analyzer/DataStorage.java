@@ -44,11 +44,11 @@ public class DataStorage extends Activity {
 		
 		if(type == FileSaveActivity.CONTROL_TEST) {
 		
-			file = new File(sdPath + SAVE_DIRECTORY + SAVE_CONTROL_FILENAME + FileSaveActivity.DataCnt + ".txt"); // File
+			file = new File(sdPath + SAVE_DIRECTORY + SAVE_CONTROL_FILENAME + FileSaveActivity.TempDataCnt + ".txt"); // File
 		
 		} else if(type == FileSaveActivity.PATIENT_TEST) {
 			
-			file = new File(sdPath + SAVE_DIRECTORY + SAVE_PATIENT_FILENAME + FileSaveActivity.DataCnt + ".txt");
+			file = new File(sdPath + SAVE_DIRECTORY + SAVE_PATIENT_FILENAME + FileSaveActivity.TempDataCnt + ".txt");
 		}
 		
 		try {
@@ -67,7 +67,7 @@ public class DataStorage extends Activity {
 			
 			while(!file.exists()); // Wait until file is created
 			
-			if(FileSaveActivity.DataCnt++ == 9999) FileSaveActivity.DataCnt = 1; // increasing the count of the data stored
+			FileSaveActivity.DataCnt++; // increasing the count of the data stored
 			
 		} catch(FileNotFoundException e) {
 			
@@ -126,17 +126,15 @@ public class DataStorage extends Activity {
 		
 		int dataCnt;
 		
+		dataCnt = (FileSaveActivity.DataCnt - num) % 9999;
+		if(dataCnt == 0) dataCnt = 9999;
+		else if(dataCnt < 0) dataCnt += 9999;
+		
 		if(type == (int) FileSaveActivity.CONTROL_TEST) {
 			
-			if((FileSaveActivity.DataCnt - num) > 0) dataCnt = FileSaveActivity.DataCnt - num;
-			else dataCnt = FileSaveActivity.DataCnt + 9999 - num;
-				 
 			filePath = sdPath + SAVE_DIRECTORY + SAVE_CONTROL_FILENAME + dataCnt +".txt"; // File number : the latest data - number
 		
 		} else if(type == (int) FileSaveActivity.PATIENT_TEST) {
-			
-			if((FileSaveActivity.DataCnt - num) > 0) dataCnt = FileSaveActivity.DataCnt - num;
-			else dataCnt = FileSaveActivity.DataCnt + 9999 - num;
 			
 			filePath = sdPath + SAVE_DIRECTORY + SAVE_PATIENT_FILENAME + dataCnt +".txt"; // File number : the latest data - number
 		}
