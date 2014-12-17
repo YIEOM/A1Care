@@ -4,7 +4,6 @@ import java.text.DecimalFormat;
 import java.util.Calendar;
 
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
-import isens.hba1c_analyzer.TimerDisplay.whichClock;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -31,14 +30,15 @@ public class FileSaveActivity extends Activity {
 
 	public static int DataCnt,
 					  TempDataCnt;
+	
 	private int runState,
 				whichState;
+	
 	private String dataType;
 	
 	protected void onCreate(Bundle savedInstanceState) {
 		
 		super.onCreate(savedInstanceState);
-		overridePendingTransition(R.anim.fade, R.anim.hold);
 		setContentView(R.layout.filesave);
 		
 		Text = (TextView) findViewById(R.id.text);		
@@ -53,8 +53,6 @@ public class FileSaveActivity extends Activity {
 		SaveData = new DataStorage();
 		
 		itn = getIntent();
-		dataType = itn.getStringExtra("RefNumber").substring(0, 1);
-		Log.w("DataInit", "Data : " + dataType);
 		
 		if(itn.getIntExtra("RunState", 0) == (int) NORMAL_RESULT) {
 
@@ -93,9 +91,15 @@ public class FileSaveActivity extends Activity {
 		DataCnt = itn.getIntExtra("DataCnt", 0);
 		TempDataCnt = DataCnt % 9999;
 		if(TempDataCnt == 0) TempDataCnt = 9999;
-		Log.w("DataArray", "Temp Data Cnt : " + TempDataCnt);
+		
+		
+		if(HomeActivity.ANALYZER_SW != HomeActivity.STABLE) {
+			
+			
 		dataType = itn.getStringExtra("RefNumber").substring(0, 1);
-
+	
+		} else dataType = "B";
+		
 		overallData.append(itn.getStringExtra("Year"));
 		overallData.append(itn.getStringExtra("Month"));
 		overallData.append(itn.getStringExtra("Day"));
@@ -106,6 +110,8 @@ public class FileSaveActivity extends Activity {
 		overallData.append(itn.getStringExtra("RefNumber"));
 		overallData.append(itn.getStringExtra("PatientIDLen"));
 		overallData.append(itn.getStringExtra("PatientID"));
+		overallData.append(itn.getStringExtra("OperatorLen"));
+		overallData.append(itn.getStringExtra("Operator"));
 		overallData.append(itn.getStringExtra("Hba1cPct"));
 		
 		historyData.append(itn.getIntExtra("RunMin", 0) + "\t");
@@ -146,6 +152,6 @@ public class FileSaveActivity extends Activity {
 	public void finish() {
 		
 		super.finish();
-		overridePendingTransition(R.anim.fade, R.anim.hold);
+//		overridePendingTransition(R.anim.fade, R.anim.hold);
 	}
 }

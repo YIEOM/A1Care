@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
-import isens.hba1c_analyzer.TimerDisplay.whichClock;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -28,15 +27,15 @@ import android.widget.Toast;
 
 public class ExportActivity extends Activity {
 
-	private UsbManager mUSBManager;
-	private Reader mNFCReader;
+	public TimerDisplay mTimerDisplay;
 	
-	public static TextView TimeText;
-	private static ImageView deviceImage;
+	public UsbManager mUSBManager;
+	public Reader mNFCReader;
+	
 	public TextView explain;
 	
-	private Button nextBtn;
-	private Button backIcon;
+	public Button nextBtn;
+	public Button backIcon;
 	
 	protected void onCreate(Bundle savedInstanceState) {
 		
@@ -44,8 +43,6 @@ public class ExportActivity extends Activity {
 		overridePendingTransition(R.anim.fade, R.anim.hold);
 		setContentView(R.layout.export);
 		
-		TimeText = (TextView) findViewById(R.id.timeText);
-		deviceImage = (ImageView) findViewById(R.id.device);				
 		explain = (TextView) findViewById(R.id.explain);
 		
 		MemoryInit();
@@ -76,42 +73,12 @@ public class ExportActivity extends Activity {
 	
 	private void MemoryInit() {
 		
-		TimerDisplay.timerState = whichClock.ExportClock;		
-		CurrTimeDisplay();
-		ExternalDeviceDisplay();
+		mTimerDisplay = new TimerDisplay();
+		mTimerDisplay.ActivityParm(this, R.id.exportlayout);
 		
 		Check();
 		
 		SerialPort.Sleep(300);
-	}
-	
-	public void CurrTimeDisplay() {
-		
-		new Thread(new Runnable() {
-		    public void run() {    
-		        runOnUiThread(new Runnable(){
-		            public void run() {
-		            	
-		            	TimeText.setText(TimerDisplay.rTime[3] + " " + TimerDisplay.rTime[4] + ":" + TimerDisplay.rTime[5]);
-		            }
-		        });
-		    }
-		}).start();	
-	}
-	
-	public void ExternalDeviceDisplay() {
-		
-		new Thread(new Runnable() {
-		    public void run() {    
-		        runOnUiThread(new Runnable(){
-		            public void run() {
-		           
-		            	if(HomeActivity.ExternalDevice == HomeActivity.FILE_OPEN) deviceImage.setBackgroundResource(R.drawable.main_usb_c);
-		            	else deviceImage.setBackgroundResource(R.drawable.main_usb);
-		            }
-		        });
-		    }
-		}).start();
 	}
 
 	public void WhichIntent() { // Activity conversion

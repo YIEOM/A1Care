@@ -7,7 +7,6 @@ import java.text.DecimalFormat;
 import java.util.Calendar;
 
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
-import isens.hba1c_analyzer.TimerDisplay.whichClock;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -27,33 +26,32 @@ import android.widget.Toast;
 
 public class SystemSettingActivity extends Activity {
 	
-	public TimerDisplay SystemSettingTimer;
-	public AdjustmentFactorActivity SystemSettingAdjustment;
+	final static byte NONE        = 0,
+					  YEAR_UP     = 1,
+					  YEAR_DOWN   = 2,
+					  MONTH_UP    = 3,
+					  MONTH_DOWN  = 4,
+					  DAY_UP      = 5,
+					  DAY_DOWN    = 6,
+					  HOUR_UP     = 7,
+					  HOUR_DOWN   = 8,
+					  MINUTE_UP   = 9,
+					  MINUTE_DOWN = 10;
 	
-	private RelativeLayout systemSettingLinear;
-	private View resetPopupView;
-	private PopupWindow resetPopup;
+	public TimerDisplay mTimerDisplay;
+	public AdjustmentFactorActivity mAdjustmentFactorActivity;
+	public ErrorPopup mErrorPopup;
 	
-	private Button escBtn,
-				   displayBtn,
-				   dateBtn,
-				   timeBtn,
-				   soundBtn,
-				   languageBtn,
-				   resultBtn,
-				   calibrationBtn,
-				   collelationBtn,
-				   reminderBtn,
-				   adjustBtn,
-				   saveBtn,
-				   resetBtn,
-				   hisBtn,
-				   yesBtn,
-				   noBtn,
-				   tempBtn;
-		
-	public static TextView TimeText;
-	private static ImageView deviceImage;
+	public Button escBtn,
+				  displayBtn,
+				  dateBtn,
+				  timeBtn,
+				  soundBtn,
+				  languageBtn,
+				  resultBtn,
+				  collelationBtn;
+
+	public TextView resetText;
 	
 	public boolean btnState = false;
 	
@@ -62,14 +60,6 @@ public class SystemSettingActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		overridePendingTransition(R.anim.fade, R.anim.hold);
 		setContentView(R.layout.systemsetting);
-		
-		TimeText = (TextView) findViewById(R.id.timeText);
-		deviceImage = (ImageView) findViewById(R.id.device);
-		
-		/* Reset Pop-up window */
-		systemSettingLinear = (RelativeLayout)findViewById(R.id.systemsettinglinear);
-		resetPopupView = View.inflate(getApplicationContext(), R.layout.resetpopup, null);
-		resetPopup = new PopupWindow(resetPopupView, 800, 480, true);
 		
 		SystemSettingInit();
 		
@@ -96,14 +86,14 @@ public class SystemSettingActivity extends Activity {
 		
 			public void onClick(View v) {
 			
-				if(!btnState) {
-					
-					btnState = true;
-					
-					displayBtn.setEnabled(false);
-
-					WhichIntent(TargetIntent.Display);
-				}
+//				if(!btnState) {
+//					
+//					btnState = true;
+//					
+//					displayBtn.setEnabled(false);
+//
+//					WhichIntent(TargetIntent.Display);
+//				}
 			}
 		});
 		
@@ -137,23 +127,6 @@ public class SystemSettingActivity extends Activity {
 					timeBtn.setEnabled(false);
 				
 					WhichIntent(TargetIntent.Time);
-				}
-			}
-		});
-		
-		/*Adjustment Factor Activity activation*/
-		adjustBtn = (Button)findViewById(R.id.adjustbtn);
-		adjustBtn.setOnClickListener(new View.OnClickListener() {
-		
-			public void onClick(View v) {
-				
-				if(!btnState) {
-					
-					btnState = true;
-					
-					adjustBtn.setEnabled(false);
-				
-					WhichIntent(TargetIntent.Adjustment);
 				}
 			}
 		});
@@ -192,151 +165,34 @@ public class SystemSettingActivity extends Activity {
 			}
 		});
 		
-		/*Calibration Activity activation*/
-		calibrationBtn = (Button)findViewById(R.id.calibrationbtn);
-		calibrationBtn.setOnClickListener(new View.OnClickListener() {
-		
-			public void onClick(View v) {
-				
-				if(!btnState) {
-					
-					btnState = true;
-					
-					calibrationBtn.setEnabled(false);
-				
-					WhichIntent(TargetIntent.Calibration);
-				}
-			}
-		});
-		
 		/*Language Activity activation*/
 		languageBtn = (Button)findViewById(R.id.languagebtn);
 		languageBtn.setOnClickListener(new View.OnClickListener() {
 		
 			public void onClick(View v) {
 				
-				if(!btnState) {
-					
-					btnState = true;
-					
-					languageBtn.setEnabled(false);
-				
-					WhichIntent(TargetIntent.Language);
-				}
-			}
-		});
-		
-		/*Temperature Activity activation*/
-		tempBtn = (Button)findViewById(R.id.tempbtn);
-		tempBtn.setOnClickListener(new View.OnClickListener() {
-		
-			public void onClick(View v) {
-				
-				if(!btnState) {
-					
-					btnState = true;
-					
-					tempBtn.setEnabled(false);
-				
-					WhichIntent(TargetIntent.Temperature);
-				}
-			}
-		});
-		
-		/*Reset Pop-up activation*/
-		resetBtn = (Button)findViewById(R.id.resetbtn);
-		resetBtn.setOnClickListener(new View.OnClickListener() {
-		
-			public void onClick(View v) {
-				
-				if(!btnState) {
-					
-					btnState = true;
-					
-					resetBtn.setEnabled(false);
-				
-					resetPopup.showAtLocation(systemSettingLinear, Gravity.CENTER, 0, 0);
-					resetPopup.setAnimationStyle(0);
-					resetPopup.showAsDropDown(resetBtn);
-				
-					btnState = false;	
-				}
-			}
-		});
-		
-		yesBtn = (Button)resetPopupView.findViewById(R.id.yesbtn);
-		yesBtn.setOnClickListener(new View.OnClickListener() {
-		
-			public void onClick(View v) {
-				
-				if(!btnState) {
-					
-					btnState = true;
-				
-					SettingParameterInit();
-					
-					resetBtn.setEnabled(true);
-					
-					resetPopup.dismiss();
-					
-					btnState = false;
-				}
-			}
-		});
-		
-		noBtn = (Button)resetPopupView.findViewById(R.id.nobtn);
-		noBtn.setOnClickListener(new View.OnClickListener() {
-		
-			public void onClick(View v) {
-				
-				if(!btnState) {
-					
-					btnState = true;
-				
-					resetBtn.setEnabled(true);
-				
-					resetPopup.dismiss();
-				
-					btnState = false;
-				}
+//				if(!btnState) {
+//					
+//					btnState = true;
+//					
+//					languageBtn.setEnabled(false);
+//				
+//					WhichIntent(TargetIntent.Language);
+//				}
 			}
 		});
 	}
 	
 	public void SystemSettingInit() {
-		
-		TimerDisplay.timerState = whichClock.SystemSettingClock;		
-		CurrTimeDisplay();
-		ExternalDeviceDisplay();
+
+		mTimerDisplay = new TimerDisplay();
+		mTimerDisplay.ActivityParm(this, R.id.systemsettinglayout);
 	}
 	
-	public void CurrTimeDisplay() {
+	public void Reset() {
 		
-		new Thread(new Runnable() {
-		    public void run() {    
-		        runOnUiThread(new Runnable(){
-		            public void run() {
-		            	
-		            	TimeText.setText(TimerDisplay.rTime[3] + " " + TimerDisplay.rTime[4] + ":" + TimerDisplay.rTime[5]);
-		            }
-		        });
-		    }
-		}).start();	
-	}
-	
-	public void ExternalDeviceDisplay() {
-		
-		new Thread(new Runnable() {
-		    public void run() {    
-		        runOnUiThread(new Runnable(){
-		            public void run() {
-		           
-		            	if(HomeActivity.ExternalDevice == HomeActivity.FILE_OPEN) deviceImage.setBackgroundResource(R.drawable.main_usb_c);
-		            	else deviceImage.setBackgroundResource(R.drawable.main_usb);
-		            }
-		        });
-		    }
-		}).start();
+		mErrorPopup = new ErrorPopup(this, this, R.id.systemsettinglayout);
+		mErrorPopup.OXBtnDisplay(R.string.reset);
 	}
 
 	public void SettingParameterInit() {
@@ -366,11 +222,6 @@ public class SystemSettingActivity extends Activity {
 			startActivity(HomeIntent);
 			break;
 						
-		case Setting		:				
-			Intent SettingIntent = new Intent(getApplicationContext(), SettingActivity.class);
-			startActivity(SettingIntent);
-			break;
-		
 		case Display		:				
 			Intent DisplayIntent = new Intent(getApplicationContext(), DisplayActivity.class);
 			startActivity(DisplayIntent);
@@ -386,24 +237,9 @@ public class SystemSettingActivity extends Activity {
 			startActivity(TimeIntent);
 			break;
 			
-		case HISSetting		:				
-			Intent HISIntent = new Intent(getApplicationContext(), HISSettingActivity.class);
-			startActivity(HISIntent);
-			break;
-
-		case Adjustment		:				
-			Intent AdjustIntent = new Intent(getApplicationContext(), AdjustmentFactorActivity.class);
-			startActivity(AdjustIntent);
-			break;
-			
 		case Sound			:				
 			Intent SoundIntent = new Intent(getApplicationContext(), SoundActivity.class);
 			startActivity(SoundIntent);
-			break;
-			
-		case Calibration	:				
-			Intent CalibrationIntent = new Intent(getApplicationContext(), CalibrationActivity.class);
-			startActivity(CalibrationIntent);
 			break;
 			
 		case Language		:				
@@ -416,11 +252,6 @@ public class SystemSettingActivity extends Activity {
 			startActivity(CorrelationIntent);
 			break;
 		
-		case Temperature		:				
-			Intent TemperatureIntent = new Intent(getApplicationContext(), TemperatureActivity.class);
-			startActivity(TemperatureIntent);
-			break;
-					
 		default		:	
 			break;			
 		}

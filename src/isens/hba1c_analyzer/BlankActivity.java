@@ -4,8 +4,8 @@ import isens.hba1c_analyzer.HomeActivity.TargetIntent;
 import isens.hba1c_analyzer.RunActivity.AnalyzerState;
 import isens.hba1c_analyzer.SystemCheckActivity.MotorCheck;
 import isens.hba1c_analyzer.SystemCheckActivity.TemperatureCheck;
-import isens.hba1c_analyzer.TimerDisplay.whichClock;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.AnimationDrawable;
@@ -22,36 +22,22 @@ import android.widget.Toast;
 
 public class BlankActivity extends Activity {
 
-	private SerialPort BlankSerial;
-	private RunActivity BlankRun;
+	public SerialPort mSerialPort;
+	public ErrorPopup mErrorPopup;
+	public TimerDisplay mTimerDisplay;
 	
-	private RelativeLayout blankLinear;
-	
-	private View errorPopupView;
-	private PopupWindow errorPopup;
-	
-	private static TextView TimeText;
-	private static ImageView deviceImage;
 	private ImageView barani;
 	
 	private RunActivity.AnalyzerState blankState;
 	private byte photoCheck;
 	
-	private byte checkError = HomeActivity.NORMAL_OPERATION;
+	private int checkError = RunActivity.NORMAL_OPERATION;
 	
 	protected void onCreate(Bundle savedInstanceState) {
 		
 		super.onCreate(savedInstanceState);
 		overridePendingTransition(R.anim.fade, R.anim.hold);
 		setContentView(R.layout.blank);
-		
-		/* Error Pop-up window */
-		blankLinear = (RelativeLayout)findViewById(R.id.blanklinear);		
-		errorPopupView = View.inflate(getApplicationContext(), R.layout.errorpopup, null);
-		errorPopup = new PopupWindow(errorPopupView, 800, 480, true);
-		
-		TimeText = (TextView) findViewById(R.id.timeText);
-		deviceImage = (ImageView) findViewById(R.id.device);
 		
 		barani = (ImageView) findViewById(R.id.progressBar);
 		
@@ -60,66 +46,49 @@ public class BlankActivity extends Activity {
 	
 	public void BlankInit() {
 		
-		TimerDisplay.timerState = whichClock.BlankClock;		
-		CurrTimeDisplay();
-		ExternalDeviceDisplay();
+		mTimerDisplay = new TimerDisplay();
+		mTimerDisplay.ActivityParm(this, R.id.blanklayout);
 				
-		BlankSerial = new SerialPort();
-		BlankRun = new RunActivity();
+		mSerialPort = new SerialPort(R.id.blanklayout);
 		
 		blankState = RunActivity.AnalyzerState.InitPosition;
 		photoCheck = 0;
 		
-		SensorCheck SensorCheckObj = new SensorCheck();
+		TimerDisplay.RXBoardFlag = true;
+		SensorCheck SensorCheckObj = new SensorCheck(this, this, R.id.blanklayout);
 		SensorCheckObj.start();
 	}
 	
-	public void CurrTimeDisplay() {
-		
-		new Thread(new Runnable() {
-		    public void run() {    
-		        runOnUiThread(new Runnable(){
-		            public void run() {
-		            	
-		            	TimeText.setText(TimerDisplay.rTime[3] + " " + TimerDisplay.rTime[4] + ":" + TimerDisplay.rTime[5]);
-		            }
-		        });
-		    }
-		}).start();	
-	}
-	
-	public void ExternalDeviceDisplay() {
-		
-		new Thread(new Runnable() {
-		    public void run() {    
-		        runOnUiThread(new Runnable(){
-		            public void run() {
-		           
-		            	if(HomeActivity.ExternalDevice == HomeActivity.FILE_OPEN) deviceImage.setBackgroundResource(R.drawable.main_usb_c);
-		            	else deviceImage.setBackgroundResource(R.drawable.main_usb);
-		            }
-		        });
-		    }
-		}).start();
-	}
-
 	public class SensorCheck extends Thread {
+		
+		Activity activity;
+		Context context;
+		int layoutid;
+		
+		public SensorCheck(Activity activity, Context context, int layoutid) {
+			
+			this.activity = activity;
+			this.context = context;
+			this.layoutid = layoutid;
+		}
 		
 		public void run() {
 			
 			GpioPort.DoorActState = true;			
 			GpioPort.CartridgeActState = true;
 			
-			SerialPort.Sleep(1500);
+			SerialPort.Sleep(1000);
 			
-			if(ActionActivity.CartridgeCheckFlag != 0) ErrorPopup(HomeActivity.CART_SENSOR_ERROR);
-			while(ActionActivity.CartridgeCheckFlag != 0);
-			errorPopup.dismiss();
+			mErrorPopup = new ErrorPopup(activity, context, layoutid);
 			
-			if(ActionActivity.DoorCheckFlag != 1) ErrorPopup(HomeActivity.DOOR_SENSOR_ERROR);
-			while(ActionActivity.DoorCheckFlag != 1);
-			errorPopup.dismiss();
-			 
+			if(ActionActivity.CartridgeCheckFlag != 0) mErrorPopup.ErrorDisplay(R.string.w002);
+			while(ActionActivity.CartridgeCheckFlag != 0) SerialPort.Sleep(100);
+			mErrorPopup.ErrorPopupClose();
+			
+			if(ActionActivity.DoorCheckFlag != 1) mErrorPopup.ErrorDisplay(R.string.w001);
+			while(ActionActivity.DoorCheckFlag != 1) SerialPort.Sleep(100);
+			mErrorPopup.ErrorPopupClose();
+			
 			GpioPort.DoorActState = false;			
 			GpioPort.CartridgeActState = false;
 
@@ -152,12 +121,12 @@ public class BlankActivity extends Activity {
 					BoardMessage(RunActivity.FILTER_DARK, AnalyzerState.Filter535nm, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 5);
 					BarAnimation(206);
 					RunActivity.BlankValue[0] = 0;
-					RunActivity.BlankValue[0] = AbsorbanceMeasure(HomeActivity.MinDark, HomeActivity.MaxDark, HomeActivity.ERROR_DARK); // Dark Absorbance
+					RunActivity.BlankValue[0] = AbsorbanceMeasure(SystemCheckActivity.MinDark, SystemCheckActivity.MaxDark, SystemCheckActivity.ERROR_DARK); // Dark Absorbance
 
 					/* TEST Mode */
-					if(!HomeActivity.TEST)
+					if(HomeActivity.ANALYZER_SW == HomeActivity.NORMAL)
 						
-					PhotoErrorCheck();
+//					PhotoErrorCheck();
 					break;
 					
 				case Filter535nm :
@@ -165,26 +134,26 @@ public class BlankActivity extends Activity {
 					MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
 					BoardMessage(RunActivity.NEXT_FILTER, AnalyzerState.Filter660nm, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 5);
 					BarAnimation(290);
-					RunActivity.BlankValue[1] = AbsorbanceMeasure(HomeActivity.Min535, HomeActivity.Max535, HomeActivity.ERROR_535nm); // Dark Absorbance
+					RunActivity.BlankValue[1] = AbsorbanceMeasure(SystemCheckActivity.Min535, SystemCheckActivity.Max535, SystemCheckActivity.ERROR_535nm); // Dark Absorbance
 					break;
 				
 				case Filter660nm :
 					MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
 					BoardMessage(RunActivity.NEXT_FILTER, AnalyzerState.Filter750nm, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 5);
 					BarAnimation(374);
-					RunActivity.BlankValue[2] = AbsorbanceMeasure(HomeActivity.Min660, HomeActivity.Max660, HomeActivity.ERROR_660nm); // Dark Absorbance
+					RunActivity.BlankValue[2] = AbsorbanceMeasure(SystemCheckActivity.Min660, SystemCheckActivity.Max660, SystemCheckActivity.ERROR_660nm); // Dark Absorbance
 					break;
 				
 				case Filter750nm :
 					MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
 					BoardMessage(RunActivity.NEXT_FILTER, AnalyzerState.FilterHome, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 5);
 					BarAnimation(458);
-					RunActivity.BlankValue[3] = AbsorbanceMeasure(HomeActivity.Min750, HomeActivity.Max750, HomeActivity.ERROR_750nm); // Dark Absorbance
+					RunActivity.BlankValue[3] = AbsorbanceMeasure(SystemCheckActivity.Min750, SystemCheckActivity.Max750, SystemCheckActivity.ERROR_750nm); // Dark Absorbance
 				
 					/* TEST Mode */
-					if(!HomeActivity.TEST)
+					if(HomeActivity.ANALYZER_SW == HomeActivity.NORMAL)
 					
-					PhotoErrorCheck();
+//					PhotoErrorCheck();
 					break;
 				
 				case FilterHome :
@@ -205,13 +174,13 @@ public class BlankActivity extends Activity {
 					break;
 				
 				case ShakingMotorError	:
-					checkError = HomeActivity.SHAKING_MOTOR_ERROR;
+					checkError = R.string.e211;
 					blankState = AnalyzerState.NoWorking;
 					WhichIntent(TargetIntent.Home);
 					break;
 					
 				case FilterMotorError	:
-					checkError = HomeActivity.FILTER_MOTOR_ERROR;
+					checkError = R.string.e212;
 					MotionInstruct(RunActivity.HOME_POSITION, SerialPort.CtrTarget.PhotoSet);			
 					BoardMessage(RunActivity.HOME_POSITION, AnalyzerState.NoWorking, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 6);
 					WhichIntent(TargetIntent.Home);
@@ -226,7 +195,7 @@ public class BlankActivity extends Activity {
 					break;
 					
 				case LampError			:
-					checkError = HomeActivity.LAMP_ERROR;
+					checkError = R.string.e232;
 					MotionInstruct(RunActivity.FILTER_DARK, SerialPort.CtrTarget.PhotoSet);
 					BoardMessage(RunActivity.FILTER_DARK, AnalyzerState.CartridgeHome, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 5);
 					MotionInstruct(RunActivity.HOME_POSITION, SerialPort.CtrTarget.PhotoSet);			
@@ -235,7 +204,7 @@ public class BlankActivity extends Activity {
 					break;
 					
 				case NoResponse :
-					Log.w("BlankStep", "NR");
+					checkError = R.string.e241;
 					blankState = AnalyzerState.NoWorking;
 					WhichIntent(TargetIntent.Home);
 					break;
@@ -249,7 +218,7 @@ public class BlankActivity extends Activity {
 	
 	public void MotionInstruct(String str, SerialPort.CtrTarget target) { // Motion of system instruction
 		
-		BlankSerial.BoardTx(str, target);
+		mSerialPort.BoardTx(str, target);
 	}
 	
 	public synchronized double AbsorbanceMeasure(double min, double max, byte errBits) { // Absorbance measurement
@@ -258,13 +227,13 @@ public class BlankActivity extends Activity {
 		String rawValue;
 		double douValue = 0;
 		
-		BlankSerial.BoardTx("VH", SerialPort.CtrTarget.PhotoSet);
+		mSerialPort.BoardTx("VH", SerialPort.CtrTarget.PhotoSet);
 		
-		rawValue = BlankSerial.BoardMessageOutput();			
+		rawValue = mSerialPort.BoardMessageOutput();			
 		
 		while(rawValue.length() != 8) {
 		
-			rawValue = BlankSerial.BoardMessageOutput();			
+			rawValue = mSerialPort.BoardMessageOutput();			
 				
 			if(time++ > 50) {
 				
@@ -296,27 +265,27 @@ public class BlankActivity extends Activity {
 		
 		case 1	:
 			blankState = AnalyzerState.PhotoSensorError;
-			checkError = HomeActivity.PHOTO_SENSOR_ERROR;
+			checkError = R.string.e231;
 			break;
 			
 		case 2	:
 			blankState = AnalyzerState.PhotoSensorError;
-			checkError = HomeActivity.FILTER_535nm_ERROR;
+			checkError = R.string.e233;
 			break;
 			
 		case 4	:
 			blankState = AnalyzerState.PhotoSensorError;
-			checkError = HomeActivity.FILTER_660nm_ERROR;
+			checkError = R.string.e234;
 			break;
 			
 		case 8	:
 			blankState = AnalyzerState.PhotoSensorError;
-			checkError = HomeActivity.FILTER_750nm_ERROR;
+			checkError = R.string.e235;
 			break;
 			
 		case 14	:
 			blankState = AnalyzerState.LampError;
-			checkError = HomeActivity.LAMP_ERROR;
+			checkError = R.string.e232;
 			break;
 			
 		default	:
@@ -333,7 +302,7 @@ public class BlankActivity extends Activity {
 		
 		while(true) {
 			
-			temp = BlankSerial.BoardMessageOutput();
+			temp = mSerialPort.BoardMessageOutput();
 			
 			if(colRsp.equals(temp)) {
 				
@@ -372,35 +341,9 @@ public class BlankActivity extends Activity {
 		}).start();	
 	}
 	
-	public void ErrorPopup(final byte error) {
-		
-		new Thread(new Runnable() {
-		    public void run() {    
-		        runOnUiThread(new Runnable(){
-		            public void run() {
-		            			            	
-		            	errorPopup.showAtLocation(blankLinear, Gravity.CENTER, 0, 0);
-						errorPopup.setAnimationStyle(0);
-											
-						TextView errorText = (TextView) errorPopup.getContentView().findViewById(R.id.errortext);
-						
-						switch(error) {
-						
-						case HomeActivity.DOOR_SENSOR_ERROR		:
-							errorText.setText(R.string.e001);
-							break;
-						
-						case HomeActivity.CART_SENSOR_ERROR		:
-							errorText.setText(R.string.e002);
-							break;
-						}
-		            }
-		        });
-		    }
-		}).start();
-	}
-	
 	public void WhichIntent(TargetIntent Itn) { // Activity conversion
+		
+		TimerDisplay.RXBoardFlag = false;
 		
 		switch(Itn) {
 		

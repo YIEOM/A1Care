@@ -6,7 +6,6 @@ import java.util.Locale;
 
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
 import isens.hba1c_analyzer.R.string;
-import isens.hba1c_analyzer.TimerDisplay.whichClock;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -28,12 +27,12 @@ public class LanguageActivity extends Activity {
 	final static int KO = 0,
 					 EN = 1;
 	
+	public TimerDisplay mTimerDisplay;
+	
 	private Button escBtn,
 				   leftBtn,
 				   rightBtn;
 	
-	private static TextView TimeText;
-	private static ImageView deviceImage;
 	private TextView languageText;
 	
 	private String[] languageTable = new String[] {"ko", "en"};
@@ -46,9 +45,6 @@ public class LanguageActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		overridePendingTransition(R.anim.fade, R.anim.hold);
 		setContentView(R.layout.language);
-		
-		TimeText = (TextView) findViewById(R.id.timeText);
-		deviceImage = (ImageView) findViewById(R.id.device);
 		
 		languageText = (TextView) findViewById(R.id.languagetext);
 		
@@ -103,41 +99,11 @@ public class LanguageActivity extends Activity {
 	}
 	
 	public void LanguageInit() {
-		
-		TimerDisplay.timerState = whichClock.LanguageClock;		
-		CurrTimeDisplay();
-		ExternalDeviceDisplay();
+
+		mTimerDisplay = new TimerDisplay();
+		mTimerDisplay.ActivityParm(this, R.id.languagelayout);
 		
 		GetLanguage();
-	}
-
-	public void CurrTimeDisplay() {
-		
-		new Thread(new Runnable() {
-		    public void run() {    
-		        runOnUiThread(new Runnable(){
-		            public void run() {
-		            	
-		            	TimeText.setText(TimerDisplay.rTime[3] + " " + TimerDisplay.rTime[4] + ":" + TimerDisplay.rTime[5]);
-		            }
-		        });
-		    }
-		}).start();	
-	}
-	
-	public void ExternalDeviceDisplay() {
-		
-		new Thread(new Runnable() {
-		    public void run() {    
-		        runOnUiThread(new Runnable(){
-		            public void run() {
-		           
-		            	if(HomeActivity.ExternalDevice == HomeActivity.FILE_OPEN) deviceImage.setBackgroundResource(R.drawable.main_usb_c);
-		            	else deviceImage.setBackgroundResource(R.drawable.main_usb);
-		            }
-		        });
-		    }
-		}).start();
 	}
 
 	public void GetLanguage() {

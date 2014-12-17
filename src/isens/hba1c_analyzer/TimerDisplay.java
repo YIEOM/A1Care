@@ -10,53 +10,94 @@ import java.util.Calendar;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import android.app.Activity;
+import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 public class TimerDisplay {
 	
 	public Handler handler = new Handler();
 	public static TimerTask OneHundredmsPeriod;
-	
-	public enum whichClock 	{HomeClock, TestClock, RunClock, ActionClock, ResultClock, MemoryClock, BlankClock, SettingClock, SystemSettingClock, RemoveClock, PatientClock, ControlClock, ExportClock,
-							ImageClock, DataSettingClock, MaintenanceClock, DateClock, TimeClock, DisplayClock, HISClock, HISSettingClock, AdjustmentClock, SoundClock, CalibrationClock, LanguageClock,
-							SystemCheckClock, CorrelationClock, TemperatureClock}
-	public static whichClock timerState;
 
-	final static String rTime[] = new String[8];
+	final static byte FILE_CLOSE 	= 0,
+			  		  FILE_OPEN 	= 1,
+			  		  FILE_NOT_OPEN = 2;
 	
-	private Timer timer;
+	public static byte ExternalDeviceBarcode = FILE_CLOSE;
 	
-	private RunActivity TimerRun;	
-	private HomeActivity TimerHome;
-	private BlankActivity TimerBlank;
-	private ActionActivity TimerAction;
-	private ResultActivity TimerResult;
-	private RemoveActivity TimerRemove;
-	private MemoryActivity TimerMemory;
-	private ExportActivity TimerExport;
-	private SettingActivity	TimerSetting;
-	private PatientTestActivity TimerPatient;
-	private ControlTestActivity TimerControl;
-	private SystemSettingActivity TimerSystemSetting;
-	private DateActivity TimerDate;
-	private DisplayActivity TimerDisplay;
-	private HISActivity	TimerHIS;
-	private HISSettingActivity TimerHISSetting;
-	private AdjustmentFactorActivity TimerAdjustment;
-	private SoundActivity TimerSound;
-	private CalibrationActivity TimerCalibration;
-	private LanguageActivity TimerLanguage;
-	private GpioPort TimerGpio;
-	private CorrelationFactorActivity TimerCorrelation;
-	private TemperatureActivity	TimerTemperature;
-	private SerialPort TimerSerial;
+	public static String rTime[] = new String[8];
+	
+	public TextView timeText;
+	public ImageView deviceImage;
+	
+	public static Activity activity;
+	
+	public Timer timer;
+
+	public GpioPort mGpioPort;
+	public SerialPort mSerialPort;
+	
+//	public void TimerInit() {
+//		
+//		mSerialPort = new SerialPort(0);
+//		mGpioPort = new GpioPort();
+//		
+//		OneHundredmsPeriod = new TimerTask() {
+//			
+//			int cnt = 0;
+//			
+//			public void run() {
+//				Runnable updater = new Runnable() {
+//					public void run() {
+//						
+//						if(cnt++ == 100) cnt = 0;
+//						
+//						if((cnt % 10) == 0) { // One second period
+//						
+//							mGpioPort.CartridgeSensorScan();
+//							mGpioPort.DoorSensorScan();
+//						
+//							RealTime();
+//							
+//							if(Integer.parseInt(rTime[6]) == 0) { // Whenever 00 second
+//											
+//								CurrTimeDisplay();
+//							}
+//
+//							ExternalDeviceCheck();
+//							
+//						} else if((cnt % 2) == 0) {
+//							
+//							mGpioPort.CartridgeSensorScan();
+//							mGpioPort.DoorSensorScan();
+//						}
+//					}
+//				};
+//				
+//				handler.post(updater);		
+//			}
+//		};
+//		
+//		timer = new Timer();
+//		timer.schedule(OneHundredmsPeriod, 0, 100); // Timer period : 100msec
+//	}
+	public static boolean RXBoardFlag = false;
 	
 	public void TimerInit() {
 		
-		TimerSerial = new SerialPort();
-		TimerGpio = new GpioPort();
+		mSerialPort = new SerialPort(0);
+		mGpioPort = new GpioPort();
+		
+		Log.w("TimerInit", "run");
 		
 		OneHundredmsPeriod = new TimerTask() {
 			
@@ -66,26 +107,28 @@ public class TimerDisplay {
 				Runnable updater = new Runnable() {
 					public void run() {
 						
-						if(cnt++ == 100) cnt = 0;
+						if(cnt++ == 1000) cnt = 0;
 						
-						if((cnt % 10) == 0) { // One second period
+						if(((cnt % 5) == 0) & RXBoardFlag) mSerialPort.BoardRxData2();
 						
-							TimerGpio.CartridgeSensorScan();
-							TimerGpio.DoorSensorScan();
+						if((cnt % 100) == 0) { // One second period
+						
+							mGpioPort.CartridgeSensorScan();
+							mGpioPort.DoorSensorScan();
 						
 							RealTime();
 							
 							if(Integer.parseInt(rTime[6]) == 0) { // Whenever 00 second
 											
-								ClockDecision();
+								CurrTimeDisplay();
 							}
 
 							ExternalDeviceCheck();
 							
-						} else if((cnt % 2) == 0) {
+						} else if((cnt % 20) == 0) {
 							
-							TimerGpio.CartridgeSensorScan();
-							TimerGpio.DoorSensorScan();
+							mGpioPort.CartridgeSensorScan();
+							mGpioPort.DoorSensorScan();
 						}
 					}
 				};
@@ -95,7 +138,7 @@ public class TimerDisplay {
 		};
 		
 		timer = new Timer();
-		timer.schedule(OneHundredmsPeriod, 0, 100); // Timer period : 100msec
+		timer.schedule(OneHundredmsPeriod, 0, 10); // Timer period : 10msec
 	}
 	
 	public void ExternalDeviceCheck() {
@@ -115,14 +158,14 @@ public class TimerDisplay {
 					
 					isConnect = true;
 					
-					if(HomeActivity.ExternalDevice != HomeActivity.FILE_OPEN) {
+					if(ExternalDeviceBarcode != FILE_OPEN) {
 					
 						Log.w("shell", "line : " + line);
 						
-						TimerSerial.HHBarcodeSerialInit();
-						TimerSerial.HHBarcodeRxStart();
+						mSerialPort.HHBarcodeSerialInit();
+						mSerialPort.HHBarcodeRxStart();
 						
-						ExternalDeviceDecision(); 
+						ExternalDeviceDisplay(); 
 					}
 				}
 			}
@@ -131,19 +174,13 @@ public class TimerDisplay {
 
 			if(isConnect == false) {
 			
-				if(HomeActivity.ExternalDevice == HomeActivity.FILE_OPEN) {
+				if(ExternalDeviceBarcode == FILE_OPEN) {
 					
-					TimerSerial.HHBarcodeSerialClose();
-						
 					SerialPort.Sleep(500);
 					
-					ExternalDeviceDecision();	
-				
-				} else if(HomeActivity.ExternalDevice == HomeActivity.FILE_NOT_OPEN) {
+					ExternalDeviceBarcode = FILE_CLOSE;
 					
-					TimerSerial.HHBarcodeSerialClose();
-						
-					SerialPort.Sleep(500);
+					ExternalDeviceDisplay();
 				}
 			}
 			
@@ -183,239 +220,29 @@ public class TimerDisplay {
 		rTime[7] = dfm.format(c.get(Calendar.HOUR_OF_DAY));		
 	}
 	
-	public void ClockDecision() { // Whenever activity change, Corresponding clock action
+	public void ActivityParm(Activity act, int id) {
 		
-		switch(timerState){
+		activity = act;
 		
-		case HomeClock			:	
-			TimerHome = new HomeActivity();
-			TimerHome.CurrTimeDisplay();
-			break;
-									
-		case ActionClock		:	
-			TimerAction = new ActionActivity();
-			TimerAction.CurrTimeDisplay();
-			break;
-			
-		case RunClock			:	
-			TimerRun = new RunActivity();
-			TimerRun.CurrTimeDisplay();
-			break;
-			
-		case ResultClock		:	
-			TimerResult = new ResultActivity();
-			TimerResult.CurrTimeDisplay();
-			break;
-			
-		case MemoryClock		:	
-			TimerMemory = new MemoryActivity();
-			TimerMemory.CurrTimeDisplay();
-			break;
-								
-		case BlankClock			:	
-			TimerBlank = new BlankActivity();
-			TimerBlank.CurrTimeDisplay();
-			break;
-								
-		case SettingClock		:	
-			TimerSetting = new SettingActivity();
-			TimerSetting.CurrTimeDisplay();
-			break;
-								
-		case SystemSettingClock	:	
-			TimerSystemSetting = new SystemSettingActivity();
-			TimerSystemSetting.CurrTimeDisplay();
-			break;
-							
-		case RemoveClock		:
-			TimerRemove = new RemoveActivity();
-			TimerRemove.CurrTimeDisplay();
-			break;
-			
-		case PatientClock		:
-			TimerPatient = new PatientTestActivity();
-			TimerPatient.CurrTimeDisplay();
-			break;
-			
-		case ControlClock		:
-			TimerControl = new ControlTestActivity();
-			TimerControl.CurrTimeDisplay();
-			break;
-			
-		case ExportClock		:
-			TimerExport = new ExportActivity();
-			TimerExport.CurrTimeDisplay();
-			break;
-			
-		case DateClock			:
-			TimerDate = new DateActivity();
-			TimerDate.CurrTimeDisplay();
-			break;
-
-		case DisplayClock		:
-			TimerDisplay = new DisplayActivity();
-			TimerDisplay.CurrTimeDisplay();
-			break;
-			
-		case HISSettingClock	:
-			TimerHISSetting = new HISSettingActivity();
-			TimerHISSetting.CurrTimeDisplay();
-			break;
-			
-		case HISClock			:
-			TimerHIS = new HISActivity();
-			TimerHIS.CurrTimeDisplay();
-			break;
+		CurrTimeDisplay();
+		ExternalDeviceDisplay();
+	}
+	
+	public void CurrTimeDisplay() {
 		
-		case AdjustmentClock	:
-			TimerAdjustment = new AdjustmentFactorActivity();
-			TimerAdjustment.CurrTimeDisplay();
-			break;
-
-		case SoundClock			:
-			TimerSound = new SoundActivity();
-			TimerSound.CurrTimeDisplay();
-			break;
+		if(activity != null) {
 			
-		case CalibrationClock	:
-			TimerCalibration = new CalibrationActivity();
-			TimerCalibration.CurrTimeDisplay();
-			break;
-		
-		case LanguageClock		:
-			TimerLanguage = new LanguageActivity();
-			TimerLanguage.CurrTimeDisplay();
-			break;
-		
-		case CorrelationClock	:
-			TimerCorrelation = new CorrelationFactorActivity();
-			TimerCorrelation.CurrTimeDisplay();
-			break;
+			timeText = (TextView) activity.findViewById(R.id.timeText);
 			
-		case TemperatureClock	:
-			TimerTemperature = new TemperatureActivity();
-			TimerTemperature.CurrTimeDisplay();
-
-		default					:	
-			break;		
+			timeText.setText(rTime[3] + " " + rTime[4] + ":" + rTime[5]);
 		}
 	}
 	
-	public void ExternalDeviceDecision() { // Whenever activity change, Corresponding clock action
+	public void ExternalDeviceDisplay() {
 		
-		switch(timerState){
+		deviceImage = (ImageView) activity.findViewById(R.id.device);
 		
-		case HomeClock			:	
-			TimerHome = new HomeActivity();
-			TimerHome.ExternalDeviceDisplay();
-			break;
-									
-		case ActionClock		:	
-			TimerAction = new ActionActivity();
-			TimerAction.ExternalDeviceDisplay();
-			break;
-			
-		case RunClock			:	
-			TimerRun = new RunActivity();
-			TimerRun.ExternalDeviceDisplay();
-			break;
-			
-		case ResultClock		:	
-			TimerResult = new ResultActivity();
-			TimerResult.ExternalDeviceDisplay();
-			break;
-			
-		case MemoryClock		:	
-			TimerMemory = new MemoryActivity();
-			TimerMemory.ExternalDeviceDisplay();
-			break;
-								
-		case BlankClock			:	
-			TimerBlank = new BlankActivity();
-			TimerBlank.ExternalDeviceDisplay();
-			break;
-								
-		case SettingClock		:	
-			TimerSetting = new SettingActivity();
-			TimerSetting.ExternalDeviceDisplay();
-			break;
-								
-		case SystemSettingClock	:	
-			TimerSystemSetting = new SystemSettingActivity();
-			TimerSystemSetting.ExternalDeviceDisplay();
-			break;
-							
-		case RemoveClock		:
-			TimerRemove = new RemoveActivity();
-			TimerRemove.ExternalDeviceDisplay();
-			break;
-			
-		case PatientClock		:
-			TimerPatient = new PatientTestActivity();
-			TimerPatient.ExternalDeviceDisplay();
-			break;
-			
-		case ControlClock		:
-			TimerControl = new ControlTestActivity();
-			TimerControl.ExternalDeviceDisplay();
-			break;
-			
-		case ExportClock		:
-			TimerExport = new ExportActivity();
-			TimerExport.ExternalDeviceDisplay();
-			break;
-			
-		case DateClock			:
-			TimerDate = new DateActivity();
-			TimerDate.ExternalDeviceDisplay();
-			break;
-
-		case DisplayClock		:
-			TimerDisplay = new DisplayActivity();
-			TimerDisplay.ExternalDeviceDisplay();
-			break;
-			
-		case HISSettingClock	:
-			TimerHISSetting = new HISSettingActivity();
-//			TimerHISSetting.ExternalDeviceDisplay();
-			break;
-			
-		case HISClock			:
-			TimerHIS = new HISActivity();
-//			TimerHIS.ExternalDeviceDisplay();
-			break;
-		
-		case AdjustmentClock	:
-			TimerAdjustment = new AdjustmentFactorActivity();
-			TimerAdjustment.ExternalDeviceDisplay();
-			break;
-
-		case SoundClock			:
-			TimerSound = new SoundActivity();
-			TimerSound.ExternalDeviceDisplay();
-			break;
-			
-		case CalibrationClock	:
-			TimerCalibration = new CalibrationActivity();
-			TimerCalibration.ExternalDeviceDisplay();
-			break;
-		
-		case LanguageClock		:
-			TimerLanguage = new LanguageActivity();
-			TimerLanguage.ExternalDeviceDisplay();
-			break;
-		
-		case CorrelationClock	:
-			TimerCorrelation = new CorrelationFactorActivity();
-			TimerCorrelation.ExternalDeviceDisplay();
-			break;
-			
-		case TemperatureClock	:
-			TimerTemperature = new TemperatureActivity();
-			TimerTemperature.ExternalDeviceDisplay();
-
-		default					:	
-			break;		
-		}
+    	if(ExternalDeviceBarcode == FILE_OPEN) deviceImage.setBackgroundResource(R.drawable.main_usb_c);
+    	else deviceImage.setBackgroundResource(R.drawable.main_usb);
 	}
 }

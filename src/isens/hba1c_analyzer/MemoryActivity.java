@@ -1,7 +1,6 @@
 package isens.hba1c_analyzer;
 
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
-import isens.hba1c_analyzer.TimerDisplay.whichClock;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,11 +13,10 @@ import android.widget.TextView;
 
 public class MemoryActivity extends Activity {
 
+	public TimerDisplay mTimerDisplay;
+	
 	final static byte CONTROL = 1,
 					  PATIENT = 2;
-	
-	public static TextView TimeText;
-	private static ImageView deviceImage;
 	
 	private Button patientBtn,
 				   controlBtn,
@@ -32,10 +30,7 @@ public class MemoryActivity extends Activity {
 		
 		super.onCreate(savedInstanceState);
 		overridePendingTransition(R.anim.fade, R.anim.hold);
-		setContentView(R.layout.memory);
-		
-		TimeText = (TextView) findViewById(R.id.timeText);
-		deviceImage = (ImageView) findViewById(R.id.device);				
+		setContentView(R.layout.memory);			
 		
 		MemoryInit();
 
@@ -92,41 +87,11 @@ public class MemoryActivity extends Activity {
 	}	
 	
 	public void MemoryInit() {
-		
-		TimerDisplay.timerState = whichClock.MemoryClock;		
-		CurrTimeDisplay();
-		ExternalDeviceDisplay();
+
+		mTimerDisplay = new TimerDisplay();
+		mTimerDisplay.ActivityParm(this, R.id.memorylayout);
 		
 		DataPage = 0;
-	}
-	
-	public void CurrTimeDisplay() {
-		
-		new Thread(new Runnable() {
-		    public void run() {    
-		        runOnUiThread(new Runnable(){
-		            public void run() {
-		            	
-		            	TimeText.setText(TimerDisplay.rTime[3] + " " + TimerDisplay.rTime[4] + ":" + TimerDisplay.rTime[5]);
-			        }
-		        });
-		    }
-		}).start();	
-	}
-	
-	public void ExternalDeviceDisplay() {
-		
-		new Thread(new Runnable() {
-		    public void run() {    
-		        runOnUiThread(new Runnable(){
-		            public void run() {
-		           
-		            	if(HomeActivity.ExternalDevice == HomeActivity.FILE_OPEN) deviceImage.setBackgroundResource(R.drawable.main_usb_c);
-		            	else deviceImage.setBackgroundResource(R.drawable.main_usb);
-		            }
-		        });
-		    }
-		}).start();
 	}
 
 	public void WhichIntent(TargetIntent Itn) { // Activity conversion
@@ -164,6 +129,5 @@ public class MemoryActivity extends Activity {
 	public void finish() {
 		
 		super.finish();
-		overridePendingTransition(R.anim.fade, R.anim.hold);
 	}
 }

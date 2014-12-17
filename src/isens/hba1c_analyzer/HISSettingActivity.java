@@ -1,6 +1,5 @@
 package isens.hba1c_analyzer;
 
-import isens.hba1c_analyzer.TimerDisplay.whichClock;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
@@ -159,9 +158,6 @@ public class HISSettingActivity extends Activity {
 	}
 	
 	private void HISInit() {
-		
-		TimerDisplay.timerState = whichClock.HISSettingClock;		
-		CurrTimeDisplay();
 		
 		Load();
 		

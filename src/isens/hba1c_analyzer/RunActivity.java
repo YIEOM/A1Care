@@ -1,7 +1,6 @@
 package isens.hba1c_analyzer;
 
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
-import isens.hba1c_analyzer.TimerDisplay.whichClock;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -46,37 +45,28 @@ public class RunActivity extends Activity {
 						MOTOR_STOP		 = "MS",
 						FILTER_ERROR 	 = "FE1",
 						CARTRIDGE_ERROR	 = "CE1";
-	
-	public enum AnalyzerState {InitPosition, Step1Position, Step1Shaking, Step2Position, Step2Shaking, MeasurePosition, FilterDark, Filter535nm, Filter660nm, Filter750nm, FilterHome, CartridgeHome, CartridgeDump, MeasureDark, Measure535nm, Measure660nm, Measure750nm, NoResponse, NoWorking, ShakingMotorError, FilterMotorError, PhotoSensorError, LampError, NormalOperation}
+		
+	final static byte NORMAL_OPERATION = 0;
 
-	private DecimalFormat ShkDf = new DecimalFormat("0000");
-	
 	final static byte FIRST_SHAKING_TIME = 105, // Motor shaking time, default : 6 * 105(sec) = 0630
 					  SECOND_SHAKING_TIME = 90; // Motor shaking time, default : 6 * 90(sec) = 0540
 	
-	private static boolean MotorShakeFlag = false;
+	public enum AnalyzerState {InitPosition, Step1Position, Step1Shaking, Step2Position, Step2Shaking, MeasurePosition, FilterDark, Filter535nm, Filter660nm, Filter750nm, FilterHome, CartridgeHome, CartridgeDump, MeasureDark, Measure535nm, Measure660nm, Measure750nm, NoResponse, NoWorking, ShakingMotorError, FilterMotorError, PhotoSensorError, LampError, NormalOperation, Stop}
 
+	public static boolean MotorShakeFlag = false;
+	
+	public ErrorPopup mErrorPopup;
+	public TimerDisplay mTimerDisplay;
+	public SerialPort mSerialPort;
+	
+	public DecimalFormat ShkDf = new DecimalFormat("0000");
+	
 	public Handler runHandler = new Handler();
-	public Timer runTimer;
+	public Timer runningTimer;
 	
-	public Toast toast;
+	public Button escIcon;
 	
-	public SerialPort RunSerial;
-	
-	private RelativeLayout runLinear;
-	private View escPopupView,
-				 errorPopupView;
-	private PopupWindow escPopup,
-						errorPopup;
-	
-	private Button escIcon,
-				   yesBtn,
-				   noBtn;
-
-	public static TextView TimeText,
-						   RunTimeText;
-	private static ImageView deviceImage;
-	
+	public TextView runTimeText;
 	public ImageView barani;
 	
 	public static double BlankValue[]     = new double[4],
@@ -107,11 +97,13 @@ public class RunActivity extends Activity {
 	
 	public AnalyzerState runState;
 	
-	public byte checkError = HomeActivity.NORMAL_OPERATION;
+	public int checkError = NORMAL_OPERATION;
 	
 	public double A;
 	
 	public boolean btnState = false;
+	
+	public static boolean isStop = false;
 	
 	protected void onCreate(Bundle savedInstanceState) {
 	
@@ -119,21 +111,7 @@ public class RunActivity extends Activity {
 		overridePendingTransition(R.anim.fade, R.anim.hold);
 		setContentView(R.layout.run);
 		
-		TimeText = (TextView) findViewById(R.id.timeText);
-		deviceImage = (ImageView) findViewById(R.id.device);
-		
-		RunTimeText = (TextView) findViewById(R.id.runTimeText);
-		
-		RunSerial = new SerialPort(); // to test
-		
-		/* Esc Pop-up window */
-		runLinear = (RelativeLayout)findViewById(R.id.runlinear);
-		escPopupView = View.inflate(this, R.layout.escpopup, null);
-		escPopup = new PopupWindow(escPopupView, 800, 480, true);
-		
-		/* Error Pop-up window */
-		errorPopupView = View.inflate(this, R.layout.errorbtnpopup, null);
-		errorPopup = new PopupWindow(errorPopupView, 800, 480, true);
+		mSerialPort = new SerialPort(R.id.runlayout); // to test
 		
 		/* esc pop-up window activation */
 		escIcon = (Button)findViewById(R.id.escicon);
@@ -145,57 +123,7 @@ public class RunActivity extends Activity {
 					
 					btnState = true;
 				
-					escIcon.setEnabled(false);
-					noBtn.setEnabled(true);
-					
-					escPopup.showAtLocation(runLinear, Gravity.CENTER, 0, 0);
-					escPopup.setAnimationStyle(0);
-					escPopup.showAsDropDown(escIcon);
-			
-					btnState = false;
-				}
-			}
-		});
-		
-		/* HOME activity activation */
-		yesBtn = (Button)escPopupView.findViewById(R.id.yesbtn);
-		yesBtn.setOnClickListener(new View.OnClickListener() {
-			
-			public void onClick(View v) {
-				
-				if(!btnState) {
-					
-					btnState = true;
-				
-					yesBtn.setEnabled(false);
-								
-					WaitPopup();
-					
-					runState = AnalyzerState.NormalOperation;
-					
-					if(MotorShakeFlag) MotionInstruct(MOTOR_STOP, SerialPort.CtrTarget.MotorStop);
-	
-					checkError = HomeActivity.STOP_RESULT;
-					
-					btnState = false;
-				}
-			}
-		});
-		
-		/* esc pop-up window close */
-		noBtn = (Button)escPopupView.findViewById(R.id.nobtn);
-		noBtn.setOnClickListener(new View.OnClickListener() {
-			
-			public void onClick(View v) {
-				
-				if(!btnState) {
-					
-					btnState = true;
-					
-					noBtn.setEnabled(false);
-					escIcon.setEnabled(true);
-					
-					escPopup.dismiss();
+					ESC();
 					
 					btnState = false;
 				}
@@ -205,55 +133,13 @@ public class RunActivity extends Activity {
 		RunInit();
 	}
 	
-	public void CurrTimeDisplay() {
-		
-		new Thread(new Runnable() {
-		    public void run() {    
-		        runOnUiThread(new Runnable(){
-		            public void run() {
-		            	
-		            	TimeText.setText(TimerDisplay.rTime[3] + " " + TimerDisplay.rTime[4] + ":" + TimerDisplay.rTime[5]);
-		            }
-		        });
-		    }
-		}).start();	
-	}
-	
-	public void ExternalDeviceDisplay() {
-		
-		new Thread(new Runnable() {
-		    public void run() {    
-		        runOnUiThread(new Runnable(){
-		            public void run() {
-		           
-		            	if(HomeActivity.ExternalDevice == HomeActivity.FILE_OPEN) deviceImage.setBackgroundResource(R.drawable.main_usb_c);
-		            	else deviceImage.setBackgroundResource(R.drawable.main_usb);
-		            }
-		        });
-		    }
-		}).start();
-	}
-
-	public void WaitPopup() { // Waiting popup window activation
-		
-		escPopup.dismiss();
-		
-		runLinear = (RelativeLayout)findViewById(R.id.runlinear);
-		escPopupView = View.inflate(this, R.layout.waitpopup, null);
-		escPopup = new PopupWindow(escPopupView, 800, 480, true);
-		
-		escPopup.showAtLocation(runLinear, Gravity.CENTER, 0, 0);
-		escPopup.setAnimationStyle(0);
-		escPopup.showAsDropDown(escIcon);
-	}
-	
 	public class Cart1stShaking extends Thread { // First shaking motion
 
 		public void run() {
 			
 			BarAnimation(165);
 			
-			for(int i = 0; i < 3; i++) {
+			for(int i = 0; i < 4; i++) {
 				
 				switch(runState) {
 				
@@ -272,60 +158,79 @@ public class RunActivity extends Activity {
 					
 				case Step1Shaking	:
 					/* TEST Mode */
-					if(HomeActivity.TEST) MotionInstruct(ShkDf.format(30), SerialPort.CtrTarget.MotorSet);
-					else
+					if(HomeActivity.ANALYZER_SW == HomeActivity.DEVEL) {
+						
+						MotionInstruct(ShkDf.format(30), SerialPort.CtrTarget.MotorSet);
+						ShakingAniThread ShakingAniThreadObj = new ShakingAniThread(174, 5);
+						ShakingAniThreadObj.start();
 					
-					MotionInstruct(ShkDf.format(FIRST_SHAKING_TIME * 6), SerialPort.CtrTarget.MotorSet);  // Motor shaking time, default : 6.5 * 10(sec) = 0065
+					} else if(HomeActivity.ANALYZER_SW == HomeActivity.DEMO) {
+					
+						MotionInstruct(ShkDf.format(18), SerialPort.CtrTarget.MotorSet);
+						ShakingAniThread ShakingAniThreadObj = new ShakingAniThread(174, 3);
+						ShakingAniThreadObj.start();
+					
+					} else {
+					
+						MotionInstruct(ShkDf.format(FIRST_SHAKING_TIME * 6), SerialPort.CtrTarget.MotorSet);  // Motor shaking time, default : 6.5 * 10(sec) = 0065
+						ShakingAniThread ShakingAniThreadObj = new ShakingAniThread(174, FIRST_SHAKING_TIME);
+						ShakingAniThreadObj.start();
+					}
 					MotorShakeFlag = true;
-					ShakingAniThread ShakingAniThreadObj = new ShakingAniThread(174, FIRST_SHAKING_TIME);
-					ShakingAniThreadObj.start();
-					BoardMessage(MOTOR_COMPLETE, AnalyzerState.MeasurePosition, CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 110);
+					BoardMessage(MOTOR_COMPLETE, AnalyzerState.NormalOperation, CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 110);
 					MotorShakeFlag = false;
+					
+					if(HomeActivity.ANALYZER_SW == HomeActivity.DEMO) {
+						
+						runState = AnalyzerState.Step2Position;
+						
+						Cart2ndShaking Cart2ndShakingObjDemo = new Cart2ndShaking();
+						Cart2ndShakingObjDemo.start();
+					}
 					break;
 					
 				case ShakingMotorError	:
-					checkError = HomeActivity.SHAKING_MOTOR_ERROR;
+					checkError = R.string.e211;
 					runState = AnalyzerState.NoWorking;
 					WhichIntent(TargetIntent.ResultError);
 					break;
 					
 				case FilterMotorError	:
-					checkError = HomeActivity.FILTER_MOTOR_ERROR;
+					checkError = R.string.e212;
 					MotionInstruct(HOME_POSITION, SerialPort.CtrTarget.PhotoSet);			
 					BoardMessage(HOME_POSITION, AnalyzerState.NoWorking, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 6);
 					WhichIntent(TargetIntent.ResultError);
 					break;
 					
-				case NoResponse :
-					checkError = HomeActivity.COMMUNICATION_ERROR;
+				case NoResponse 	:
 					runState = AnalyzerState.NoWorking;
 					WhichIntent(TargetIntent.ResultError);
 					break;
 					
-				case NormalOperation :
-					runState = AnalyzerState.MeasurePosition;
-					break;
+				case Stop			 :
+					checkError = R.string.stop;
 					
 				default	:
 					break;
 				}
 			}
-			
-			if(runState == AnalyzerState.MeasurePosition) {
-				
-				switch(checkError) {
-				
-				case HomeActivity.NORMAL_OPERATION	:
-					Cart1stFilter1 Cart1stFilter1Obj = new Cart1stFilter1();
-					Cart1stFilter1Obj.start();	
-					break;
 					
-				case HomeActivity.STOP_RESULT		:
-					CartDump CartDumpObj = new CartDump(checkError);
-					CartDumpObj.start();
-					break;
-				}
+			switch(checkError) {
+			
+			case NORMAL_OPERATION	:
+				Cart1stFilter1 Cart1stFilter1Obj = new Cart1stFilter1();
+				Cart1stFilter1Obj.start();	
+				break;
+				
+			case R.string.stop		:
+				CartDump CartDumpObj = new CartDump(checkError);
+				CartDumpObj.start();
+				break;
+				
+			default	:
+				break;
 			}
+			
 		}
 	}
 
@@ -337,7 +242,9 @@ public class RunActivity extends Activity {
 			SerialPort.Sleep(2000);
 			BarAnimation(282);
 			
-			for(int i = 0; i < 5; i++) {
+			runState = AnalyzerState.MeasurePosition;
+			
+			for(int i = 0; i < 6; i++) {
 				
 				switch(runState) {
 				
@@ -375,52 +282,51 @@ public class RunActivity extends Activity {
 				case FilterDark		:
 					MotionInstruct(FILTER_DARK, SerialPort.CtrTarget.PhotoSet);
 					BarAnimation(309);
-					BoardMessage(FILTER_DARK, AnalyzerState.Filter535nm, FILTER_ERROR, AnalyzerState.FilterMotorError, 5);
+					BoardMessage(FILTER_DARK, AnalyzerState.NormalOperation, FILTER_ERROR, AnalyzerState.FilterMotorError, 5);
 					BarAnimation(312);
 					break;
 					
 				case ShakingMotorError	:
-					checkError = HomeActivity.SHAKING_MOTOR_ERROR;
+					checkError = R.string.e211;
 					runState = AnalyzerState.NoWorking;
 					WhichIntent(TargetIntent.ResultError);
 					break;
 					
 				case FilterMotorError	:
-					checkError = HomeActivity.FILTER_MOTOR_ERROR;
+					checkError = R.string.e212;
 					MotionInstruct(HOME_POSITION, SerialPort.CtrTarget.PhotoSet);			
 					BoardMessage(HOME_POSITION, AnalyzerState.NoWorking, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 6);
 					WhichIntent(TargetIntent.ResultError);
 					break;
 					
-				case NoResponse :
-					checkError = HomeActivity.COMMUNICATION_ERROR;
+				case NoResponse			:
 					runState = AnalyzerState.NoWorking;
 					WhichIntent(TargetIntent.ResultError);
 					break;
 				
-				case NormalOperation :
-					runState = AnalyzerState.Filter535nm;
+				case Stop				:
+					checkError = R.string.stop;
 					break;
-				
+					
 				default	:
 					break;
 				}
 			}
 			
-			if(runState == AnalyzerState.Filter535nm) {
+			switch(checkError) {
+			
+			case NORMAL_OPERATION	:
+				Cart1stFilter2 Cart1stFilter2Obj = new Cart1stFilter2();
+				Cart1stFilter2Obj.start();	
+				break;
 				
-				switch(checkError) {
-				
-				case HomeActivity.NORMAL_OPERATION	:
-					Cart1stFilter2 Cart1stFilter2Obj = new Cart1stFilter2();
-					Cart1stFilter2Obj.start();	
-					break;
-					
-				case HomeActivity.STOP_RESULT		:
-					CartDump CartDumpObj = new CartDump(checkError);
-					CartDumpObj.start();
-					break;
-				}
+			case R.string.stop		:
+				CartDump CartDumpObj = new CartDump(checkError);
+				CartDumpObj.start();
+				break;
+			
+			default	:
+				break;
 			}
 		}
 	}
@@ -432,7 +338,9 @@ public class RunActivity extends Activity {
 			SerialPort.Sleep(1000);
 			BarAnimation(315);
 			
-			for(int i = 0; i < 4; i++) {
+			runState = AnalyzerState.Filter535nm;
+			
+			for(int i = 0; i < 5; i++) {
 				
 				switch(runState) {
 				
@@ -463,31 +371,30 @@ public class RunActivity extends Activity {
 				case FilterDark		:
 					MotionInstruct(FILTER_DARK, SerialPort.CtrTarget.PhotoSet);
 					BarAnimation(336);
-					BoardMessage(FILTER_DARK, AnalyzerState.Filter535nm, FILTER_ERROR, AnalyzerState.FilterMotorError, 5);
+					BoardMessage(FILTER_DARK, AnalyzerState.NormalOperation, FILTER_ERROR, AnalyzerState.FilterMotorError, 5);
 					BarAnimation(339);
 					break;
 					
 				case ShakingMotorError	:
-					checkError = HomeActivity.SHAKING_MOTOR_ERROR;
+					checkError = R.string.e211;
 					runState = AnalyzerState.NoWorking;
 					WhichIntent(TargetIntent.ResultError);
 					break;
 					
 				case FilterMotorError	:
-					checkError = HomeActivity.FILTER_MOTOR_ERROR;
+					checkError = R.string.e212;
 					MotionInstruct(HOME_POSITION, SerialPort.CtrTarget.PhotoSet);			
 					BoardMessage(HOME_POSITION, AnalyzerState.NoWorking, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 6);
 					WhichIntent(TargetIntent.ResultError);
 					break;
 					
 				case NoResponse :
-					checkError = HomeActivity.COMMUNICATION_ERROR;
 					runState = AnalyzerState.NoWorking;
 					WhichIntent(TargetIntent.ResultError);
 					break;
 					
-				case NormalOperation :
-					runState = AnalyzerState.Filter535nm;
+				case Stop			 :
+					checkError = R.string.stop;
 					break;
 					
 				default	:
@@ -495,21 +402,21 @@ public class RunActivity extends Activity {
 				}
 			}
 			
-			if(runState == AnalyzerState.Filter535nm) {
+			switch(checkError) {
 				
-				switch(checkError) {
+			case NORMAL_OPERATION	:
+				Cart1stFilter3 Cart1stFilter3Obj = new Cart1stFilter3();
+				Cart1stFilter3Obj.start();
+				break;
 				
-				case HomeActivity.NORMAL_OPERATION	:
-					Cart1stFilter3 Cart1stFilter3Obj = new Cart1stFilter3();
-					Cart1stFilter3Obj.start();
-					break;
-					
-				case HomeActivity.STOP_RESULT		:
-					CartDump CartDumpObj = new CartDump(checkError);
-					CartDumpObj.start();
-					break;
-				}	
-			}
+			case R.string.stop		:
+				CartDump CartDumpObj = new CartDump(checkError);
+				CartDumpObj.start();
+				break;
+			
+			default	:
+				break;
+			}	
 		}
 	}
 	
@@ -520,7 +427,9 @@ public class RunActivity extends Activity {
 			SerialPort.Sleep(1000);
 			BarAnimation(342);
 			
-			for(int i = 0; i < 4; i++) {
+			runState = AnalyzerState.Filter535nm;
+			
+			for(int i = 0; i < 5; i++) {
 				
 				switch(runState) {
 				
@@ -551,31 +460,30 @@ public class RunActivity extends Activity {
 				case FilterDark		:
 					MotionInstruct(FILTER_DARK, SerialPort.CtrTarget.PhotoSet);
 					BarAnimation(363);
-					BoardMessage(FILTER_DARK, AnalyzerState.Step2Position, FILTER_ERROR, AnalyzerState.FilterMotorError, 5);
+					BoardMessage(FILTER_DARK, AnalyzerState.NormalOperation, FILTER_ERROR, AnalyzerState.FilterMotorError, 5);
 					BarAnimation(366);
 					break;
 					
 				case ShakingMotorError	:
-					checkError = HomeActivity.SHAKING_MOTOR_ERROR;
+					checkError = R.string.e211;
 					runState = AnalyzerState.NoWorking;
 					WhichIntent(TargetIntent.ResultError);
 					break;
 					
 				case FilterMotorError	:
-					checkError = HomeActivity.FILTER_MOTOR_ERROR;
+					checkError = R.string.e212;
 					MotionInstruct(HOME_POSITION, SerialPort.CtrTarget.PhotoSet);			
 					BoardMessage(HOME_POSITION, AnalyzerState.NoWorking, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 6);
 					WhichIntent(TargetIntent.ResultError);
 					break;
 					
 				case NoResponse :
-					checkError = HomeActivity.COMMUNICATION_ERROR;
 					runState = AnalyzerState.NoWorking;
 					WhichIntent(TargetIntent.ResultError);
 					break;
 					
-				case NormalOperation :
-					runState = AnalyzerState.Step2Position;
+				case Stop			 :
+					checkError = R.string.stop;
 					break;
 					
 				default	:
@@ -583,23 +491,23 @@ public class RunActivity extends Activity {
 				}
 			}
 			
-			if(runState == AnalyzerState.Step2Position) {
-				
+			switch(checkError) {
+			
+			case NORMAL_OPERATION	:
 				checkError = tHbCalculate();
 				
-				switch(checkError) {
+				Cart2ndShaking Cart2ndShakingObj = new Cart2ndShaking();
+				Cart2ndShakingObj.start();
+				break;
 				
-				case HomeActivity.NORMAL_OPERATION	:
-					Cart2ndShaking Cart2ndShakingObj = new Cart2ndShaking();
-					Cart2ndShakingObj.start();
-					break;
-					
-				default	:
-					CartDump CartDumpObj = new CartDump(checkError);
-					CartDumpObj.start();
-					break;
-				}	
-			}
+			case R.string.stop		:
+				CartDump CartDumpObj = new CartDump(checkError);
+				CartDumpObj.start();
+				break;
+			
+			default	:
+				break;
+			}	
 		}
 	}
 	
@@ -607,7 +515,9 @@ public class RunActivity extends Activity {
 		
 		public void run() {			
 			
-			for(int i = 0; i < 2; i++) {
+			runState = AnalyzerState.Step2Position;
+						
+			for(int i = 0; i < 3; i++) {
 				
 				switch(runState) {
 				
@@ -621,38 +531,58 @@ public class RunActivity extends Activity {
 					
 				case Step2Shaking	:
 					/* TEST Mode */
-					if(HomeActivity.TEST) MotionInstruct(ShkDf.format(30), SerialPort.CtrTarget.MotorSet);
-					else
+					if(HomeActivity.ANALYZER_SW == HomeActivity.DEVEL) {
 						
-					MotionInstruct(ShkDf.format(SECOND_SHAKING_TIME * 6), SerialPort.CtrTarget.MotorSet);  // Motor shaking time, default : 6 * 10(sec) = 0065
+						MotionInstruct(ShkDf.format(30), SerialPort.CtrTarget.MotorSet);
+						ShakingAniThread ShakingAniThreadObj = new ShakingAniThread(375, 5);
+						ShakingAniThreadObj.start();
+					
+					} else if(HomeActivity.ANALYZER_SW == HomeActivity.DEMO) {
+					
+						MotionInstruct(ShkDf.format(18), SerialPort.CtrTarget.MotorSet);
+						ShakingAniThread ShakingAniThreadObj = new ShakingAniThread(375, 3);
+						ShakingAniThreadObj.start();
+					
+					} else {
+						
+						MotionInstruct(ShkDf.format(SECOND_SHAKING_TIME * 6), SerialPort.CtrTarget.MotorSet);  // Motor shaking time, default : 6 * 10(sec) = 0065
+						ShakingAniThread ShakingAniThreadObj = new ShakingAniThread(375, SECOND_SHAKING_TIME);
+						ShakingAniThreadObj.start();
+					}
+						
 					MotorShakeFlag = true;
-					ShakingAniThread ShakingAniThreadObj = new ShakingAniThread(375, SECOND_SHAKING_TIME);
-					ShakingAniThreadObj.start();
-					BoardMessage(MOTOR_COMPLETE, AnalyzerState.MeasurePosition, CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 100);
+					BoardMessage(MOTOR_COMPLETE, AnalyzerState.NormalOperation, CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 100);
 					MotorShakeFlag = false;
+					
+					if(HomeActivity.ANALYZER_SW == HomeActivity.DEMO) {
+						
+						runState = AnalyzerState.CartridgeDump;
+						
+						CartDump CartDumpObjDemo = new CartDump(NORMAL_OPERATION);
+						CartDumpObjDemo.start();
+					}
 					break;
 					
 				case ShakingMotorError	:
-					checkError = HomeActivity.SHAKING_MOTOR_ERROR;
+					checkError = R.string.e211;
 					runState = AnalyzerState.NoWorking;
 					WhichIntent(TargetIntent.ResultError);
 					break;
 					
 				case FilterMotorError	:
-					checkError = HomeActivity.FILTER_MOTOR_ERROR;
+					checkError = R.string.e212;
 					MotionInstruct(HOME_POSITION, SerialPort.CtrTarget.PhotoSet);			
 					BoardMessage(HOME_POSITION, AnalyzerState.NoWorking, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 6);
 					WhichIntent(TargetIntent.ResultError);
 					break;
 					
 				case NoResponse :
-					checkError = HomeActivity.COMMUNICATION_ERROR;
 					runState = AnalyzerState.NoWorking;
 					WhichIntent(TargetIntent.ResultError);
 					break;
 					
-				case NormalOperation :
-					runState = AnalyzerState.MeasurePosition;
+				case Stop			 :
+					checkError = R.string.stop;
 					break;
 					
 				default	:
@@ -660,20 +590,20 @@ public class RunActivity extends Activity {
 				}
 			}
 			
-			if(runState == AnalyzerState.MeasurePosition) {
+			switch(checkError) {
+			
+			case NORMAL_OPERATION	:
+				Cart2ndFilter1 Cart2ndFilter1Obj = new Cart2ndFilter1();
+				Cart2ndFilter1Obj.start();
+				break;
 				
-				switch(checkError) {
-				
-				case HomeActivity.NORMAL_OPERATION	:
-					Cart2ndFilter1 Cart2ndFilter1Obj = new Cart2ndFilter1();
-					Cart2ndFilter1Obj.start();
-					break;
-					
-				case HomeActivity.STOP_RESULT		:
-					CartDump CartDumpObj = new CartDump(checkError);
-					CartDumpObj.start();
-					break;
-				}
+			case R.string.stop		:
+				CartDump CartDumpObj = new CartDump(checkError);
+				CartDumpObj.start();
+				break;
+			
+			default	:
+				break;
 			}
 		}
 	}
@@ -686,7 +616,9 @@ public class RunActivity extends Activity {
 			SerialPort.Sleep(2000);
 			BarAnimation(487);
 			
-			for(int i = 0; i < 5; i++) {
+			runState = AnalyzerState.MeasurePosition;
+			
+			for(int i = 0; i < 6; i++) {
 				
 				switch(runState) {
 				
@@ -724,31 +656,30 @@ public class RunActivity extends Activity {
 				case FilterDark		:
 					MotionInstruct(FILTER_DARK, SerialPort.CtrTarget.PhotoSet);
 					BarAnimation(514);
-					BoardMessage(FILTER_DARK, AnalyzerState.Filter535nm, FILTER_ERROR, AnalyzerState.FilterMotorError, 5);
+					BoardMessage(FILTER_DARK, AnalyzerState.NormalOperation, FILTER_ERROR, AnalyzerState.FilterMotorError, 5);
 					BarAnimation(517);
 					break;
 					
 				case ShakingMotorError	:
-					checkError = HomeActivity.SHAKING_MOTOR_ERROR;
+					checkError = R.string.e211;
 					runState = AnalyzerState.NoWorking;
 					WhichIntent(TargetIntent.ResultError);
 					break;
 					
 				case FilterMotorError	:
-					checkError = HomeActivity.FILTER_MOTOR_ERROR;
+					checkError = R.string.e212;
 					MotionInstruct(HOME_POSITION, SerialPort.CtrTarget.PhotoSet);			
 					BoardMessage(HOME_POSITION, AnalyzerState.NoWorking, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 6);
 					WhichIntent(TargetIntent.ResultError);
 					break;
 					
 				case NoResponse :
-					checkError = HomeActivity.COMMUNICATION_ERROR;
 					runState = AnalyzerState.NoWorking;
 					WhichIntent(TargetIntent.ResultError);
 					break;
 					
-				case NormalOperation :
-					runState = AnalyzerState.Filter535nm;
+				case Stop			 :
+					checkError = R.string.stop;
 					break;
 					
 				default	:
@@ -756,21 +687,21 @@ public class RunActivity extends Activity {
 				}
 			}
 			
-			if(runState == AnalyzerState.Filter535nm) {
+			switch(checkError) {
 			
-				switch(checkError) {
+			case NORMAL_OPERATION	:
+				Cart2ndFilter2 Cart2ndFilter2Obj = new Cart2ndFilter2();
+				Cart2ndFilter2Obj.start();
+				break;
 				
-				case HomeActivity.NORMAL_OPERATION	:
-					Cart2ndFilter2 Cart2ndFilter2Obj = new Cart2ndFilter2();
-					Cart2ndFilter2Obj.start();
-					break;
-					
-				case HomeActivity.STOP_RESULT		:
-					CartDump CartDumpObj = new CartDump(checkError);
-					CartDumpObj.start();
-					break;
+			case R.string.stop		:
+				CartDump CartDumpObj = new CartDump(checkError);
+				CartDumpObj.start();
+				break;
+			
+			default	:
+				break;
 				}
-			}
 		}
 	}
 	
@@ -781,7 +712,9 @@ public class RunActivity extends Activity {
 			SerialPort.Sleep(1000);
 			BarAnimation(520);
 						
-			for(int i = 0; i < 4; i++) {
+			runState = AnalyzerState.Filter535nm;
+			
+			for(int i = 0; i < 5; i++) {
 				
 				switch(runState) {
 				
@@ -812,31 +745,30 @@ public class RunActivity extends Activity {
 				case FilterDark		:
 					MotionInstruct(FILTER_DARK, SerialPort.CtrTarget.PhotoSet);
 					BarAnimation(541);
-					BoardMessage(FILTER_DARK, AnalyzerState.Filter535nm, FILTER_ERROR, AnalyzerState.FilterMotorError, 5);
+					BoardMessage(FILTER_DARK, AnalyzerState.NormalOperation, FILTER_ERROR, AnalyzerState.FilterMotorError, 5);
 					BarAnimation(544);
 					break;
 					
 				case ShakingMotorError	:
-					checkError = HomeActivity.SHAKING_MOTOR_ERROR;
+					checkError = R.string.e211;
 					runState = AnalyzerState.NoWorking;
 					WhichIntent(TargetIntent.ResultError);
 					break;
 					
 				case FilterMotorError	:
-					checkError = HomeActivity.FILTER_MOTOR_ERROR;
+					checkError = R.string.e212;
 					MotionInstruct(HOME_POSITION, SerialPort.CtrTarget.PhotoSet);			
 					BoardMessage(HOME_POSITION, AnalyzerState.NoWorking, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 6);
 					WhichIntent(TargetIntent.ResultError);
 					break;
 					
 				case NoResponse :
-					checkError = HomeActivity.COMMUNICATION_ERROR;
 					runState = AnalyzerState.NoWorking;
 					WhichIntent(TargetIntent.ResultError);
 					break;
 					
-				case NormalOperation :
-					runState = AnalyzerState.Filter535nm;
+				case Stop			 :
+					checkError = R.string.stop;
 					break;
 					
 				default	:
@@ -844,20 +776,20 @@ public class RunActivity extends Activity {
 				}
 			}
 			
-			if(runState == AnalyzerState.Filter535nm) {
+			switch(checkError) {
+			
+			case NORMAL_OPERATION	:
+				Cart2ndFilter3 Cart2ndFilter3Obj = new Cart2ndFilter3();
+				Cart2ndFilter3Obj.start();
+				break;
 				
-				switch(checkError) {
-				
-				case HomeActivity.NORMAL_OPERATION	:
-					Cart2ndFilter3 Cart2ndFilter3Obj = new Cart2ndFilter3();
-					Cart2ndFilter3Obj.start();
-					break;
-					
-				case HomeActivity.STOP_RESULT		:
-					CartDump CartDumpObj = new CartDump(checkError);
-					CartDumpObj.start();
-					break;
-				}
+			case R.string.stop		:
+				CartDump CartDumpObj = new CartDump(checkError);
+				CartDumpObj.start();
+				break;
+			
+			default	:
+				break;
 			}
 		}
 	}
@@ -869,7 +801,9 @@ public class RunActivity extends Activity {
 			SerialPort.Sleep(1000);
 			BarAnimation(547);
 			
-			for(int i = 0; i < 4; i++) {
+			runState = AnalyzerState.Filter535nm;
+			
+			for(int i = 0; i < 5; i++) {
 				
 				switch(runState) {
 				
@@ -900,45 +834,53 @@ public class RunActivity extends Activity {
 				case FilterDark		:
 					MotionInstruct(FILTER_DARK, SerialPort.CtrTarget.PhotoSet);
 					BarAnimation(568);
-					BoardMessage(FILTER_DARK, AnalyzerState.CartridgeDump, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 5);
+					BoardMessage(FILTER_DARK, AnalyzerState.NormalOperation, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 5);
 					BarAnimation(571);
 					break;
 					
 				case ShakingMotorError	:
-					checkError = HomeActivity.SHAKING_MOTOR_ERROR;
+					checkError = R.string.e211;
 					runState = AnalyzerState.NoWorking;
 					WhichIntent(TargetIntent.ResultError);
 					break;
 					
 				case FilterMotorError	:
-					checkError = HomeActivity.FILTER_MOTOR_ERROR;
+					checkError = R.string.e212;
 					MotionInstruct(HOME_POSITION, SerialPort.CtrTarget.PhotoSet);			
 					BoardMessage(HOME_POSITION, AnalyzerState.NoWorking, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 6);
 					WhichIntent(TargetIntent.ResultError);
 					break;
 					
 				case NoResponse :
-					checkError = HomeActivity.COMMUNICATION_ERROR;
 					runState = AnalyzerState.NoWorking;
 					WhichIntent(TargetIntent.ResultError);
 					break;
-					
-				case NormalOperation :
-					runState = AnalyzerState.CartridgeDump;
+				
+				case Stop			 :
+					checkError = R.string.stop;
 					break;
-					
+				
 				default	:
 					break;
 				}
 			}			
 			
-			if(runState == AnalyzerState.CartridgeDump) {
-				
+			CartDump CartDumpObj;
+			
+			switch(checkError) {
+			
+			case NORMAL_OPERATION	:
 				checkError = HbA1cCalculate();
 				
-				CartDump CartDumpObj = new CartDump(checkError);
+			case R.string.stop		:
+				CartDumpObj = new CartDump(checkError);
 				CartDumpObj.start();
+				break;
+			
+			default	:
+				break;
 			}
+			
 		}
 	}
 	
@@ -946,7 +888,7 @@ public class RunActivity extends Activity {
 		
 		private int whichState;
 		
-		CartDump(byte whichState) {
+		CartDump(int whichState) {
 			
 			this.whichState = whichState;
 		}
@@ -955,9 +897,11 @@ public class RunActivity extends Activity {
 						
 			switch(whichState) {
 			
-			case HomeActivity.NORMAL_OPERATION	:
+			case NORMAL_OPERATION	:
 				
-				for(int i = 0; i < 2; i++) {
+				runState = AnalyzerState.CartridgeDump;
+				
+				for(int i = 0; i < 3; i++) {
 					
 					switch(runState) {
 					
@@ -976,20 +920,19 @@ public class RunActivity extends Activity {
 						break;
 						
 					case ShakingMotorError	:
-						checkError = HomeActivity.SHAKING_MOTOR_ERROR;
+						checkError = R.string.e211;
 						runState = AnalyzerState.NoWorking;
 						WhichIntent(TargetIntent.ResultError);
 						break;
 						
 					case FilterMotorError	:
-						checkError = HomeActivity.FILTER_MOTOR_ERROR;
+						checkError = R.string.e212;
 						MotionInstruct(HOME_POSITION, SerialPort.CtrTarget.PhotoSet);			
 						BoardMessage(HOME_POSITION, AnalyzerState.NoWorking, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 6);
 						WhichIntent(TargetIntent.ResultError);
 						break;
 						
 					case NoResponse :
-						checkError = HomeActivity.COMMUNICATION_ERROR;
 						runState = AnalyzerState.NoWorking;
 						WhichIntent(TargetIntent.ResultError);
 						break;
@@ -1008,9 +951,11 @@ public class RunActivity extends Activity {
 				break;
 				
 			default	:
+				
+				isStop = false;
 				runState = AnalyzerState.FilterDark;
 				
-				for(int i = 0; i < 3; i++) {
+				for(int i = 0; i < 4; i++) {
 					
 					switch(runState) {
 					
@@ -1034,20 +979,19 @@ public class RunActivity extends Activity {
 						break;
 						
 					case ShakingMotorError	:
-						checkError = HomeActivity.SHAKING_MOTOR_ERROR;
+						checkError = R.string.e211;
 						runState = AnalyzerState.NoWorking;
 						WhichIntent(TargetIntent.ResultError);
 						break;
 						
 					case FilterMotorError	:
-						checkError = HomeActivity.FILTER_MOTOR_ERROR;
+						checkError = R.string.e212;
 						MotionInstruct(HOME_POSITION, SerialPort.CtrTarget.PhotoSet);			
 						BoardMessage(HOME_POSITION, AnalyzerState.NoWorking, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 6);
 						WhichIntent(TargetIntent.ResultError);
 						break;
 						
 					case NoResponse :
-						checkError = HomeActivity.COMMUNICATION_ERROR;
 						runState = AnalyzerState.NoWorking;
 						WhichIntent(TargetIntent.ResultError);
 						break;
@@ -1068,15 +1012,17 @@ public class RunActivity extends Activity {
 		}
 	}
 	
-	public void RunTimeDisplay() { // Display running time
+	public void RunTimeDisplay(Activity activity) { // Display running time
 		
 		if(runSec == 60) {
 			
 			runMin++;
 			runSec = 0;
 		}
+		
+		runTimeText = (TextView) activity.findViewById(R.id.runTimeText);
 			
-		RunTimeText.setText(Integer.toString(runMin) + " min " + Integer.toString(runSec) + " sec");
+		runTimeText.setText(Integer.toString(runMin) + " min " + Integer.toString(runSec) + " sec");
 
 		runSec++;
 	}
@@ -1086,23 +1032,24 @@ public class RunActivity extends Activity {
 		runSec = 0;
 		runMin = 0;
 		MotorShakeFlag = false;
+		isStop = false;
+		runState = AnalyzerState.InitPosition;
+		checkError = NORMAL_OPERATION;
 		
-		TimerDisplay.timerState = whichClock.RunClock;
-		CurrTimeDisplay();
-		ExternalDeviceDisplay();
+		mTimerDisplay = new TimerDisplay();
+		mTimerDisplay.ActivityParm(this, R.id.runlayout);
+		
+		mErrorPopup = new ErrorPopup(this, this, R.id.runlayout);
 		
 		BarAnimation(162);
-		RunTimerInit();
-		checkError = HomeActivity.NORMAL_OPERATION;
+		RunTimerInit(this);
 		
-		runState = AnalyzerState.InitPosition;
-		
+		TimerDisplay.RXBoardFlag = true;
 		Cart1stShaking Cart1stShakingObj = new Cart1stShaking(); // to test
 		Cart1stShakingObj.start(); // to test
-
 	}
 	
-	public void RunTimerInit() {
+	public void RunTimerInit(final Activity activity) {
 		
 		TimerTask OneSecondPeriod = new TimerTask() {
 			
@@ -1110,7 +1057,7 @@ public class RunActivity extends Activity {
 				Runnable updater = new Runnable() {
 					public void run() {
 						
-						RunTimeDisplay();
+						RunTimeDisplay(activity);
 					}
 				};
 				
@@ -1118,13 +1065,14 @@ public class RunActivity extends Activity {
 			}
 		};
 		
-		runTimer = new Timer();
-		runTimer.schedule(OneSecondPeriod, 0, 1000); // Timer period : 100msec
+		runningTimer = new Timer();
+		runningTimer.schedule(OneSecondPeriod, 0, 1000); // Timer period : 100msec
 	}
 	
 	public void MotionInstruct(String str, SerialPort.CtrTarget target) { // Motion of system instruction
 		
-		RunSerial.BoardTx(str, target);
+		mSerialPort = new SerialPort(R.id.runlayout);
+		mSerialPort.BoardTx(str, target);
 	}
 
 	public synchronized double AbsorbanceMeasure() { // Absorbance measurement
@@ -1132,19 +1080,19 @@ public class RunActivity extends Activity {
 		int time = 0;	
 		String rawValue;
 		
-		RunSerial.BoardTx("VH", SerialPort.CtrTarget.PhotoSet);
+		mSerialPort.BoardTx("VH", SerialPort.CtrTarget.PhotoSet);
 		
-		rawValue = RunSerial.BoardMessageOutput();			
+		rawValue = mSerialPort.BoardMessageOutput();			
 		
 		while(rawValue.length() != 8) {
 		
 			time++;
-			rawValue = RunSerial.BoardMessageOutput();			
+			rawValue = mSerialPort.BoardMessageOutput();			
 				
 			if(time > 50) {
 				
 				runState = AnalyzerState.NoResponse;
-			
+				checkError = R.string.e241;
 				break;
 			}
 		
@@ -1156,30 +1104,32 @@ public class RunActivity extends Activity {
 		return (douValue - BlankValue[0]);	
 	}
 	
-	public byte tHbCalculate() {
+	public int tHbCalculate() {
 		
 		A = Absorb1stHandling();
 		Log.w("tHb Calucation", "thb A : " + A);
+		
 		/* TEST Mode */
-		if(HomeActivity.TEST) return HomeActivity.NORMAL_OPERATION;
+		if(HomeActivity.ANALYZER_SW != HomeActivity.NORMAL) return NORMAL_OPERATION;
 		else {
 		
 			
 		if(A < 0.16) {
 			
-			return HomeActivity.tHb_LOW_ERROR;
+			return R.string.e111;
 		
 		} else if(A > 0.63) {
 			
-			return HomeActivity.tHb_HIGH_ERROR;
+			return R.string.e112;
 		
-		} else return HomeActivity.NORMAL_OPERATION;
+		} else 
+			return NORMAL_OPERATION;
 		
 		
 		}
 	}
 	
-	public byte HbA1cCalculate() { // Calculation for HbA1c percentage
+	public int HbA1cCalculate() { // Calculation for HbA1c percentage
 		
 		double B, St, Bt, SLA, SHA, BLA, BHA, SLV, SHV, BLV, BHV, a3, b3, b32, a4, b4;
 					
@@ -1208,25 +1158,28 @@ public class RunActivity extends Activity {
 		b4 = b3 - (a4 * St);
 		
 		HbA1cPctDbl = (B - (St * a4 + b4)) / a3 / St * 100; // %-HbA1c(%)
+		
+		HbA1cPctDbl = (Barcode.Sm + Barcode.Ss) * HbA1cPctDbl + (Barcode.Im + Barcode.Is); 
+		
 		HbA1cPctDbl = CF_Slope * (AF_Slope * HbA1cPctDbl + AF_Offset) + CF_Offset;
 		
 		Log.w("tHb Calucation", "HbA1cPctDbl : " + HbA1cPctDbl);
 		
 		/* TEST Mode */
-		if(HomeActivity.TEST) return HomeActivity.NORMAL_OPERATION;
+		if(HomeActivity.ANALYZER_SW != HomeActivity.NORMAL) return NORMAL_OPERATION;
 		else {
 		
 		
 		if(HbA1cPctDbl < 4) {
 			
-			return HomeActivity.A1c_LOW_ERROR;
+			return R.string.e121;
 		
 		} else if(HbA1cPctDbl > 15) {
 			
-			return HomeActivity.A1c_HIGH_ERROR;
+			return R.string.e122;
 		
 		} else
-			return HomeActivity.NORMAL_OPERATION;
+			return NORMAL_OPERATION;
 		
 		
 		}
@@ -1343,7 +1296,7 @@ public class RunActivity extends Activity {
 	        	BarAnimation(coordinates + i*2);
 	        	SerialPort.Sleep(2000);
 	        	
-	        	if(checkError != HomeActivity.NORMAL_OPERATION) break;
+	        	if(checkError != NORMAL_OPERATION) break;
 			}
 		}
 	}
@@ -1357,27 +1310,34 @@ public class RunActivity extends Activity {
 		
 		while(true) {
 			
-			temp = RunSerial.BoardMessageOutput();
+			temp = mSerialPort.BoardMessageOutput();
 			
-			if(colRsp.equals(temp)) {
+//			if(runState != AnalyzerState.Stop) {
+//			
+				if(temp.equals(colRsp)) {
+					
+					runState = nextState;
+					if(isStop) runState = AnalyzerState.Stop;
+					break;
 				
-				runState = nextState;
-				break;
-			
-			} else if(errRsp.equals(temp)) {
+				} else if(temp.equals(errRsp)) {
+					
+					runState = errState;
+					if(isStop) runState = AnalyzerState.Stop;
+					break;
 				
-				runState = errState;
-				break;
-			
-			} else if(MOTOR_STOP.equals(temp)) {
+				} else if(temp.equals(MOTOR_STOP)) {
+					
+					runState = AnalyzerState.Stop;
+					break;
+				}
 				
-				runState = AnalyzerState.MeasurePosition;;
-				break;
-			}
+//			} else break;
 					
 			if(time++ > rspTime) {
 				
 				runState = AnalyzerState.NoResponse;
+				checkError = R.string.e241;
 				break;
 			}
 			
@@ -1403,31 +1363,33 @@ public class RunActivity extends Activity {
 		}).start();	
 	}
 	
+	public void ESC() {
+		
+		mErrorPopup.OXBtnDisplay(R.string.esc);
+	}
+	
+	public void RunStop() {
+		
+		if(MotorShakeFlag) MotionInstruct(MOTOR_STOP, SerialPort.CtrTarget.MotorStop);
+		else isStop = true;
+	}
+	
 	public void WhichIntent(TargetIntent Itn) { // Activity conversion
 
+		TimerDisplay.RXBoardFlag = false;
+		
 		Intent ResultIntent = new Intent(getApplicationContext(), ResultActivity.class);
 		
 		SerialPort.Sleep(1000); // Delay of error prevention		
-		escPopup.dismiss();
-		runTimer.cancel();
+		
+		mErrorPopup.ErrorPopupClose();
+		
+		runningTimer.cancel();
 		
 		SerialPort.Sleep(200);
 				
-		switch(Itn) {
-		
-		case Result			:							
-			ResultIntent.putExtra("RunState", (int) HomeActivity.NORMAL_OPERATION); // Normal operation
-			startActivity(ResultIntent);
-			break;
-
-		case ResultError	:		
-			ResultIntent.putExtra("RunState", (int) checkError); // Error operation
-			startActivity(ResultIntent);
-			break;
-			
-		default			:	
-			break;			
-		}
+		ResultIntent.putExtra("RunState", checkError); // Error operation
+		startActivity(ResultIntent);
 		
 		finish();
 	}

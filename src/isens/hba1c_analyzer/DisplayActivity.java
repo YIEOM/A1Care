@@ -1,7 +1,6 @@
 package isens.hba1c_analyzer;
 
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
-import isens.hba1c_analyzer.TimerDisplay.whichClock;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,18 +14,17 @@ import android.widget.TextView;
 
 public class DisplayActivity extends Activity {
 	
-	private Button escBtn,
-				   minusBtn,
-				   plusBtn;
+	public TimerDisplay mTimerDisplay;
 	
-	private ImageView barGauge;
+	public Button escBtn,
+				  minusBtn,
+				  plusBtn;
 	
-	private int brightnessValue = 0;
+	public ImageView barGauge;
 	
-	private static TextView TimeText;
-	private static ImageView deviceImage;
+	public int brightnessValue = 0;
 	
-	private boolean btnState = false;
+	public boolean btnState = false;
 	
 	protected void onCreate(Bundle savedInstanceState) {
 		
@@ -34,8 +32,6 @@ public class DisplayActivity extends Activity {
 		overridePendingTransition(R.anim.fade, R.anim.hold);
 		setContentView(R.layout.display);
 		
-		TimeText  = (TextView) findViewById(R.id.timeText);
-		deviceImage = (ImageView) findViewById(R.id.device);
 		barGauge = (ImageView) findViewById(R.id.bargauge);
 		
 		/*SystemSetting Activity activation*/
@@ -88,9 +84,8 @@ public class DisplayActivity extends Activity {
 	
 	public void DisplayInit() {
 		
-		TimerDisplay.timerState = whichClock.DisplayClock;		
-		CurrTimeDisplay();	
-		ExternalDeviceDisplay();
+		mTimerDisplay = new TimerDisplay();		
+		mTimerDisplay.ActivityParm(this, R.id.displaylayout);
 		
 		try {
 			
@@ -102,35 +97,6 @@ public class DisplayActivity extends Activity {
 		} catch(Exception e) {
 			
 		}
-	}
-	
-	public void CurrTimeDisplay() {
-		
-		new Thread(new Runnable() {
-		    public void run() {    
-		        runOnUiThread(new Runnable(){
-		            public void run() {
-		            	
-		            	TimeText.setText(TimerDisplay.rTime[3] + " " + TimerDisplay.rTime[4] + ":" + TimerDisplay.rTime[5]);
-		            }
-		        });
-		    }
-		}).start();	
-	}
-	
-	public void ExternalDeviceDisplay() {
-		
-		new Thread(new Runnable() {
-		    public void run() {    
-		        runOnUiThread(new Runnable(){
-		            public void run() {
-		           
-		            	if(HomeActivity.ExternalDevice == HomeActivity.FILE_OPEN) deviceImage.setBackgroundResource(R.drawable.main_usb_c);
-		            	else deviceImage.setBackgroundResource(R.drawable.main_usb);
-		            }
-		        });
-		    }
-		}).start();
 	}
 
 	public synchronized void BrightnessUp() {

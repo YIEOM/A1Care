@@ -29,6 +29,8 @@ public class Barcode {
 						 L, 
 						 H;
 	
+	public static double Sm, Im, Ss, Is;
+	
 	public void BarcodeCheck(StringBuffer buffer) { // Check a barcode data
 		
 		int len, 
@@ -65,15 +67,31 @@ public class Barcode {
 				
 				RefNum = buffer.substring(0, 5);
 				
-				a1  = 0.0001 * (0.5 * ((int) buffer.charAt(6) - 42) - 20) + scale * a1ref; // tHb slope
-				b1  = 0.0001 * (20 * ((int) buffer.charAt(7) - 42) - 800) + scale * b1ref; // tHb y-intercept
-				a21 = 0.00025 * (((int) buffer.charAt(8) - 42) - 40) + scale * a21ref; // A1c-Low slope
-				b21 = 0.001 * (((int) buffer.charAt(9) - 42) - 40) + scale * b21ref; // A1c-Low intercept
-				a22 = 0.00025 * (((int) buffer.charAt(10) - 42) - 40) + scale * a22ref; // A1c-High slope
-				b22 = 0.001 * (((int) buffer.charAt(11) - 42) - 40) + scale * b22ref; // A1c-High intercept
-				L   = 0.2 * (0.5 * ((int) buffer.charAt(12) - 42) - 5) + 5; // A1c-Low %
-				H   = 0.2 * (0.5 * ((int) buffer.charAt(13) - 42) - 5) + 9; // A1c-High %
+//				a1  = 0.0001 * (0.5 * ((int) buffer.charAt(6) - 42) - 20) + scale * a1ref; // tHb slope
+//				b1  = 0.0001 * (20 * ((int) buffer.charAt(7) - 42) - 800) + scale * b1ref; // tHb y-intercept
+//				a21 = 0.00025 * (((int) buffer.charAt(8) - 42) - 40) + scale * a21ref; // A1c-Low slope
+//				b21 = 0.001 * (((int) buffer.charAt(9) - 42) - 40) + scale * b21ref; // A1c-Low intercept
+//				a22 = 0.00025 * (((int) buffer.charAt(10) - 42) - 40) + scale * a22ref; // A1c-High slope
+//				b22 = 0.001 * (((int) buffer.charAt(11) - 42) - 40) + scale * b22ref; // A1c-High intercept
+//				L   = 0.2 * (0.5 * ((int) buffer.charAt(12) - 42) - 5) + 5; // A1c-Low %
+//				H   = 0.2 * (0.5 * ((int) buffer.charAt(13) - 42) - 5) + 9; // A1c-High %
 				
+				Sm = 0.0237 * ((int) buffer.charAt(6) - 43) + 0.1;
+				Im = 0.158 * ((int) buffer.charAt(7) - 43) - 6;
+				Ss = 0.0003*((int) buffer.charAt(8) - 43);
+				Is = 0.002*((int) buffer.charAt(9) - 43);
+				
+				Log.w("Barcode", "sm : " + Sm + " im : " + Im + " ss : " + Ss + " is : " + Is);
+				
+				a1 = 0.009793532;
+				b1 = -0.028;
+				a21 = 0.050135658;
+				b21 = 0.0283;
+				a22 = 0.034922675;
+				b22 = 0.04333;
+				L   = 4.8;
+				H   = 9;
+			
 				sum = (test + year + month + day + line + locate) % 10; // Checksum bit
 				
 				Log.w("Barcode", "scale : " + scale + " test : " + test + " year : " + year + " month : " + month + " day : " + day + " line : " + line + " locate : " + locate + " check : " + check);

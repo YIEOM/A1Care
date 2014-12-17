@@ -1,7 +1,5 @@
 package isens.hba1c_analyzer;
 
-import isens.hba1c_analyzer.TimerDisplay.whichClock;
-
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -17,8 +15,8 @@ import android.util.Log;
 
 public class SerialPort {
 	
-	public Barcode SerialBarcode;
-	public ResultActivity SerialResult;
+	public Barcode mBarcode;
+	public ResultActivity mResultActivity;
 	
 	/* Board Serial set-up */
 	private static FileDescriptor BoardFd;
@@ -43,7 +41,6 @@ public class SerialPort {
 	public FileDescriptor mFd;
 	public static FileInputStream HHBarcodeFileInputStream;
 	public static HHBarcodeRxThread hBarcodeRxThread;
-	
 	
 	public enum CtrTarget {PhotoSet, TmpSet, TmpCall, MotorSet, AmbientTmpCall, CartCall, DoorCall, MotorStop}
 	public enum RxTarget {Board, Barcode}
@@ -104,6 +101,13 @@ public class SerialPort {
 	
 	public static String AmpTemperature = "0";
 	
+	public int layoutid;
+	
+	SerialPort(int layoutid) {
+		
+		this.layoutid = layoutid;
+	}
+	
 	private class BoardTxThread extends Thread { // Instruction for a board
 
 		private String message;
@@ -122,7 +126,7 @@ public class SerialPort {
 				BoardFileOutputStream = new FileOutputStream(BoardFd);				
 
 				if (BoardFileOutputStream != null) {
-					Log.w("BoardTxThread", "message : " + message);
+//					Log.w("BoardTxThread", "message : " + message);
 					BoardFileOutputStream.write(STX);
 
 					switch(target) {
@@ -156,9 +160,16 @@ public class SerialPort {
 	
 	public class PrinterTxThread extends Thread { // Instruction for a printer
 		
-		private String type = "";
-		private byte mode;
-		private StringBuffer txData;
+		String type = "";
+		
+		StringBuffer txData;
+		
+		byte mode;
+		
+		int	pIdx,
+			pLen,
+			oIdx,
+			oLen;
 		
 		PrinterTxThread(byte mode, StringBuffer txData) {
 			
@@ -174,6 +185,11 @@ public class SerialPort {
 				
 				if (pFileOutputStream != null) {
 					
+					pIdx = 23 + 2;
+					pLen = Integer.parseInt(txData.substring(23, pIdx));
+					oIdx = pIdx + pLen + 2;
+					oLen = Integer.parseInt(txData.substring(pIdx + pLen, oIdx));
+					
 					pFileOutputStream.write(STX);
 
 					/* i-SENS */
@@ -186,7 +202,7 @@ public class SerialPort {
 					pFileOutputStream.write(CR);
 					pFileOutputStream.write(GS); 
 					pFileOutputStream.write(0x21); // size of character 
-					pFileOutputStream.write(0x01); // 2 times of width and 2 times of height
+					pFileOutputStream.write(0x01); // 1 times of width and 2 times of height
 					pFileOutputStream.write("A1Care".getBytes());
 					
 					/* Start Line */
@@ -262,13 +278,8 @@ public class SerialPort {
 					/* HbA1c */
 					type = txData.substring(18, 19);
 					
-					if(type.equals("A")) type = "Optical Test";
-					else if(type.equals("B")) type = "Control A1c";
-					else if(type.equals("C")) type = "Control A/C";
-					else if(type.equals("D")) type = "HbA1c";
-					else if(type.equals("E")) type = "HbA1c";
-					else if(type.equals("F")) type = "HbA1c";
-					else if(type.equals("G")) type = "ACR";
+					if(type.equals("B")) type = "Control A1c";
+					else type = "HbA1c";
 					
 					pFileOutputStream.write(CR);
 					pFileOutputStream.write(type.getBytes());
@@ -299,7 +310,7 @@ public class SerialPort {
 					
 					/* HbA1c percentage */
 					pFileOutputStream.write(CR);
-					pFileOutputStream.write(txData.substring(25 + Integer.parseInt(txData.substring(23, 25))).getBytes());
+					pFileOutputStream.write(txData.substring(oIdx + oLen).getBytes());
 					pFileOutputStream.write(" %".getBytes());
 					
 					/* Reference Range */
@@ -329,7 +340,7 @@ public class SerialPort {
 					/* Test number */
 					pFileOutputStream.write(CR);
 					pFileOutputStream.write(txData.substring(14, 18).getBytes());
-					
+
 					/* Cartridge Lot */
 					pFileOutputStream.write(LF);
 					pFileOutputStream.write(CR);
@@ -356,8 +367,22 @@ public class SerialPort {
 					
 					/* Patient ID */
 					pFileOutputStream.write(CR);
-					pFileOutputStream.write(txData.substring(25, 25 + Integer.parseInt(txData.substring(23, 25))).getBytes());
+					pFileOutputStream.write(txData.substring(pIdx, pIdx + pLen).getBytes());
 										
+					/* OID */
+					pFileOutputStream.write(LF);
+					pFileOutputStream.write(CR);
+					pFileOutputStream.write("Operator ID".getBytes());
+					
+					pFileOutputStream.write(ESC);
+					pFileOutputStream.write(0x24);
+					pFileOutputStream.write(0xC8);
+					pFileOutputStream.write(0x00);
+					
+					/* Operator ID */
+					pFileOutputStream.write(CR);
+					pFileOutputStream.write(txData.substring(oIdx, oIdx + oLen).getBytes());
+					
 					/* End Line */
 					pFileOutputStream.write(LF);
 					pFileOutputStream.write(CR);
@@ -423,15 +448,77 @@ public class SerialPort {
 		}
 	}
 	
-	public byte[] BoardInputData() {
+//	public byte[] BoardInputData() {
+//		
+//		int tmpTail;
+//		
+//		while(BoardInputTail == BoardInputHead) {
+//			
+//			Sleep(10);
+//		}
+//		tmpTail = (BoardInputTail + 1) % BOARD_INPUT_MASK;
+//		BoardInputTail = tmpTail;
+//				
+//		return BoardRxBuffer[tmpTail];
+//	}
+//	
+//	public class BoardRxData extends Thread {
+//		
+//		public void run() {
+//			
+//			byte[] tmpBuffer;
+//			byte tmpData;
+//			
+//			while(true) {
+//				
+//				tmpBuffer = BoardInputData();
+//				
+//				for(int i = 0; i < BOARD_INPUT_BUFFER; i++) {
+//					
+//					tmpData = tmpBuffer[i];
+//
+//					if(tmpData == 0) break;
+//					
+//					if(tmpData != STX) {
+//						
+//						if(BoardRxFlag) {
+//							
+//							if(tmpData == ETX) {
+//								
+//								BoardMessageForm(BoardRxData);
+//								BoardRxFlag = false;
+//								
+//							} else BoardRxData += Character.toString((char) tmpData);	
+//						}
+//						
+//					} else {
+//						
+//						BoardRxFlag = true;
+//						BoardRxData = "";
+//					}
+//				}
+//			}
+//		}
+//	}
+	
+public byte[] BoardInputData() {
 		
 		int tmpTail;
 		
-		while(BoardInputTail == BoardInputHead);
-		tmpTail = (BoardInputTail + 1) % BOARD_INPUT_MASK;
-		BoardInputTail = tmpTail;
-				
-		return BoardRxBuffer[tmpTail];
+		if(BoardInputTail != BoardInputHead) {
+			
+			tmpTail = (BoardInputTail + 1) % BOARD_INPUT_MASK;
+			BoardInputTail = tmpTail;
+					
+			return BoardRxBuffer[tmpTail];	
+		
+		} else return null;
+	}
+	
+	public void BoardRxData2() {
+		
+		BoardRxData mBoardRxData = new BoardRxData();
+		mBoardRxData.start();
 	}
 	
 	public class BoardRxData extends Thread {
@@ -441,9 +528,11 @@ public class SerialPort {
 			byte[] tmpBuffer;
 			byte tmpData;
 			
-			while(true) {
-				
-				tmpBuffer = BoardInputData();
+			tmpBuffer = BoardInputData();
+			
+//			Log.w("BoardRxData", "tmpBuffer : " + tmpBuffer);
+			
+			if(tmpBuffer != null) {
 				
 				for(int i = 0; i < BOARD_INPUT_BUFFER; i++) {
 					
@@ -477,7 +566,7 @@ public class SerialPort {
 		
 		int tmpHead;
 
-//		Log.w("BoardMessageForm", "tmpStrData : " + tmpStrData);
+		Log.w("BoardMessageForm", "tmpStrData : " + tmpStrData);
 		
 		if(tmpStrData.substring(0, 1).equals("S")) {
 			
@@ -500,18 +589,32 @@ public class SerialPort {
 		}
 	}
 	
-	public String BoardMessageOutput() {
+//	public String BoardMessageOutput() {
+//		
+//		int tmpTail;
+//		
+//		if(BoardMsgHead == BoardMsgTail) return "NR";
+//		else {
+//			
+//			tmpTail = (BoardMsgTail + 1) % UART_RX_MASK;
+//			BoardMsgTail = tmpTail;
+//			
+//			return BoardMsgBuffer[tmpTail];
+//		}
+//	}
+	
+public String BoardMessageOutput() {
 		
 		int tmpTail;
 		
+//		Log.w("BoardMessageOutput", "BoardMsgHead : " + BoardMsgHead + " BoardMsgTail : " + BoardMsgTail);
+		
 		if(BoardMsgHead == BoardMsgTail) return "NR";
-		else {
-			
-			tmpTail = (BoardMsgTail + 1) % UART_RX_MASK;
-			BoardMsgTail = tmpTail;
-			
-			return BoardMsgBuffer[tmpTail];
-		}
+		
+		tmpTail = (BoardMsgTail + 1) % UART_RX_MASK;
+		BoardMsgTail = tmpTail;
+		
+		return BoardMsgBuffer[tmpTail];
 	}
 	
 	public void SensorMessageBuffer(String tmpData) {
@@ -527,11 +630,24 @@ public class SerialPort {
 		}
 	}
 	
+//	public String SensorMessageOutput() {
+//		
+//		int tmpTail;
+//		
+//		while(SensorMsgHead == SensorMsgTail);
+//		tmpTail = SensorMsgTail + 1;
+//		if(tmpTail == UART_RX_MASK) tmpTail = 0;
+//		SensorMsgTail = tmpTail;
+//		
+//		return SensorMsgBuffer[tmpTail];
+//	}
+	
 	public String SensorMessageOutput() {
 		
 		int tmpTail;
 		
-		while(SensorMsgHead == SensorMsgTail);
+		if(SensorMsgHead == SensorMsgTail) return "NR";
+			
 		tmpTail = SensorMsgTail + 1;
 		if(tmpTail == UART_RX_MASK) tmpTail = 0;
 		SensorMsgTail = tmpTail;
@@ -618,8 +734,8 @@ public class SerialPort {
 			
 			barcodeReception.append(new String(BarcodeAppendBuffer[num], 0, len));
 		
-			SerialBarcode = new Barcode();
-			SerialBarcode.BarcodeCheck(barcodeReception);
+			mBarcode = new Barcode();
+			mBarcode.BarcodeCheck(barcodeReception);
 				
 		} catch(ArrayIndexOutOfBoundsException e) {
 			
@@ -633,7 +749,7 @@ public class SerialPort {
 		
 		public void run() {
 
-			while(HomeActivity.ExternalDevice == HomeActivity.FILE_OPEN) {
+			while(TimerDisplay.ExternalDeviceBarcode == TimerDisplay.FILE_OPEN) {
 						
 				int size;
 				
@@ -649,6 +765,12 @@ public class SerialPort {
 						if(size > 0) {
 								
 							HHBarcodeDataReceive(size);
+
+						} else {
+							
+							HHBarcodeFileInputStream.close();
+							
+							close();
 						}
 						
 					} else {
@@ -700,7 +822,7 @@ public class SerialPort {
 			
 			HHbarcodeReception.append(new String(HHBarcodeAppendBuffer[num], 0, len));
 			
-			if(TimerDisplay.timerState == whichClock.ResultClock) {
+			if(layoutid == R.id.resultlayout) {
 				
 				Handler mHandler = new Handler(Looper.getMainLooper());
 
@@ -708,8 +830,8 @@ public class SerialPort {
 
 					public void run() {
 	
-						SerialResult = new ResultActivity();
-						SerialResult.PatientIDDisplay(HHbarcodeReception);
+						mResultActivity = new ResultActivity();
+						mResultActivity.PatientIDDisplay(HHbarcodeReception);
 					}
 				}, 0);
 			}
@@ -754,9 +876,11 @@ public class SerialPort {
 		}
 	}
 	
-	public void PrinterSerialInit() {		
+	public void PrinterSerialInit() {
 	
-		pFd = open("/dev/ttySAC2", 9600, 0);
+		if(HomeActivity.ANALYZER_DEVICE == HomeActivity.PP) pFd = open("/dev/ttySAC2", 9600, 0); // PP
+		else if(HomeActivity.ANALYZER_DEVICE == HomeActivity.ES) pFd = open("/dev/ttySAC1", 9600, 0); // ES
+		else pFd = open("/dev/ttySAC2", 9600, 0); // PP
 	}
 	
 	public void PrinterTxStart(byte mode, StringBuffer txData) {
@@ -767,7 +891,9 @@ public class SerialPort {
 	
 	public void BarcodeSerialInit() {
 
-		BarcodeFd = open("/dev/ttySAC1", 115200, 0);
+		if(HomeActivity.ANALYZER_DEVICE == HomeActivity.PP) BarcodeFd = open("/dev/ttySAC1", 115200, 0); // PP
+		else if(HomeActivity.ANALYZER_DEVICE == HomeActivity.ES) BarcodeFd = open("/dev/ttySAC2", 115200, 0); // PP
+		else BarcodeFd = open("/dev/ttySAC1", 115200, 0); // PP
 	}
 
 	public void BarcodeRxStart() {
@@ -790,34 +916,11 @@ public class SerialPort {
 			hBarcodeRxThread = new HHBarcodeRxThread();
 			hBarcodeRxThread.start();
 			
-			HomeActivity.ExternalDevice = HomeActivity.FILE_OPEN;
+			TimerDisplay.ExternalDeviceBarcode = TimerDisplay.FILE_OPEN;
 				
 		} catch(NullPointerException e) {
 			
-			HomeActivity.ExternalDevice = HomeActivity.FILE_NOT_OPEN;
-		}
-	}
-	
-	public void HHBarcodeSerialClose() {
-	
-		try {
-			
-			hBarcodeRxThread.interrupt();
-			
-			HHBarcodeFileInputStream.close();
-
-			Log.w("HHBarcodeSerialClose", "RX Thread : " + hBarcodeRxThread + " Input Stream : " + HHBarcodeFileInputStream);
-			
-			if(HomeActivity.ExternalDevice == HomeActivity.FILE_OPEN) {
-				
-				close();
-			}
-
-			HomeActivity.ExternalDevice = HomeActivity.FILE_CLOSE;
-			
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			TimerDisplay.ExternalDeviceBarcode = TimerDisplay.FILE_NOT_OPEN;
 		}
 	}
 	

@@ -1,7 +1,6 @@
 package isens.hba1c_analyzer;
 
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
-import isens.hba1c_analyzer.TimerDisplay.whichClock;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -19,19 +18,18 @@ import android.widget.TextView;
 
 public class SoundActivity extends Activity {
 	
-	public AudioManager audioManager;
-	private SoundPool mPool;
+	public TimerDisplay mTimerDisplay;
 	
-	private Button escBtn,
+	public AudioManager audioManager;
+	public SoundPool mPool;
+	
+	public Button escBtn,
 				   minusBtn,
 				   plusBtn;
 	
-	private ImageView barGauge;
+	public ImageView barGauge;
 	
-	private int volume = 0;
-	
-	private static TextView TimeText;
-	private static ImageView deviceImage;
+	public int volume = 0;
 	
 	public boolean btnState = false;
 	
@@ -40,10 +38,7 @@ public class SoundActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		overridePendingTransition(R.anim.fade, R.anim.hold);
 		setContentView(R.layout.sound);
-		
-		TimeText  = (TextView) findViewById(R.id.timeText);
-		deviceImage = (ImageView) findViewById(R.id.device);
-		
+
 		barGauge = (ImageView) findViewById(R.id.bargauge);
 		
 		/*System Setting Activity activation*/
@@ -97,44 +92,14 @@ public class SoundActivity extends Activity {
 	
 	public void SoundInit() {
 		
-		TimerDisplay.timerState = whichClock.SoundClock;		
-		CurrTimeDisplay();
-		ExternalDeviceDisplay();
+		mTimerDisplay = new TimerDisplay();
+		mTimerDisplay.ActivityParm(this, R.id.soundlayout);
 	
 		audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 		
 		volume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
 
 		GaugeDisplay();
-	}
-	
-	public void CurrTimeDisplay() {
-		
-		new Thread(new Runnable() {
-		    public void run() {    
-		        runOnUiThread(new Runnable(){
-		            public void run() {
-		            	
-		            	TimeText.setText(TimerDisplay.rTime[3] + " " + TimerDisplay.rTime[4] + ":" + TimerDisplay.rTime[5]);
-		            }
-		        });
-		    }
-		}).start();	
-	}
-	
-	public void ExternalDeviceDisplay() {
-		
-		new Thread(new Runnable() {
-		    public void run() {    
-		        runOnUiThread(new Runnable(){
-		            public void run() {
-		           
-		            	if(HomeActivity.ExternalDevice == HomeActivity.FILE_OPEN) deviceImage.setBackgroundResource(R.drawable.main_usb_c);
-		            	else deviceImage.setBackgroundResource(R.drawable.main_usb);
-		            }
-		        });
-		    }
-		}).start();
 	}
 
 	public void WhichIntent(TargetIntent Itn) { // Activity conversion

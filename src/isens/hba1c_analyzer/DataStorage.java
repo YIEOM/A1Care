@@ -128,7 +128,6 @@ public class DataStorage extends Activity {
 		
 		dataCnt = (FileSaveActivity.DataCnt - num) % 9999;
 		if(dataCnt == 0) dataCnt = 9999;
-		else if(dataCnt < 0) dataCnt += 9999;
 		
 		if(type == (int) FileSaveActivity.CONTROL_TEST) {
 			

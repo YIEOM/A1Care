@@ -1,11 +1,11 @@
 package isens.hba1c_analyzer;
 
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
-import isens.hba1c_analyzer.TimerDisplay.whichClock;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Random;
 
 import android.app.Activity;
 import android.content.Context;
@@ -31,11 +31,15 @@ import android.widget.Toast;
 
 public class ResultActivity extends Activity {
 		
-	private Temperature ResultTmp;
-	private SerialPort ResultSerial;
+	final static byte ACTION_ACTIVITY  = 1,
+					  HOME_ACTIVITY    = 2,
+					  COVER_ACTION_ESC = 3;
 	
-	public static TextView TimeText;
-	private static ImageView deviceImage;
+	public Temperature mTemperature;
+	public SerialPort mSerialPort;
+	public ErrorPopup mErrorPopup;
+	public TimerDisplay mTimerDisplay;
+	public DatabaseHander mDatabaseHander;
 	
 	public static EditText PatientIDText;
 	
@@ -44,20 +48,19 @@ public class ResultActivity extends Activity {
 					 AMPMText,
 					 Ref;
 	
-	private RelativeLayout resultLinear;
-	private View errorPopupView;
-	private PopupWindow errorPopup;
+//	public RelativeLayout resultLinear;
 	
 	private Button homeIcon,
 				   printBtn,
-				   nextSampleBtn,
-				   errorBtn;
+				   nextSampleBtn;
 	
 	private String getTime[] = new String[6];
 	
 	public static int ItnData;
 	public int dataCnt;
-	private double cellBlockEndTmp;
+	public double cellBlockEndTmp;
+	
+	public String operator;
 	
 	public boolean btnState = false;
 	
@@ -67,16 +70,7 @@ public class ResultActivity extends Activity {
 		overridePendingTransition(R.anim.fade, R.anim.hold);
 		setContentView(R.layout.result);
 		
-		TimeText = (TextView) findViewById(R.id.timeText);		
-		deviceImage = (ImageView) findViewById(R.id.device);
-		
 		PatientIDText = (EditText) findViewById(R.id.patientidtext);
-		deviceImage = (ImageView) findViewById(R.id.device);
-		
-		/* Popup window activation */
-		resultLinear = (RelativeLayout)findViewById(R.id.resultlinear);
-		errorPopupView = View.inflate(this, R.layout.errorbtnpopup, null);
-		errorPopup = new PopupWindow(errorPopupView, 800, 480, true);
 		
 		ResultInit();
 		
@@ -127,126 +121,87 @@ public class ResultActivity extends Activity {
 				}
 			}
 		});
-		
-		/* error pop-up Close */
-		errorBtn = (Button)errorPopupView.findViewById(R.id.errorbtn);
-		errorBtn.setOnClickListener(new View.OnClickListener() {
-			
-			public void onClick(View v) {
-				
-				if(!btnState) {
-					
-					btnState = true;
-					
-					errorPopup.dismiss();
-				
-					btnState = false;
-				}
-			}
-		});
 	}
 	
 	public void ResultInit() {
-		
-		TimerDisplay.timerState = whichClock.ResultClock;		
-		CurrTimeDisplay();
-		ExternalDeviceDisplay();
+
+		mTimerDisplay = new TimerDisplay();
+		mTimerDisplay.ActivityParm(this, R.id.resultlayout);
 		
 		GetCurrTime();
 		GetDataCnt();
 		
-		ResultTmp = new Temperature();
-		cellBlockEndTmp = ResultTmp.CellTmpRead();
+		mTemperature = new Temperature(R.id.resultlayout);
+		cellBlockEndTmp = mTemperature.CellTmpRead();
 		
-		HbA1cText = (TextView)findViewById(R.id.hba1cPct);
-		DateText = (TextView)findViewById(R.id.r_testdate1);
-		AMPMText = (TextView)findViewById(R.id.r_testdate2);
+		HbA1cText = (TextView) findViewById(R.id.hba1cPct);
+		DateText = (TextView) findViewById(R.id.r_testdate1);
+		AMPMText = (TextView) findViewById(R.id.r_testdate2);
 		Ref = (TextView) findViewById(R.id.ref);
 				
 		Intent itn = getIntent();
 		ItnData = itn.getIntExtra("RunState", 0);
 		
-		switch(ItnData) {
+		if(ItnData == RunActivity.NORMAL_OPERATION) {
 			
-		case HomeActivity.NORMAL_OPERATION		:
+			if(HomeActivity.ANALYZER_SW == HomeActivity.DEVEL) {
+				
+				RunActivity.HbA1cPctDbl = 0;
+			} else if(HomeActivity.ANALYZER_SW == HomeActivity.DEMO) {
+				
+				int rem;
+				
+				rem = (int) ((Math.random() * 10) + 1) % 3;
+				
+				switch(rem) {
+				
+				case 0	:
+					RunActivity.HbA1cPctDbl = 5.5;
+					break;
+					
+				case 1	:
+					RunActivity.HbA1cPctDbl = 6.7;
+					break;
+				
+				case 2	:
+					RunActivity.HbA1cPctDbl = 8.3;
+					break;
+					
+				default	:
+					break;
+				}
+			}
+			
 			DecimalFormat hbA1cFormat = new DecimalFormat("0.0");
 			HbA1cText.setText(hbA1cFormat.format(RunActivity.HbA1cPctDbl) + "%");
-			break;
+		
+		} else if(ItnData == R.string.stop) { 
 			
-		case HomeActivity.tHb_LOW_ERROR			:
-			HbA1cText.setText(R.string.e111);
-			ErrorPopup("E111");
-			break;
+			HbA1cText.setText(ItnData);
 			
-		case HomeActivity.tHb_HIGH_ERROR		:
-			HbA1cText.setText(R.string.e112);
-			ErrorPopup("E112");
-			break;
+		} else {
 			
-		case HomeActivity.A1c_LOW_ERROR			:
-			HbA1cText.setText(R.string.e121);
-			ErrorPopup("E121");
-			break;
-			
-		case HomeActivity.A1c_HIGH_ERROR		:
-			HbA1cText.setText(R.string.e122);
-			ErrorPopup("E122");
-			break;
-			
-		case HomeActivity.FILTER_MOTOR_ERROR		:
-			HbA1cText.setText(R.string.e212);
-			ErrorPopup("E212");
-			break;
-			
-		case HomeActivity.SHAKING_MOTOR_ERROR		:
-			HbA1cText.setText(R.string.e221);
-			ErrorPopup("E221");
-			break;
-			
-		case HomeActivity.COMMUNICATION_ERROR	:
-			HbA1cText.setText(R.string.e241);
-			ErrorPopup("E241");
-			break;
-			
-		case HomeActivity.STOP_RESULT			:
-			HbA1cText.setText(R.string.stop);
-			break;
+			HbA1cText.setText(ItnData);
+			mErrorPopup = new ErrorPopup(this, this, R.id.resultlayout);
+			mErrorPopup.ErrorBtnDisplay(ItnData);
 		}
 		
 		DateText.setText(TimerDisplay.rTime[0] + "." + TimerDisplay.rTime[1] + "." + TimerDisplay.rTime[2] + " " + TimerDisplay.rTime[4] + ":" + TimerDisplay.rTime[5]);
 		AMPMText.setText(TimerDisplay.rTime[3]);
 		Ref.setText(Barcode.RefNum);
+		
+		mDatabaseHander = new DatabaseHander(this);
+		operator = mDatabaseHander.GetLastLoginID();
+		
+		if(operator == null) operator = "Guest";
+		
+		if(HomeActivity.ANALYZER_SW == HomeActivity.STABLE) {
+			
+			if(ItnData != R.string.stop) WhichIntent(TargetIntent.Run); // Stable
+			else HomeActivity.NumofStable = 0;
+		}
 	}
 	
-	public void CurrTimeDisplay() {
-		
-		new Thread(new Runnable() {
-		    public void run() {    
-		        runOnUiThread(new Runnable(){
-		            public void run() {
-		            	
-		            	TimeText.setText(TimerDisplay.rTime[3] + " " + TimerDisplay.rTime[4] + ":" + TimerDisplay.rTime[5]);
-		            }
-		        });
-		    }
-		}).start();	
-	}
-	
-	public void ExternalDeviceDisplay() {
-		
-		new Thread(new Runnable() {
-		    public void run() {    
-		        runOnUiThread(new Runnable(){
-		            public void run() {
-		           
-		            	if(HomeActivity.ExternalDevice == HomeActivity.FILE_OPEN) deviceImage.setBackgroundResource(R.drawable.main_usb_c);
-		            	else deviceImage.setBackgroundResource(R.drawable.main_usb);
-		            }
-		        });
-		    }
-		}).start();
-	}
-
 	public void PatientIDDisplay(final StringBuffer str) {
 		
 		new Thread(new Runnable() {
@@ -259,20 +214,6 @@ public class ResultActivity extends Activity {
 		        });
 		    }
 		}).start();
-	}
-	
-	public void ErrorPopup(final String str) { // E101 error pop-up window
-				
-		errorPopupView.post(new Runnable() {
-	        public void run() {
-	
-	        	errorPopup.showAtLocation(resultLinear, Gravity.CENTER, 0, 0);
-				errorPopup.setAnimationStyle(0);					
-							
-				TextView errorText = (TextView)errorPopup.getContentView().findViewById(R.id.errortext);
-				errorText.setText(str);	
-	        }
-	    });
 	}
 	
 	public void GetCurrTime() { // getting the current date and time
@@ -288,10 +229,13 @@ public class ResultActivity extends Activity {
 	
 	public void GetDataCnt() {
 		
+		if(HomeActivity.ANALYZER_SW != HomeActivity.STABLE) {
+		
+		
 		if(Barcode.RefNum.substring(0, 1).equals("B")) dataCnt = RemoveActivity.ControlDataCnt;
-		else if(Barcode.RefNum.substring(0, 1).equals("D")) dataCnt = RemoveActivity.PatientDataCnt;		
-		else if(Barcode.RefNum.substring(0, 1).equals("E")) dataCnt = RemoveActivity.PatientDataCnt;		
-		else if(Barcode.RefNum.substring(0, 1).equals("F")) dataCnt = RemoveActivity.PatientDataCnt;		
+		else dataCnt = RemoveActivity.PatientDataCnt;
+		
+		} else dataCnt = RemoveActivity.ControlDataCnt;
 	}
 	
 	public void PrintResultData() {
@@ -301,6 +245,11 @@ public class ResultActivity extends Activity {
 					  hbA1cFormat = new DecimalFormat("0.0"),
 					  pIDLenDfm = new DecimalFormat("00");
 		
+		int tempDataCnt;
+		
+		tempDataCnt = dataCnt % 9999;
+		if(tempDataCnt == 0) tempDataCnt = 9999; 
+		
 		txData.delete(0, txData.capacity());
 		
 		txData.append(getTime[0]);
@@ -309,14 +258,18 @@ public class ResultActivity extends Activity {
 		txData.append(getTime[3]);
 		txData.append(getTime[4]);
 		txData.append(getTime[5]);
-		txData.append(dfm.format(dataCnt));
+		txData.append(dfm.format(tempDataCnt));
 		txData.append(Barcode.RefNum);
 		txData.append(pIDLenDfm.format(PatientIDText.getText().toString().length()));
 		txData.append(PatientIDText.getText().toString());
+		txData.append(pIDLenDfm.format(operator.length()));
+		txData.append(operator);
 		txData.append(hbA1cFormat.format(RunActivity.HbA1cPctDbl));
 		
-		ResultSerial = new SerialPort();
-		ResultSerial.PrinterTxStart(SerialPort.PRINTRESULT, txData);
+		mSerialPort = new SerialPort(R.id.resultlayout);
+		mSerialPort.PrinterTxStart(SerialPort.PRINTRESULT, txData);
+		
+		SerialPort.Sleep(100);
 		
 		btnState = false;
 	}
@@ -339,6 +292,8 @@ public class ResultActivity extends Activity {
 		DataSaveIntent.putExtra("RefNumber", Barcode.RefNum);
 		DataSaveIntent.putExtra("PatientIDLen", pIDLenDfm.format(PatientIDText.getText().toString().length()));
 		DataSaveIntent.putExtra("PatientID", PatientIDText.getText().toString());
+		DataSaveIntent.putExtra("OperatorLen", pIDLenDfm.format(operator.length()));
+		DataSaveIntent.putExtra("Operator", operator);
 		DataSaveIntent.putExtra("Hba1cPct", photoDfm.format(RunActivity.HbA1cPctDbl));
 		
 		DataSaveIntent.putExtra("RunMin", (int) RunActivity.runMin);
@@ -369,12 +324,12 @@ public class ResultActivity extends Activity {
 		switch(Itn) {
 		
 		case Home		:							
-			DataSaveIntent.putExtra("WhichIntent", (int) HomeActivity.HOME_ACTIVITY);
+			DataSaveIntent.putExtra("WhichIntent", (int) HOME_ACTIVITY);
 			startActivity(DataSaveIntent);
 			break;
 
 		case Run	:			
-			DataSaveIntent.putExtra("WhichIntent", (int) HomeActivity.ACTION_ACTIVITY);
+			DataSaveIntent.putExtra("WhichIntent", (int) ACTION_ACTIVITY);
 			startActivity(DataSaveIntent);
 			break;
 
@@ -388,6 +343,5 @@ public class ResultActivity extends Activity {
 	public void finish() {
 		
 		super.finish();
-		overridePendingTransition(R.anim.fade, R.anim.hold);
 	}
 }

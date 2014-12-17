@@ -5,7 +5,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
-import isens.hba1c_analyzer.TimerDisplay.whichClock;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -23,7 +22,7 @@ import android.widget.TextView;
 
 public class DateActivity extends Activity {
 
-	private TimerDisplay DateTimer;
+	private TimerDisplay mTimerDisplay;
 	
 	public Handler handler = new Handler();
 	public TimerTask oneHundredmsPeriod;
@@ -61,8 +60,6 @@ public class DateActivity extends Activity {
 		overridePendingTransition(R.anim.fade, R.anim.hold);
 		setContentView(R.layout.date);
 		
-		TimeText  = (TextView) findViewById(R.id.timeText);
-		deviceImage = (ImageView) findViewById(R.id.device);
 		yearText  = (TextView) findViewById(R.id.yeartext);
 		monthText = (TextView) findViewById(R.id.monthtext);
 		dayText   = (TextView) findViewById(R.id.daytext);
@@ -99,7 +96,7 @@ public class DateActivity extends Activity {
 						
 						btnState = true;
 						
-						DateChange(HomeActivity.YEAR_UP);
+						DateChange(SystemSettingActivity.YEAR_UP);
 					}
 					break;
 
@@ -116,7 +113,7 @@ public class DateActivity extends Activity {
 			
 			public boolean onLongClick(View v) {
 			
-				TimerInit(HomeActivity.YEAR_UP);
+				TimerInit(SystemSettingActivity.YEAR_UP);
 				
 				return true;
 			}
@@ -135,7 +132,7 @@ public class DateActivity extends Activity {
 						
 						btnState = true;
 						
-						DateChange(HomeActivity.YEAR_DOWN);
+						DateChange(SystemSettingActivity.YEAR_DOWN);
 					}
 					break;
 
@@ -152,7 +149,7 @@ public class DateActivity extends Activity {
 			
 			public boolean onLongClick(View v) {
 			
-				TimerInit(HomeActivity.YEAR_DOWN);
+				TimerInit(SystemSettingActivity.YEAR_DOWN);
 				
 				return true;
 			}
@@ -171,7 +168,7 @@ public class DateActivity extends Activity {
 						
 						btnState = true;
 						
-						DateChange(HomeActivity.MONTH_UP);
+						DateChange(SystemSettingActivity.MONTH_UP);
 					}
 					break;
 
@@ -188,7 +185,7 @@ public class DateActivity extends Activity {
 			
 			public boolean onLongClick(View v) {
 			
-				TimerInit(HomeActivity.MONTH_UP);
+				TimerInit(SystemSettingActivity.MONTH_UP);
 				
 				return true;
 			}
@@ -207,7 +204,7 @@ public class DateActivity extends Activity {
 						
 						btnState = true;
 						
-						DateChange(HomeActivity.MONTH_DOWN);
+						DateChange(SystemSettingActivity.MONTH_DOWN);
 					}
 					break;
 
@@ -224,7 +221,7 @@ public class DateActivity extends Activity {
 			
 			public boolean onLongClick(View v) {
 			
-				TimerInit(HomeActivity.MONTH_DOWN);
+				TimerInit(SystemSettingActivity.MONTH_DOWN);
 				
 				return true;
 			}
@@ -243,7 +240,7 @@ public class DateActivity extends Activity {
 						
 						btnState = true;
 						
-						DateChange(HomeActivity.DAY_UP);
+						DateChange(SystemSettingActivity.DAY_UP);
 					}
 					break;
 
@@ -260,7 +257,7 @@ public class DateActivity extends Activity {
 			
 			public boolean onLongClick(View v) {
 			
-				TimerInit(HomeActivity.DAY_UP);
+				TimerInit(SystemSettingActivity.DAY_UP);
 				
 				return true;
 			}
@@ -279,7 +276,7 @@ public class DateActivity extends Activity {
 						
 						btnState = true;
 						
-						DateChange(HomeActivity.DAY_DOWN);
+						DateChange(SystemSettingActivity.DAY_DOWN);
 					}
 					break;
 
@@ -296,7 +293,7 @@ public class DateActivity extends Activity {
 			
 			public boolean onLongClick(View v) {
 			
-				TimerInit(HomeActivity.DAY_DOWN);
+				TimerInit(SystemSettingActivity.DAY_DOWN);
 				
 				return true;
 			}
@@ -307,9 +304,9 @@ public class DateActivity extends Activity {
 	
 	public void DateInit() {
 		
-		TimerDisplay.timerState = whichClock.DateClock;		
-		CurrTimeDisplay();
-		ExternalDeviceDisplay();
+		mTimerDisplay = new TimerDisplay();
+		mTimerDisplay.ActivityParm(this, R.id.datelayout);
+		
 		GetCurrDate();
 	}
 		
@@ -331,35 +328,6 @@ public class DateActivity extends Activity {
 		
 		timer = new Timer();
 		timer.schedule(oneHundredmsPeriod, 0, 100); // Timer period : 100msec
-	}
-	
-	public void CurrTimeDisplay() {
-		
-		new Thread(new Runnable() {
-		    public void run() {    
-		        runOnUiThread(new Runnable(){
-		            public void run() {
-		            	
-		            	TimeText.setText(TimerDisplay.rTime[3] + " " + TimerDisplay.rTime[4] + ":" + TimerDisplay.rTime[5]);
-		            }
-		        });
-		    }
-		}).start();	
-	}
-	
-	public void ExternalDeviceDisplay() {
-		
-		new Thread(new Runnable() {
-		    public void run() {    
-		        runOnUiThread(new Runnable(){
-		            public void run() {
-		           
-		            	if(HomeActivity.ExternalDevice == HomeActivity.FILE_OPEN) deviceImage.setBackgroundResource(R.drawable.main_usb_c);
-		            	else deviceImage.setBackgroundResource(R.drawable.main_usb);
-		            }
-		        });
-		    }
-		}).start();
 	}
 	
 	public synchronized void DateDisplay() { // displaying date parameter
@@ -394,27 +362,27 @@ public class DateActivity extends Activity {
 		
 		switch(whichDate) {
 		
-		case HomeActivity.YEAR_UP		:
+		case SystemSettingActivity.YEAR_UP		:
 			c.add(Calendar.YEAR, 1);
 			break;
 			
-		case HomeActivity.YEAR_DOWN		:
+		case SystemSettingActivity.YEAR_DOWN	:
 			c.add(Calendar.YEAR, -1);
 			break;
 		
-		case HomeActivity.MONTH_UP		:
+		case SystemSettingActivity.MONTH_UP		:
 			c.add(Calendar.MONTH, 1);
 			break;
 			
-		case HomeActivity.MONTH_DOWN	:
+		case SystemSettingActivity.MONTH_DOWN	:
 			c.add(Calendar.MONTH, -1);
 			break;
 		
-		case HomeActivity.DAY_UP		:
+		case SystemSettingActivity.DAY_UP		:
 			c.add(Calendar.DAY_OF_MONTH, 1);
 			break;
 			
-		case HomeActivity.DAY_DOWN		:
+		case SystemSettingActivity.DAY_DOWN		:
 			c.add(Calendar.DAY_OF_MONTH, -1);
 			break;
 			
@@ -431,8 +399,8 @@ public class DateActivity extends Activity {
 		
 		SystemClock.setCurrentTimeMillis(c.getTimeInMillis());
 
-		DateTimer = new TimerDisplay();
-		DateTimer.TimerInit(); // starting the timer
+		mTimerDisplay = new TimerDisplay();
+		mTimerDisplay.TimerInit(); // starting the timer
 
 		SerialPort.Sleep(1000);
 	}

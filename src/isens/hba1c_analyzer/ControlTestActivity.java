@@ -3,7 +3,6 @@ package isens.hba1c_analyzer;
 import java.text.DecimalFormat;
 
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
-import isens.hba1c_analyzer.TimerDisplay.whichClock;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -23,64 +22,61 @@ import android.widget.TextView;
 
 public class ControlTestActivity extends Activity {
 	
-	private SerialPort ControlSerial;
+	public SerialPort mSerialPort;
+	public TimerDisplay mTimerDisplay;
 	
-	private RelativeLayout cTestLayout;
-	private View detailPopupView;
-	private PopupWindow detailPopup;
+	public RelativeLayout cTestLayout;
+	public View detailPopupView;
+	public PopupWindow detailPopup;
 	
-	private TextView TestNumText [] = new TextView[5],
-					 TypeText    [] = new TextView[5],
-					 ResultText  [] = new TextView[5],
-					 DateTimeText[] = new TextView[5],
-					 patientID,
-					 testDate,
-					 typeDetailText,
-					 primary,
-					 range,
-					 ref,
-					 testNo,
-					 operatorID,
-					 result;
+	public TextView TestNumText [] = new TextView[5],
+					TypeText    [] = new TextView[5],
+					ResultText  [] = new TextView[5],
+					DateTimeText[] = new TextView[5],
+					patientID,
+					testDate,
+					typeDetailText,
+					primary,
+					range,
+					ref,
+					testNo,
+					operatorID,
+					result;
 	
-	private static TextView TimeText;
-	private static ImageView deviceImage;
+	public Button homeIcon,
+				  backIcon,
+				  detailViewBtn,
+				  nextViewBtn,
+				  preViewBtn,
+				  printBtn,
+				  cancleBtn;
 	
-	private Button homeIcon,
-				   backIcon,
-				   detailViewBtn,
-				   nextViewBtn,
-				   preViewBtn,
-				   printBtn,
-				   cancleBtn;
+	public ImageButton checkBoxBtn1,
+					   checkBoxBtn2,
+					   checkBoxBtn3,
+				       checkBoxBtn4,
+					   checkBoxBtn5;
 	
-	private ImageButton checkBoxBtn1,
-						checkBoxBtn2,
-						checkBoxBtn3,
-						checkBoxBtn4,
-						checkBoxBtn5;
+	public String dateTime[] = new String[5],
+				  testNum [] = new String[5],
+				  refNum  [] = new String[5],
+				  hbA1c   [] = new String[5],
+				  typeStr [] = new String[5],
+				  pID     [] = new String[5],
+				  oID	  [] = new String[5];
 	
-	private String dateTime[] = new String[5],
-				   testNum [] = new String[5],
-				   refNum  [] = new String[5],
-				   hbA1c   [] = new String[5],
-				   typeStr [] = new String[5],
-				   pID     [] = new String[5];
-	
-	private boolean checkFlag = false,
+	public boolean checkFlag = false,
 					btnState = false;
-	private ImageButton whichBox = null;
 	
-	private int boxNum = 0;
+	public ImageButton whichBox = null;
+	
+	public int boxNum = 0;
 	
 	protected void onCreate(Bundle savedInstanceState) {
 		
 		super.onCreate(savedInstanceState);
 		overridePendingTransition(R.anim.fade, R.anim.hold);
 		setContentView(R.layout.controltest);
-		
-		TimeText = (TextView) findViewById(R.id.timeText);
-		deviceImage = (ImageView) findViewById(R.id.device);
 		
 		/* Popup window activation */
 		cTestLayout = (RelativeLayout)findViewById(R.id.ctestlayout);
@@ -290,44 +286,12 @@ public class ControlTestActivity extends Activity {
 	
 	public void ControlInit() {
 		
-		TimerDisplay.timerState = whichClock.ControlClock;		
-		CurrTimeDisplay();
-		ExternalDeviceDisplay();
+		mTimerDisplay = new TimerDisplay();
+		mTimerDisplay.ActivityParm(this, R.id.ctestlayout);
 		
-		GetItnData();
-		ControlText();
 		ControlDisplay();
 		
 		SerialPort.Sleep(300);
-	}
-	
-	public void CurrTimeDisplay() {
-		
-		new Thread(new Runnable() {
-		    public void run() {    
-		        runOnUiThread(new Runnable(){
-		            public void run() {
-		            	
-		            	TimeText.setText(TimerDisplay.rTime[3] + " " + TimerDisplay.rTime[4] + ":" + TimerDisplay.rTime[5]);
-		            }
-		        });
-		    }
-		}).start();	
-	}
-	
-	public void ExternalDeviceDisplay() {
-		
-		new Thread(new Runnable() {
-		    public void run() {    
-		        runOnUiThread(new Runnable(){
-		            public void run() {
-		           
-		            	if(HomeActivity.ExternalDevice == HomeActivity.FILE_OPEN) deviceImage.setBackgroundResource(R.drawable.main_usb_c);
-		            	else deviceImage.setBackgroundResource(R.drawable.main_usb);
-		            }
-		        });
-		    }
-		}).start();
 	}
 	
 	public void GetItnData() { // getting the intent data
@@ -339,6 +303,7 @@ public class ControlTestActivity extends Activity {
 		refNum   = itn.getStringArrayExtra("RefNumber");
 		hbA1c    = itn.getStringArrayExtra("HbA1c");
 		pID      = itn.getStringArrayExtra("PatientID");
+		oID      = itn.getStringArrayExtra("OperatorID");
 		
 //		Log.w("GetItnData", "Cartridge Lot : " + refNum[0] + " HbA1c : " + hbA1c[0]);
 	}
@@ -373,6 +338,9 @@ public class ControlTestActivity extends Activity {
 	
 	public void ControlDisplay() { // displaying the patient data
 			
+		GetItnData();
+		ControlText();
+		
 		for(int i = 0; i < 5; i++) {
 			
 			if(testNum[i] != null) {
@@ -388,7 +356,7 @@ public class ControlTestActivity extends Activity {
 	
 	public void PressedCheckBox(ImageButton box) { // displaying the button pressed
 		
-		if(checkFlag == false) { // whether or not box is checked
+		if(!checkFlag) { // whether or not box is checked
 
 			checkFlag = true;
 			box.setBackgroundResource(R.drawable.checkbox_s); // changing to checked box
@@ -412,7 +380,7 @@ public class ControlTestActivity extends Activity {
 	
 	public void DisplayDetailView() { // displaying the detail patient data
 
-		if(checkFlag == true && testNum[boxNum - 1] != null) {
+		if(checkFlag && testNum[boxNum - 1] != null) {
 			
 			patientID.setText(pID[boxNum - 1]);
 			testDate.setText(dateTime[boxNum - 1].substring(2, 4) + "." + dateTime[boxNum - 1].substring(4, 6) + "." + dateTime[boxNum - 1].substring(6, 8) + " " + dateTime[boxNum - 1].substring(8, 10) + " " + dateTime[boxNum - 1].substring(10, 12) + ":" + dateTime[boxNum - 1].substring(12, 14));
@@ -421,7 +389,7 @@ public class ControlTestActivity extends Activity {
 			range.setText("4.0 - 6.0%");
 			ref.setText(refNum[boxNum - 1]);
 			testNo.setText(testNum[boxNum - 1]);
-			operatorID.setText("Guest");
+			operatorID.setText(oID[boxNum - 1]);
 			result.setText(hbA1c[boxNum - 1] + "%");
 			
 			detailViewBtn.setEnabled(false);
@@ -450,10 +418,14 @@ public class ControlTestActivity extends Activity {
 		txData.append(refNum[boxNum - 1]);
 		txData.append(pIDLenDfm.format(pID[boxNum - 1].length()));
 		txData.append(pID[boxNum - 1]);
+		txData.append(pIDLenDfm.format(oID[boxNum - 1].length()));
+		txData.append(oID[boxNum - 1]);
 		txData.append(hbA1c[boxNum - 1]);
 		
-		ControlSerial = new SerialPort();
-		ControlSerial.PrinterTxStart(SerialPort.PRINTRECORD, txData);
+		mSerialPort = new SerialPort(R.id.ctestlayout);
+		mSerialPort.PrinterTxStart(SerialPort.PRINTRECORD, txData);
+		
+		SerialPort.Sleep(100);
 		
 		btnState = false;
 	}

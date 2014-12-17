@@ -1,7 +1,6 @@
 package isens.hba1c_analyzer;
 
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
-import isens.hba1c_analyzer.TimerDisplay.whichClock;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
@@ -21,23 +20,19 @@ import android.widget.Toast;
 
 public class CorrelationFactorActivity extends Activity {
 	
-	private Button escBtn;
+	public TimerDisplay mTimerDisplay;
 	
-	private EditText slopeEText, 
-					 offsetEText;
+	public Button escBtn;
 	
-	private static TextView TimeText;
-	private static ImageView deviceImage;
+	public EditText slopeEText, 
+					offsetEText;
 	
-	private boolean btnState = false;
+	public boolean btnState = false;
 	
 	protected void onCreate(Bundle savedInstanceState) {
 		
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.correlation);
-		
-		TimeText = (TextView)findViewById(R.id.timeText);
-		deviceImage = (ImageView) findViewById(R.id.device);
 				
 		slopeEText = (EditText) findViewById(R.id.slopeetext);
 		offsetEText = (EditText) findViewById(R.id.offsetetext);
@@ -54,7 +49,7 @@ public class CorrelationFactorActivity extends Activity {
 				
 					escBtn.setEnabled(false);
 					
-					CorrelationSave(Float.valueOf(slopeEText.getText().toString()).floatValue(), Float.valueOf(offsetEText.getText().toString()).floatValue());
+					GetCorrelationFactor();
 					
 					WhichIntent(TargetIntent.SystemSetting);
 				}
@@ -66,43 +61,32 @@ public class CorrelationFactorActivity extends Activity {
 	
 	public void CorrelationInit() {
 		
-		TimerDisplay.timerState = whichClock.CorrelationClock;		
-		CurrTimeDisplay();
-		ExternalDeviceDisplay();
+		mTimerDisplay = new TimerDisplay();
+		mTimerDisplay.ActivityParm(this, R.id.corrlayout);
 		
 		slopeEText.setText(Float.toString(RunActivity.CF_Slope));
 		offsetEText.setText(Float.toString(RunActivity.CF_Offset));
 	}
-
-	public void CurrTimeDisplay() {
+	
+	public void GetCorrelationFactor() {
 		
-		new Thread(new Runnable() {
-		    public void run() {    
-		        runOnUiThread(new Runnable(){
-		            public void run() {
-		            	
-//		            	Log.w("SettingTimeDisplay", "run");
-		            	TimeText.setText(TimerDisplay.rTime[3] + " " + TimerDisplay.rTime[4] + ":" + TimerDisplay.rTime[5]);
-		            }
-		        });
-		    }
-		}).start();	
+		float slope,
+			  offset;
+		
+		try {
+		
+			slope = Float.valueOf(slopeEText.getText().toString()).floatValue();
+			offset = Float.valueOf(offsetEText.getText().toString()).floatValue();
+			
+		} catch (NumberFormatException e) {
+			
+			slope = RunActivity.CF_Slope;
+			offset = RunActivity.CF_Offset;
+		}
+		
+		CorrelationSave(slope, offset);
 	}
 	
-	public void ExternalDeviceDisplay() {
-		
-		new Thread(new Runnable() {
-		    public void run() {    
-		        runOnUiThread(new Runnable(){
-		            public void run() {
-		           
-		            	if(HomeActivity.ExternalDevice == HomeActivity.FILE_OPEN) deviceImage.setBackgroundResource(R.drawable.main_usb_c);
-		            	else deviceImage.setBackgroundResource(R.drawable.main_usb);
-		            }
-		        });
-		    }
-		}).start();
-	}	
 	public void CorrelationSave(float slope, float offset) { // Saving number of user define parameter
 		
 		SharedPreferences correlationPref = getSharedPreferences("User Define", MODE_PRIVATE);

@@ -3,7 +3,6 @@ package isens.hba1c_analyzer;
 import java.text.DecimalFormat;
 
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
-import isens.hba1c_analyzer.TimerDisplay.whichClock;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -23,12 +22,13 @@ import android.widget.TextView;
 
 public class PatientTestActivity extends Activity {
 	
-	private DataStorage PatientData;
-	private SerialPort PatientSerial;
+	public DataStorage mDataStorage;
+	public SerialPort mSerialPort;
+	public TimerDisplay mTimerDisplay;
 	
-	private RelativeLayout pTestLayout;
-	private View detailPopupView;
-	private PopupWindow detailPopup;
+	public RelativeLayout pTestLayout;
+	public View detailPopupView;
+	public PopupWindow detailPopup;
 	
 	private TextView TestNumText [] = new TextView[5],
 					 TypeText    [] = new TextView[5],
@@ -44,29 +44,27 @@ public class PatientTestActivity extends Activity {
 					 operatorID,
 					 result;
 	
-	public static TextView TimeText;
-	private static ImageView deviceImage;
+	public Button homeIcon,
+				  backIcon,
+				  detailViewBtn,
+				  nextViewBtn,
+				  preViewBtn,
+				  printBtn,
+				  cancleBtn;
 	
-	private Button homeIcon,
-				   backIcon,
-				   detailViewBtn,
-				   nextViewBtn,
-				   preViewBtn,
-				   printBtn,
-				   cancleBtn;
+	public ImageButton checkBoxBtn1,
+					   checkBoxBtn2,
+					   checkBoxBtn3,
+					   checkBoxBtn4,
+					   checkBoxBtn5;
 	
-	private ImageButton checkBoxBtn1,
-						checkBoxBtn2,
-						checkBoxBtn3,
-						checkBoxBtn4,
-						checkBoxBtn5;
-	
-	private String dateTime[] = new String[5],
-				   testNum [] = new String[5],
-				   refNum  [] = new String[5],
-				   hbA1c   [] = new String[5],
-				   typeStr [] = new String[5],
-				   pID     [] = new String[5];
+	public String dateTime[] = new String[5],
+				  testNum [] = new String[5],
+				  refNum  [] = new String[5],
+				  hbA1c   [] = new String[5],
+				  typeStr [] = new String[5],
+				  pID     [] = new String[5],
+				  oID	  [] = new String[5];
 	
 	private boolean checkFlag = false,
 					btnState = false;
@@ -79,9 +77,6 @@ public class PatientTestActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		overridePendingTransition(R.anim.fade, R.anim.hold);
 		setContentView(R.layout.patienttest);
-		
-		TimeText = (TextView) findViewById(R.id.timeText);
-		deviceImage = (ImageView) findViewById(R.id.device);
 		
 		/* Popup window activation */
 		pTestLayout = (RelativeLayout)findViewById(R.id.ptestlayout);
@@ -290,45 +285,13 @@ public class PatientTestActivity extends Activity {
 	}	
 	
 	public void PatientInit() {
+
+		mTimerDisplay = new TimerDisplay();
+		mTimerDisplay.ActivityParm(this, R.id.ptestlayout);
 		
-		TimerDisplay.timerState = whichClock.PatientClock;		
-		CurrTimeDisplay();
-		ExternalDeviceDisplay();
-		
-		GetItnData();
-		PatientText();
 		PatientDisplay();
 	}
 	
-	public void CurrTimeDisplay() {
-		
-		new Thread(new Runnable() {
-		    public void run() {    
-		        runOnUiThread(new Runnable(){
-		            public void run() {
-		            	
-		            	TimeText.setText(TimerDisplay.rTime[3] + " " + TimerDisplay.rTime[4] + ":" + TimerDisplay.rTime[5]);
-		            }
-		        });
-		    }
-		}).start();	
-	}
-	
-	public void ExternalDeviceDisplay() {
-		
-		new Thread(new Runnable() {
-		    public void run() {    
-		        runOnUiThread(new Runnable(){
-		            public void run() {
-		           
-		            	if(HomeActivity.ExternalDevice == HomeActivity.FILE_OPEN) deviceImage.setBackgroundResource(R.drawable.main_usb_c);
-		            	else deviceImage.setBackgroundResource(R.drawable.main_usb);
-		            }
-		        });
-		    }
-		}).start();
-	}
-
 	public void GetItnData() { // getting the intent data
 		
 		Intent itn = getIntent();
@@ -338,6 +301,7 @@ public class PatientTestActivity extends Activity {
 		refNum   = itn.getStringArrayExtra("RefNumber");
 		hbA1c    = itn.getStringArrayExtra("HbA1c");
 		pID      = itn.getStringArrayExtra("PatientID");
+		oID      = itn.getStringArrayExtra("OperatorID");
 		
 //		Log.w("GetItnData", "Cartridge Lot : " + refNum[0] + " HbA1c : " + hbA1c[0]);
 	}
@@ -372,6 +336,9 @@ public class PatientTestActivity extends Activity {
 	
 	public void PatientDisplay() { // displaying the patient data
 			
+		GetItnData();
+		PatientText();
+		
     	for(int i = 0; i < 5; i++) {
     		
     		if(testNum[i] != null) {
@@ -387,7 +354,7 @@ public class PatientTestActivity extends Activity {
 	
 	public void PressedCheckBox(ImageButton box) { // displaying the button pressed
 		
-		if(checkFlag == false) { // whether or not box is checked
+		if(!checkFlag) { // whether or not box is checked
 	
 			checkFlag = true;
 			box.setBackgroundResource(R.drawable.checkbox_s); // changing to checked box
@@ -411,7 +378,7 @@ public class PatientTestActivity extends Activity {
 	
 	public void DisplayDetailView() { // displaying the detail patient data
 
-		if(checkFlag == true && testNum[boxNum - 1] != null) {
+		if(checkFlag && testNum[boxNum - 1] != null) {
 				
 			patientID.setText(pID[boxNum - 1]);
 			testDate.setText(dateTime[boxNum - 1].substring(2, 4) + "." + dateTime[boxNum - 1].substring(4, 6) + "." + dateTime[boxNum - 1].substring(6, 8) + " " + dateTime[boxNum - 1].substring(8, 10) + " " + dateTime[boxNum - 1].substring(10, 12) + ":" + dateTime[boxNum - 1].substring(12, 14));
@@ -420,7 +387,7 @@ public class PatientTestActivity extends Activity {
 			range.setText("4.0 - 6.0%");
 			ref.setText(refNum[boxNum - 1]);
 			testNo.setText(testNum[boxNum - 1]);
-			operatorID.setText("Guest");
+			operatorID.setText(oID[boxNum - 1]);
 			result.setText(hbA1c[boxNum - 1] + "%");
 			
 			detailViewBtn.setEnabled(false);
@@ -449,10 +416,14 @@ public class PatientTestActivity extends Activity {
 		txData.append(refNum[boxNum - 1]);
 		txData.append(pIDLenDfm.format(pID[boxNum - 1].length()));
 		txData.append(pID[boxNum - 1]);
+		txData.append(pIDLenDfm.format(oID[boxNum - 1].length()));
+		txData.append(oID[boxNum - 1]);
 		txData.append(hbA1c[boxNum - 1]);
 		
-		PatientSerial = new SerialPort();
-		PatientSerial.PrinterTxStart(SerialPort.PRINTRECORD, txData);
+		mSerialPort = new SerialPort(R.id.ptestlayout);
+		mSerialPort.PrinterTxStart(SerialPort.PRINTRECORD, txData);
+		
+		SerialPort.Sleep(100);
 		
 		btnState = false;
 	}

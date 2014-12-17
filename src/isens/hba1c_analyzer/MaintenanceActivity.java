@@ -7,7 +7,6 @@ import java.text.DecimalFormat;
 import java.util.Calendar;
 
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
-import isens.hba1c_analyzer.TimerDisplay.whichClock;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -22,14 +21,13 @@ import android.widget.TimePicker;
 
 public class MaintenanceActivity extends Activity {
 	
-	private Button backBtn,
-				   homeBtn,
-				   systemBtn,
-				   opticalBtn,
-				   serviceBtn;
-		
-	private static TextView TimeText;
-	private static ImageView deviceImage;
+	public TimerDisplay mTimerDisplay;
+	
+	public Button escBtn,
+	  			  lampBtn,
+	  			  adjustBtn,
+	  			  calibrationBtn,
+	  			  tempBtn;
 	
 	public boolean btnState = false;
 	
@@ -39,41 +37,89 @@ public class MaintenanceActivity extends Activity {
 		overridePendingTransition(R.anim.fade, R.anim.hold);
 		setContentView(R.layout.maintenance);
 		
-		TimeText = (TextView) findViewById(R.id.timeText);
-		deviceImage = (ImageView) findViewById(R.id.device);
-		
 		MaintenanceInit();
 					
-		/*Setting Activity activation*/
-		backBtn = (Button)findViewById(R.id.backicon);
-		backBtn.setOnClickListener(new View.OnClickListener() {
+		/*Home Activity activation*/
+		escBtn = (Button)findViewById(R.id.escicon);
+		escBtn.setOnClickListener(new View.OnClickListener() {
 		
 			public void onClick(View v) {
 			
 				if(!btnState) {
 					
 					btnState = true;
+				
+					escBtn.setEnabled(false);
 					
-					backBtn.setEnabled(false);
-					
-					WhichIntent(TargetIntent.Setting);	
+					WhichIntent(TargetIntent.Home);
 				}
 			}
 		});
 		
-		/*Home Activity activation*/
-		homeBtn = (Button)findViewById(R.id.homeicon);
-		homeBtn.setOnClickListener(new View.OnClickListener() {
+		/*Adjustment Factor Activity activation*/
+		adjustBtn = (Button)findViewById(R.id.adjustbtn);
+		adjustBtn.setOnClickListener(new View.OnClickListener() {
 		
 			public void onClick(View v) {
-			
+				
 				if(!btnState) {
 					
 					btnState = true;
 					
-					homeBtn.setEnabled(false);
+					adjustBtn.setEnabled(false);
+				
+					WhichIntent(TargetIntent.Adjustment);
+				}
+			}
+		});
 		
-					WhichIntent(TargetIntent.Home);
+		/*Calibration Activity activation*/
+		calibrationBtn = (Button)findViewById(R.id.calibrationbtn);
+		calibrationBtn.setOnClickListener(new View.OnClickListener() {
+		
+			public void onClick(View v) {
+				
+				if(!btnState) {
+					
+					btnState = true;
+					
+					calibrationBtn.setEnabled(false);
+				
+					WhichIntent(TargetIntent.Calibration);
+				}
+			}
+		});
+		
+		/*Temperature Activity activation*/
+		tempBtn = (Button)findViewById(R.id.tempbtn);
+		tempBtn.setOnClickListener(new View.OnClickListener() {
+		
+			public void onClick(View v) {
+				
+				if(!btnState) {
+					
+					btnState = true;
+					
+					tempBtn.setEnabled(false);
+				
+					WhichIntent(TargetIntent.Temperature);
+				}
+			}
+		});
+		
+		/*Lamp Intensity Activity activation*/
+		lampBtn = (Button)findViewById(R.id.lampbtn);
+		lampBtn.setOnClickListener(new View.OnClickListener() {
+		
+			public void onClick(View v) {
+				
+				if(!btnState) {
+					
+					btnState = true;
+					
+					lampBtn.setEnabled(false);
+				
+					WhichIntent(TargetIntent.Lamp);
 				}
 			}
 		});
@@ -81,54 +127,39 @@ public class MaintenanceActivity extends Activity {
 	
 	public void MaintenanceInit() {
 		
-		TimerDisplay.timerState = whichClock.MaintenanceClock;		
-		CurrTimeDisplay();
-		ExternalDeviceDisplay();
-	}
-
-	public void CurrTimeDisplay() {
-		
-		new Thread(new Runnable() {
-		    public void run() {    
-		        runOnUiThread(new Runnable(){
-		            public void run() {
-		            	
-		            	TimeText.setText(TimerDisplay.rTime[3] + " " + TimerDisplay.rTime[4] + ":" + TimerDisplay.rTime[5]);
-		            }
-		        });
-		    }
-		}).start();	
-	}
-	
-	public void ExternalDeviceDisplay() {
-		
-		new Thread(new Runnable() {
-		    public void run() {    
-		        runOnUiThread(new Runnable(){
-		            public void run() {
-		           
-		            	if(HomeActivity.ExternalDevice == HomeActivity.FILE_OPEN) deviceImage.setBackgroundResource(R.drawable.main_usb_c);
-		            	else deviceImage.setBackgroundResource(R.drawable.main_usb);
-		            }
-		        });
-		    }
-		}).start();
+		mTimerDisplay = new TimerDisplay();
+		mTimerDisplay.ActivityParm(this, R.id.maintenancelayout);
 	}
 
 	public void WhichIntent(TargetIntent Itn) { // Activity conversion
 		
 		switch(Itn) {
 		
-		case Home		:				
+		case Home			:				
 			Intent HomeIntent = new Intent(getApplicationContext(), HomeActivity.class);
 			startActivity(HomeIntent);
 			break;
 						
-		case Setting	:
-			Intent SettingIntent = new Intent(getApplicationContext(), SettingActivity.class);
-			startActivity(SettingIntent);
+		case Lamp		:				
+			Intent LampIntent = new Intent(getApplicationContext(), LampActivity.class);
+			startActivity(LampIntent);
 			break;
 			
+		case Adjustment		:				
+			Intent AdjustIntent = new Intent(getApplicationContext(), AdjustmentFactorActivity.class);
+			startActivity(AdjustIntent);
+			break;
+
+		case Calibration		:				
+			Intent calibIntent = new Intent(getApplicationContext(), CalibrationActivity.class);
+			startActivity(calibIntent);
+			break;
+			
+		case Temperature		:				
+			Intent TemperatureIntent = new Intent(getApplicationContext(), TemperatureActivity.class);
+			startActivity(TemperatureIntent);
+			break;
+					
 		default		:	
 			break;			
 		}

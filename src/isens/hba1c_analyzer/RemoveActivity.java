@@ -3,7 +3,6 @@ package isens.hba1c_analyzer;
 import java.lang.annotation.Target;
 
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
-import isens.hba1c_analyzer.TimerDisplay.whichClock;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -15,13 +14,11 @@ import android.widget.TextView;
 
 public class RemoveActivity extends Activity {
 
-	SerialPort RemoveSerial;
+	public SerialPort mSerialPort;
+	public TimerDisplay mTimerDisplay;
 	
 	public AnimationDrawable RemoveAni;
 	public ImageView RemoveImage;
-	
-	public static TextView TimeText;
-	private static ImageView deviceImage;
 	
 	public static int PatientDataCnt,
 					  ControlDataCnt;
@@ -32,51 +29,18 @@ public class RemoveActivity extends Activity {
 		overridePendingTransition(R.anim.fade, R.anim.hold);
 		setContentView(R.layout.remove);
 
-		RemoveSerial = new SerialPort();
-		
-		TimeText = (TextView) findViewById(R.id.timeText);
-		deviceImage = (ImageView) findViewById(R.id.device);
+		mSerialPort = new SerialPort(R.id.removelayout);
 		
 		RemoveInit();
 	}
 	
 	public void RemoveInit() {
 		
-		TimerDisplay.timerState = whichClock.RemoveClock;		
-		CurrTimeDisplay();
-		ExternalDeviceDisplay();
+		mTimerDisplay = new TimerDisplay();
+		mTimerDisplay.ActivityParm(this, R.id.removelayout);
 		
 		UserAction UserActionObj = new UserAction();
 		UserActionObj.start();
-	}
-	
-	public void CurrTimeDisplay() {
-		
-		new Thread(new Runnable() {
-		    public void run() {    
-		        runOnUiThread(new Runnable(){
-		            public void run() {
-		            	
-		            	TimeText.setText(TimerDisplay.rTime[3] + " " + TimerDisplay.rTime[4] + ":" + TimerDisplay.rTime[5]);
-		            }
-		        });
-		    }
-		}).start();	
-	}
-	
-	public void ExternalDeviceDisplay() {
-		
-		new Thread(new Runnable() {
-		    public void run() {    
-		        runOnUiThread(new Runnable(){
-		            public void run() {
-		           
-		            	if(HomeActivity.ExternalDevice == HomeActivity.FILE_OPEN) deviceImage.setBackgroundResource(R.drawable.main_usb_c);
-		            	else deviceImage.setBackgroundResource(R.drawable.main_usb);
-		            }
-		        });
-		    }
-		}).start();
 	}
 
 	public class UserAction extends Thread {
@@ -87,14 +51,17 @@ public class RemoveActivity extends Activity {
 			
 			User1stAction();
 			
+			if((HomeActivity.ANALYZER_SW != HomeActivity.STABLE) || (ResultActivity.ItnData == R.string.stop)) { // Stable
+			
+			
 			GpioPort.DoorActState = true;
 			GpioPort.CartridgeActState = true;
 	
 			SerialPort.Sleep(1500);
 			
-			while(ActionActivity.CartridgeCheckFlag != 0);
+			while(ActionActivity.CartridgeCheckFlag != 0) SerialPort.Sleep(100);;
 			
-			while((ActionActivity.DoorCheckFlag != 1) | (ActionActivity.CartridgeCheckFlag != 0));
+			while((ActionActivity.DoorCheckFlag != 1) | (ActionActivity.CartridgeCheckFlag != 0)) SerialPort.Sleep(100);;
 			
 			GpioPort.DoorActState = false;
 			GpioPort.CartridgeActState = false;
@@ -102,46 +69,51 @@ public class RemoveActivity extends Activity {
 			Intent itn = getIntent();
 			whichIntent = itn.getIntExtra("WhichIntent", 0);
 			
-			if(whichIntent != HomeActivity.COVER_ACTION_ESC) {
-					 
-				if(Barcode.RefNum.substring(0, 1).equals("B")) {
+			if(whichIntent != ResultActivity.COVER_ACTION_ESC) {
+			
+				if(HomeActivity.ANALYZER_SW != HomeActivity.STABLE) {
 					
-					ControlDataCnt = itn.getIntExtra("DataCnt", 0);	
-				
-				} else if(Barcode.RefNum.substring(0, 1).equals("D")) {
 					
-					PatientDataCnt = itn.getIntExtra("DataCnt", 0);
-				
-				} else if(Barcode.RefNum.substring(0, 1).equals("E")) {
+				if(Barcode.RefNum.substring(0, 1).equals("B")) ControlDataCnt = itn.getIntExtra("DataCnt", 0);	
+				else PatientDataCnt = itn.getIntExtra("DataCnt", 0);
 					
-					PatientDataCnt = itn.getIntExtra("DataCnt", 0);
-				
-				} else if(Barcode.RefNum.substring(0, 1).equals("F")) {
-					
-					PatientDataCnt = itn.getIntExtra("DataCnt", 0);
-				}
+						
+				} else ControlDataCnt = itn.getIntExtra("DataCnt", 0);
 				
 				DataCntSave();			
 			}
-			
+						
 			RemoveAni.stop();
 			
 			switch(whichIntent) {
 			
-			case HomeActivity.ACTION_ACTIVITY	:
+			case ResultActivity.ACTION_ACTIVITY	:
 				WhichIntent(TargetIntent.Blank);
 				break;
 			
-			case HomeActivity.HOME_ACTIVITY		:	
+			case ResultActivity.HOME_ACTIVITY		:	
 				WhichIntent(TargetIntent.Home);
 				break;
 				
-			case HomeActivity.COVER_ACTION_ESC	:
+			case ResultActivity.COVER_ACTION_ESC	:
 				WhichIntent(TargetIntent.Home);
 				break;
 				
 			default	:
 				break;
+			}
+			
+			
+			} else {
+				
+				SerialPort.Sleep(5000);		
+				
+				if(HomeActivity.NumofStable++ < 25) WhichIntent(TargetIntent.Blank);
+				else {
+					
+					HomeActivity.NumofStable = 0;
+					WhichIntent(TargetIntent.Home);
+				}
 			}
 		}
 	}

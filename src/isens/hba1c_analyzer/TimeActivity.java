@@ -6,7 +6,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
-import isens.hba1c_analyzer.TimerDisplay.whichClock;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -23,7 +22,7 @@ import android.widget.TextView;
 
 public class TimeActivity extends Activity {
 
-	private TimerDisplay TimeTimer;
+	private TimerDisplay mTimerDisplay;
 	
 	public Handler handler = new Handler();
 	public TimerTask oneHundredmsPeriod;
@@ -44,9 +43,6 @@ public class TimeActivity extends Activity {
 				   ampmUpBtn,
 				   ampmDownBtn;
 	
-	private static TextView TimeText;
-	private static ImageView deviceImage;
-	
 	private int currHour,
 				hour,
 				currMin,
@@ -63,9 +59,6 @@ public class TimeActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		overridePendingTransition(R.anim.fade, R.anim.hold);
 		setContentView(R.layout.time);
-		
-		TimeText  = (TextView) findViewById(R.id.timeText);
-		deviceImage = (ImageView) findViewById(R.id.device);
 		
 		hourText  = (TextView) findViewById(R.id.hourtext);
 		minText   = (TextView) findViewById(R.id.mintext);
@@ -103,7 +96,7 @@ public class TimeActivity extends Activity {
 						
 						btnState = true;
 						
-						TimeChange(HomeActivity.HOUR_UP);
+						TimeChange(SystemSettingActivity.HOUR_UP);
 					}
 					break;
 
@@ -120,7 +113,7 @@ public class TimeActivity extends Activity {
 			
 			public boolean onLongClick(View v) {
 			
-				TimerInit(HomeActivity.HOUR_UP);
+				TimerInit(SystemSettingActivity.HOUR_UP);
 				
 				return true;
 			}
@@ -139,7 +132,7 @@ public class TimeActivity extends Activity {
 						
 						btnState = true;
 						
-						TimeChange(HomeActivity.HOUR_DOWN);
+						TimeChange(SystemSettingActivity.HOUR_DOWN);
 					}
 					break;
 
@@ -156,7 +149,7 @@ public class TimeActivity extends Activity {
 			
 			public boolean onLongClick(View v) {
 			
-				TimerInit(HomeActivity.HOUR_DOWN);
+				TimerInit(SystemSettingActivity.HOUR_DOWN);
 				
 				return true;
 			}
@@ -175,7 +168,7 @@ public class TimeActivity extends Activity {
 						
 						btnState = true;
 						
-						TimeChange(HomeActivity.MINUTE_UP);
+						TimeChange(SystemSettingActivity.MINUTE_UP);
 					}
 					break;
 
@@ -192,7 +185,7 @@ public class TimeActivity extends Activity {
 			
 			public boolean onLongClick(View v) {
 			
-				TimerInit(HomeActivity.MINUTE_UP);
+				TimerInit(SystemSettingActivity.MINUTE_UP);
 				
 				return true;
 			}
@@ -211,7 +204,7 @@ public class TimeActivity extends Activity {
 						
 						btnState = true;
 						
-						TimeChange(HomeActivity.MINUTE_DOWN);
+						TimeChange(SystemSettingActivity.MINUTE_DOWN);
 					}
 					break;
 
@@ -228,7 +221,7 @@ public class TimeActivity extends Activity {
 			
 			public boolean onLongClick(View v) {
 			
-				TimerInit(HomeActivity.MINUTE_DOWN);
+				TimerInit(SystemSettingActivity.MINUTE_DOWN);
 				
 				return true;
 			}
@@ -267,9 +260,8 @@ public class TimeActivity extends Activity {
 	
 	public void DateInit() {
 		
-		TimerDisplay.timerState = whichClock.TimeClock;		
-		CurrTimeDisplay();
-		ExternalDeviceDisplay();
+		mTimerDisplay = new TimerDisplay();
+		mTimerDisplay.ActivityParm(this, R.id.timelayout);
 		GetCurrTime();
 	}
 	
@@ -291,35 +283,6 @@ public class TimeActivity extends Activity {
 		
 		timer = new Timer();
 		timer.schedule(oneHundredmsPeriod, 0, 100); // Timer period : 100msec
-	}
-	
-	public void CurrTimeDisplay() {
-		
-		new Thread(new Runnable() {
-		    public void run() {    
-		        runOnUiThread(new Runnable(){
-		            public void run() {
-		            	
-		            	TimeText.setText(TimerDisplay.rTime[3] + " " + TimerDisplay.rTime[4] + ":" + TimerDisplay.rTime[5]);
-		            }
-		        });
-		    }
-		}).start();
-	}
-	
-	public void ExternalDeviceDisplay() {
-		
-		new Thread(new Runnable() {
-		    public void run() {    
-		        runOnUiThread(new Runnable(){
-		            public void run() {
-		           
-		            	if(HomeActivity.ExternalDevice == HomeActivity.FILE_OPEN) deviceImage.setBackgroundResource(R.drawable.main_usb_c);
-		            	else deviceImage.setBackgroundResource(R.drawable.main_usb);
-		            }
-		        });
-		    }
-		}).start();
 	}
 	
 	public void WhichIntent(TargetIntent Itn) { // Activity conversion
@@ -393,7 +356,7 @@ public class TimeActivity extends Activity {
 		
 		switch(whichTime) {
 		
-		case HomeActivity.HOUR_UP		:
+		case SystemSettingActivity.HOUR_UP		:
 			if(hour < 12) {
 				hour += 1;
 			} else {
@@ -401,7 +364,7 @@ public class TimeActivity extends Activity {
 			}
 			break;
 			
-		case HomeActivity.HOUR_DOWN		:
+		case SystemSettingActivity.HOUR_DOWN	:
 			if(hour > 1) {
 				hour -= 1;
 			} else {
@@ -409,7 +372,7 @@ public class TimeActivity extends Activity {
 			}
 			break;
 			
-		case HomeActivity.MINUTE_UP		:
+		case SystemSettingActivity.MINUTE_UP	:
 			if(min < 59) {
 				min += 1;
 			} else {
@@ -418,7 +381,7 @@ public class TimeActivity extends Activity {
 			minStr = dfm.format(min);
 			break;
 			
-		case HomeActivity.MINUTE_DOWN	:
+		case SystemSettingActivity.MINUTE_DOWN	:
 			if(min > 0) {
 				min -= 1;
 			} else {
@@ -471,14 +434,14 @@ public class TimeActivity extends Activity {
 		
 		SystemClock.setCurrentTimeMillis(c.getTimeInMillis());
 		
-		TimeTimer = new TimerDisplay();
-		TimeTimer.TimerInit();
+		mTimerDisplay = new TimerDisplay();
+		mTimerDisplay.TimerInit();
 		
 		SerialPort.Sleep(1000);
 		
 		if(hour == 0) hour = 12;
 		
-		CurrTimeDisplay();
+		mTimerDisplay.ActivityParm(this, R.id.timelayout);
 		GetCurrTime();
 	}
 	

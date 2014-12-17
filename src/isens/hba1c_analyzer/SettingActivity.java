@@ -1,11 +1,18 @@
 package isens.hba1c_analyzer;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
+import isens.hba1c_analyzer.CalibrationActivity.TargetMode;
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
-import isens.hba1c_analyzer.TimerDisplay.whichClock;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -14,24 +21,38 @@ import android.widget.TextView;
 
 public class SettingActivity extends Activity {
 	
-	private Button systemBtn,
-				   dataBtn,
-				   maintenanceBtn,
-				   escIcon;
+	public TimerDisplay mTimerDisplay;
+	public OperatorController mOperatorController;
 	
-	private static TextView TimeText;
-	private static ImageView deviceImage;
+	public Button systemBtn,
+				  dataBtn,
+				  operatorBtn,
+				  escIcon;
 	
 	public boolean btnState = false;
+	
+	public Handler handler = new Handler();
+	public TimerTask OneHundredmsPeriod;
+	public Timer timer;
+	
+	public Button cheat1Btn,
+				  cheat2Btn;
+
+	public Button btn;
+	
+	public static boolean isC1Pressed = false,
+						  isC2Pressed = false;
+	
+	public boolean isC1Running = true;
+	public boolean isCheat = false;
+	public int cnt;
+	public int longClickTime;
 	
 	protected void onCreate(Bundle savedInstanceState) {
 		
 		super.onCreate(savedInstanceState);
 		overridePendingTransition(R.anim.fade, R.anim.hold);
 		setContentView(R.layout.setting);
-		
-		TimeText = (TextView) findViewById(R.id.timeText);
-		deviceImage = (ImageView) findViewById(R.id.device);
 		
 		SettingInit();
 		
@@ -52,37 +73,32 @@ public class SettingActivity extends Activity {
 			}
 		});
 		
-		/*Data setting Activity activation*/
-		dataBtn = (Button)findViewById(R.id.databtn);
-		dataBtn.setOnClickListener(new View.OnClickListener() {
-		
-			public void onClick(View v) {
-				
-				if(!btnState) {
-					
-					btnState = true;
-				
-					dataBtn.setEnabled(false);
-				
-					WhichIntent(TargetIntent.DataSetting);
-				}
-			}
-		});
-		
-		/*Maintenance Activity activation*/
-		maintenanceBtn = (Button)findViewById(R.id.maintenancebtn);
-		maintenanceBtn.setOnClickListener(new View.OnClickListener() {
+		/*Operator setting Activity activation*/
+		operatorBtn = (Button)findViewById(R.id.operatorbtn);
+		operatorBtn.setOnClickListener(new View.OnClickListener() {
 		
 			public void onClick(View v) {
 			
-//				maintenanceBtn.setEnabled(false);
-//				
-//				WhichIntent(TargetIntent.Maintenance);
+				/* */
+//				if(HomeActivity.ANALYZER_SW == HomeActivity.DEVEL) {
+				
+				if(!btnState) {
+				
+					btnState = true;
+					
+					operatorBtn.setEnabled(false);
+				
+					WhichIntent(TargetIntent.OperatorSetting);
+				}
+				
+//				}
+				
+				/* */
 			}
 		});
 		
 		/*Home Activity activation*/
-		escIcon = (Button)findViewById(R.id.backicon);
+		escIcon = (Button)findViewById(R.id.escicon);
 		escIcon.setOnClickListener(new View.OnClickListener() {
 		
 			public void onClick(View v) {
@@ -97,41 +113,163 @@ public class SettingActivity extends Activity {
 				}
 			}
 		});
+		
+		cheat1Btn = (Button)findViewById(R.id.cheat1btn);
+		cheat1Btn.setOnClickListener(new View.OnClickListener() {
+		
+			public void onClick(View v) {
+			
+				Cheat1stModeStart();
+			}
+		});
+		
+		cheat2Btn = (Button)findViewById(R.id.cheat2btn);
+		cheat2Btn.setOnTouchListener(new View.OnTouchListener() {
+				
+			public boolean onTouch(View v, MotionEvent event) {
+				
+				switch(event.getAction()) {
+				
+				case MotionEvent.ACTION_DOWN	:
+					PressedBtn();
+					break;
+					
+				case MotionEvent.ACTION_UP		:
+					TakeOffBtn();
+					break;
+					
+				default	:
+					break;
+				}
+				
+				return false;
+			}
+		});	
 	}
 	
 	public void SettingInit() {
 		
-		TimerDisplay.timerState = whichClock.SettingClock;		
-		CurrTimeDisplay();
-		ExternalDeviceDisplay();
+		mTimerDisplay = new TimerDisplay();
+		mTimerDisplay.ActivityParm(this, R.id.settinglayout);
 	}
 	
-	public void CurrTimeDisplay() {
+	public void PressedBtn() {
 		
-		new Thread(new Runnable() {
-		    public void run() {    
-		        runOnUiThread(new Runnable(){
-		            public void run() {
-		            	
-		            	TimeText.setText(TimerDisplay.rTime[3] + " " + TimerDisplay.rTime[4] + ":" + TimerDisplay.rTime[5]);
-		            }
-		        });
-		    }
-		}).start();	
+		if(!isC2Pressed && isC1Pressed) {
+			
+			isC2Pressed = true;
+			isCheat = false;
+			longClickTime = cnt;
+		}
 	}
 	
-	public void ExternalDeviceDisplay() {
+	public void TakeOffBtn() {
 		
-		new Thread(new Runnable() {
-		    public void run() {    
-		        runOnUiThread(new Runnable(){
-		            public void run() {
-		           
-		            	if(HomeActivity.ExternalDevice == HomeActivity.FILE_OPEN) deviceImage.setBackgroundResource(R.drawable.main_usb_c);
-		            	else deviceImage.setBackgroundResource(R.drawable.main_usb);
-		            }
-		        });
-		    }
+		CheatModeStop(this);
+	}
+	
+	public void TimerInit() {
+		
+		OneHundredmsPeriod = new TimerTask() {
+			
+			public void run() {
+				Runnable updater = new Runnable() {
+					public void run() {
+						
+						cnt++;
+						
+						if(!isC2Pressed) CheatMode();
+						else Cheat2ndModeStart();
+					}
+				};
+				
+				handler.post(updater);		
+			}
+		};
+		
+		timer = new Timer();
+		timer.schedule(OneHundredmsPeriod, 0, 100); // Timer period : 100msec
+	}
+	
+	public void Cheat1stModeStart() {
+		
+		if(!isC1Pressed) {
+			
+			Log.w("Cheat mode", "1st start");
+			
+			BtnColor(this, R.id.cheat1btn, "#3004A458");
+		
+			isC1Pressed = true;
+			
+			cnt = 0;
+			
+			TimerInit();
+		}
+	}
+	
+	public void Cheat2ndModeStart() {
+		
+		int hundredmsCnt = cnt - longClickTime;
+		
+		if(hundredmsCnt > 30) {
+			
+			Log.w("Cheat mode", "2nd start");
+			
+			isCheat = true;
+			
+			BtnColor(this, R.id.cheat2btn, "#30023894");
+		
+			timer.cancel();
+			
+			mOperatorController = new OperatorController(this, this, R.id.settinglayout);
+			mOperatorController.EngineerLoginDisplay();
+		}
+	}
+	
+	public void CheatModeStop(Activity activity) {
+		
+		if(isC1Pressed) {
+			
+			Log.w("Cheat mode", "1st stop");
+			
+			BtnColor(activity, R.id.cheat1btn, "#00000000");
+		
+			isC1Pressed = false;
+			
+			if(!isCheat) timer.cancel();
+		}
+		
+		if(isC2Pressed) {
+			
+			Log.w("Cheat mode", "2nd stop");
+			
+			BtnColor(activity, R.id.cheat2btn, "#00000000");
+			
+			isC2Pressed = false;
+		}
+	}
+	
+	public void CheatMode() {
+		
+		if(cnt == 50) {
+			
+			CheatModeStop(this);
+		}
+	}
+	
+	public void BtnColor(final Activity activity, final int id, final String color) {
+		
+		new Thread(new Runnable() {			
+			public void run() {    
+				runOnUiThread(new Runnable(){
+					public void run() {
+
+						btn = (Button) activity.findViewById(id);
+ 	
+						btn.setBackgroundColor(Color.parseColor(color));
+					}
+				});
+			}
 		}).start();
 	}
 
@@ -139,36 +277,47 @@ public class SettingActivity extends Activity {
 		
 		switch(Itn) {
 		
-		case Home			:				
+		case Home				:				
 			Intent HomeIntent = new Intent(getApplicationContext(), HomeActivity.class);
 			startActivity(HomeIntent);
 			break;
 						
-		case SystemSetting	:
+		case SystemSetting		:
 			Intent SystemSettingIntent = new Intent(getApplicationContext(), SystemSettingActivity.class);
 			startActivity(SystemSettingIntent);
 			break;
 			
-		case DataSetting	:
+		case DataSetting		:
 			Intent DataSettingIntent = new Intent(getApplicationContext(), DataSettingActivity.class);
 			startActivity(DataSettingIntent);
 			break;			
 			
-		case Maintenance	:		
-			Intent MaintenanceIntent = new Intent(getApplicationContext(), MaintenanceActivity.class);
-			startActivity(MaintenanceIntent);
+		case OperatorSetting	:		
+			Intent OperatorIntent = new Intent(getApplicationContext(), OperatorSettingActivity.class);
+			startActivity(OperatorIntent);
 			break;
 			
 		default		:	
 			break;			
 		}
 		
-		finish();		
+		finish(this);		
 	}
 	
-	public void finish() {
+	public void MaintenanceIntent(Activity activity, Context context) { // Activity conversion
+		
+		isC1Pressed = false;
+		isC2Pressed = false;
+		
+		Intent MaintenanceIntent = new Intent(context, MaintenanceActivity.class);
+		activity.startActivity(MaintenanceIntent);
+		
+		finish(activity);		
+	}
+	
+	public void finish(Activity activity) {
 		
 		super.finish();
-		overridePendingTransition(R.anim.fade, R.anim.hold);
+		activity.overridePendingTransition(R.anim.fade, R.anim.hold);
 	}
 }

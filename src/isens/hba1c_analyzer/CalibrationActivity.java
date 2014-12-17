@@ -26,61 +26,58 @@ import isens.hba1c_analyzer.RunActivity.Cart2ndShaking;
 import isens.hba1c_analyzer.RunActivity.CartDump;
 import isens.hba1c_analyzer.RunActivity.ShakingAniThread;
 import isens.hba1c_analyzer.SerialPort.CtrTarget;
-import isens.hba1c_analyzer.TimerDisplay.whichClock;
 
 public class CalibrationActivity extends Activity{
 
-	private SerialPort CalibSerial;
-	private ActionActivity CalibAction;
+	public SerialPort mSerialPort;
+	public ActionActivity mActionActivity;
+	public TimerDisplay mTimerDisplay;
 	
-	private Button escBtn,
-				   blankBtn,
-				   scanBtn,
-				   quickBtn,
-				   fullBtn;
+	public Button escBtn,
+				  blankBtn,
+//				  scanBtn,
+				  quickBtn,
+				  fullBtn;
 	
-	private TextView deviceState,
-					 oneOne,
-					 oneTwo,
-					 oneThree,
-					 twoOne,
-					 twoTwo,
-					 twoThree,
-					 threeOne,
-					 threeTwo,
-					 threeThree,
-					 fourOne,
-					 fourTwo,
-					 fourThree,
-					 fiveOne,
-					 fiveTwo,
-					 fiveThree,
-					 sixOne,
-					 sixTwo,
-					 sixThree,
-					 hba1cStr,
-					 tHbStr;
+	public TextView deviceState,
+					oneOne,
+					oneTwo,
+					oneThree,
+					twoOne,
+					twoTwo,
+					twoThree,
+					threeOne,
+					threeTwo,
+					threeThree,
+					fourOne,
+					fourTwo,
+					fourThree,
+					fiveOne,
+					fiveTwo,
+					fiveThree,
+					sixOne,
+					sixTwo,
+					sixThree,
+					hba1cStr,
+					tHbStr;
 	
-	private Handler handler = new Handler();
-	private TimerTask OneHundredmsPeriod;
-	private Timer timer;
+	public Handler handler = new Handler();
+	public TimerTask OneHundredmsPeriod;
+	public Timer timer;
 	
-	private static boolean TestFlag = false,
+	public static boolean TestFlag = false,
 						   ThreadRun = false;
 	
-	private enum TargetMode {Blank, Quick, Full, Scan}
-	private enum MeasTarget {Shk1stOne, Shk1stTwo, Shk1stThree, Shk2ndOne, Shk2ndTwo, Shk2ndThree}
+	public enum TargetMode {Blank, Quick, Full, Scan}
+	public enum MeasTarget {Shk1stOne, Shk1stTwo, Shk1stThree, Shk2ndOne, Shk2ndTwo, Shk2ndThree}
 	
-	private TargetMode targetMode = null;
-	private MeasTarget measTarget = null;
+	public TargetMode targetMode = null;
+	public MeasTarget measTarget = null;
 	
-	private RunActivity.AnalyzerState calibState;
+	public RunActivity.AnalyzerState calibState;
 	
-	private static TextView TimeText;
-	private static ImageView deviceImage;
-	
-	private boolean absorbCheck = false,
-					btnState = false;
+	public boolean absorbCheck = false,
+				   btnState = false;
 	
 	DecimalFormat AbsorbanceFormat = new DecimalFormat("0.0000"),
 				  hbA1cFormat = new DecimalFormat("0.00"),
@@ -92,9 +89,6 @@ public class CalibrationActivity extends Activity{
 		super.onCreate(savedInstanceState);
 		overridePendingTransition(R.anim.fade, R.anim.hold);
 		setContentView(R.layout.calibration);
-		
-		TimeText = (TextView) findViewById(R.id.timeText);
-		deviceImage = (ImageView) findViewById(R.id.device);
 		
 		deviceState = (TextView) findViewById(R.id.devicestate);
 		
@@ -136,7 +130,7 @@ public class CalibrationActivity extends Activity{
 
 					escBtn.setEnabled(false);
 					
-					WhichIntent(TargetIntent.SystemSetting);
+					WhichIntent(TargetIntent.Maintenance);
 				}
 			}
 		});
@@ -157,21 +151,21 @@ public class CalibrationActivity extends Activity{
 			}
 		});
 		
-		scanBtn = (Button)findViewById(R.id.scanbtn);
-		scanBtn.setOnClickListener(new View.OnClickListener() { 
-		
-			public void onClick(View v) {
-				
-				if(!btnState) {
-					
-					btnState = true;
-					
-					scanBtn.setEnabled(false);
-					
-					BarcodeStart();
-				}
-			}
-		});
+//		scanBtn = (Button)findViewById(R.id.scanbtn);
+//		scanBtn.setOnClickListener(new View.OnClickListener() { 
+//		
+//			public void onClick(View v) {
+//				
+//				if(!btnState) {
+//					
+//					btnState = true;
+//					
+//					scanBtn.setEnabled(false);
+//					
+//					BarcodeStart();
+//				}
+//			}
+//		});
 
 		
 		quickBtn = (Button)findViewById(R.id.quickbtn);
@@ -209,47 +203,17 @@ public class CalibrationActivity extends Activity{
 		CalibrationInit();
 	}
 	
-	public void ExternalDeviceDisplay() {
-		
-		new Thread(new Runnable() {
-		    public void run() {    
-		        runOnUiThread(new Runnable(){
-		            public void run() {
-		           
-		            	if(HomeActivity.ExternalDevice == HomeActivity.FILE_OPEN) deviceImage.setBackgroundResource(R.drawable.main_usb_c);
-		            	else deviceImage.setBackgroundResource(R.drawable.main_usb);
-		            }
-		        });
-		    }
-		}).start();
-	}
-	
 	public void CalibrationInit() {
 		
-		TimerDisplay.timerState = whichClock.CalibrationClock;		
-		CurrTimeDisplay();
-		ExternalDeviceDisplay();
+		mTimerDisplay = new TimerDisplay();
+		mTimerDisplay.ActivityParm(this, R.id.caliblayout);
 		
 		AbsorbanceDisplay();
 		CalValueDisplay();
 		
-		CalibSerial = new SerialPort();
+		mSerialPort = new SerialPort(R.id.caliblayout);
 	}
 
-	public void CurrTimeDisplay() { // displaying current time
-		
-		new Thread(new Runnable() {
-		    public void run() {    
-		        runOnUiThread(new Runnable(){
-		            public void run() {
-		            	
-		        		TimeText.setText(TimerDisplay.rTime[3] + " " + TimerDisplay.rTime[4] + ":" + TimerDisplay.rTime[5]);
-		            }
-		        });
-		    }
-		}).start();	
-	}
-	
 	public void TimerInit() {
 		
 		OneHundredmsPeriod = new TimerTask() {
@@ -279,8 +243,8 @@ public class CalibrationActivity extends Activity{
 								
 								cnt = 0;
 								
-								CalibAction = new ActionActivity();
-								CalibAction.BarcodeScan();
+								mActionActivity = new ActionActivity();
+								mActionActivity.BarcodeScan();
 							}
 						}
 					}
@@ -367,7 +331,7 @@ public class CalibrationActivity extends Activity{
 		btnState = false;
 		
 		blankBtn.setEnabled(true);
-		scanBtn.setEnabled(true);
+//		scanBtn.setEnabled(true);
 		quickBtn.setEnabled(true);
 		fullBtn.setEnabled(true);
 		escBtn.setEnabled(true);
@@ -376,7 +340,7 @@ public class CalibrationActivity extends Activity{
 	public void BlankMode() {
 		
 		escBtn.setEnabled(false);
-		scanBtn.setEnabled(false);
+//		scanBtn.setEnabled(false);
 		quickBtn.setEnabled(false);
 		fullBtn.setEnabled(false);
 		
@@ -465,7 +429,7 @@ public class CalibrationActivity extends Activity{
 	public void QuickMode() {
 		
 		blankBtn.setEnabled(false);
-		scanBtn.setEnabled(false);
+//		scanBtn.setEnabled(false);
 		fullBtn.setEnabled(false);
 		escBtn.setEnabled(false);
 		
@@ -484,7 +448,7 @@ public class CalibrationActivity extends Activity{
 	public void FullMode() {
 		
 		blankBtn.setEnabled(false);
-		scanBtn.setEnabled(false);
+//		scanBtn.setEnabled(false);
 		quickBtn.setEnabled(false);
 		escBtn.setEnabled(false);
 		
@@ -499,94 +463,6 @@ public class CalibrationActivity extends Activity{
 		Cart1stShaking BlankCart1stShakingObj = new Cart1stShaking();
 		BlankCart1stShakingObj.start();
 	}
-	
-//	public class Cart1stShaking extends Thread { // First shaking motion
-//		
-//		public void run() {
-//						
-//			String shkTime = "0000";
-//			
-//			if(targetMode == TargetMode.Quick) shkTime = "0030";
-//			else if(targetMode == TargetMode.Full) shkTime = "0630";
-//			
-//			MotionInstruct(RunActivity.Step1st_POSITION, SerialPort.CtrTarget.PhotoSet);			
-//			while(!RunActivity.Step1st_POSITION.equals(CalibSerial.BoardMessageOutput()));
-//			
-//			MotionInstruct(shkTime, SerialPort.CtrTarget.MotorSet);  // Motor shaking time, default : 6.5 * 10(sec) = 0065
-//			while(!RunActivity.MOTOR_COMPLETE.equals(CalibSerial.BoardMessageOutput()));
-//			SerialPort.Sleep(2000);
-//				
-//			MotionInstruct(RunActivity.MEASURE_POSITION, SerialPort.CtrTarget.PhotoSet);
-//			while(!RunActivity.MEASURE_POSITION.equals(CalibSerial.BoardMessageOutput()));
-//			
-//			MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
-//			while(!RunActivity.NEXT_FILTER.equals(CalibSerial.BoardMessageOutput()));
-//			RunActivity.Step1stValue1[0] = AbsorbanceMeasure(); // 535nm Absorbance
-//			
-//			MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
-//			while(!RunActivity.NEXT_FILTER.equals(CalibSerial.BoardMessageOutput()));
-//			
-//			RunActivity.Step1stValue1[1] = AbsorbanceMeasure(); // 535nm Absorbance
-//				
-//			MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
-//			while(!RunActivity.NEXT_FILTER.equals(CalibSerial.BoardMessageOutput()));
-//				
-//			RunActivity.Step1stValue1[2] = AbsorbanceMeasure(); // 535nm Absorbance
-//			
-//			MotionInstruct(RunActivity.FILTER_DARK, SerialPort.CtrTarget.PhotoSet);
-//			AbsorbCal1st();
-//			measTarget = MeasTarget.Shk1stOne;
-//			absorbCheck = true;
-//			while(!RunActivity.FILTER_DARK.equals(CalibSerial.BoardMessageOutput()));
-//			
-//			SerialPort.Sleep(1000);
-//			
-//			MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
-//			while(!RunActivity.NEXT_FILTER.equals(CalibSerial.BoardMessageOutput()));
-//			RunActivity.Step1stValue2[0] = AbsorbanceMeasure(); // 535nm Absorbance
-//			
-//			MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
-//			while(!RunActivity.NEXT_FILTER.equals(CalibSerial.BoardMessageOutput()));
-//			
-//			RunActivity.Step1stValue2[1] = AbsorbanceMeasure(); // 535nm Absorbance
-//			
-//			MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
-//			while(!RunActivity.NEXT_FILTER.equals(CalibSerial.BoardMessageOutput()));
-//			
-//			RunActivity.Step1stValue2[2] = AbsorbanceMeasure(); // 535nm Absorbance
-//			
-//			MotionInstruct(RunActivity.FILTER_DARK, SerialPort.CtrTarget.PhotoSet);
-//			AbsorbCal1st2();
-//			measTarget = MeasTarget.Shk1stTwo;
-//			absorbCheck = true;
-//			while(!RunActivity.FILTER_DARK.equals(CalibSerial.BoardMessageOutput()));
-//				
-//			SerialPort.Sleep(1000);
-//			
-//			MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
-//			while(!RunActivity.NEXT_FILTER.equals(CalibSerial.BoardMessageOutput()));
-//			RunActivity.Step1stValue3[0] = AbsorbanceMeasure(); // 535nm Absorbance
-//			
-//			MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
-//			while(!RunActivity.NEXT_FILTER.equals(CalibSerial.BoardMessageOutput()));
-//			
-//			RunActivity.Step1stValue3[1] = AbsorbanceMeasure(); // 535nm Absorbance
-//			
-//			MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
-//			while(!RunActivity.NEXT_FILTER.equals(CalibSerial.BoardMessageOutput()));
-//			
-//			RunActivity.Step1stValue3[2] = AbsorbanceMeasure(); // 535nm Absorbance
-//			
-//			MotionInstruct(RunActivity.FILTER_DARK, SerialPort.CtrTarget.PhotoSet);
-//			AbsorbCal1st3();
-//			measTarget = MeasTarget.Shk1stThree;
-//			absorbCheck = true;
-//			while(!RunActivity.FILTER_DARK.equals(CalibSerial.BoardMessageOutput()));
-//			
-//			Cart2ndShaking Cart2ndShakingObj = new Cart2ndShaking();
-//			Cart2ndShakingObj.start();	
-//		}
-//	}
 	
 	public class Cart1stShaking extends Thread { // First shaking motion
 
@@ -830,88 +706,6 @@ public class CalibrationActivity extends Activity{
 		}
 	}
 	
-//	public class Cart2ndShaking extends Thread { // Second shaking motion
-//		
-//		public void run() {			
-//		
-//			String shkTime = "0000";
-//			
-//			if(targetMode == TargetMode.Quick) shkTime = "0030";
-//			else if(targetMode == TargetMode.Full) shkTime = "0540";
-//			
-//			MotionInstruct(RunActivity.Step2nd_POSITION, SerialPort.CtrTarget.PhotoSet);
-//			while(!RunActivity.Step2nd_POSITION.equals(CalibSerial.BoardMessageOutput()));
-//						
-//			MotionInstruct(shkTime, SerialPort.CtrTarget.MotorSet);  // Motor shaking time, default : 6.5 * 10(sec) = 0065
-//			while(!RunActivity.MOTOR_COMPLETE.equals(CalibSerial.BoardMessageOutput()));
-//			SerialPort.Sleep(2000);
-//						
-//			MotionInstruct(RunActivity.MEASURE_POSITION, SerialPort.CtrTarget.PhotoSet);
-//			while(!RunActivity.MEASURE_POSITION.equals(CalibSerial.BoardMessageOutput()));
-//			
-//			MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
-//			while(!RunActivity.NEXT_FILTER.equals(CalibSerial.BoardMessageOutput()));
-//			RunActivity.Step2ndValue1[0] = AbsorbanceMeasure(); // 535nm Absorbance
-//			
-//			MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
-//			while(!RunActivity.NEXT_FILTER.equals(CalibSerial.BoardMessageOutput()));
-//			RunActivity.Step2ndValue1[1] = AbsorbanceMeasure(); // 535nm Absorbance
-//			
-//			MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
-//			while(!RunActivity.NEXT_FILTER.equals(CalibSerial.BoardMessageOutput()));
-//			RunActivity.Step2ndValue1[2] = AbsorbanceMeasure(); // 535nm Absorbance
-//			
-//			MotionInstruct(RunActivity.FILTER_DARK, SerialPort.CtrTarget.PhotoSet);
-//			AbsorbCal2nd();
-//			measTarget = MeasTarget.Shk2ndOne;
-//			absorbCheck = true;
-//			while(!RunActivity.FILTER_DARK.equals(CalibSerial.BoardMessageOutput()));
-//			
-//			SerialPort.Sleep(1000);
-//						
-//			MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
-//			while(!RunActivity.NEXT_FILTER.equals(CalibSerial.BoardMessageOutput()));
-//			RunActivity.Step2ndValue2[0] = AbsorbanceMeasure(); // 535nm Absorbance
-//			
-//			MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
-//			while(!RunActivity.NEXT_FILTER.equals(CalibSerial.BoardMessageOutput()));
-//			RunActivity.Step2ndValue2[1] = AbsorbanceMeasure(); // 535nm Absorbance
-//			
-//			MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
-//			while(!RunActivity.NEXT_FILTER.equals(CalibSerial.BoardMessageOutput()));
-//			RunActivity.Step2ndValue2[2] = AbsorbanceMeasure(); // 535nm Absorbance
-//			
-//			MotionInstruct(RunActivity.FILTER_DARK, SerialPort.CtrTarget.PhotoSet);
-//			AbsorbCal2nd2();
-//			measTarget = MeasTarget.Shk2ndTwo;
-//			absorbCheck = true;
-//			while(!RunActivity.FILTER_DARK.equals(CalibSerial.BoardMessageOutput()));
-//		
-//			SerialPort.Sleep(1000);
-//			
-//			MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
-//			while(!RunActivity.NEXT_FILTER.equals(CalibSerial.BoardMessageOutput()));
-//			RunActivity.Step2ndValue3[0] = AbsorbanceMeasure(); // 535nm Absorbance
-//			
-//			MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
-//			while(!RunActivity.NEXT_FILTER.equals(CalibSerial.BoardMessageOutput()));
-//			RunActivity.Step2ndValue3[1] = AbsorbanceMeasure(); // 535nm Absorbance
-//			
-//			MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
-//			while(!RunActivity.NEXT_FILTER.equals(CalibSerial.BoardMessageOutput()));
-//			RunActivity.Step2ndValue3[2] = AbsorbanceMeasure(); // 535nm Absorbance
-//			
-//			MotionInstruct(RunActivity.FILTER_DARK, SerialPort.CtrTarget.PhotoSet);
-//			AbsorbCal2nd3();
-//			measTarget = MeasTarget.Shk2ndThree;
-//			absorbCheck = true;
-//			while(!RunActivity.FILTER_DARK.equals(CalibSerial.BoardMessageOutput()));
-//			
-//			CartDump CartDumpObj = new CartDump();
-//			CartDumpObj.start();	
-//		}
-//	}
-	
 	public class Cart2ndShaking extends Thread { // Second shaking motion
 		
 		public void run() {			
@@ -1152,20 +946,6 @@ public class CalibrationActivity extends Activity{
 			}
 		}
 	}
-		
-//	public class CartDump extends Thread { // Cartridge dumping motion
-//		
-//		public void run() {
-//						
-//			MotionInstruct(RunActivity.CARTRIDGE_DUMP, SerialPort.CtrTarget.PhotoSet);
-//			while(!RunActivity.CARTRIDGE_DUMP.equals(CalibSerial.BoardMessageOutput()));
-//
-//			MotionInstruct(RunActivity.HOME_POSITION, SerialPort.CtrTarget.PhotoSet);
-//			while(!RunActivity.HOME_POSITION.equals(CalibSerial.BoardMessageOutput()));
-//			
-//			ThreadRun = false;
-//		}
-//	}
 	
 	public class CartDump extends Thread { // Cartridge dumping motion
 		
@@ -1205,6 +985,19 @@ public class CalibrationActivity extends Activity{
 			
 			if(calibState == AnalyzerState.NormalOperation) {
 				
+				HbA1cCalculation();
+				
+				new Thread(new Runnable() {
+				    public void run() {
+				        runOnUiThread(new Runnable(){
+				            public void run() {
+				
+				            	HbA1cDisplay();
+				            }
+				        });
+				    }
+				}).start();
+				
 				ThreadRun = false;
 			}
 		}
@@ -1212,7 +1005,7 @@ public class CalibrationActivity extends Activity{
 	
 	public void MotionInstruct(String str, SerialPort.CtrTarget target) { // Motion of system instruction
 		
-		CalibSerial.BoardTx(str, target);
+		mSerialPort.BoardTx(str, target);
 	}
 	
 	public synchronized void AbsorbCal1st() {
@@ -1395,16 +1188,19 @@ public class CalibrationActivity extends Activity{
 		
 		CalValueDisplay();
 		
-		CalibSerial = new SerialPort();
-		CalibSerial.BarcodeSerialInit();
-		CalibSerial.BarcodeRxStart();
+		mSerialPort = new SerialPort(R.id.caliblayout);
+		mSerialPort.BarcodeSerialInit();
+		mSerialPort.BarcodeRxStart();
 		
 		ActionActivity.BarcodeCheckFlag = false;
 		
+		RunActivity.HbA1cPctDbl = 0.0;
+		RunActivity.tHbDbl = 0.0;
+		
 		targetMode = TargetMode.Scan;
 		
-		CalibAction = new ActionActivity();
-		CalibAction.BarcodeScan();
+		mActionActivity = new ActionActivity();
+		mActionActivity.BarcodeScan();
 		
 		TimerInit();
 		
@@ -1420,7 +1216,7 @@ public class CalibrationActivity extends Activity{
 			
 			timer.cancel();
 			
-			HbA1cCalculation();
+			if(ActionActivity.IsCorrectBarcode) HbA1cCalculation();
 			
 			new Thread(new Runnable() {
 			    public void run() {
@@ -1434,7 +1230,7 @@ public class CalibrationActivity extends Activity{
 			            	blankBtn.setEnabled(true);
 			    			quickBtn.setEnabled(true);
 			    			fullBtn.setEnabled(true);
-			    			scanBtn.setEnabled(true);
+//			    			scanBtn.setEnabled(true);
 			    			escBtn.setEnabled(true);
 			            }
 			        });
@@ -1449,15 +1245,13 @@ public class CalibrationActivity extends Activity{
 		String rawValue;
 		double douValue = 0;
 		
-//		SerialPort.Sleep(1000);
+		mSerialPort.BoardTx("VH", SerialPort.CtrTarget.PhotoSet);
 		
-		CalibSerial.BoardTx("VH", SerialPort.CtrTarget.PhotoSet);
-		
-		rawValue = CalibSerial.BoardMessageOutput();			
+		rawValue = mSerialPort.BoardMessageOutput();			
 		
 		while(rawValue.length() != 8) {
 		
-			rawValue = CalibSerial.BoardMessageOutput();			
+			rawValue = mSerialPort.BoardMessageOutput();			
 		
 			SerialPort.Sleep(100);
 		}	
@@ -1474,7 +1268,7 @@ public class CalibrationActivity extends Activity{
 		
 		while(true) {
 			
-			temp = CalibSerial.BoardMessageOutput();
+			temp = mSerialPort.BoardMessageOutput();
 			
 			if(colRsp.equals(temp)) {
 				
@@ -1514,6 +1308,15 @@ public class CalibrationActivity extends Activity{
 		A = Absorb1stHandling();
 		B = Absorb2ndHandling();
 		
+		Barcode.a1 = 0.009793532;
+		Barcode.b1 = -0.028;
+		Barcode.a21 = 0.050135658;
+		Barcode.b21 = 0.0283;
+		Barcode.a22 = 0.034922675;
+		Barcode.b22 = 0.04333;
+		Barcode.L   = 4.8;
+		Barcode.H   = 9;
+		
 		St = (A - Barcode.b1)/Barcode.a1;
 		RunActivity.tHbDbl = St;
 		Bt = (A - Barcode.b1)/Barcode.a1 + 1;
@@ -1537,6 +1340,7 @@ public class CalibrationActivity extends Activity{
 		b4 = b3 - (a4 * St);
 		
 		RunActivity.HbA1cPctDbl = (B - (St * a4 + b4)) / a3 / St * 100;
+				
 		RunActivity.HbA1cPctDbl = RunActivity.CF_Slope * (RunActivity.AF_Slope * RunActivity.HbA1cPctDbl + RunActivity.AF_Offset) + RunActivity.CF_Offset;
 	}
 	
@@ -1617,9 +1421,9 @@ public class CalibrationActivity extends Activity{
 			startActivity(HomeIntent);
 			break;
 		
-		case SystemSetting	:				
-			Intent SystemSettingIntent = new Intent(getApplicationContext(), SystemSettingActivity.class);
-			startActivity(SystemSettingIntent);
+		case Maintenance	:				
+			Intent MaintenanceIntent = new Intent(getApplicationContext(), MaintenanceActivity.class);
+			startActivity(MaintenanceIntent);
 			break;
 		
 		default		:	

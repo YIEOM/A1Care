@@ -8,7 +8,6 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
-import isens.hba1c_analyzer.TimerDisplay.whichClock;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
@@ -180,8 +179,6 @@ public class HISActivity extends Activity {
 	
 	private void HISInit() {
 		
-		TimerDisplay.timerState = whichClock.HISClock;		
-		CurrTimeDisplay();
 		
 		SerialPort.Sleep(300);
 	}

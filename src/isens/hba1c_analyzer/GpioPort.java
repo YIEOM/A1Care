@@ -8,7 +8,7 @@ public class GpioPort {
 	final static String DOOR_SENSOR 	   = "ID",
 						CARTRIDGE_SENSOR   = "IC";
 	
-	private SerialPort GpioSerial;
+	private SerialPort mSerialPort;
 	
 	private enum SensorScan {InitialState, DebounceState, StableState, ReleaseState}
 	
@@ -58,96 +58,217 @@ public class GpioPort {
 		return value;
 	}
 	
+//	public byte DoorCheck() {
+//		
+//		String tmpData;
+//		
+//		GpioSerial = new SerialPort(0);
+//		GpioSerial.BoardTx(DOOR_SENSOR, SerialPort.CtrTarget.DoorCall);
+//		
+//		tmpData = GpioSerial.SensorMessageOutput();
+//		
+//		while(!tmpData.substring(1, 2).equals("D")) {
+//			
+//			tmpData = GpioSerial.SensorMessageOutput();
+//		}
+//		
+//		return (byte) Integer.parseInt(tmpData.substring(2));
+//	}
+//	
+//	public void DoorSensorScan() { // State code of door sensor
+//		
+//		if(DoorActState) {
+//		
+//			switch(DoorSensorState) {		
+//			
+//			case InitialState	:
+//				DoorInitState = DoorCheck();
+//				DoorSensorState = SensorScan.DebounceState;
+//				break;
+//			
+//			case DebounceState	:	
+//				DoorSensorState = (DoorCheck() == DoorInitState) ? SensorScan.StableState : SensorScan.InitialState;
+//				break;
+//										
+//			case StableState	:
+//				if(DoorCheck() == DoorInitState) {
+//					
+//					ActionActivity.DoorCheckFlag = DoorInitState;
+//					
+//				} else DoorSensorState = SensorScan.DebounceState;
+//				break;
+//										
+//			default :
+//				DoorSensorState = SensorScan.InitialState;
+//				break;
+//			}
+//		}
+//	}
+//
+//	public byte CartridgeCheck() {
+//		
+//		String tmpData;
+//		
+//		GpioSerial = new SerialPort(0);
+//		GpioSerial.BoardTx(CARTRIDGE_SENSOR, SerialPort.CtrTarget.CartCall);
+//		
+//		tmpData = GpioSerial.SensorMessageOutput();
+//		
+//		while(!tmpData.substring(1, 2).equals("C")) {
+//			
+//			tmpData = GpioSerial.SensorMessageOutput();
+//		}
+//		
+//		return (byte) Integer.parseInt(tmpData.substring(2));
+//	}
+//	
+//	public void CartridgeSensorScan() { // State code of cartridge sensor
+//		
+//		if(CartridgeActState) {
+//
+//			switch(CartridgeSensorState) {		
+//			
+//			case InitialState	:
+//				CartridgeInitState = CartridgeCheck();
+//				CartridgeSensorState = SensorScan.DebounceState;
+//				break;
+//			
+//			case DebounceState	:	
+//				CartridgeSensorState = (CartridgeCheck() == CartridgeInitState) ? SensorScan.StableState : SensorScan.InitialState;
+//				break;
+//										
+//			case StableState	:			
+//				if(CartridgeCheck() == CartridgeInitState) {
+//					ActionActivity.CartridgeCheckFlag = CartridgeInitState;
+//					
+//				} else CartridgeSensorState = SensorScan.DebounceState;
+//				break;
+//										
+//			default :
+//				CartridgeSensorState = SensorScan.InitialState;
+//				break;
+//			}
+//		}
+//	}
+	
 	public byte DoorCheck() {
 		
 		String tmpData;
 		
-		GpioSerial = new SerialPort();
-		GpioSerial.BoardTx(DOOR_SENSOR, SerialPort.CtrTarget.DoorCall);
+		mSerialPort = new SerialPort(0);
+		mSerialPort.BoardTx(DOOR_SENSOR, SerialPort.CtrTarget.DoorCall);
 		
-		tmpData = GpioSerial.SensorMessageOutput();
-		
-		while(!tmpData.substring(1, 2).equals("D")) {
-			
-			tmpData = GpioSerial.SensorMessageOutput();
-		}
+		tmpData = BoardMessage("D");
 		
 		return (byte) Integer.parseInt(tmpData.substring(2));
 	}
-	
+
 	public void DoorSensorScan() { // State code of door sensor
 		
-		if(DoorActState) {
+		DoorSensorScan mDoorSensorScan = new DoorSensorScan();
+		mDoorSensorScan.start();
+	}
+	
+	public class DoorSensorScan extends Thread {
 		
-			switch(DoorSensorState) {		
+		public void run() {
 			
-			case InitialState	:
-				DoorInitState = DoorCheck();
-				DoorSensorState = SensorScan.DebounceState;
-				break;
-			
-			case DebounceState	:	
-				DoorSensorState = (DoorCheck() == DoorInitState) ? SensorScan.StableState : SensorScan.InitialState;
-				break;
-										
-			case StableState	:
-				if(DoorCheck() == DoorInitState) {
-					
-					ActionActivity.DoorCheckFlag = DoorInitState;
-					
-				} else DoorSensorState = SensorScan.DebounceState;
-				break;
-										
-			default :
-				DoorSensorState = SensorScan.InitialState;
-				break;
+			if(DoorActState) {
+				
+				switch(DoorSensorState) {		
+				
+				case InitialState	:
+					DoorInitState = DoorCheck();
+					DoorSensorState = SensorScan.DebounceState;
+					break;
+				
+				case DebounceState	:	
+					DoorSensorState = (DoorCheck() == DoorInitState) ? SensorScan.StableState : SensorScan.InitialState;
+					break;
+											
+				case StableState	:
+					if(DoorCheck() == DoorInitState) {
+						
+						ActionActivity.DoorCheckFlag = DoorInitState;
+						
+					} else DoorSensorState = SensorScan.DebounceState;
+					break;
+											
+				default :
+					DoorSensorState = SensorScan.InitialState;
+					break;
+				}
 			}
 		}
 	}
-
+	
 	public byte CartridgeCheck() {
 		
 		String tmpData;
 		
-		GpioSerial = new SerialPort();
-		GpioSerial.BoardTx(CARTRIDGE_SENSOR, SerialPort.CtrTarget.CartCall);
+		mSerialPort = new SerialPort(0);
+		mSerialPort.BoardTx(CARTRIDGE_SENSOR, SerialPort.CtrTarget.CartCall);
 		
-		tmpData = GpioSerial.SensorMessageOutput();
-		
-		while(!tmpData.substring(1, 2).equals("C")) {
-			
-			tmpData = GpioSerial.SensorMessageOutput();
-		}
+		tmpData = BoardMessage("C");
 		
 		return (byte) Integer.parseInt(tmpData.substring(2));
 	}
 	
-	public void CartridgeSensorScan() { // State code of cartridge sensor
+	public void CartridgeSensorScan() { // State code of door sensor
 		
-		if(CartridgeActState) {
+		CartridgeSensorScan mCartridgeSensorScan = new CartridgeSensorScan();
+		mCartridgeSensorScan.start();
+	}
+	
+	public class CartridgeSensorScan extends Thread {
+		
+		public void run() {
+			
+			if(CartridgeActState) {
 
-			switch(CartridgeSensorState) {		
-			
-			case InitialState	:
-				CartridgeInitState = CartridgeCheck();
-				CartridgeSensorState = SensorScan.DebounceState;
-				break;
-			
-			case DebounceState	:	
-				CartridgeSensorState = (CartridgeCheck() == CartridgeInitState) ? SensorScan.StableState : SensorScan.InitialState;
-				break;
-										
-			case StableState	:			
-				if(CartridgeCheck() == CartridgeInitState) {
-					ActionActivity.CartridgeCheckFlag = CartridgeInitState;
-					
-				} else CartridgeSensorState = SensorScan.DebounceState;
-				break;
-										
-			default :
-				CartridgeSensorState = SensorScan.InitialState;
-				break;
+				switch(CartridgeSensorState) {		
+				
+				case InitialState	:
+					CartridgeInitState = CartridgeCheck();
+					CartridgeSensorState = SensorScan.DebounceState;
+					break;
+				
+				case DebounceState	:	
+					CartridgeSensorState = (CartridgeCheck() == CartridgeInitState) ? SensorScan.StableState : SensorScan.InitialState;
+					break;
+											
+				case StableState	:			
+					if(CartridgeCheck() == CartridgeInitState) {
+						ActionActivity.CartridgeCheckFlag = CartridgeInitState;
+						
+					} else CartridgeSensorState = SensorScan.DebounceState;
+					break;
+											
+				default :
+					CartridgeSensorState = SensorScan.InitialState;
+					break;
+				}
 			}
+		}
+	}
+	
+	public synchronized String BoardMessage(String sensorMsg) {
+		
+		String temp = "";
+		
+		mSerialPort = new SerialPort(0);
+		
+		while(true) {
+			
+			temp = mSerialPort.SensorMessageOutput();
+			
+			if(temp.substring(1, 2).equals(sensorMsg)) {
+				
+				Log.w("BoardMessage", "temp : " + temp);
+				return temp;
+			}
+			
+			SerialPort.Sleep(10);
 		}
 	}
 }

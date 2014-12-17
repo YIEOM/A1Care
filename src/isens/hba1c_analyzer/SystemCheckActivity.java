@@ -8,7 +8,6 @@ import java.io.InputStreamReader;
 import isens.hba1c_analyzer.CalibrationActivity.Cart1stShaking;
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
 import isens.hba1c_analyzer.RunActivity.AnalyzerState;
-import isens.hba1c_analyzer.TimerDisplay.whichClock;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -16,6 +15,7 @@ import android.content.SharedPreferences;
 import android.graphics.drawable.AnimationDrawable;
 import android.media.AudioManager;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.provider.Settings.SettingNotFoundException;
 import android.util.Log;
 import android.view.Gravity;
@@ -27,34 +27,46 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class SystemCheckActivity extends Activity {
+	
+	final static double MaxDark = 5000,
+						MinDark = 3000,
+						Max535  = 300000,
+						Min535  = 100000,
+						Max660  = 500000,
+						Min660  = 200000,
+						Max750  = 800000,
+						Min750  = 400000;
 
+	final static byte ERROR_DARK  = 1,
+					  ERROR_535nm = 2,
+					  ERROR_660nm = 4,
+					  ERROR_750nm = 8;	
+	
 	static byte NUMBER_CELL_BLOCK_TEMP_CHECK = 60;
-	static final byte NUMBER_AMBIENT_TEMP_CHECK = 30/5;
+	final static byte NUMBER_AMBIENT_TEMP_CHECK = 30/5;
 	final static String SHAKING_CHECK_TIME = "0030";
 	
 	private enum TmpState {FirstTmp, SecondTmp, ThirdTmp, ForthTmp, FifthTmp}
 	
-	private GpioPort SystemGpio;
-	private SerialPort SystemSerial;
-	private Temperature SystemTmp;
-	private TimerDisplay SystemTimer;
+	public GpioPort mGpioPort;
+	public SerialPort mSerialPort;
+	public Temperature mTemperature;
+	public TimerDisplay mTimerDisplay;
+	public ErrorPopup mErrorPopup;
 	
-	private AudioManager audioManager;
+	public AudioManager audioManager;
 	
-	private RelativeLayout systemCheckLinear;
+	public RelativeLayout systemCheckLinear;
 	
 	private AnimationDrawable systemCheckAni;
 	private ImageView systemCheckImage;
-	
-	private View errorPopupView;
-	private PopupWindow errorPopup;
 	
 	private AnalyzerState systemState;
 	
 	public TmpState tmpNumber;
 	
-	private byte checkError;
 	private byte photoCheck;
+	public int checkError;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -62,11 +74,6 @@ public class SystemCheckActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		overridePendingTransition(R.anim.fade, R.anim.hold);
 		setContentView(R.layout.systemcheck);
-		
-		/* Error Pop-up window */
-		systemCheckLinear = (RelativeLayout)findViewById(R.id.systemchecklinear);		
-		errorPopupView = View.inflate(getApplicationContext(), R.layout.errorpopup, null);
-		errorPopup = new PopupWindow(errorPopupView, 800, 480, true);
 				
 		SystemCheckInit();
 	}
@@ -76,38 +83,41 @@ public class SystemCheckActivity extends Activity {
 		SystemAniStart();
 	
 		/* Serial communication start */
-		SystemSerial = new SerialPort();
-		SystemSerial.BoardSerialInit();
-		SystemSerial.BoardRxStart();
-		SystemSerial.PrinterSerialInit();
+		mSerialPort = new SerialPort(R.id.systemchecklayout);
+		mSerialPort.BoardSerialInit();
+		mSerialPort.BoardRxStart();
+		mSerialPort.PrinterSerialInit();
 			
 		/* Timer start */
-		TimerDisplay.timerState = whichClock.SystemCheckClock;
-		SystemTimer = new TimerDisplay();
-		SystemTimer.TimerInit(); 
-		SystemTimer.RealTime();
+		mTimerDisplay = new TimerDisplay();
+		mTimerDisplay.TimerInit(); 
+		mTimerDisplay.RealTime();
 		
 		/* Barcode reader off */
-		SystemGpio = new GpioPort();
-		SystemGpio.TriggerHigh();
+		mGpioPort = new GpioPort();
+		mGpioPort.TriggerHigh();
 		
 		ParameterInit();
 
 		/* Temperature setting */
-		SystemTmp = new Temperature(); // to test
-		SystemTmp.TmpInit(); // to test
+		mTemperature = new Temperature(R.id.systemchecklayout); // to test
+		mTemperature.TmpInit(); // to test
 		
 		BrightnessInit();
 		
 		VolumeInit();
 		
 		/* TEST Mode */
-		if(HomeActivity.TEST) WhichIntent(TargetIntent.Home);
+		if(HomeActivity.ANALYZER_SW == HomeActivity.DEVEL) {
+//			SensorCheck SensorCheckObj = new SensorCheck(thisad, this, R.id.systemchecklinear);
+//			SensorCheckObj.start();
+			WhichIntent(TargetIntent.Home);
+		}
 		
 		else {
 			
-		
-		SensorCheck SensorCheckObj = new SensorCheck();
+		TimerDisplay.RXBoardFlag = true;
+		SensorCheck SensorCheckObj = new SensorCheck(this, this, R.id.systemchecklayout);
 		SensorCheckObj.start();
 		
 		
@@ -116,21 +126,34 @@ public class SystemCheckActivity extends Activity {
 	
 	public class SensorCheck extends Thread {
 		
+		Activity activity;
+		Context context;
+		int layoutid;
+		
+		public SensorCheck(Activity activity, Context context, int layoutid) {
+			
+			this.activity = activity;
+			this.context = context;
+			this.layoutid = layoutid;
+		}
+				
 		public void run() {
 			
 			GpioPort.DoorActState = true;			
 			GpioPort.CartridgeActState = true;
 			
-			SerialPort.Sleep(2000);
+			SerialPort.Sleep(1000);
 			
-			if(ActionActivity.CartridgeCheckFlag != 0) ErrorPopup(HomeActivity.CART_SENSOR_ERROR);
-			while(ActionActivity.CartridgeCheckFlag != 0);
-			errorPopup.dismiss();
+			mErrorPopup = new ErrorPopup(activity, context, layoutid);
 			
-			if(ActionActivity.DoorCheckFlag != 1) ErrorPopup(HomeActivity.DOOR_SENSOR_ERROR);
-			while(ActionActivity.DoorCheckFlag != 1);
-			errorPopup.dismiss();
-			 
+			if(ActionActivity.CartridgeCheckFlag != 0) mErrorPopup.ErrorDisplay(R.string.w002);
+			while(ActionActivity.CartridgeCheckFlag != 0) SerialPort.Sleep(100);
+			mErrorPopup.ErrorPopupClose();
+			
+			if(ActionActivity.DoorCheckFlag != 1) mErrorPopup.ErrorDisplay(R.string.w001);
+			while(ActionActivity.DoorCheckFlag != 1) SerialPort.Sleep(100);
+			mErrorPopup.ErrorPopupClose();
+			
 			GpioPort.DoorActState = false;			
 			GpioPort.CartridgeActState = false;
 
@@ -178,7 +201,7 @@ public class SystemCheckActivity extends Activity {
 					break;
 					
 				case MeasureDark		:
-					PhotoCheck(AnalyzerState.Filter535nm, HomeActivity.MaxDark, HomeActivity.MinDark, HomeActivity.ERROR_DARK, 1);
+					PhotoCheck(AnalyzerState.Filter535nm, MaxDark, MinDark, ERROR_DARK, 1);
 					PhotoErrorCheck();
 					break;
 					
@@ -188,7 +211,7 @@ public class SystemCheckActivity extends Activity {
 					break;
 					
 				case Measure535nm		:
-					PhotoCheck(AnalyzerState.Filter660nm, HomeActivity.Max535, HomeActivity.Min535, HomeActivity.ERROR_535nm, 1);
+					PhotoCheck(AnalyzerState.Filter660nm, Max535, Min535, ERROR_535nm, 1);
 					break;
 					
 				case Filter660nm		:
@@ -197,7 +220,7 @@ public class SystemCheckActivity extends Activity {
 					break;
 					
 				case Measure660nm		:
-					PhotoCheck(AnalyzerState.Filter750nm, HomeActivity.Max660, HomeActivity.Min660, HomeActivity.ERROR_660nm, 1);
+					PhotoCheck(AnalyzerState.Filter750nm, Max660, Min660, ERROR_660nm, 1);
 					break;
 					
 				case Filter750nm		:
@@ -206,7 +229,7 @@ public class SystemCheckActivity extends Activity {
 					break;
 					
 				case Measure750nm		:
-					PhotoCheck(AnalyzerState.FilterDark, HomeActivity.Max750, HomeActivity.Min750, HomeActivity.ERROR_750nm, 1);
+					PhotoCheck(AnalyzerState.FilterDark, Max750, Min750, ERROR_750nm, 1);
 					PhotoErrorCheck();
 					break;
 					
@@ -226,18 +249,22 @@ public class SystemCheckActivity extends Activity {
 					break;
 					
 				case NormalOperation	:
-					TemperatureCheck TemperatureCheckObj = new TemperatureCheck();
-					TemperatureCheckObj.start();
+					if(HomeActivity.ANALYZER_SW == HomeActivity.NORMAL) {
+					
+						TemperatureCheck TemperatureCheckObj = new TemperatureCheck();
+						TemperatureCheckObj.start();
+					
+					} else WhichIntent(TargetIntent.Home);
 					break;
 					
 				case ShakingMotorError	:
-					checkError = HomeActivity.SHAKING_MOTOR_ERROR;
+					checkError = R.string.e211;
 					systemState = AnalyzerState.NoWorking;
 					WhichIntent(HomeActivity.TargetIntent.Home);
 					break;
 					
 				case FilterMotorError	:
-					checkError = HomeActivity.FILTER_MOTOR_ERROR;
+					checkError = R.string.e212;
 					MotionInstruct(RunActivity.HOME_POSITION, SerialPort.CtrTarget.PhotoSet);			
 					MotorCheck(RunActivity.HOME_POSITION, AnalyzerState.NoWorking, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 6);
 					WhichIntent(HomeActivity.TargetIntent.Home);
@@ -252,7 +279,7 @@ public class SystemCheckActivity extends Activity {
 					break;
 					
 				case LampError			:
-					checkError = HomeActivity.LAMP_ERROR;
+					checkError = R.string.e232;
 					MotionInstruct(RunActivity.FILTER_DARK, SerialPort.CtrTarget.PhotoSet);
 					MotorCheck(RunActivity.FILTER_DARK, AnalyzerState.NoWorking, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 3);
 					MotionInstruct(RunActivity.HOME_POSITION, SerialPort.CtrTarget.PhotoSet);			
@@ -261,7 +288,7 @@ public class SystemCheckActivity extends Activity {
 					break;
 					
 				case NoResponse			:
-					checkError = HomeActivity.COMMUNICATION_ERROR;
+					checkError = R.string.e241;
 					systemState = AnalyzerState.NoWorking;
 					WhichIntent(HomeActivity.TargetIntent.Home);
 					break;
@@ -283,7 +310,7 @@ public class SystemCheckActivity extends Activity {
 			
 			for(i = 0; i < NUMBER_CELL_BLOCK_TEMP_CHECK; i++) {
 				
-				tmp = SystemTmp.CellTmpRead();
+				tmp = mTemperature.CellTmpRead();
 				Log.w("TemperatureCheck", "Cell Temperature : " + tmp);
 				
 				switch(tmpNumber) {
@@ -325,11 +352,13 @@ public class SystemCheckActivity extends Activity {
 				
 				for(i = 0; i < NUMBER_AMBIENT_TEMP_CHECK; i++) {
 					
-					tmp += SystemTmp.AmbTmpRead();
+					tmp += mTemperature.AmbTmpRead();
 //					Log.w("TemperatureCheck", "Amb Temperature : " + tmp);
 					
 					SerialPort.Sleep(5000);
 				}
+				
+				TimerDisplay.RXBoardFlag = false;
 				
 				if((Temperature.MinAmbTmp < tmp/NUMBER_AMBIENT_TEMP_CHECK) & (tmp/NUMBER_AMBIENT_TEMP_CHECK < Temperature.MaxAmbTmp)) {
 					
@@ -339,13 +368,13 @@ public class SystemCheckActivity extends Activity {
 				
 				} else {
 					
-					checkError = HomeActivity.AMBIENT_TEMP_ERROR;
+					checkError = R.string.e221;
 					WhichIntent(TargetIntent.Home);
 				}
 
 			} else {
 				
-				checkError = HomeActivity.CELL_TEMP_ERROR;
+				checkError = R.string.e222;
 				WhichIntent(TargetIntent.Home);
 			}
 		}
@@ -399,13 +428,13 @@ public class SystemCheckActivity extends Activity {
 		String rawValue;
 		double douValue = 0;
 		
-		SystemSerial.BoardTx("VH", SerialPort.CtrTarget.PhotoSet);
+		mSerialPort.BoardTx("VH", SerialPort.CtrTarget.PhotoSet);
 		
-		rawValue = SystemSerial.BoardMessageOutput();			
+		rawValue = mSerialPort.BoardMessageOutput();			
 		
 		while(rawValue.length() != 8) {
 		
-			rawValue = SystemSerial.BoardMessageOutput();			
+			rawValue = mSerialPort.BoardMessageOutput();			
 				
 			if(time++ > 50) systemState = AnalyzerState.NoResponse;
 			
@@ -431,7 +460,7 @@ public class SystemCheckActivity extends Activity {
 		
 		SerialPort.Sleep(rspTime * 1000);
 		
-		temp = SystemSerial.BoardMessageOutput();
+		temp = mSerialPort.BoardMessageOutput();
 		
 		if(colRsp.equals(temp)) systemState = nextState;
 		else if(errRsp.equals(temp)) systemState = errState;
@@ -445,11 +474,11 @@ public class SystemCheckActivity extends Activity {
 		
 		RunActivity.BlankValue[0] = 0;
 		
-		SystemSerial.BoardTx("VH", SerialPort.CtrTarget.PhotoSet);
+		mSerialPort.BoardTx("VH", SerialPort.CtrTarget.PhotoSet);
 		
 		SerialPort.Sleep(rspTime * 1000);
 		
-		tempStr = SystemSerial.BoardMessageOutput();
+		tempStr = mSerialPort.BoardMessageOutput();
 
 		if(tempStr.length() == 8) {
 			
@@ -468,27 +497,27 @@ public class SystemCheckActivity extends Activity {
 		
 		case 1	:
 			systemState = AnalyzerState.PhotoSensorError;
-			checkError = HomeActivity.PHOTO_SENSOR_ERROR;
+			checkError = R.string.e231;
 			break;
 			
 		case 2	:
 			systemState = AnalyzerState.PhotoSensorError;
-			checkError = HomeActivity.FILTER_535nm_ERROR;
+			checkError = R.string.e233;
 			break;
 			
 		case 4	:
 			systemState = AnalyzerState.PhotoSensorError;
-			checkError = HomeActivity.FILTER_660nm_ERROR;
+			checkError = R.string.e234;
 			break;
 			
 		case 8	:
 			systemState = AnalyzerState.PhotoSensorError;
-			checkError = HomeActivity.FILTER_750nm_ERROR;
+			checkError = R.string.e235;
 			break;
 			
 		case 14	:
 			systemState = AnalyzerState.LampError;
-			checkError = HomeActivity.LAMP_ERROR;
+			checkError = R.string.e232;
 			break;
 			
 		default	:
@@ -498,11 +527,12 @@ public class SystemCheckActivity extends Activity {
 	
 	public void MotionInstruct(String str, SerialPort.CtrTarget target) { // Motion of system instruction
 		
-		SystemSerial.BoardTx(str, target);
+		mSerialPort.BoardTx(str, target);
 	}
 	
 	public void SystemAniStart() { // System Check animation start
 		
+		systemCheckLinear = (RelativeLayout)findViewById(R.id.systemchecklayout);
 		systemCheckImage = (ImageView)findViewById(R.id.systemcheckani);
 		systemCheckAni = (AnimationDrawable)systemCheckImage.getBackground();
 		
@@ -553,11 +583,18 @@ public class SystemCheckActivity extends Activity {
 		
 		photoCheck = 0;
 		systemState = AnalyzerState.InitPosition;
-		checkError = HomeActivity.NORMAL_OPERATION;
+		checkError = RunActivity.NORMAL_OPERATION;
 		
 		SharedPreferences DcntPref = getSharedPreferences("Data Counter", MODE_PRIVATE);
 		RemoveActivity.PatientDataCnt = DcntPref.getInt("PatientDataCnt", 1);
 		RemoveActivity.ControlDataCnt = DcntPref.getInt("ControlDataCnt", 1);
+		
+		/* TEST Mode */
+		if(HomeActivity.ANALYZER_SW == HomeActivity.DEVEL) {
+			
+			RemoveActivity.PatientDataCnt = 11;
+			RemoveActivity.ControlDataCnt = 11;
+		}
 		
 		SharedPreferences AdjustmentPref = getSharedPreferences("User Define", MODE_PRIVATE);
 		RunActivity.AF_Slope = AdjustmentPref.getFloat("AF SlopeVal", 1.0f);
@@ -565,40 +602,12 @@ public class SystemCheckActivity extends Activity {
 		RunActivity.CF_Slope = AdjustmentPref.getFloat("CF SlopeVal", 1.0f);
 		RunActivity.CF_Offset = AdjustmentPref.getFloat("CF OffsetVal", 0f);
 		
-		SharedPreferences LoginPref = getSharedPreferences("Log in", MODE_PRIVATE);
+		SharedPreferences LoginPref = PreferenceManager.getDefaultSharedPreferences(this);
 		HomeActivity.LoginFlag = LoginPref.getBoolean("Activation", true);
 		HomeActivity.CheckFlag = LoginPref.getBoolean("Check Box", false);
 		
 		SharedPreferences temperaturePref = getSharedPreferences("Temperature", MODE_PRIVATE);
 		Temperature.InitTmp = temperaturePref.getFloat("Cell Block", 27.0f);
-	}
-	
-	public void ErrorPopup(final byte error) {
-		
-		new Thread(new Runnable() {
-		    public void run() {    
-		        runOnUiThread(new Runnable(){
-		            public void run() {
-		            			            	
-		            	errorPopup.showAtLocation(systemCheckLinear, Gravity.CENTER, 0, 0);
-						errorPopup.setAnimationStyle(0);
-											
-						TextView errorText = (TextView) errorPopup.getContentView().findViewById(R.id.errortext);
-						
-						switch(error) {
-						
-						case HomeActivity.DOOR_SENSOR_ERROR		:
-							errorText.setText(R.string.e001);
-							break;
-						
-						case HomeActivity.CART_SENSOR_ERROR		:
-							errorText.setText(R.string.e002);
-							break;
-						}
-		            }
-		        });
-		    }
-		}).start();
 	}
 	
 	public void WhichIntent(TargetIntent Itn) { // Activity conversion
@@ -607,7 +616,7 @@ public class SystemCheckActivity extends Activity {
 		
 		case Home		:				
 			Intent HomeIntent = new Intent(getApplicationContext(), HomeActivity.class);
-			HomeIntent.putExtra("System Check State", (int) checkError);
+			HomeIntent.putExtra("System Check State", checkError);
 			startActivity(HomeIntent);
 			break;
 		
