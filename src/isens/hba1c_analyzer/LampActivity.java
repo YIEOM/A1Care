@@ -136,6 +136,53 @@ public class LampActivity extends Activity {
 		mSerialPort = new SerialPort(R.id.lamplayout);
 	}
 	
+//	public void TestStart() {
+//
+//		isNormal = true;
+//		isMeasured = false;
+//		
+//		escIcon.setEnabled(false);
+//		
+//		for(int i = 0; i < 3; i++) {
+//			
+//			switch(photoState) {
+//			
+//			case MeasurePosition :
+//				MotionInstruct(RunActivity.MEASURE_POSITION, SerialPort.CtrTarget.PhotoSet);			
+//				BoardMessage(RunActivity.MEASURE_POSITION, AnalyzerState.FilterDark);
+//				break;
+//				
+//			case FilterDark :
+//				MotionInstruct(RunActivity.FILTER_DARK, SerialPort.CtrTarget.PhotoSet);
+//				BoardMessage(RunActivity.FILTER_DARK, AnalyzerState.Filter535nm);
+//				break;
+//				
+//			case Filter535nm :
+//				MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
+//				BoardMessage(RunActivity.NEXT_FILTER, AnalyzerState.Filter535nm);
+//				break;
+//				
+//			default	:
+//				break;
+//			}
+//		}
+//		
+//		if(photoState == AnalyzerState.Filter535nm) {
+//		
+//			DrawThread mDrawThread = new DrawThread(mGraph.GetHolder());
+//			mDrawThread.start();
+//
+//			PhotoMeasure mPhotoMeasure = new PhotoMeasure();
+//			mPhotoMeasure.start();
+//		
+//			cancelBtn.setEnabled(true);
+//			
+//		} else {
+//			
+//			TestCancel();
+//		}
+//	}
+	
 	public void TestStart() {
 
 		isNormal = true;
@@ -143,43 +190,54 @@ public class LampActivity extends Activity {
 		
 		escIcon.setEnabled(false);
 		
-		for(int i = 0; i < 3; i++) {
+		TimerDisplay.RXBoardFlag = true;
+		
+		TestStart mTestStart = new TestStart();
+		mTestStart.start();
+	}
+	
+	public class TestStart extends Thread {
+		
+		public void run() {
 			
-			switch(photoState) {
-			
-			case MeasurePosition :
-				MotionInstruct(RunActivity.MEASURE_POSITION, SerialPort.CtrTarget.PhotoSet);			
-				BoardMessage(RunActivity.MEASURE_POSITION, AnalyzerState.FilterDark);
-				break;
+			for(int i = 0; i < 3; i++) {
 				
-			case FilterDark :
-				MotionInstruct(RunActivity.FILTER_DARK, SerialPort.CtrTarget.PhotoSet);
-				BoardMessage(RunActivity.FILTER_DARK, AnalyzerState.Filter535nm);
-				break;
+				switch(photoState) {
 				
-			case Filter535nm :
-				MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
-				BoardMessage(RunActivity.NEXT_FILTER, AnalyzerState.Filter535nm);
-				break;
-				
-			default	:
-				break;
+				case MeasurePosition :
+					MotionInstruct(RunActivity.MEASURE_POSITION, SerialPort.CtrTarget.PhotoSet);			
+					BoardMessage(RunActivity.MEASURE_POSITION, AnalyzerState.FilterDark);
+					break;
+					
+				case FilterDark :
+					MotionInstruct(RunActivity.FILTER_DARK, SerialPort.CtrTarget.PhotoSet);
+					BoardMessage(RunActivity.FILTER_DARK, AnalyzerState.Filter535nm);
+					break;
+					
+				case Filter535nm :
+					MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
+					BoardMessage(RunActivity.NEXT_FILTER, AnalyzerState.Filter535nm);
+					break;
+					
+				default	:
+					break;
+				}
 			}
-		}
-		
-		if(photoState == AnalyzerState.Filter535nm) {
-		
-			DrawThread mDrawThread = new DrawThread(mGraph.GetHolder());
-			mDrawThread.start();
+			
+			if(photoState == AnalyzerState.Filter535nm) {
+			
+				DrawThread mDrawThread = new DrawThread(mGraph.GetHolder());
+				mDrawThread.start();
 
-			PhotoMeasure mPhotoMeasure = new PhotoMeasure();
-			mPhotoMeasure.start();
-		
-			cancelBtn.setEnabled(true);
+				PhotoMeasure mPhotoMeasure = new PhotoMeasure();
+				mPhotoMeasure.start();
 			
-		} else {
-			
-			TestCancel();
+				cancelBtn.setEnabled(true);
+				
+			} else {
+				
+				TestCancel();
+			}
 		}
 	}
 	
@@ -195,7 +253,7 @@ public class LampActivity extends Activity {
 				if(isOn) isOn = false;
 				else isOn = true;
 				
-				while(isMeasured);
+				while(isMeasured) SerialPort.Sleep(100);
 				
 				adc = AbsorbanceMeasure();
 										
@@ -269,7 +327,7 @@ public class LampActivity extends Activity {
 			
 				try {
 				
-					while(!isMeasured);
+					while(!isMeasured) SerialPort.Sleep(100);
 					
 					canvas = surfaceHolder.lockCanvas(null);
 					
@@ -415,6 +473,8 @@ public class LampActivity extends Activity {
 				break;
 			}
 		}
+		
+		TimerDisplay.RXBoardFlag = false;
 	
 		SerialPort.Sleep(1000);
 		

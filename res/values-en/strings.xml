@@ -9,8 +9,6 @@
     <string name="datetime">Date/Time</string>
     <string name="testnum">Test No.</string>
     <string name="type">Type</string>
-    <string name="e001">Please close the door</string>
-	<string name="e002">Please remove the cartridge</string>
     <string name="e212">E212</string>
 	<string name="e211">E211</string>
     <string name="e231">E231</string>
@@ -27,7 +25,7 @@
     <string name="e121">E121</string>
     <string name="e122">E122</string>
     <string name="stop">STOP</string>
-    <string name="blank">Blank in progress...</string>
+    <string name="blank">Test preparation</string>
     <string name="previous">Previous</string>
     <string name="detail">Detail View</string>
     <string name="next">Next</string>
@@ -38,9 +36,8 @@
     <string name="esc">Do you exit this test?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
-    <string name="wait">Please wait.</string>
-    <string name="measure">Test in Progress...</string>
-    <string name="remove">The cartridge is removed and the cover is closed, automatically go to the next step.</string>
+    <string name="wait">Please wait...</string>
+    <string name="measure">Test in progress...</string>
     <string name="korean">Korean</string>
     <string name="english">English</string>
     <string name="def">Default</string>
@@ -53,5 +50,22 @@
     <string name="patientid">Patient ID</string>
     <string name="operatorid">Operator ID</string>
     <string name="reset">Are you sure reset?</string>
+    <string name="operator">Operator</string>
+    <string name="registrationDate">Registration Date</string>
+    <string name="password">Password</string>
+    <string name="comment">Comment</string>
+    <string name="delete">Confirm to delete</string>
+    <string name="w001">Cover open</string>
+	<string name="w002">Please remove cartridge from test chamber</string>
+    <string name="w005">This ID is not proper</string>
+	<string name="w006">Does not match password</string>
+    <string name="w011">Please enter ID</string>
+    <string name="w012">ID already in use</string>
+    <string name="w013">Please enter password</string>
+    <string name="w014">Please re-enter password</string>
+    <string name="w015">Wrong password</string>
+    <string name="w016">Please re-enter current password</string>
+    <string name="w017">Please enter new password</string>
+    <string name="w018">Wrong password</string>
      
 </resources>

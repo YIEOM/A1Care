@@ -39,6 +39,7 @@ public class RemoveActivity extends Activity {
 		mTimerDisplay = new TimerDisplay();
 		mTimerDisplay.ActivityParm(this, R.id.removelayout);
 		
+		TimerDisplay.RXBoardFlag = true;
 		UserAction UserActionObj = new UserAction();
 		UserActionObj.start();
 	}
@@ -65,6 +66,8 @@ public class RemoveActivity extends Activity {
 			
 			GpioPort.DoorActState = false;
 			GpioPort.CartridgeActState = false;
+			
+			TimerDisplay.RXBoardFlag = false;
 			
 			Intent itn = getIntent();
 			whichIntent = itn.getIntExtra("WhichIntent", 0);

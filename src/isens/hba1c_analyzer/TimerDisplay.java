@@ -28,6 +28,10 @@ public class TimerDisplay {
 	public Handler handler = new Handler();
 	public static TimerTask OneHundredmsPeriod;
 
+	final static byte TIMER_PERIOD = 1000/20, // 1000/Hz
+					  PERIOD_1sec  = 1000/TIMER_PERIOD, // 1 second
+					  PERIOD_200ms = 200 /TIMER_PERIOD; // 200 milisecond
+	
 	final static byte FILE_CLOSE 	= 0,
 			  		  FILE_OPEN 	= 1,
 			  		  FILE_NOT_OPEN = 2;
@@ -46,50 +50,6 @@ public class TimerDisplay {
 	public GpioPort mGpioPort;
 	public SerialPort mSerialPort;
 	
-//	public void TimerInit() {
-//		
-//		mSerialPort = new SerialPort(0);
-//		mGpioPort = new GpioPort();
-//		
-//		OneHundredmsPeriod = new TimerTask() {
-//			
-//			int cnt = 0;
-//			
-//			public void run() {
-//				Runnable updater = new Runnable() {
-//					public void run() {
-//						
-//						if(cnt++ == 100) cnt = 0;
-//						
-//						if((cnt % 10) == 0) { // One second period
-//						
-//							mGpioPort.CartridgeSensorScan();
-//							mGpioPort.DoorSensorScan();
-//						
-//							RealTime();
-//							
-//							if(Integer.parseInt(rTime[6]) == 0) { // Whenever 00 second
-//											
-//								CurrTimeDisplay();
-//							}
-//
-//							ExternalDeviceCheck();
-//							
-//						} else if((cnt % 2) == 0) {
-//							
-//							mGpioPort.CartridgeSensorScan();
-//							mGpioPort.DoorSensorScan();
-//						}
-//					}
-//				};
-//				
-//				handler.post(updater);		
-//			}
-//		};
-//		
-//		timer = new Timer();
-//		timer.schedule(OneHundredmsPeriod, 0, 100); // Timer period : 100msec
-//	}
 	public static boolean RXBoardFlag = false;
 	
 	public void TimerInit() {
@@ -109,9 +69,9 @@ public class TimerDisplay {
 						
 						if(cnt++ == 1000) cnt = 0;
 						
-						if(((cnt % 5) == 0) & RXBoardFlag) mSerialPort.BoardRxData2();
+						if(RXBoardFlag) mSerialPort.BoardRxData2();
 						
-						if((cnt % 100) == 0) { // One second period
+						if((cnt % PERIOD_1sec) == 0) { // One second period
 						
 							mGpioPort.CartridgeSensorScan();
 							mGpioPort.DoorSensorScan();
@@ -125,7 +85,7 @@ public class TimerDisplay {
 
 							ExternalDeviceCheck();
 							
-						} else if((cnt % 20) == 0) {
+						} else if((cnt % PERIOD_200ms) == 0) {
 							
 							mGpioPort.CartridgeSensorScan();
 							mGpioPort.DoorSensorScan();
@@ -138,7 +98,7 @@ public class TimerDisplay {
 		};
 		
 		timer = new Timer();
-		timer.schedule(OneHundredmsPeriod, 0, 10); // Timer period : 10msec
+		timer.schedule(OneHundredmsPeriod, 0, TIMER_PERIOD); // Timer period : 10msec
 	}
 	
 	public void ExternalDeviceCheck() {

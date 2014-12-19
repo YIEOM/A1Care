@@ -1,26 +1,23 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/maintenancelayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/background" >
-    
-    <Button
-        android:id="@+id/backicon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/back_selector" />
     
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:src="@drawable/title" />
+        android:src="@drawable/title"
+        android:background="#00000000" />
     
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="115px"
-        android:layout_marginTop="12px"
-        android:src="@drawable/m_title" />
+        android:layout_marginLeft="128px"
+        android:layout_marginTop="20px"
+        android:src="@drawable/m_title"
+        android:background="#00000000" />
             
     <ImageView
         android:id="@+id/device" 
@@ -44,82 +41,273 @@
         android:layout_marginTop="15px" />
    		
    	<Button
-        android:id="@+id/homeicon"
+        android:id="@+id/escicon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="726px"
-        android:background="@drawable/home_selector" />
+        android:layout_marginLeft="728px"
+        android:background="@drawable/esc_selector" />
    	   	
-    <Button
-        android:id="@+id/systembtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-  	    android:layout_marginLeft="105px"
-        android:layout_marginTop="125px"
-        android:gravity="center"
-	    android:text="SYSTEM CHECK"
-	    android:textStyle="bold"
-        android:typeface="sans"
-        android:textSize="28px"
-        android:textColor="#565656"
-        android:background="@drawable/btn_selector4" />
-
-    <Button
-        android:id="@+id/opticalbtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-  	    android:layout_marginLeft="405px"
-        android:layout_marginTop="125px"
-        android:gravity="center"
-	    android:text="OPTICAL CHECK"
-	    android:textStyle="bold"
-        android:typeface="sans"
-        android:textSize="28px"
-        android:textColor="#565656"
-        android:background="@drawable/btn_selector4" />
-    
-    <Button
-        android:id="@+id/servicebtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="105px"
-       	android:layout_marginTop="250px"
-  	    android:background="@drawable/btn_selector4" />
-
-    <RelativeLayout 
-        android:layout_width="300px"
-        android:layout_height="125px"
-  	    android:layout_marginLeft="105px"
-        android:layout_marginTop="250px" >
-	    
-	    <TextView 
-		    android:layout_width="wrap_content"
-        	android:layout_height="wrap_content"
-        	android:layout_marginTop="35px"
-        	android:layout_centerHorizontal="true"
-	        android:text="SERVICE"
-		    android:textStyle="bold"
-	        android:typeface="sans"
-	        android:textSize="28px"
-	        android:textColor="#565656" />
-	    
-	    <TextView 
+   	<RelativeLayout 
+   	    android:layout_width="wrap_content"
+   	    android:layout_height="wrap_content"
+   	    android:layout_marginLeft="30px"
+        android:layout_marginTop="134px" >
+   	    
+   	    <Button
+	        android:id="@+id/lampbtn"
 	        android:layout_width="wrap_content"
-        	android:layout_height="wrap_content"
-        	android:layout_marginTop="65px"
-        	android:layout_centerHorizontal="true"
-        	android:text="(Engineer only)"
+	        android:layout_height="wrap_content"
+	        android:background="@drawable/systemsetting_btn_selector" />
+   	    
+		<ImageView 
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+	        android:layout_marginTop="25px"
+		    android:layout_centerHorizontal="true" />
+	        
+		<TextView
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+	        android:layout_centerInParent="true"
+	        android:gravity="center"
+		    android:text="LAMP\nINTENSITY"
 	        android:typeface="sans"
-	        android:textSize="20px"
-	        android:textColor="#565656" />
-	    
-    </RelativeLayout>
-    
-    <ImageView
+	        android:textSize="18px"
+	        android:textColor="#242424" />
+		    
+   	</RelativeLayout>
+
+ 	<RelativeLayout 
+   	    android:layout_width="wrap_content"
+   	    android:layout_height="wrap_content"
+   	    android:layout_marginLeft="182px"
+        android:layout_marginTop="134px" >
+   	    
+   	    <Button
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:background="@drawable/systemsetting_btn_selector" />
+   	    
+		<ImageView 
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+	        android:layout_marginTop="27px"
+		    android:layout_centerHorizontal="true" />
+	        
+		<TextView
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+	        android:layout_marginTop="85px" 
+	        android:layout_centerHorizontal="true"
+	        android:gravity="center"
+	        android:typeface="sans"
+	        android:textSize="18px"
+	        android:textColor="#242424" />
+		    
+   	</RelativeLayout>
+
+ 	<RelativeLayout 
+   	    android:layout_width="wrap_content"
+   	    android:layout_height="wrap_content"
+   	    android:layout_marginLeft="335px"
+        android:layout_marginTop="134px" >
+   	    
+   	    <Button
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:background="@drawable/systemsetting_btn_selector" />
+   	    
+		<ImageView 
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+	        android:layout_marginTop="29px"
+		    android:layout_centerHorizontal="true" />
+	        
+		<TextView
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+	        android:layout_marginTop="85px" 
+	        android:layout_centerHorizontal="true"
+	        android:gravity="center"
+	        android:typeface="sans"
+	        android:textSize="18px"
+	        android:textColor="#242424" />
+		    
+   	</RelativeLayout>
+
+ 	<RelativeLayout 
+   	    android:layout_width="wrap_content"
+   	    android:layout_height="wrap_content"
+   	    android:layout_marginLeft="486px"
+        android:layout_marginTop="134px" >
+   	    
+   	    <Button
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:background="@drawable/systemsetting_btn_selector" />
+   	    
+		<ImageView 
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+	        android:layout_marginTop="35px"
+		    android:layout_centerHorizontal="true" />
+	        
+		<TextView
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+	        android:layout_marginTop="85px" 
+	        android:layout_centerHorizontal="true"
+	        android:gravity="center"
+	        android:typeface="sans"
+	        android:textSize="18px"
+	        android:textColor="#242424" />
+		    
+   	</RelativeLayout>			
+   	
+ 	<RelativeLayout 
+   	    android:layout_width="wrap_content"
+   	    android:layout_height="wrap_content"
+   	    android:layout_marginLeft="639px"
+        android:layout_marginTop="134px" >
+   	    
+   	    <Button
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:background="@drawable/systemsetting_btn_selector" />
+   	    
+		<ImageView 
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+	        android:layout_marginTop="35px"
+		    android:layout_centerHorizontal="true" />
+	        
+		<TextView
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+	        android:layout_marginTop="85px" 
+	        android:layout_centerHorizontal="true"
+	        android:gravity="center"
+	        android:typeface="sans"
+	        android:textSize="18px"
+	        android:textColor="#242424" />
+		    
+   	</RelativeLayout>
+ 	
+ 	<RelativeLayout 
+   	    android:layout_width="wrap_content"
+   	    android:layout_height="wrap_content"
+   	    android:layout_marginLeft="30px"
+        android:layout_marginTop="269px" >
+   	    
+   	    <Button
+	        android:id="@+id/adjustbtn"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:background="@drawable/systemsetting_btn_selector" />
+   	    
+		<ImageView 
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+	        android:layout_marginTop="25px"
+		    android:layout_centerHorizontal="true"
+	        android:src="@drawable/af_icon" />
+	        
+		<TextView
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+	        android:layout_marginTop="70px" 
+	        android:layout_centerHorizontal="true"
+	        android:gravity="center"
+		    android:text="ADJUSTMENT\nFACTOR"
+	        android:typeface="sans"
+	        android:textSize="18px"
+	        android:textColor="#242424" />
+		    
+   	</RelativeLayout>
+   	
+ 	<RelativeLayout 
+   	    android:layout_width="wrap_content"
+   	    android:layout_height="wrap_content"
+   	    android:layout_marginLeft="182px"
+        android:layout_marginTop="269px" >
+   	    
+   	    <Button
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:background="@drawable/systemsetting_btn_selector" />
+   	    
+		<ImageView 
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+	        android:layout_marginTop="20px"
+		    android:layout_centerHorizontal="true" />
+	        
+		<TextView
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+	        android:layout_marginTop="70px" 
+	        android:layout_centerHorizontal="true"
+	        android:gravity="center"
+	        android:typeface="sans"
+	        android:textSize="18px"
+	        android:textColor="#242424" />
+		    
+   	</RelativeLayout>
+ 	      	 
+ 	<RelativeLayout 
+   	    android:layout_width="wrap_content"
+   	    android:layout_height="wrap_content"
+   	    android:layout_marginLeft="335px"
+        android:layout_marginTop="269px" >
+   	    
+   	    <Button
+	        android:id="@+id/calibrationbtn"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:background="@drawable/systemsetting_btn_selector" />
+   	    
+		<ImageView 
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+	        android:layout_marginTop="25px"
+		    android:layout_centerHorizontal="true"
+	        android:src="@drawable/cal_icon" />
+	        
+		<TextView
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+	        android:layout_marginTop="85px" 
+	        android:layout_centerHorizontal="true"
+	        android:gravity="center"
+		    android:text="CALIBRATION"
+	        android:typeface="sans"
+	        android:textSize="18px"
+	        android:textColor="#242424" />
+		    
+   	</RelativeLayout>
+        
+    <Button
+        android:id="@+id/tempbtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-  	    android:layout_marginLeft="405px"
-        android:layout_marginTop="250px"
-        android:background="@drawable/btn4_d" />
+  	    android:layout_marginLeft="486px"
+        android:layout_marginTop="269px"
+        android:gravity="center"
+        android:text="TEMPERATURE"
+        android:typeface="sans"
+        android:textSize="18px"
+        android:textColor="#242424"
+        android:background="@drawable/systemsetting_btn_selector" />
+    
+   	<Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+  	    android:layout_marginLeft="639px"
+        android:layout_marginTop="269px"
+        android:gravity="center"
+	    android:typeface="sans"
+        android:textSize="18px"
+        android:textColor="#242424"
+        android:background="@drawable/systemsetting_btn_selector" />
     
 </RelativeLayout>

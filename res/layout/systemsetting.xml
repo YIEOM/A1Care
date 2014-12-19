@@ -1,5 +1,5 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/systemsettinglinear"
+    android:id="@+id/systemsettinglayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/background" >
@@ -214,38 +214,6 @@
         android:layout_marginTop="269px" >
    	    
    	    <Button
-	        android:id="@+id/adjustbtn"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:background="@drawable/systemsetting_btn_selector" />
-   	    
-		<ImageView 
-		    android:layout_width="wrap_content"
-		    android:layout_height="wrap_content"
-	        android:layout_marginTop="25px"
-		    android:layout_centerHorizontal="true"
-	        android:src="@drawable/af_icon" />
-	        
-		<TextView
-		    android:layout_width="wrap_content"
-		    android:layout_height="wrap_content"
-	        android:layout_marginTop="70px" 
-	        android:layout_centerHorizontal="true"
-	        android:gravity="center"
-		    android:text="ADJUSTMENT\nFACTOR"
-	        android:typeface="sans"
-	        android:textSize="18px"
-	        android:textColor="#242424" />
-		    
-   	</RelativeLayout>
-   	
- 	<RelativeLayout 
-   	    android:layout_width="wrap_content"
-   	    android:layout_height="wrap_content"
-   	    android:layout_marginLeft="182px"
-        android:layout_marginTop="269px" >
-   	    
-   	    <Button
 	        android:id="@+id/collelationbtn"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
@@ -254,7 +222,7 @@
 		<ImageView 
 		    android:layout_width="wrap_content"
 		    android:layout_height="wrap_content"
-	        android:layout_marginTop="20px"
+	        android:layout_marginTop="25px"
 		    android:layout_centerHorizontal="true"
 	        android:src="@drawable/cf_icon" />
 	        
@@ -270,6 +238,19 @@
 	        android:textColor="#242424" />
 		    
    	</RelativeLayout>
+   	
+ 	<RelativeLayout 
+   	    android:layout_width="wrap_content"
+   	    android:layout_height="wrap_content"
+   	    android:layout_marginLeft="182px"
+        android:layout_marginTop="269px" >
+   	    
+   	    <Button
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:background="@drawable/systemsetting_btn_selector" />
+  	    
+   	</RelativeLayout>
  	      	 
  	<RelativeLayout 
    	    android:layout_width="wrap_content"
@@ -278,52 +259,29 @@
         android:layout_marginTop="269px" >
    	    
    	    <Button
-	        android:id="@+id/calibrationbtn"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:background="@drawable/systemsetting_btn_selector" />
-   	    
-		<ImageView 
-		    android:layout_width="wrap_content"
-		    android:layout_height="wrap_content"
-	        android:layout_marginTop="25px"
-		    android:layout_centerHorizontal="true"
-	        android:src="@drawable/cal_icon" />
-	        
-		<TextView
-		    android:layout_width="wrap_content"
-		    android:layout_height="wrap_content"
-	        android:layout_marginTop="85px" 
-	        android:layout_centerHorizontal="true"
-	        android:gravity="center"
-		    android:text="CALIBRATION"
-	        android:typeface="sans"
-	        android:textSize="18px"
-	        android:textColor="#242424" />
-		    
+   	     
    	</RelativeLayout>
         
     <Button
-        android:id="@+id/tempbtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
   	    android:layout_marginLeft="486px"
         android:layout_marginTop="269px"
         android:gravity="center"
-        android:text="TEMPERATURE"
         android:typeface="sans"
         android:textSize="18px"
         android:textColor="#242424"
         android:background="@drawable/systemsetting_btn_selector" />
     
    	<Button
-        android:id="@+id/resetbtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
   	    android:layout_marginLeft="639px"
         android:layout_marginTop="269px"
         android:gravity="center"
-        android:text="RESET"
 	    android:typeface="sans"
         android:textSize="18px"
         android:textColor="#242424"

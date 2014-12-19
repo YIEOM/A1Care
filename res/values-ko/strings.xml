@@ -9,8 +9,6 @@
 	<string name="datetime">날짜 및 시간</string>
 	<string name="testnum">테스트 번호</string>
 	<string name="type">형식</string>
-	<string name="e001">도어를 닫아주세요</string>
-	<string name="e002">카트리지를 제거해 주세요</string>
 	<string name="e212">E212</string>
 	<string name="e211">E211</string>
     <string name="e231">E231</string>
@@ -27,7 +25,7 @@
     <string name="e121">E121</string>
     <string name="e122">E122</string>
     <string name="stop">중단</string>
-    <string name="blank">블랭크 측정 중입니다. 잠시만 기다려 주십시오</string>
+    <string name="blank">블랭크 진행 중입니다...</string>
 	<string name="previous">이전</string>
     <string name="detail">자세히 보기</string>
     <string name="next">다음</string>
@@ -38,9 +36,8 @@
     <string name="esc">현재 단계를 종료하고 홈화면으로 이동합니다</string>
     <string name="yes">예</string>
     <string name="no">아니오</string>
-    <string name="wait">잠시만 기다려 주세요.</string>
-    <string name="measure">측정 중입니다. 잠시만 기다려 주세요.</string>
-    <string name="remove">카트리지 제거가 완료되고 커버를 닫으면 자동으로 다음단계로 이동합니다</string>
+    <string name="wait">기다려 주세요</string>
+    <string name="measure">기다려주세요, 당화혈색소 측정 중입니다...</string>
     <string name="korean">한국어</string>
     <string name="english">영어</string>
     <string name="def">초기화</string>
@@ -53,5 +50,22 @@
     <string name="patientid">환자 ID</string>
     <string name="operatorid">오퍼레이터 ID</string>
     <string name="reset">설정 초기화</string>
+    <string name="operator">사용자</string>
+    <string name="registrationDate">등록날짜</string>
+    <string name="password">비밀번호</string>
+    <string name="comment">비고</string>
+    <string name="delete">삭제</string>
+    <string name="w001">도어를 닫아주세요</string>
+	<string name="w002">카트리지를 제거해주세요</string>
+	<string name="w005">등록 ID 없음</string>
+	<string name="w006">비밀번호가 일치하지 않습니다</string>
+	<string name="w011">ID를 입력해주세요</string>
+    <string name="w012">중복 사용중인 ID입니다</string>
+    <string name="w013">등록 비밀번호를 입력해주세요</string>
+    <string name="w014">확인 비밀번호를 입력해주세요</string>
+    <string name="w015">확인용 비밀번호가 일치하지 않습니다 다름</string>
+    <string name="w016">기존 비밀번호를 확인해주세요</string>
+    <string name="w017">수정 비밀번호를 입력해주세요</string>
+    <string name="w018">비밀번호가 일치하지 않습니다</string>
     
 </resources>

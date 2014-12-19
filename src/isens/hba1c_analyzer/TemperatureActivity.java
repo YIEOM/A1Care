@@ -32,7 +32,7 @@ public class TemperatureActivity extends Activity {
 				  setBtn,
 				  readBtn;	
 	
-	public TextView tmptext;
+//	public TextView tmptext;
 	
 	public EditText tmpEText;
 		
@@ -40,8 +40,6 @@ public class TemperatureActivity extends Activity {
 		
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.temperature);
-		
-		tmptext =  (TextView)findViewById(R.id.tmptext);
 		
 		tmpEText = (EditText) findViewById(R.id.tmpetext);
 		
@@ -108,16 +106,61 @@ public class TemperatureActivity extends Activity {
 	
 	public void TmpDisplay() {
 		
-		DecimalFormat tmpdfm = new DecimalFormat("0.0");
-		double tmpDouble;
-		
-		mTemperature = new Temperature(R.id.temperaturelayout);
-		tmpDouble = mTemperature.CellTmpRead();
-		
-		tmptext.setText(tmpdfm.format(tmpDouble));
-		
-		readBtn.setEnabled(true);
+		TmpDisplay mTmpDisplay = new TmpDisplay(this);
+		mTmpDisplay.start();
 	}
+	
+	public class TmpDisplay extends Thread {
+		
+		Activity activity;
+		
+		TmpDisplay(Activity activity) {
+			
+			this.activity = activity;
+		}
+		
+		public void run() {
+			
+			final DecimalFormat tmpdfm = new DecimalFormat("0.0");
+			final double tmpDouble;
+			
+			final TextView tmptext = (TextView)activity.findViewById(R.id.tmptext);
+			
+			mTemperature = new Temperature(R.id.temperaturelayout);
+			mTemperature.CellTmpRead();
+			
+			SerialPort.Sleep(500);
+			
+			tmpDouble = mTemperature.CellTmpValue();
+			Log.w("TmpDisplay", "tmpDouble : " + tmpDouble);
+			
+			new Thread(new Runnable() {
+			    public void run() {    
+			        runOnUiThread(new Runnable(){
+			            public void run(){
+			            	
+			            	tmptext.setText(tmpdfm.format(tmpDouble));
+			    			
+			    			readBtn.setEnabled(true);
+			            }
+			        });
+			    }
+			}).start();
+			
+		}
+	}
+	
+//public void TmpDisplay2(Activity activity, double tmpDouble) {
+//	
+//	DecimalFormat tmpdfm = new DecimalFormat("0.0");
+//	
+//	tmptext =  (TextView)activity.findViewById(R.id.tmptext);
+//	readBtn = (Button)activity.findViewById(R.id.readbtn);
+//	
+//	tmptext.setText(tmpdfm.format(tmpDouble));
+//	
+//	readBtn.setEnabled(true);
+//}
 	
 	public void WhichIntent(TargetIntent Itn) { // Activity conversion
 		

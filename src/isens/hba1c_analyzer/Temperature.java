@@ -4,12 +4,15 @@ import isens.hba1c_analyzer.SerialPort.CtrTarget;
 
 import java.text.DecimalFormat;
 
+import android.app.Activity;
 import android.content.SharedPreferences;
 import android.util.Log;
 import android.widget.TextView;
 
 public class Temperature extends SerialPort {
 
+	TemperatureActivity mTemperatureActivity;
+	
 	int layoutid;
 	
 	Temperature(int layoutid) {
@@ -28,21 +31,8 @@ public class Temperature extends SerialPort {
 	static final int MaxAmbTmp = 39,
 					 MinAmbTmp = 23;
 	
-//	public void TmpInit() { // Initial temperature of cell block set-up
-//		
-//		double tmpDouble;
-//		String tmpString;
-//		DecimalFormat tmpFormat;
-//		
-//		tmpDouble = (double) InitTmp * (double) 1670.17 + (double) 25891.34;
-//		tmpFormat = new DecimalFormat("#####0");
-//		
-//		if(tmpFormat.format(tmpDouble).length() == 5) tmpString = "0" + tmpFormat.format(tmpDouble);
-//		else tmpString = tmpFormat.format(tmpDouble);
-//		
-//		BoardTx("R" + tmpString, CtrTarget.TmpSet);
-//		while(!BoardMessageOutput().equals(tmpFormat.format(tmpDouble)));
-//	}
+	public double cellTmp,
+				  ambTmp;
 	
 	public void TmpInit() {
 		
@@ -72,83 +62,78 @@ public class Temperature extends SerialPort {
 		}
 	}
 	
-//	public double CellTmpRead() { // Read current temperature of cell block
-//		
-//		double tmpRaw;
-//		double tmpDouble;
-//	
-//		BoardTx(TEMPERATURE_CELLBLOCK, CtrTarget.TmpCall);
-//		Sleep(500);
-//		
-//		tmpRaw = Double.parseDouble(BoardMessageOutput());
-//		tmpDouble = (tmpRaw / (double) 1670.17) - (double) 15.5;
-//		
-//		return tmpDouble;
-//	}
-//	
-//	public double AmbTmpRead() { // Read current ambient temperature
-//	
-//		int tmpADC;
-//		double tmpDouble,
-//			   tmpV;
-//		String tmpData;
-//		
-//		BoardTx(TEMPERATURE_AMBIENT, CtrTarget.AmbientTmpCall);
-//				
-//		tmpData = SensorMessageOutput();
-//		
-//		while(!tmpData.substring(1, 2).equals("T")) {
-//			
-//			tmpData = SensorMessageOutput();
-//		}
-//		
-//		tmpADC = Integer.parseInt(tmpData.substring(2));
-//		
-//		tmpV = ((double) 5/1024 * (tmpADC + 1));
-//		tmpDouble = (double) tmpV / 0.01;
-//		
-//		return tmpDouble;
-//	}	
-	
-public double CellTmpRead() { // Read current temperature of cell block
+	public void CellTmpRead() { // Read current temperature of cell block
 		
-		double tmpRaw;
-		double tmpDouble;
-	
-		TimerDisplay.RXBoardFlag = true;
-		BoardTx(TEMPERATURE_CELLBLOCK, CtrTarget.TmpCall);
-		Sleep(500);
-		
-		tmpRaw = Double.parseDouble(BoardMessageOutput());
-		tmpDouble = (tmpRaw / (double) 1670.17) - (double) 15.5;
-		TimerDisplay.RXBoardFlag = false;
-		
-		return tmpDouble;
+		CellTmpRead mCellTmpRead = new CellTmpRead();
+		mCellTmpRead.start();
 	}
 	
-	public double AmbTmpRead() { // Read current ambient temperature
-	
-		int tmpADC;
-		double tmpDouble,
-			   tmpV;
-		String tmpData;
+	public class CellTmpRead extends Thread {
 		
-		TimerDisplay.RXBoardFlag = true;
-		BoardTx(TEMPERATURE_AMBIENT, CtrTarget.AmbientTmpCall);
-				
-		tmpData = SensorMessageOutput();
-		
-		while(!tmpData.substring(1, 2).equals("T")) {
+		public void run() {
 			
-			tmpData = SensorMessageOutput();
+			double tmpRaw;
+			String tmpStr;
+			
+			TimerDisplay.RXBoardFlag = true;
+			
+			BoardTx(TEMPERATURE_CELLBLOCK, CtrTarget.TmpCall);
+			
+			do {	
+			
+				tmpStr = BoardMessageOutput();
+				Sleep(10);
+			
+			} while(tmpStr.equals("NR"));
+			
+			TimerDisplay.RXBoardFlag = false;
+			
+			tmpRaw = Double.parseDouble(tmpStr);
+			cellTmp = (tmpRaw / (double) 1670.17) - (double) 15.5;
+			
+	//		Log.w("CellTmpRead", "tmpDouble : " + tmpDouble);
 		}
-		TimerDisplay.RXBoardFlag = false;
+	}
+
+	public double CellTmpValue() {
 		
-		tmpADC = Integer.parseInt(tmpData.substring(2));
+		return cellTmp;
+	}
+
+	public void AmbTmpRead() { // Read current temperature of cell block
 		
-		tmpV = ((double) 5/1024 * (tmpADC + 1));
-		tmpDouble = (double) tmpV / 0.01;
+		AmbTmpRead mAmbTmpRead = new AmbTmpRead();
+		mAmbTmpRead.start();
+	}
+	
+	public class AmbTmpRead extends Thread {
+	
+		public void run() {
+			
+			int tmpADC;
+			double tmpV;
+			String tmpData;
+			
+			TimerDisplay.RXBoardFlag = true;
+			BoardTx(TEMPERATURE_AMBIENT, CtrTarget.AmbientTmpCall);
+					
+			do {
+				
+				tmpData = SensorMessageOutput();
+			
+			} while(!tmpData.substring(1, 2).equals("T"));
+			
+			TimerDisplay.RXBoardFlag = false;
+			
+			tmpADC = Integer.parseInt(tmpData.substring(2));
+			
+			tmpV = ((double) 5/1024 * (tmpADC + 1));
+			ambTmp = (double) tmpV / 0.01;
+		}
+	}
+
+	public double AmbTmpValue() {
 		
-		return tmpDouble;
+		return ambTmp;
 	}
 }

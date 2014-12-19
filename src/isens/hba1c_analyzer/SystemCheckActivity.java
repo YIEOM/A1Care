@@ -142,7 +142,7 @@ public class SystemCheckActivity extends Activity {
 			GpioPort.DoorActState = true;			
 			GpioPort.CartridgeActState = true;
 			
-			SerialPort.Sleep(1000);
+			SerialPort.Sleep(1500);
 			
 			mErrorPopup = new ErrorPopup(activity, context, layoutid);
 			
@@ -187,7 +187,7 @@ public class SystemCheckActivity extends Activity {
 					
 				case Step2Position		:
 					MotionInstruct(RunActivity.Step2nd_POSITION, SerialPort.CtrTarget.PhotoSet);
-					MotorCheck(RunActivity.Step2nd_POSITION, AnalyzerState.Step2Shaking, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 2);
+					MotorCheck(RunActivity.Step2nd_POSITION, AnalyzerState.Step2Shaking, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 3);
 					break;
 					
 				case Step2Shaking		:
@@ -305,12 +305,17 @@ public class SystemCheckActivity extends Activity {
 		public void run() {
 			
 			int i;
-			double tmp;
+			double tmp = 0;
 			tmpNumber = TmpState.FirstTmp;
 			
 			for(i = 0; i < NUMBER_CELL_BLOCK_TEMP_CHECK; i++) {
 				
-				tmp = mTemperature.CellTmpRead();
+				mTemperature.CellTmpRead();
+				
+				SerialPort.Sleep(300);
+				
+				tmp = mTemperature.CellTmpValue();
+				
 				Log.w("TemperatureCheck", "Cell Temperature : " + tmp);
 				
 				switch(tmpNumber) {
@@ -352,7 +357,12 @@ public class SystemCheckActivity extends Activity {
 				
 				for(i = 0; i < NUMBER_AMBIENT_TEMP_CHECK; i++) {
 					
-					tmp += mTemperature.AmbTmpRead();
+					mTemperature.AmbTmpRead();
+					
+					SerialPort.Sleep(300);
+					
+					tmp += mTemperature.AmbTmpValue();
+
 //					Log.w("TemperatureCheck", "Amb Temperature : " + tmp);
 					
 					SerialPort.Sleep(5000);
@@ -461,6 +471,8 @@ public class SystemCheckActivity extends Activity {
 		SerialPort.Sleep(rspTime * 1000);
 		
 		temp = mSerialPort.BoardMessageOutput();
+		
+		Log.w("Motor check", "temp : " + temp);
 		
 		if(colRsp.equals(temp)) systemState = nextState;
 		else if(errRsp.equals(temp)) systemState = errState;

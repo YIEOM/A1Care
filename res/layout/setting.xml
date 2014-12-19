@@ -1,4 +1,5 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/settinglayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/background" >
@@ -47,7 +48,7 @@
    	<RelativeLayout 
    	    android:layout_width="wrap_content"
    	    android:layout_height="wrap_content"
-   	    android:layout_marginLeft="61px"
+   	    android:layout_marginLeft="114px"
         android:layout_marginTop="137px" >
    	    
    	    <Button
@@ -75,11 +76,11 @@
 	        android:textColor="#565656" />
 		    
    	</RelativeLayout>
-   	
+
  	<RelativeLayout 
    	    android:layout_width="wrap_content"
    	    android:layout_height="wrap_content"
-   	    android:layout_marginLeft="234px"
+   	    android:layout_marginLeft="314px"
         android:layout_marginTop="137px" >
    	    
    	    <Button
@@ -111,7 +112,7 @@
  	<RelativeLayout 
    	    android:layout_width="wrap_content"
    	    android:layout_height="wrap_content"
-   	    android:layout_marginLeft="406px"
+   	    android:layout_marginLeft="514px"
         android:layout_marginTop="137px" >
    	    
    	    <Button
@@ -139,37 +140,21 @@
 	        android:textColor="#565656" />
 		    
    	</RelativeLayout>
+   		
+ 	<Button
+		android:id="@+id/cheat1btn"
+		android:layout_width="50px"
+		android:layout_height="50px"
+		android:layout_marginLeft="0px"
+        android:layout_marginTop="430px"
+		android:background="#00000000" />
+   	
+ 	<Button
+		android:id="@+id/cheat2btn"
+		android:layout_width="50px"
+		android:layout_height="50px"
+		android:layout_marginLeft="750px"
+        android:layout_marginTop="430px"
+		android:background="#00000000" />
 
- 	<RelativeLayout 
-   	    android:layout_width="wrap_content"
-   	    android:layout_height="wrap_content"
-   	    android:layout_marginLeft="579px"
-        android:layout_marginTop="137px" >
-   	    
-   	    <Button
-	        android:id="@+id/maintenancebtn"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:background="@drawable/settingmodebtn_selector" />
-   	    
-		<ImageView 
-		    android:layout_width="wrap_content"
-		    android:layout_height="wrap_content"
-	        android:layout_marginTop="30px"
-		    android:layout_centerHorizontal="true"
-	        android:src="@drawable/settingmode_icon4" />
-	        
-		<TextView
-		    android:layout_width="wrap_content"
-		    android:layout_height="wrap_content"
-	        android:layout_marginTop="190px" 
-	        android:layout_centerHorizontal="true"
-		    android:gravity="center"
-		    android:text="MAINTENANCE"
-	        android:typeface="sans"
-	        android:textSize="20px"
-	        android:textColor="#565656" />
-		    
-   	</RelativeLayout>
-   			
 </RelativeLayout>

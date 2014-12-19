@@ -1,5 +1,5 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/homelinear"
+    android:id="@+id/homelayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/main_bg" >
@@ -8,7 +8,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:src="@drawable/main_top_bg" />
+        android:background="@drawable/main_top_bg" />
             
     <ImageView
         android:id="@+id/device" 
@@ -54,5 +54,15 @@
         android:layout_marginLeft="78px"
         android:layout_marginTop="229px"
         android:background="@drawable/record_selector" />
+    
+    <TextView
+        android:id="@+id/idtext" 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:typeface="sans"
+        android:textSize="18px"
+        android:textColor="#17469E"
+        android:layout_marginLeft="12px"
+        android:layout_marginTop="450px" />
               
 </RelativeLayout>

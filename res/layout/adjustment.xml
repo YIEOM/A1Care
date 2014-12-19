@@ -1,4 +1,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/adjustlayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/background" >
@@ -71,8 +73,23 @@
         android:singleLine="true" 
         android:imeOptions="actionDone"
         android:inputType="numberDecimal|numberSigned"
-        android:longClickable="false"
         android:background="@drawable/af_slope_box" />
+        
+    <!-- <EditText
+        android:id="@+id/slopeetext"
+        android:layout_width="271px"
+        android:layout_height="62px"
+        android:layout_marginLeft="361px"
+        android:layout_marginTop="148px"
+        android:paddingLeft="10px"
+        android:ems="10"
+        android:textSize="40px"
+        android:textColor="#565656"
+        android:singleLine="true" 
+        android:imeOptions="actionDone"
+        android:inputType="numberDecimal|numberSigned"
+        android:longClickable="false"
+        android:background="@drawable/af_slope_box" /> -->
             
     <ImageView
         android:layout_width="wrap_content"
@@ -94,7 +111,16 @@
         android:singleLine="true" 
         android:imeOptions="actionDone"
         android:inputType="numberDecimal|numberSigned"
-        android:longClickable="false"
         android:background="@drawable/af_intercept_box" />
 
+    <android.inputmethodservice.KeyboardView
+        android:layout_marginLeft="500px"
+        android:layout_marginTop="180px"
+        android:id="@+id/customkeyboard"
+        android:layout_height="300px"
+        android:layout_width="300px"
+        android:visibility="gone"
+        android:keyBackground="@drawable/btn"
+        android:keyTextColor="#00f000" />
+    
 </RelativeLayout>

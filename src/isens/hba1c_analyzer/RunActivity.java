@@ -496,8 +496,17 @@ public class RunActivity extends Activity {
 			case NORMAL_OPERATION	:
 				checkError = tHbCalculate();
 				
-				Cart2ndShaking Cart2ndShakingObj = new Cart2ndShaking();
-				Cart2ndShakingObj.start();
+				if(checkError == NORMAL_OPERATION) {
+					
+					Cart2ndShaking Cart2ndShakingObj = new Cart2ndShaking();
+					Cart2ndShakingObj.start();
+				
+				} else {
+					
+					CartDump CartDumpObj = new CartDump(checkError);
+					CartDumpObj.start();
+				}
+				
 				break;
 				
 			case R.string.stop		:

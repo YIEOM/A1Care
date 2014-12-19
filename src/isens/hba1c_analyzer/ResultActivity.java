@@ -131,8 +131,8 @@ public class ResultActivity extends Activity {
 		GetCurrTime();
 		GetDataCnt();
 		
-		mTemperature = new Temperature(R.id.resultlayout);
-		cellBlockEndTmp = mTemperature.CellTmpRead();
+//		mTemperature = new Temperature(R.id.resultlayout);
+//		cellBlockEndTmp = mTemperature.CellTmpRead();
 		
 		HbA1cText = (TextView) findViewById(R.id.hba1cPct);
 		DateText = (TextView) findViewById(R.id.r_testdate1);
