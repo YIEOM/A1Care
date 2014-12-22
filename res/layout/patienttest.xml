@@ -89,7 +89,7 @@
         <ImageView 
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="515px"
+            android:layout_marginLeft="545px"
             android:layout_marginTop="18px"
             android:background="@drawable/line_v" />
        
@@ -128,14 +128,14 @@
                     android:text="@string/result"
                     android:typeface="sans" 
 		            android:textSize="18px"
-                    android:layout_width="120px"
+                    android:layout_width="150px"
 		           	android:textColor="#565656"
                     android:gravity="center" />
                 <TextView
                     android:text="@string/datetime"
                     android:typeface="sans" 
 		            android:textSize="18px"
-                    android:layout_width="260px"
+                    android:layout_width="230px"
 		            android:textColor="#565656"
                     android:gravity="center" />
                 
@@ -189,14 +189,14 @@
                 	android:id="@+id/result1" 
 	            	android:typeface="sans" 
 	            	android:textSize="18px"
-                    android:layout_width="120px"
+                    android:layout_width="150px"
 	           		android:textColor="#565656"
                     android:gravity="center" />
                	<TextView
                     android:id="@+id/dateTime1" 
 	            	android:typeface="sans" 
 	            	android:textSize="18px"
-                   	android:layout_width="260px"
+                   	android:layout_width="230px"
 	            	android:textColor="#565656"
                    	android:gravity="center" />
                	

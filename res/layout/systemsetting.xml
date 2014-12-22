@@ -246,9 +246,28 @@
         android:layout_marginTop="269px" >
    	    
    	    <Button
+	        android:id="@+id/convertbtn"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:background="@drawable/systemsetting_btn_selector" />
+   	    
+		<ImageView 
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+	        android:layout_marginTop="25px"
+		    android:layout_centerHorizontal="true"
+	        android:src="@drawable/convert_icon" />
+	        
+		<TextView
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+	        android:layout_marginTop="85px" 
+	        android:layout_centerHorizontal="true"
+	        android:gravity="center"
+		    android:text="CONVERT"
+	        android:typeface="sans"
+	        android:textSize="18px"
+	        android:textColor="#242424" />
   	    
    	</RelativeLayout>
  	      	 

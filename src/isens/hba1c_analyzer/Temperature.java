@@ -29,7 +29,7 @@ public class Temperature extends SerialPort {
 	public static float InitTmp;
 
 	static final int MaxAmbTmp = 39,
-					 MinAmbTmp = 23;
+					 MinAmbTmp = 20;
 	
 	public double cellTmp,
 				  ambTmp;
@@ -73,7 +73,7 @@ public class Temperature extends SerialPort {
 		public void run() {
 			
 			double tmpRaw;
-			String tmpStr;
+			String temp;
 			
 			TimerDisplay.RXBoardFlag = true;
 			
@@ -81,14 +81,14 @@ public class Temperature extends SerialPort {
 			
 			do {	
 			
-				tmpStr = BoardMessageOutput();
+				temp = BoardMessageOutput();
 				Sleep(10);
 			
-			} while(tmpStr.equals("NR"));
+			} while(temp.equals("NR"));
 			
 			TimerDisplay.RXBoardFlag = false;
 			
-			tmpRaw = Double.parseDouble(tmpStr);
+			tmpRaw = Double.parseDouble(temp);
 			cellTmp = (tmpRaw / (double) 1670.17) - (double) 15.5;
 			
 	//		Log.w("CellTmpRead", "tmpDouble : " + tmpDouble);

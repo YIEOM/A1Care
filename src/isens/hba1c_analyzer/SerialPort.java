@@ -160,7 +160,10 @@ public class SerialPort {
 	
 	public class PrinterTxThread extends Thread { // Instruction for a printer
 		
-		String type = "";
+		String type = "",
+			   primary = "",
+			   unit = "",
+			   range;
 		
 		StringBuffer txData;
 		
@@ -294,9 +297,24 @@ public class SerialPort {
 					pFileOutputStream.write(0xC8);
 					pFileOutputStream.write(0x00);
 					
+					primary = txData.substring(oIdx + oLen, oIdx + oLen + 1);
+					
+					if(primary.equals("0")) {
+						
+						primary = "NGSP";
+						unit = " %";
+						range = "4.0 - 6.0";
+
+					} else {
+						
+						primary = "IFCC";
+						unit = " mmol/mol";
+						range = "20 - 42";
+					}
+					
 					/* HbA1c percentage */
 					pFileOutputStream.write(CR);
-					pFileOutputStream.write("NGSP".getBytes());
+					pFileOutputStream.write(primary.getBytes());
 					
 					/* Result */
 					pFileOutputStream.write(LF);
@@ -308,10 +326,10 @@ public class SerialPort {
 					pFileOutputStream.write(0xC8);
 					pFileOutputStream.write(0x00);
 					
-					/* HbA1c percentage */
+					/* HbA1c */
 					pFileOutputStream.write(CR);
-					pFileOutputStream.write(txData.substring(oIdx + oLen).getBytes());
-					pFileOutputStream.write(" %".getBytes());
+					pFileOutputStream.write(txData.substring(oIdx + oLen + 1).getBytes());
+					pFileOutputStream.write(unit.getBytes());
 					
 					/* Reference Range */
 					pFileOutputStream.write(LF);
@@ -325,7 +343,7 @@ public class SerialPort {
 					
 					/* 4.0 - 6.0% */
 					pFileOutputStream.write(CR);
-					pFileOutputStream.write("4.0 - 6.0 %".getBytes());
+					pFileOutputStream.write((range + unit).getBytes());
 					
 					/* Test No. */
 					pFileOutputStream.write(LF);
@@ -448,60 +466,7 @@ public class SerialPort {
 		}
 	}
 	
-//	public byte[] BoardInputData() {
-//		
-//		int tmpTail;
-//		
-//		while(BoardInputTail == BoardInputHead) {
-//			
-//			Sleep(10);
-//		}
-//		tmpTail = (BoardInputTail + 1) % BOARD_INPUT_MASK;
-//		BoardInputTail = tmpTail;
-//				
-//		return BoardRxBuffer[tmpTail];
-//	}
-//	
-//	public class BoardRxData extends Thread {
-//		
-//		public void run() {
-//			
-//			byte[] tmpBuffer;
-//			byte tmpData;
-//			
-//			while(true) {
-//				
-//				tmpBuffer = BoardInputData();
-//				
-//				for(int i = 0; i < BOARD_INPUT_BUFFER; i++) {
-//					
-//					tmpData = tmpBuffer[i];
-//
-//					if(tmpData == 0) break;
-//					
-//					if(tmpData != STX) {
-//						
-//						if(BoardRxFlag) {
-//							
-//							if(tmpData == ETX) {
-//								
-//								BoardMessageForm(BoardRxData);
-//								BoardRxFlag = false;
-//								
-//							} else BoardRxData += Character.toString((char) tmpData);	
-//						}
-//						
-//					} else {
-//						
-//						BoardRxFlag = true;
-//						BoardRxData = "";
-//					}
-//				}
-//			}
-//		}
-//	}
-	
-public byte[] BoardInputData() {
+	public byte[] BoardInputData() {
 		
 		int tmpTail;
 		
@@ -589,21 +554,7 @@ public byte[] BoardInputData() {
 		}
 	}
 	
-//	public String BoardMessageOutput() {
-//		
-//		int tmpTail;
-//		
-//		if(BoardMsgHead == BoardMsgTail) return "NR";
-//		else {
-//			
-//			tmpTail = (BoardMsgTail + 1) % UART_RX_MASK;
-//			BoardMsgTail = tmpTail;
-//			
-//			return BoardMsgBuffer[tmpTail];
-//		}
-//	}
-	
-public String BoardMessageOutput() {
+	public String BoardMessageOutput() {
 		
 		int tmpTail;
 		
@@ -629,18 +580,6 @@ public String BoardMessageOutput() {
 			SensorMsgHead = tmpHead;
 		}
 	}
-	
-//	public String SensorMessageOutput() {
-//		
-//		int tmpTail;
-//		
-//		while(SensorMsgHead == SensorMsgTail);
-//		tmpTail = SensorMsgTail + 1;
-//		if(tmpTail == UART_RX_MASK) tmpTail = 0;
-//		SensorMsgTail = tmpTail;
-//		
-//		return SensorMsgBuffer[tmpTail];
-//	}
 	
 	public String SensorMessageOutput() {
 		

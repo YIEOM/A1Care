@@ -44,21 +44,31 @@ public class ResultActivity extends Activity {
 	public static EditText PatientIDText;
 	
 	private TextView HbA1cText,
+					 HbA1cUnitText,
 					 DateText,
 					 AMPMText,
-					 Ref;
+					 Ref,
+					 PrimaryText,
+					 RangeText,
+					 UnitText;
 	
 //	public RelativeLayout resultLinear;
 	
 	private Button homeIcon,
 				   printBtn,
-				   nextSampleBtn;
+				   nextSampleBtn,
+				   convertBtn;
 	
 	private String getTime[] = new String[6];
 	
 	public static int ItnData;
 	public int dataCnt;
 	public double cellBlockEndTmp;
+	public String hbA1cCurr,
+				  unitCurr,
+				  rangeCurr,
+				  primaryCurr;
+	public byte primaryByte;
 	
 	public String operator;
 	
@@ -121,6 +131,22 @@ public class ResultActivity extends Activity {
 				}
 			}
 		});
+		
+		convertBtn = (Button)findViewById(R.id.convertbtn);
+		convertBtn.setOnClickListener(new View.OnClickListener() {
+		
+			public void onClick(View v) {
+
+				if(!btnState & (ItnData == RunActivity.NORMAL_OPERATION)) {
+					
+					btnState = true;
+					
+					SerialPort.Sleep(200);
+					
+					PrimaryConvert();
+				}
+			}
+		});		
 	}
 	
 	public void ResultInit() {
@@ -135,10 +161,14 @@ public class ResultActivity extends Activity {
 //		cellBlockEndTmp = mTemperature.CellTmpRead();
 		
 		HbA1cText = (TextView) findViewById(R.id.hba1cPct);
+		HbA1cUnitText = (TextView) findViewById(R.id.hba1cUnit);
 		DateText = (TextView) findViewById(R.id.r_testdate1);
 		AMPMText = (TextView) findViewById(R.id.r_testdate2);
 		Ref = (TextView) findViewById(R.id.ref);
-				
+		PrimaryText = (TextView) findViewById(R.id.primary);
+		RangeText = (TextView) findViewById(R.id.r_range);
+		UnitText = (TextView) findViewById(R.id.unit);
+		
 		Intent itn = getIntent();
 		ItnData = itn.getIntExtra("RunState", 0);
 		
@@ -146,7 +176,9 @@ public class ResultActivity extends Activity {
 			
 			if(HomeActivity.ANALYZER_SW == HomeActivity.DEVEL) {
 				
-				RunActivity.HbA1cPctDbl = 0;
+				if(ConvertActivity.Primary == ConvertActivity.NGSP) RunActivity.HbA1cValue = 5.2;
+				else RunActivity.HbA1cValue = 33.3;
+				
 			} else if(HomeActivity.ANALYZER_SW == HomeActivity.DEMO) {
 				
 				int rem;
@@ -156,15 +188,15 @@ public class ResultActivity extends Activity {
 				switch(rem) {
 				
 				case 0	:
-					RunActivity.HbA1cPctDbl = 5.5;
+					RunActivity.HbA1cValue = 5.5;
 					break;
 					
 				case 1	:
-					RunActivity.HbA1cPctDbl = 6.7;
+					RunActivity.HbA1cValue = 6.7;
 					break;
 				
 				case 2	:
-					RunActivity.HbA1cPctDbl = 8.3;
+					RunActivity.HbA1cValue = 8.3;
 					break;
 					
 				default	:
@@ -172,8 +204,10 @@ public class ResultActivity extends Activity {
 				}
 			}
 			
-			DecimalFormat hbA1cFormat = new DecimalFormat("0.0");
-			HbA1cText.setText(hbA1cFormat.format(RunActivity.HbA1cPctDbl) + "%");
+			primaryByte = ConvertActivity.Primary;
+			
+			UnitConvert(RunActivity.HbA1cValue, ConvertActivity.Primary);
+			HbA1cDisplay();
 		
 		} else if(ItnData == R.string.stop) { 
 			
@@ -242,7 +276,6 @@ public class ResultActivity extends Activity {
 		
 		StringBuffer txData = new StringBuffer();
 		DecimalFormat dfm = new DecimalFormat("0000"),
-					  hbA1cFormat = new DecimalFormat("0.0"),
 					  pIDLenDfm = new DecimalFormat("00");
 		
 		int tempDataCnt;
@@ -264,7 +297,9 @@ public class ResultActivity extends Activity {
 		txData.append(PatientIDText.getText().toString());
 		txData.append(pIDLenDfm.format(operator.length()));
 		txData.append(operator);
-		txData.append(hbA1cFormat.format(RunActivity.HbA1cPctDbl));
+		txData.append(Integer.toString((int) primaryByte)); // primary
+		Log.w("PrintResultData", "primary : " + Integer.toString((int) primaryByte));
+		txData.append(hbA1cCurr);
 		
 		mSerialPort = new SerialPort(R.id.resultlayout);
 		mSerialPort.PrinterTxStart(SerialPort.PRINTRESULT, txData);
@@ -274,12 +309,74 @@ public class ResultActivity extends Activity {
 		btnState = false;
 	}
 	
+	public void UnitConvert(double hbA1cValue, byte primary) {
+		
+		DecimalFormat hbA1cFormat = new DecimalFormat("0.0");
+		
+		if(primary == ConvertActivity.NGSP) {
+			
+			hbA1cCurr = hbA1cFormat.format(hbA1cValue);
+			unitCurr = "%";
+			rangeCurr = "4.0 - 6.0";
+			primaryCurr = "NGSP";
+			
+			HbA1cUnitText.setTextSize(85);
+			
+		} else {
+			
+			hbA1cCurr = hbA1cFormat.format(hbA1cValue);
+			unitCurr = "mmol/mol";
+			rangeCurr = "20 - 42";
+			primaryCurr = "IFCC";
+			
+			HbA1cUnitText.setTextSize(30);
+		}
+	}
+	
+	public void HbA1cDisplay() {
+		
+		HbA1cText.setText(hbA1cCurr);
+		HbA1cUnitText.setText(unitCurr);
+		PrimaryText.setText(primaryCurr);
+		RangeText.setText(rangeCurr);
+		UnitText.setText(unitCurr);
+		
+		btnState = false;
+	}
+	
+	public void PrimaryConvert() {
+		
+		RunActivity mRunActivity = new RunActivity();
+		
+		double hbA1cValue;
+		
+		if(primaryByte == ConvertActivity.NGSP) { // to IFCC
+				
+			primaryByte	= ConvertActivity.IFCC;
+			hbA1cValue = mRunActivity.ConvertHbA1c(ConvertActivity.IFCC); 
+			UnitConvert(hbA1cValue, primaryByte);
+		
+		} else {
+			
+			primaryByte	= ConvertActivity.NGSP;
+			hbA1cValue = mRunActivity.ConvertHbA1c(ConvertActivity.NGSP); 
+			UnitConvert(hbA1cValue, primaryByte);
+		}
+		
+		HbA1cDisplay();
+	}
+	
 	public void WhichIntent(TargetIntent Itn) { // Activity conversion after intent data deliver
 		
 		Intent DataSaveIntent = new Intent(getApplicationContext(), FileSaveActivity.class);
 		DecimalFormat photoDfm = new DecimalFormat("0.0"),
 					  absorbDfm = new DecimalFormat("0.0000"),
 					  pIDLenDfm = new DecimalFormat("00");
+		
+		String pID;
+		int pIDLen;
+		
+		UnitConvert(RunActivity.HbA1cValue, ConvertActivity.Primary);
 		
 		DataSaveIntent.putExtra("RunState", ItnData);
 		DataSaveIntent.putExtra("Year", getTime[0]);
@@ -294,7 +391,8 @@ public class ResultActivity extends Activity {
 		DataSaveIntent.putExtra("PatientID", PatientIDText.getText().toString());
 		DataSaveIntent.putExtra("OperatorLen", pIDLenDfm.format(operator.length()));
 		DataSaveIntent.putExtra("Operator", operator);
-		DataSaveIntent.putExtra("Hba1cPct", photoDfm.format(RunActivity.HbA1cPctDbl));
+		DataSaveIntent.putExtra("Primary", Integer.toString((int) ConvertActivity.Primary)); // primary
+		DataSaveIntent.putExtra("Hba1cPct", hbA1cCurr);
 		
 		DataSaveIntent.putExtra("RunMin", (int) RunActivity.runMin);
 		DataSaveIntent.putExtra("RunSec", (int) RunActivity.runSec);

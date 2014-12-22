@@ -1175,7 +1175,7 @@ public class CalibrationActivity extends Activity{
 	
 	public void HbA1cDisplay() {
 		
-    	hba1cStr.setText(hbA1cFormat.format(RunActivity.HbA1cPctDbl));
+    	hba1cStr.setText(hbA1cFormat.format(RunActivity.HbA1cValue));
 		tHbStr.setText(hbA1cFormat.format(RunActivity.tHbDbl));
 	}
 	
@@ -1194,7 +1194,7 @@ public class CalibrationActivity extends Activity{
 		
 		ActionActivity.BarcodeCheckFlag = false;
 		
-		RunActivity.HbA1cPctDbl = 0.0;
+		RunActivity.HbA1cValue = 0.0;
 		RunActivity.tHbDbl = 0.0;
 		
 		targetMode = TargetMode.Scan;
@@ -1339,9 +1339,9 @@ public class CalibrationActivity extends Activity{
 		a4 = (b32 - b3) / (Bt - St);
 		b4 = b3 - (a4 * St);
 		
-		RunActivity.HbA1cPctDbl = (B - (St * a4 + b4)) / a3 / St * 100;
+		RunActivity.HbA1cValue = (B - (St * a4 + b4)) / a3 / St * 100;
 				
-		RunActivity.HbA1cPctDbl = RunActivity.CF_Slope * (RunActivity.AF_Slope * RunActivity.HbA1cPctDbl + RunActivity.AF_Offset) + RunActivity.CF_Offset;
+		RunActivity.HbA1cValue = RunActivity.CF_Slope * (RunActivity.AF_Slope * RunActivity.HbA1cValue + RunActivity.AF_Offset) + RunActivity.CF_Offset;
 	}
 	
 	public double Absorb1stHandling() {

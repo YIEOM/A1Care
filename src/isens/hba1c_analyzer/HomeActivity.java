@@ -32,7 +32,7 @@ public class HomeActivity extends Activity {
 					  DEVEL = 1, // Development
 					  DEMO = 2, // Sales department
 					  STABLE = 3, // Motion that TUVSUD require ; Operation for 2 hours
-					  ANALYZER_SW = NORMAL;
+					  ANALYZER_SW = DEVEL;
 
 	final static byte PP = 1,
 			          ES = 2,
@@ -49,7 +49,7 @@ public class HomeActivity extends Activity {
 				  settingBtn,
 				  recordBtn;
 	
-	public enum TargetIntent {Home, HbA1c, NA, Action, Run, Blank, Memory, Result, ResultError, Remove, Image, Date, Setting, SystemSetting, DataSetting, OperatorSetting, Time, Display, HIS, HISSetting, Export, Maintenance, FileSave, ControlFileLoad, PatientFileLoad, NextFile, PreFile, Adjustment, Sound, Calibration, Language, Correlation, Temperature, Lamp}
+	public enum TargetIntent {Home, HbA1c, NA, Action, Run, Blank, Memory, Result, ResultError, Remove, Image, Date, Setting, SystemSetting, DataSetting, OperatorSetting, Time, Display, HIS, HISSetting, Export, Maintenance, FileSave, ControlFileLoad, PatientFileLoad, NextFile, PreFile, Adjustment, Sound, Calibration, Language, Correlation, Temperature, Lamp, Convert}
 	
 	public static boolean LoginFlag = true,
 						  CheckFlag;

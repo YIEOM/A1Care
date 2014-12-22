@@ -40,6 +40,8 @@
     <string name="measure">Test in progress...</string>
     <string name="korean">Korean</string>
     <string name="english">English</string>
+    <string name="ngsp">NGSP</string>
+    <string name="ifcc">IFCC</string>
     <string name="def">Default</string>
     <string name="slope">Slope</string>
     <string name="offset">Offset</string>

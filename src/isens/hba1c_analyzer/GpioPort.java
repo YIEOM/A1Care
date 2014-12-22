@@ -21,6 +21,8 @@ public class GpioPort {
 	private static byte DoorInitState;
 	private static byte CartridgeInitState;
 	
+	public static boolean IsCheck = false;
+	
 	static	{
 		
 		System.loadLibrary("gpio_port");
@@ -155,6 +157,9 @@ public class GpioPort {
 		
 		String tmpData;
 		
+		while(IsCheck) SerialPort.Sleep(10);
+		IsCheck = true;
+		
 		mSerialPort = new SerialPort(0);
 		mSerialPort.BoardTx(DOOR_SENSOR, SerialPort.CtrTarget.DoorCall);
 		
@@ -174,6 +179,8 @@ public class GpioPort {
 		public void run() {
 			
 			if(DoorActState) {
+				
+				Log.w("DoorSensorScan", "Door : " + DoorSensorState);
 				
 				switch(DoorSensorState) {		
 				
@@ -206,10 +213,15 @@ public class GpioPort {
 		
 		String tmpData;
 		
+		while(IsCheck) SerialPort.Sleep(10);
+		IsCheck = true;
+		
 		mSerialPort = new SerialPort(0);
 		mSerialPort.BoardTx(CARTRIDGE_SENSOR, SerialPort.CtrTarget.CartCall);
 		
 		tmpData = BoardMessage("C");
+		
+		Log.w("CartridgeCheck", "data : " + Integer.parseInt(tmpData.substring(2)));
 		
 		return (byte) Integer.parseInt(tmpData.substring(2));
 	}
@@ -226,19 +238,22 @@ public class GpioPort {
 			
 			if(CartridgeActState) {
 
-				switch(CartridgeSensorState) {		
+				Log.w("CartridgeSensorScan", "Cartridge : " + CartridgeSensorState);
+				
+				switch(CartridgeSensorState) {
 				
 				case InitialState	:
 					CartridgeInitState = CartridgeCheck();
 					CartridgeSensorState = SensorScan.DebounceState;
 					break;
 				
-				case DebounceState	:	
+				case DebounceState	:
 					CartridgeSensorState = (CartridgeCheck() == CartridgeInitState) ? SensorScan.StableState : SensorScan.InitialState;
 					break;
 											
 				case StableState	:			
 					if(CartridgeCheck() == CartridgeInitState) {
+						
 						ActionActivity.CartridgeCheckFlag = CartridgeInitState;
 						
 					} else CartridgeSensorState = SensorScan.DebounceState;
@@ -249,10 +264,12 @@ public class GpioPort {
 					break;
 				}
 			}
+			
+			DoorSensorScan();
 		}
 	}
 	
-	public synchronized String BoardMessage(String sensorMsg) {
+	public String BoardMessage(String sensorMsg) {
 		
 		String temp = "";
 		
@@ -262,9 +279,11 @@ public class GpioPort {
 			
 			temp = mSerialPort.SensorMessageOutput();
 			
+			Log.w("BoardMessage", "sensor : " + sensorMsg + " temp : " + temp);
+			
 			if(temp.substring(1, 2).equals(sensorMsg)) {
 				
-				Log.w("BoardMessage", "temp : " + temp);
+				IsCheck = false;
 				return temp;
 			}
 			

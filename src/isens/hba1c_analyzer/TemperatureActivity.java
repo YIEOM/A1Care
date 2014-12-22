@@ -150,18 +150,6 @@ public class TemperatureActivity extends Activity {
 		}
 	}
 	
-//public void TmpDisplay2(Activity activity, double tmpDouble) {
-//	
-//	DecimalFormat tmpdfm = new DecimalFormat("0.0");
-//	
-//	tmptext =  (TextView)activity.findViewById(R.id.tmptext);
-//	readBtn = (Button)activity.findViewById(R.id.readbtn);
-//	
-//	tmptext.setText(tmpdfm.format(tmpDouble));
-//	
-//	readBtn.setEnabled(true);
-//}
-	
 	public void WhichIntent(TargetIntent Itn) { // Activity conversion
 		
 		switch(Itn) {

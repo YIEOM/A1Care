@@ -90,6 +90,7 @@ public class SystemCheckActivity extends Activity {
 			
 		/* Timer start */
 		mTimerDisplay = new TimerDisplay();
+		mTimerDisplay.ActivityParm(this, R.id.systemchecklayout);
 		mTimerDisplay.TimerInit(); 
 		mTimerDisplay.RealTime();
 		
@@ -363,7 +364,7 @@ public class SystemCheckActivity extends Activity {
 					
 					tmp += mTemperature.AmbTmpValue();
 
-//					Log.w("TemperatureCheck", "Amb Temperature : " + tmp);
+					Log.w("TemperatureCheck", "Amb Temperature : " + tmp);
 					
 					SerialPort.Sleep(5000);
 				}
@@ -613,6 +614,9 @@ public class SystemCheckActivity extends Activity {
 		RunActivity.AF_Offset = AdjustmentPref.getFloat("AF OffsetVal", 0f);
 		RunActivity.CF_Slope = AdjustmentPref.getFloat("CF SlopeVal", 1.0f);
 		RunActivity.CF_Offset = AdjustmentPref.getFloat("CF OffsetVal", 0f);
+		
+		SharedPreferences convertPref = getSharedPreferences("Primary", MODE_PRIVATE);
+		ConvertActivity.Primary = (byte) convertPref.getInt("Convert", 0);
 		
 		SharedPreferences LoginPref = PreferenceManager.getDefaultSharedPreferences(this);
 		HomeActivity.LoginFlag = LoginPref.getBoolean("Activation", true);

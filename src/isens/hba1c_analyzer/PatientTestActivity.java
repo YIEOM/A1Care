@@ -22,7 +22,6 @@ import android.widget.TextView;
 
 public class PatientTestActivity extends Activity {
 	
-	public DataStorage mDataStorage;
 	public SerialPort mSerialPort;
 	public TimerDisplay mTimerDisplay;
 	
@@ -61,13 +60,15 @@ public class PatientTestActivity extends Activity {
 	public String dateTime[] = new String[5],
 				  testNum [] = new String[5],
 				  refNum  [] = new String[5],
-				  hbA1c   [] = new String[5],
 				  typeStr [] = new String[5],
 				  pID     [] = new String[5],
-				  oID	  [] = new String[5];
+				  oID	  [] = new String[5],
+				  priStr  [] = new String[5],
+				  hbA1c   [] = new String[5];
 	
 	private boolean checkFlag = false,
 					btnState = false;
+	
 	private ImageButton whichBox = null;
 	
 	private int boxNum = 0;
@@ -302,6 +303,7 @@ public class PatientTestActivity extends Activity {
 		hbA1c    = itn.getStringArrayExtra("HbA1c");
 		pID      = itn.getStringArrayExtra("PatientID");
 		oID      = itn.getStringArrayExtra("OperatorID");
+		priStr   = itn.getStringArrayExtra("Primary");
 		
 //		Log.w("GetItnData", "Cartridge Lot : " + refNum[0] + " HbA1c : " + hbA1c[0]);
 	}
@@ -336,6 +338,8 @@ public class PatientTestActivity extends Activity {
 	
 	public void PatientDisplay() { // displaying the patient data
 			
+		String hbA1cValue;
+		
 		GetItnData();
 		PatientText();
 		
@@ -346,7 +350,10 @@ public class PatientTestActivity extends Activity {
     			TestNumText [i].setText(testNum[i]);
     			typeStr     [i] = "HbA1c";
 				TypeText    [i].setText(typeStr[i]);
-    			ResultText  [i].setText(hbA1c[i] + "%"); // 17 - 48
+    			
+				if(priStr[i].equals("0")) hbA1cValue = hbA1c[i] + "%";
+				else hbA1cValue = hbA1c[i] + "mmol/mol";
+				ResultText  [i].setText(hbA1cValue); // 17 - 48
             	DateTimeText[i].setText(dateTime[i].substring(0, 4) + "." + dateTime[i].substring(4, 6) + "." + dateTime[i].substring(6, 8) + " " + dateTime[i].substring(8, 10) + " " + dateTime[i].substring(10, 12) + ":" + dateTime[i].substring(12, 14));	
     		}	
     	}
@@ -378,17 +385,35 @@ public class PatientTestActivity extends Activity {
 	
 	public void DisplayDetailView() { // displaying the detail patient data
 
+		String pri,
+			   unit,
+			   ran;
+		
 		if(checkFlag && testNum[boxNum - 1] != null) {
 				
 			patientID.setText(pID[boxNum - 1]);
 			testDate.setText(dateTime[boxNum - 1].substring(2, 4) + "." + dateTime[boxNum - 1].substring(4, 6) + "." + dateTime[boxNum - 1].substring(6, 8) + " " + dateTime[boxNum - 1].substring(8, 10) + " " + dateTime[boxNum - 1].substring(10, 12) + ":" + dateTime[boxNum - 1].substring(12, 14));
 			typeDetailText.setText(typeStr[boxNum - 1]);
-			primary.setText("NGSP");
-			range.setText("4.0 - 6.0%");
+			
+			if(priStr[boxNum - 1].equals("0")) {
+				
+				pri = "NGSP";
+				unit = "%";
+				ran = "4.0 - 6.0%";
+				
+			} else {
+				
+				pri = "IFCC";
+				unit = "mmol/mol";
+				ran = "20 - 42mmol/mol";
+			}
+			
+			primary.setText(pri);
+			range.setText(ran);
 			ref.setText(refNum[boxNum - 1]);
 			testNo.setText(testNum[boxNum - 1]);
 			operatorID.setText(oID[boxNum - 1]);
-			result.setText(hbA1c[boxNum - 1] + "%");
+			result.setText(hbA1c[boxNum - 1] + unit);
 			
 			detailViewBtn.setEnabled(false);
 			detailPopup.showAtLocation(pTestLayout, Gravity.CENTER, 0, 0);
@@ -418,6 +443,7 @@ public class PatientTestActivity extends Activity {
 		txData.append(pID[boxNum - 1]);
 		txData.append(pIDLenDfm.format(oID[boxNum - 1].length()));
 		txData.append(oID[boxNum - 1]);
+		txData.append(priStr[boxNum - 1]);
 		txData.append(hbA1c[boxNum - 1]);
 		
 		mSerialPort = new SerialPort(R.id.ptestlayout);

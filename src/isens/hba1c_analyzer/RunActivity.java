@@ -87,7 +87,7 @@ public class RunActivity extends Activity {
 					   runMin = 0;
 	
 	public static double tHbDbl,
-						 HbA1cPctDbl,
+						 HbA1cValue,
 						 douValue;
 	
 	public static float AF_Slope,
@@ -1166,33 +1166,56 @@ public class RunActivity extends Activity {
 		a4 = (b32 - b3) / (Bt - St);
 		b4 = b3 - (a4 * St);
 		
-		HbA1cPctDbl = (B - (St * a4 + b4)) / a3 / St * 100; // %-HbA1c(%)
+		HbA1cValue = (B - (St * a4 + b4)) / a3 / St * 100; // %-HbA1c(%)
 		
-		HbA1cPctDbl = (Barcode.Sm + Barcode.Ss) * HbA1cPctDbl + (Barcode.Im + Barcode.Is); 
+		HbA1cValue = (Barcode.Sm + Barcode.Ss) * HbA1cValue + (Barcode.Im + Barcode.Is); 
 		
-		HbA1cPctDbl = CF_Slope * (AF_Slope * HbA1cPctDbl + AF_Offset) + CF_Offset;
+		HbA1cValue = CF_Slope * (AF_Slope * HbA1cValue + AF_Offset) + CF_Offset;
 		
-		Log.w("tHb Calucation", "HbA1cPctDbl : " + HbA1cPctDbl);
+		Log.w("tHb Calucation", "HbA1cPctDbl : " + HbA1cValue);
 		
 		/* TEST Mode */
 		if(HomeActivity.ANALYZER_SW != HomeActivity.NORMAL) return NORMAL_OPERATION;
 		else {
 		
 		
-		if(HbA1cPctDbl < 4) {
+		if(HbA1cValue < 4) {
 			
 			return R.string.e121;
 		
-		} else if(HbA1cPctDbl > 15) {
+		} else if(HbA1cValue > 15) {
 			
 			return R.string.e122;
 		
 		} else
+			
+			HbA1cValue = ConvertHbA1c(ConvertActivity.NGSP);
+			
 			return NORMAL_OPERATION;
 		
 		
 		}
 	}
+	
+	public double ConvertHbA1c(byte primary) {
+		
+		double hbA1cValue;
+		
+		if(primary == ConvertActivity.Primary) return HbA1cValue;
+		else if(primary == ConvertActivity.NGSP) {
+			
+			hbA1cValue = HbA1cValue*0.09148 + 2.152;
+			
+			return hbA1cValue;
+			
+		} else {
+			
+			hbA1cValue = (HbA1cValue - 2.152)/0.09148;
+			
+			return hbA1cValue;			
+		}
+	}
+	
 	
 	public double Absorb1stHandling() {
 		

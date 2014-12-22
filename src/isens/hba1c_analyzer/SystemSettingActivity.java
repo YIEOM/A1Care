@@ -49,7 +49,8 @@ public class SystemSettingActivity extends Activity {
 				  soundBtn,
 				  languageBtn,
 				  resultBtn,
-				  collelationBtn;
+				  collelationBtn,
+				  convertBtn;
 
 	public TextView resetText;
 	
@@ -181,6 +182,22 @@ public class SystemSettingActivity extends Activity {
 //				}
 			}
 		});
+		
+		convertBtn = (Button)findViewById(R.id.convertbtn);
+		convertBtn.setOnClickListener(new View.OnClickListener() {
+		
+			public void onClick(View v) {
+				
+				if(!btnState) {
+					
+					btnState = true;
+					
+					convertBtn.setEnabled(false);
+				
+					WhichIntent(TargetIntent.Convert);
+				}
+			}
+		});
 	}
 	
 	public void SystemSettingInit() {
@@ -247,11 +264,16 @@ public class SystemSettingActivity extends Activity {
 			startActivity(LanguageIntent);
 			break;
 
-		case Correlation		:				
+		case Correlation	:				
 			Intent CorrelationIntent = new Intent(getApplicationContext(), CorrelationFactorActivity.class);
 			startActivity(CorrelationIntent);
 			break;
 		
+		case Convert		:
+			Intent ConvertIntent = new Intent(getApplicationContext(), ConvertActivity.class);
+			startActivity(ConvertIntent);
+			break;
+			
 		default		:	
 			break;			
 		}

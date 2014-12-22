@@ -18,6 +18,7 @@ public class ErrorPopup {
 	public RunActivity mRunActivity;
 	public OperatorController mOperatorController;
 	public SystemSettingActivity mSystemSettingActivity;
+	public LampActivity mLampActivity;
 	
 	public Activity activity;
 	public Context context;
@@ -83,6 +84,10 @@ public class ErrorPopup {
 			mActionActivity = new ActionActivity();
 			mActionActivity.ActionInit(activity, context);
 			break;
+			
+		case R.id.lamplayout	:
+			mLampActivity = new LampActivity();
+			mLampActivity.TestCancel();
 			
 		default	:
 			break;

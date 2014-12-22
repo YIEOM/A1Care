@@ -67,9 +67,6 @@ public class ActionActivity extends Activity {
 		overridePendingTransition(R.anim.fade, R.anim.hold);
 		setContentView(R.layout.action);
 		
-		mPool = new SoundPool(1, AudioManager.STREAM_MUSIC, 0);
-		mWin = mPool.load(this, R.raw.jump, 1);
-		
 		/* Esc Pop-up window activation */
 		escBtn = (Button)findViewById(R.id.escicon);
 		escBtn.setOnClickListener(new View.OnClickListener() {
@@ -194,12 +191,14 @@ public class ActionActivity extends Activity {
 				SerialPort.Sleep(100);
 			}
 			
-			
 			} else SerialPort.Sleep(2000);
 			
 			if(!ESCButtonFlag) {  // to test
 				
 				ActionActivity.DoorCheckFlag = 0;
+				
+				mPool = new SoundPool(1, AudioManager.STREAM_MUSIC, 0);
+				mWin = mPool.load(context, R.raw.jump, 1);
 				
 				mPool.setOnLoadCompleteListener(new OnLoadCompleteListener() {
 				      public void onLoadComplete(SoundPool mPool, int sampleId, int status) {

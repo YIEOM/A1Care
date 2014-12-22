@@ -92,7 +92,6 @@ public class FileSaveActivity extends Activity {
 		TempDataCnt = DataCnt % 9999;
 		if(TempDataCnt == 0) TempDataCnt = 9999;
 		
-		
 		if(HomeActivity.ANALYZER_SW != HomeActivity.STABLE) {
 			
 			
@@ -112,6 +111,7 @@ public class FileSaveActivity extends Activity {
 		overallData.append(itn.getStringExtra("PatientID"));
 		overallData.append(itn.getStringExtra("OperatorLen"));
 		overallData.append(itn.getStringExtra("Operator"));
+		overallData.append(itn.getStringExtra("Primary"));
 		overallData.append(itn.getStringExtra("Hba1cPct"));
 		
 		historyData.append(itn.getIntExtra("RunMin", 0) + "\t");

@@ -126,7 +126,7 @@ public class BlankActivity extends Activity {
 					/* TEST Mode */
 					if(HomeActivity.ANALYZER_SW == HomeActivity.NORMAL)
 						
-//					PhotoErrorCheck();
+					PhotoErrorCheck();
 					break;
 					
 				case Filter535nm :
@@ -153,7 +153,7 @@ public class BlankActivity extends Activity {
 					/* TEST Mode */
 					if(HomeActivity.ANALYZER_SW == HomeActivity.NORMAL)
 					
-//					PhotoErrorCheck();
+					PhotoErrorCheck();
 					break;
 				
 				case FilterHome :

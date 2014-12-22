@@ -75,6 +75,7 @@
 		<activity android:name="HomeActivity"></activity>
 		<activity android:name="CalibrationActivity"></activity>
 		<activity android:name="LanguageActivity"></activity>
+		<activity android:name="ConvertActivity"></activity>
 		<activity android:name="TempFileSaveActivity" android:process="com.android.phone"></activity>
 		<activity android:name="TemperatureActivity">
     	    <intent-filter >

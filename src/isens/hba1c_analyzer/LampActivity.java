@@ -6,6 +6,8 @@ import java.util.TimerTask;
 import isens.hba1c_analyzer.CalibrationActivity.TargetMode;
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
 import isens.hba1c_analyzer.RunActivity.AnalyzerState;
+import isens.hba1c_analyzer.RunActivity.Cart1stFilter2;
+import isens.hba1c_analyzer.RunActivity.CartDump;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -31,6 +33,7 @@ public class LampActivity extends Activity {
 	
 	public SerialPort mSerialPort;
 	public TimerDisplay mTimerDisplay;
+	public ErrorPopup mErrorPopup;
 	public Graph mGraph;
 	
 	public Button escIcon,
@@ -46,8 +49,10 @@ public class LampActivity extends Activity {
 	
 	public double f535nmValue[] = new double[100];
 	
-	public RunActivity.AnalyzerState photoState = AnalyzerState.MeasurePosition;
+	public RunActivity.AnalyzerState photoState;
 
+	public int checkError = RunActivity.NORMAL_OPERATION;
+	
 	public boolean isNormal = true;
 	
 	public SurfaceView mSurfaceView;
@@ -192,31 +197,59 @@ public class LampActivity extends Activity {
 		
 		TimerDisplay.RXBoardFlag = true;
 		
-		TestStart mTestStart = new TestStart();
+		photoState = AnalyzerState.MeasurePosition;
+		
+		TestStart mTestStart = new TestStart(this, this, R.id.lamplayout);
 		mTestStart.start();
 	}
 	
 	public class TestStart extends Thread {
 		
+		Activity activity;
+		Context context;
+		int layoutid;
+		
+		TestStart(Activity activity, Context context, int layoutid) {
+			
+			this.activity = activity;
+			this.context = context;
+			this.layoutid = layoutid;
+		}
+		
 		public void run() {
 			
-			for(int i = 0; i < 3; i++) {
+			for(int i = 0; i < 4; i++) {
 				
 				switch(photoState) {
 				
 				case MeasurePosition :
 					MotionInstruct(RunActivity.MEASURE_POSITION, SerialPort.CtrTarget.PhotoSet);			
-					BoardMessage(RunActivity.MEASURE_POSITION, AnalyzerState.FilterDark);
+					BoardMessage(RunActivity.MEASURE_POSITION, AnalyzerState.FilterDark, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 5);
 					break;
 					
-				case FilterDark :
+				case FilterDark		:
 					MotionInstruct(RunActivity.FILTER_DARK, SerialPort.CtrTarget.PhotoSet);
-					BoardMessage(RunActivity.FILTER_DARK, AnalyzerState.Filter535nm);
+					BoardMessage(RunActivity.FILTER_DARK, AnalyzerState.Filter535nm, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 5);
 					break;
 					
 				case Filter535nm :
 					MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
-					BoardMessage(RunActivity.NEXT_FILTER, AnalyzerState.Filter535nm);
+					BoardMessage(RunActivity.NEXT_FILTER, AnalyzerState.NormalOperation, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 5);
+					break;
+					
+				case ShakingMotorError	:
+					checkError = R.string.e211;
+					photoState = AnalyzerState.NoWorking;
+					break;
+					
+				case FilterMotorError	:
+					checkError = R.string.e212;
+					MotionInstruct(RunActivity.HOME_POSITION, SerialPort.CtrTarget.PhotoSet);			
+					BoardMessage(RunActivity.HOME_POSITION, AnalyzerState.NoWorking, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 6);
+					break;
+					
+				case NoResponse			:
+					photoState = AnalyzerState.NoWorking;
 					break;
 					
 				default	:
@@ -224,19 +257,22 @@ public class LampActivity extends Activity {
 				}
 			}
 			
-			if(photoState == AnalyzerState.Filter535nm) {
+			switch(checkError) {
 			
+			case RunActivity.NORMAL_OPERATION	:
 				DrawThread mDrawThread = new DrawThread(mGraph.GetHolder());
 				mDrawThread.start();
 
-				PhotoMeasure mPhotoMeasure = new PhotoMeasure();
+				PhotoMeasure mPhotoMeasure = new PhotoMeasure(activity, context, layoutid);
 				mPhotoMeasure.start();
 			
 				cancelBtn.setEnabled(true);
+				break;
 				
-			} else {
-				
-				TestCancel();
+			default	:
+				mErrorPopup = new ErrorPopup(activity, context, layoutid);
+				mErrorPopup.ErrorBtnDisplay(checkError);
+				break;
 			}
 		}
 	}
@@ -245,6 +281,17 @@ public class LampActivity extends Activity {
 		
 		boolean isOn = false;
 		double adc;
+		
+		Activity activity;
+		Context context;
+		int layoutid;
+		
+		PhotoMeasure(Activity activity, Context context, int layoutid) {
+			
+			this.activity = activity;
+			this.context = context;
+			this.layoutid = layoutid;
+		}
 		
 		public void run() {
 			
@@ -256,15 +303,32 @@ public class LampActivity extends Activity {
 				while(isMeasured) SerialPort.Sleep(100);
 				
 				adc = AbsorbanceMeasure();
-										
-				ADCAcquire(adc);
-				MeasureDisplay(isOn, CoordinateAcquire());
+						
+				if(adc != -1.0) {
+					
+					ADCAcquire(adc);
+					MeasureDisplay(isOn, CoordinateAcquire());
+					
+					Log.w("Photo measure", "run");
+					isMeasured = true;
 				
-				Log.w("Photo measure", "run");
-				isMeasured = true;
+				} else {
+					
+					isNormal = false;
+				}
 			}
 			
-			TestCancel();
+			switch(checkError) {
+			
+			case RunActivity.NORMAL_OPERATION	:
+				TestCancel();
+				break;
+				
+			default	:
+				mErrorPopup = new ErrorPopup(activity, context, layoutid);
+				mErrorPopup.ErrorBtnDisplay(checkError);
+				break;
+			}
 		}
 	}
 	
@@ -461,12 +525,12 @@ public class LampActivity extends Activity {
 			
 			case FilterHome :
 				MotionInstruct(RunActivity.FILTER_DARK, SerialPort.CtrTarget.PhotoSet);
-				BoardMessage(RunActivity.FILTER_DARK, AnalyzerState.CartridgeHome);
+				BoardMessage(RunActivity.FILTER_DARK, AnalyzerState.CartridgeHome, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 5);
 				break;
 			
 			case CartridgeHome :
 				MotionInstruct(RunActivity.HOME_POSITION, SerialPort.CtrTarget.PhotoSet);
-				BoardMessage(RunActivity.HOME_POSITION, AnalyzerState.NormalOperation);
+				BoardMessage(RunActivity.HOME_POSITION, AnalyzerState.NormalOperation, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 5);
 				break;
 				
 			default	:
@@ -503,6 +567,7 @@ public class LampActivity extends Activity {
 	
 	public synchronized double AbsorbanceMeasure() { // Absorbance measurement
 		
+		int time = 0;
 		String rawValue;
 		double douValue = 0;
 		
@@ -511,32 +576,59 @@ public class LampActivity extends Activity {
 		rawValue = mSerialPort.BoardMessageOutput();			
 		
 		while(rawValue.length() != 8) {
-		
+			
 			rawValue = mSerialPort.BoardMessageOutput();			
+				
+			if(time++ > 50) {
+				
+				photoState = AnalyzerState.NoResponse;
+			
+				break;
+			}
 		
-			SerialPort.Sleep(10);
+			SerialPort.Sleep(100);
 		}	
 	
-		douValue = Double.parseDouble(rawValue);
+		if(photoState != AnalyzerState.NoResponse) {
+
+			douValue = Double.parseDouble(rawValue);
 			
-		return douValue;
+			return douValue;
+		}
+		
+		return -1;
 	}
 	
-	public void BoardMessage(String colRsp, AnalyzerState nextState) {
+	public void BoardMessage(String colRsp, AnalyzerState nextState, String errRsp, AnalyzerState errState, int rspTime) {
 		
+		int time = 0;
 		String temp = "";
+		
+		rspTime = rspTime * 10;
 		
 		while(true) {
 			
 			temp = mSerialPort.BoardMessageOutput();
-			
-			if(colRsp.equals(temp)) {
+	
+			if(temp.equals(colRsp)) {
 				
 				photoState = nextState;
 				break;
-			} 
 			
-			SerialPort.Sleep(10);
+			} else if(temp.equals(errRsp)) {
+				
+				photoState = errState;
+				break;
+			}
+					
+			if(time++ > rspTime) {
+				
+				photoState = AnalyzerState.NoResponse;
+				checkError = R.string.e241;
+				break;
+			}
+			
+			SerialPort.Sleep(100);
 		}
 	}
 	

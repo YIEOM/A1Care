@@ -26,6 +26,7 @@ public class FileLoadActivity extends Activity {
 				   fileRefNum    [] = new String[5],
 				   filePatientID [] = new String[5],
 				   fileOperatorID[] = new String[5],
+				   filePrimary   [] = new String[5],
 				   fileHbA1c     [] = new String[5];
 			   
 	String filePath = "",
@@ -50,6 +51,7 @@ public class FileLoadActivity extends Activity {
 			fileRefNum    [i] = null;
 			filePatientID [i] = null;
 			fileOperatorID[i] = null;
+			filePrimary   [i] = null;
 			fileHbA1c     [i] = null;
 		}
 	}
@@ -91,7 +93,8 @@ public class FileLoadActivity extends Activity {
 				fileRefNum    [i] = loadData.substring(18, 23);
 				filePatientID [i] = loadData.substring(pIdx, pIdx + pLen);
 				fileOperatorID[i] = loadData.substring(oIdx, oIdx + oLen);
-				fileHbA1c     [i] = loadData.substring(oIdx + oLen);
+				filePrimary   [i] = loadData.substring(oIdx + oLen, oIdx + oLen + 1);
+				fileHbA1c     [i] = loadData.substring(oIdx + oLen + 1);
 			}
 		}
 		
@@ -119,9 +122,10 @@ public class FileLoadActivity extends Activity {
 		RecordIntent.putExtra("DateTime", fileDateTime);
 		RecordIntent.putExtra("TestNum", fileTestNum);
 		RecordIntent.putExtra("RefNumber", fileRefNum);
-		RecordIntent.putExtra("HbA1c", fileHbA1c);
 		RecordIntent.putExtra("PatientID", filePatientID);
 		RecordIntent.putExtra("OperatorID", fileOperatorID);
+		RecordIntent.putExtra("Primary", filePrimary);
+		RecordIntent.putExtra("HbA1c", fileHbA1c);
 		startActivity(RecordIntent);
 				
 		finish();

@@ -30,7 +30,7 @@ public class TimerDisplay {
 
 	final static byte TIMER_PERIOD = 1000/20, // 1000/Hz
 					  PERIOD_1sec  = 1000/TIMER_PERIOD, // 1 second
-					  PERIOD_200ms = 200 /TIMER_PERIOD; // 200 milisecond
+					  PERIOD_250ms = 250 /TIMER_PERIOD; // 250 milisecond
 	
 	final static byte FILE_CLOSE 	= 0,
 			  		  FILE_OPEN 	= 1,
@@ -43,7 +43,8 @@ public class TimerDisplay {
 	public TextView timeText;
 	public ImageView deviceImage;
 	
-	public static Activity activity;
+	public Activity activity;
+	public int layoutid;
 	
 	public Timer timer;
 
@@ -74,8 +75,7 @@ public class TimerDisplay {
 						if((cnt % PERIOD_1sec) == 0) { // One second period
 						
 							mGpioPort.CartridgeSensorScan();
-							mGpioPort.DoorSensorScan();
-						
+													
 							RealTime();
 							
 							if(Integer.parseInt(rTime[6]) == 0) { // Whenever 00 second
@@ -85,10 +85,9 @@ public class TimerDisplay {
 
 							ExternalDeviceCheck();
 							
-						} else if((cnt % PERIOD_200ms) == 0) {
+						} else if((cnt % PERIOD_250ms) == 0) {
 							
 							mGpioPort.CartridgeSensorScan();
-							mGpioPort.DoorSensorScan();
 						}
 					}
 				};
@@ -183,6 +182,7 @@ public class TimerDisplay {
 	public void ActivityParm(Activity act, int id) {
 		
 		activity = act;
+		layoutid = id;
 		
 		CurrTimeDisplay();
 		ExternalDeviceDisplay();
@@ -190,7 +190,7 @@ public class TimerDisplay {
 	
 	public void CurrTimeDisplay() {
 		
-		if(activity != null) {
+		if(layoutid != R.id.systemchecklayout) {
 			
 			timeText = (TextView) activity.findViewById(R.id.timeText);
 			
@@ -200,9 +200,12 @@ public class TimerDisplay {
 	
 	public void ExternalDeviceDisplay() {
 		
-		deviceImage = (ImageView) activity.findViewById(R.id.device);
-		
-    	if(ExternalDeviceBarcode == FILE_OPEN) deviceImage.setBackgroundResource(R.drawable.main_usb_c);
-    	else deviceImage.setBackgroundResource(R.drawable.main_usb);
+		if(layoutid != R.id.systemchecklayout) {
+			
+			deviceImage = (ImageView) activity.findViewById(R.id.device);
+			
+			if(ExternalDeviceBarcode == FILE_OPEN) deviceImage.setBackgroundResource(R.drawable.main_usb_c);
+			else deviceImage.setBackgroundResource(R.drawable.main_usb);
+		}
 	}
 }

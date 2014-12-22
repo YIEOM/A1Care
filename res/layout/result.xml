@@ -48,6 +48,17 @@
         android:textSize="85px"
         android:textColor="#1F3E6F"
         android:textStyle="bold" />
+   	
+   	<TextView
+	    android:id="@+id/hba1cUnit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/hba1cPct"
+        android:layout_alignBaseline="@id/hba1cPct"
+        android:typeface="sans"
+        android:textColor="#1F3E6F"
+        android:textStyle="bold"
+        android:layout_marginLeft="5px" />
 	 
 	<RelativeLayout 
 	    android:layout_width="wrap_content"
@@ -56,10 +67,10 @@
         android:layout_marginTop="208px" >
 	    
 		<TextView
+	        android:id="@+id/primary"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:layout_marginLeft="10px"
-            android:text="NGSP"
 	        android:typeface="sans"
 	        android:textSize="20px"
 	        android:textColor="#242424"
@@ -70,18 +81,17 @@
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:layout_marginLeft="10px"
-            android:text="4.0 - 6.0"
 	        android:typeface="sans"
 	        android:textSize="20px"
 	        android:textColor="#242424"
 	        android:layout_marginTop="30px" />
 		
 		<TextView
+		    android:id="@+id/unit"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
             android:layout_toRightOf="@id/r_range"
 	        android:layout_alignBaseline="@id/r_range"
-	        android:text="%"
 	        android:typeface="sans"
 	        android:textSize="12px"
 	        android:textColor="#242424"
@@ -134,7 +144,15 @@
 	        android:background="@drawable/result_pid" />
 	    	    
 	</RelativeLayout>
-                  
+           
+	<Button
+        android:id="@+id/convertbtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="536px"
+        android:layout_marginTop="198px"
+        android:background="@drawable/result_convert_selector" />
+	
     <Button
         android:id="@+id/printbtn"
         android:layout_width="wrap_content"
