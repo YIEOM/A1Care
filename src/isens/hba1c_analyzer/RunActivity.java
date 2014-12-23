@@ -1189,11 +1189,7 @@ public class RunActivity extends Activity {
 		
 		} else
 			
-			HbA1cValue = ConvertHbA1c(ConvertActivity.NGSP);
-			
 			return NORMAL_OPERATION;
-		
-		
 		}
 	}
 	
@@ -1201,18 +1197,13 @@ public class RunActivity extends Activity {
 		
 		double hbA1cValue;
 		
-		if(primary == ConvertActivity.Primary) return HbA1cValue;
-		else if(primary == ConvertActivity.NGSP) {
-			
-			hbA1cValue = HbA1cValue*0.09148 + 2.152;
-			
-			return hbA1cValue;
-			
-		} else {
+		if(primary == ConvertActivity.NGSP) return HbA1cValue;
+		
+		else {
 			
 			hbA1cValue = (HbA1cValue - 2.152)/0.09148;
-			
-			return hbA1cValue;			
+			Log.w("ConvertHbA1c", "IFCC value : " + hbA1cValue);
+			return hbA1cValue;	
 		}
 	}
 	

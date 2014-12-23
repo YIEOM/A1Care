@@ -58,7 +58,7 @@
         android:typeface="sans"
         android:textColor="#1F3E6F"
         android:textStyle="bold"
-        android:layout_marginLeft="5px" />
+        android:layout_marginLeft="2px" />
 	 
 	<RelativeLayout 
 	    android:layout_width="wrap_content"

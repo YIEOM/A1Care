@@ -602,8 +602,6 @@ public class SerialPort {
 				
 				int size;
 
-				Log.w("BarcodeRxThread", "isInterrupted : " + isInterrupted());
-				
 				try {
 					
 					if(BarcodeFileInputStream != null) {
