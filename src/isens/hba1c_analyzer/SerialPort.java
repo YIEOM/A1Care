@@ -34,7 +34,7 @@ public class SerialPort {
 	
 	/* Barcode Serial set-up */
 	public static FileDescriptor BarcodeFd;
-	private static FileInputStream BarcodeFileInputStream;
+	public static FileInputStream BarcodeFileInputStream;
 	private FileOutputStream BarcodeFileOutputStream;
 	public static BarcodeRxThread bBarcodeRxThread;
 	
@@ -601,6 +601,8 @@ public class SerialPort {
 			while(!isInterrupted()) {
 				
 				int size;
+
+				Log.w("BarcodeRxThread", "isInterrupted : " + isInterrupted());
 				
 				try {
 					
@@ -642,7 +644,7 @@ public class SerialPort {
 		for(int i = 0; i < size; i++) {
 
 			BarcodeAppendBuffer[BarcodeBufCnt][BarcodeBufIndex++] = BarcodeRxBuffer[i]; // bufCnt : number of each buffer, bufIndex : bit index of one buffer
-//			Log.w("BarcodeDataReceive", "BarcodeRxBuffer : " + Character.toString((char) BarcodeRxBuffer[i]));
+			Log.w("BarcodeDataReceive", "BarcodeRxBuffer : " + Character.toString((char) BarcodeRxBuffer[i]));
 		}	
 		
 		if(BarcodeBufIndex > 18 | BarcodeBufIndex < 2) {

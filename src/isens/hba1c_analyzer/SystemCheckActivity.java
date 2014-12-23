@@ -87,6 +87,8 @@ public class SystemCheckActivity extends Activity {
 		mSerialPort.BoardSerialInit();
 		mSerialPort.BoardRxStart();
 		mSerialPort.PrinterSerialInit();
+		mSerialPort.BarcodeSerialInit();
+		mSerialPort.BarcodeRxStart();
 			
 		/* Timer start */
 		mTimerDisplay = new TimerDisplay();

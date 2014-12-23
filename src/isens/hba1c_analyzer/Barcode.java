@@ -120,7 +120,7 @@ public class Barcode {
 	
 	public void BarcodeStop(boolean state) { // Turn off barcode module
 		
-		SerialPort.bBarcodeRxThread.interrupt();
+//		SerialPort.bBarcodeRxThread.interrupt();
 		
 		if(state) {
 			

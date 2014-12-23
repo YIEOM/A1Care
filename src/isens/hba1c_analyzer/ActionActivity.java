@@ -1,5 +1,6 @@
 package isens.hba1c_analyzer;
 
+import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -96,9 +97,9 @@ public class ActionActivity extends Activity {
 		BarcodeCheckFlag = false;
 		SerialPort.BarcodeReadStart = false;
 		
-		mSerialPort = new SerialPort(R.id.actionlayout);
-		mSerialPort.BarcodeSerialInit();
-		mSerialPort.BarcodeRxStart();
+//		mSerialPort = new SerialPort(R.id.actionlayout);
+//		mSerialPort.BarcodeSerialInit();
+//		mSerialPort.BarcodeRxStart();
 		
 		ESCButtonFlag = false;
 		btnState = false;
@@ -351,7 +352,8 @@ public class ActionActivity extends Activity {
 		
 	public void WhichIntent(Activity activity, Context context, TargetIntent Itn) { // Activity conversion
 			
-		SerialPort.bBarcodeRxThread.interrupt();
+//		SerialPort.bBarcodeRxThread.interrupt();
+		
 		TimerDisplay.RXBoardFlag = false;
 		GpioPort.CartridgeActState = false;
 		GpioPort.DoorActState = false;

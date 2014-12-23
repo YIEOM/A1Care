@@ -22,7 +22,7 @@ import android.graphics.Typeface;
 /*
  * 
  * Object : Development SW
- * Revision Date : 2014-10-21
+ * Version : A1Care_v1.3.16-alpha
  * 
 */
 
@@ -32,7 +32,7 @@ public class HomeActivity extends Activity {
 					  DEVEL = 1, // Development
 					  DEMO = 2, // Sales department
 					  STABLE = 3, // Motion that TUVSUD require ; Operation for 2 hours
-					  ANALYZER_SW = DEVEL;
+					  ANALYZER_SW = NORMAL;
 
 	final static byte PP = 1,
 			          ES = 2,

@@ -350,6 +350,7 @@ public class CalibrationActivity extends Activity{
 		
 		TimerInit();
 		
+		TimerDisplay.RXBoardFlag = true;
 		BlankStep BlankStepObj = new BlankStep();
 		BlankStepObj.start();
 	}
@@ -423,6 +424,7 @@ public class CalibrationActivity extends Activity{
 			}
 			
 			ThreadRun = false;
+			TimerDisplay.RXBoardFlag = false;
 		}
 	}
 	
@@ -441,6 +443,7 @@ public class CalibrationActivity extends Activity{
 		
 		TimerInit();
 		
+		TimerDisplay.RXBoardFlag = true;
 		Cart1stShaking Cart1stShakingObj = new Cart1stShaking();
 		Cart1stShakingObj.start();
 	}
@@ -460,6 +463,7 @@ public class CalibrationActivity extends Activity{
 		
 		TimerInit();
 		
+		TimerDisplay.RXBoardFlag = true;
 		Cart1stShaking BlankCart1stShakingObj = new Cart1stShaking();
 		BlankCart1stShakingObj.start();
 	}
@@ -999,6 +1003,7 @@ public class CalibrationActivity extends Activity{
 				}).start();
 				
 				ThreadRun = false;
+				TimerDisplay.RXBoardFlag = true;
 			}
 		}
 	}
@@ -1188,9 +1193,9 @@ public class CalibrationActivity extends Activity{
 		
 		CalValueDisplay();
 		
-		mSerialPort = new SerialPort(R.id.caliblayout);
-		mSerialPort.BarcodeSerialInit();
-		mSerialPort.BarcodeRxStart();
+//		mSerialPort = new SerialPort(R.id.caliblayout);
+//		mSerialPort.BarcodeSerialInit();
+//		mSerialPort.BarcodeRxStart();
 		
 		ActionActivity.BarcodeCheckFlag = false;
 		

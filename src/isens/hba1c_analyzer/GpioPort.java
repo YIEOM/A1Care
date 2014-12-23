@@ -271,6 +271,7 @@ public class GpioPort {
 	
 	public String BoardMessage(String sensorMsg) {
 		
+		int time = 0;
 		String temp = "";
 		
 		mSerialPort = new SerialPort(0);
@@ -280,6 +281,12 @@ public class GpioPort {
 			temp = mSerialPort.SensorMessageOutput();
 			
 			Log.w("BoardMessage", "sensor : " + sensorMsg + " temp : " + temp);
+			
+			if(time++ == 20) {
+				
+				IsCheck = false;
+				return "NR2";
+			}
 			
 			if(temp.substring(1, 2).equals(sensorMsg)) {
 				
