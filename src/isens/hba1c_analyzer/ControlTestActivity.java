@@ -32,6 +32,7 @@ public class ControlTestActivity extends Activity {
 	public TextView TestNumText [] = new TextView[5],
 					TypeText    [] = new TextView[5],
 					ResultText  [] = new TextView[5],
+					UnitText    [] = new TextView[5],
 					DateTimeText[] = new TextView[5],
 					patientID,
 					testDate,
@@ -313,33 +314,36 @@ public class ControlTestActivity extends Activity {
 		TestNumText [0] = (TextView) findViewById(R.id.testNum1);
 		TypeText    [0] = (TextView) findViewById(R.id.type1);
 		ResultText  [0] = (TextView) findViewById(R.id.result1);
+		UnitText    [0] = (TextView) findViewById(R.id.unit1);
 		DateTimeText[0] = (TextView) findViewById(R.id.dateTime1);
 		
 		TestNumText [1] = (TextView) findViewById(R.id.testNum2);
 		TypeText    [1] = (TextView) findViewById(R.id.type2);
 		ResultText  [1] = (TextView) findViewById(R.id.result2);
+		UnitText    [1] = (TextView) findViewById(R.id.unit2);
 		DateTimeText[1] = (TextView) findViewById(R.id.dateTime2);
 		
 		TestNumText [2] = (TextView) findViewById(R.id.testNum3);
 		TypeText    [2] = (TextView) findViewById(R.id.type3);
 		ResultText  [2] = (TextView) findViewById(R.id.result3);
+		UnitText    [2] = (TextView) findViewById(R.id.unit3);
 		DateTimeText[2] = (TextView) findViewById(R.id.dateTime3);
 		
 		TestNumText [3] = (TextView) findViewById(R.id.testNum4);
 		TypeText    [3] = (TextView) findViewById(R.id.type4);
 		ResultText  [3] = (TextView) findViewById(R.id.result4);
+		UnitText    [3] = (TextView) findViewById(R.id.unit4);
 		DateTimeText[3] = (TextView) findViewById(R.id.dateTime4);
 		
 		TestNumText [4] = (TextView) findViewById(R.id.testNum5);
 		TypeText    [4] = (TextView) findViewById(R.id.type5);
 		ResultText  [4] = (TextView) findViewById(R.id.result5);
+		UnitText    [4] = (TextView) findViewById(R.id.unit5);
 		DateTimeText[4] = (TextView) findViewById(R.id.dateTime5);
 	}
 	
 	public void ControlDisplay() { // displaying the patient data
 			
-		String hbA1cValue;
-		
 		GetItnData();
 		ControlText();
 		
@@ -350,10 +354,9 @@ public class ControlTestActivity extends Activity {
     			TestNumText [i].setText(testNum[i]);
     			typeStr     [i] = "HbA1c";
 				TypeText    [i].setText(typeStr[i]);
-    			
-				if(priStr[i].equals("0")) hbA1cValue = hbA1c[i] + "%";
-				else hbA1cValue = hbA1c[i] + "mmol/mol";
-				ResultText  [i].setText(hbA1cValue); // 17 - 48
+    			ResultText  [i].setText(hbA1c[i]);
+				if(priStr[i].equals("0")) UnitText[i].setText("%");
+				else UnitText[i].setText("mmol/mol");				
             	DateTimeText[i].setText(dateTime[i].substring(0, 4) + "." + dateTime[i].substring(4, 6) + "." + dateTime[i].substring(6, 8) + " " + dateTime[i].substring(8, 10) + " " + dateTime[i].substring(10, 12) + ":" + dateTime[i].substring(12, 14));	
     		}	
     	}
@@ -398,14 +401,14 @@ public class ControlTestActivity extends Activity {
 			if(priStr[boxNum - 1].equals("0")) {
 				
 				pri = "NGSP";
-				unit = "%";
-				ran = "4.0 - 6.0%";
+				unit = " %";
+				ran = "4.0 - 6.0 %";
 				
 			} else {
 				
 				pri = "IFCC";
-				unit = "mmol/mol";
-				ran = "20 - 42mmol/mol";
+				unit = " mmol/mol";
+				ran = "20 - 42 mmol/mol";
 			}
 			
 			primary.setText(pri);
@@ -446,7 +449,7 @@ public class ControlTestActivity extends Activity {
 		txData.append(priStr[boxNum - 1]);
 		txData.append(hbA1c[boxNum - 1]);
 		
-		mSerialPort = new SerialPort(R.id.ctestlayout);
+		mSerialPort = new SerialPort();
 		mSerialPort.PrinterTxStart(SerialPort.PRINTRECORD, txData);
 		
 		SerialPort.Sleep(100);

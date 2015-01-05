@@ -45,7 +45,7 @@ public class RunActivity extends Activity {
 						MOTOR_STOP		 = "MS",
 						FILTER_ERROR 	 = "FE1",
 						CARTRIDGE_ERROR	 = "CE1";
-		
+	
 	final static byte NORMAL_OPERATION = 0;
 
 	final static byte FIRST_SHAKING_TIME = 105, // Motor shaking time, default : 6 * 105(sec) = 0630
@@ -111,7 +111,7 @@ public class RunActivity extends Activity {
 		overridePendingTransition(R.anim.fade, R.anim.hold);
 		setContentView(R.layout.run);
 		
-		mSerialPort = new SerialPort(R.id.runlayout); // to test
+		mSerialPort = new SerialPort(); // to test
 		
 		/* esc pop-up window activation */
 		escIcon = (Button)findViewById(R.id.escicon);
@@ -203,6 +203,7 @@ public class RunActivity extends Activity {
 					break;
 					
 				case NoResponse 	:
+					Log.w("Cart1stShaking", "NR : " + checkError);
 					runState = AnalyzerState.NoWorking;
 					WhichIntent(TargetIntent.ResultError);
 					break;
@@ -223,6 +224,7 @@ public class RunActivity extends Activity {
 				break;
 				
 			case R.string.stop		:
+				Log.w("Cart1stShaking", "Stop : " + checkError);
 				CartDump CartDumpObj = new CartDump(checkError);
 				CartDumpObj.start();
 				break;
@@ -963,7 +965,7 @@ public class RunActivity extends Activity {
 				
 				isStop = false;
 				runState = AnalyzerState.FilterDark;
-				
+				Log.w("CartridgeDump", "check Error : " + checkError + " STOP : " + R.string.stop);
 				for(int i = 0; i < 4; i++) {
 					
 					switch(runState) {
@@ -1080,7 +1082,7 @@ public class RunActivity extends Activity {
 	
 	public void MotionInstruct(String str, SerialPort.CtrTarget target) { // Motion of system instruction
 		
-		mSerialPort = new SerialPort(R.id.runlayout);
+		mSerialPort = new SerialPort();
 		mSerialPort.BoardTx(str, target);
 	}
 
@@ -1359,7 +1361,8 @@ public class RunActivity extends Activity {
 					
 			if(time++ > rspTime) {
 				
-				runState = AnalyzerState.NoResponse;
+				if(isStop) runState = AnalyzerState.Stop;
+				else runState = AnalyzerState.NoResponse;
 				checkError = R.string.e241;
 				break;
 			}

@@ -211,7 +211,7 @@ public class CalibrationActivity extends Activity{
 		AbsorbanceDisplay();
 		CalValueDisplay();
 		
-		mSerialPort = new SerialPort(R.id.caliblayout);
+		mSerialPort = new SerialPort();
 	}
 
 	public void TimerInit() {

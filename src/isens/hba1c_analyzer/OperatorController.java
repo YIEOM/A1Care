@@ -250,7 +250,7 @@ public class OperatorController {
 				} else {
 							
 					mErrorPopup = new ErrorPopup(activity, context, layoutid);
-					mErrorPopup.ErrorBtnDisplay(R.string.w006);
+					mErrorPopup.ErrorBtnDisplay(R.string.w018);
 				}
 			} else {
 				

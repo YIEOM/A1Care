@@ -186,13 +186,31 @@
                     android:layout_width="140px"
 	           		android:textColor="#565656"
                     android:gravity="center" />
-               	<TextView
-                	android:id="@+id/result1" 
-	            	android:typeface="sans" 
-	            	android:textSize="18px"
-                    android:layout_width="150px"
-	           		android:textColor="#565656"
-                    android:gravity="center" />
+               	<RelativeLayout 
+			        android:layout_width="150px"
+			        android:layout_height="53px"
+			        android:gravity="center" >
+            	
+	            	<TextView
+	                	android:id="@+id/result1" 
+		            	android:layout_width="wrap_content"
+                    	android:layout_height="53px"
+	            		android:typeface="sans" 
+		            	android:textSize="18px"
+		           		android:textColor="#565656" />
+	            	
+	            	<TextView
+	                	android:id="@+id/unit1"
+	                	android:layout_width="wrap_content" 
+                    	android:layout_height="53px"
+		            	android:typeface="sans" 
+		            	android:textSize="12px"
+		           		android:textColor="#565656"
+				        android:layout_toRightOf="@id/result1"
+				        android:layout_alignBaseline="@id/result1"
+	                    android:layout_marginLeft="3px" />
+                
+                </RelativeLayout>
                	<TextView
                     android:id="@+id/dateTime1" 
 	            	android:typeface="sans" 
@@ -236,12 +254,29 @@
 	            	android:textSize="18px"
                     android:textColor="#565656"
                     android:gravity="center" />
-               	<TextView
-                	android:id="@+id/result2" 
-	            	android:typeface="sans" 
-	            	android:textSize="18px"
-                    android:textColor="#565656"
-                    android:gravity="center" />
+               	<RelativeLayout 
+			        android:gravity="center" >
+            	
+	            	<TextView
+	                	android:id="@+id/result2" 
+		            	android:layout_width="wrap_content"
+                    	android:layout_height="53px"
+                    	android:typeface="sans" 
+		            	android:textSize="18px"
+		           		android:textColor="#565656" />
+	            	
+	            	<TextView
+	                	android:id="@+id/unit2"
+	                	android:layout_width="wrap_content" 
+                    	android:layout_height="53px"
+		            	android:typeface="sans" 
+		            	android:textSize="12px"
+		           		android:textColor="#565656"
+				        android:layout_toRightOf="@id/result2"
+				        android:layout_alignBaseline="@id/result2"
+	                    android:layout_marginLeft="3px" />
+                
+                </RelativeLayout>
                 <TextView
                 	android:id="@+id/dateTime2" 
 	            	android:typeface="sans" 
@@ -284,13 +319,29 @@
 	            	android:textSize="18px"
                    	android:textColor="#565656"
                    	android:gravity="center" />
-               	<TextView
-                   	android:id="@+id/result3" 
-	            	android:typeface="sans" 
-	            	android:textSize="18px"
-                   	android:layout_width="70px"
-	           		android:textColor="#565656"
-                   	android:gravity="center" />
+               	<RelativeLayout 
+			        android:gravity="center" >
+            	
+	            	<TextView
+	                	android:id="@+id/result3" 
+		            	android:layout_width="wrap_content"
+                    	android:layout_height="53px"
+                    	android:typeface="sans" 
+		            	android:textSize="18px"
+		           		android:textColor="#565656" />
+	            	
+	            	<TextView
+	                	android:id="@+id/unit3"
+	                	android:layout_width="wrap_content" 
+                    	android:layout_height="53px"
+		            	android:typeface="sans" 
+		            	android:textSize="12px"
+		           		android:textColor="#565656"
+				        android:layout_toRightOf="@id/result3"
+				        android:layout_alignBaseline="@id/result3"
+	                    android:layout_marginLeft="3px" />
+                
+                </RelativeLayout>
                	<TextView
                    	android:id="@+id/dateTime3" 
 	            	android:typeface="sans" 
@@ -333,12 +384,29 @@
 	            	android:textSize="18px"
                    	android:textColor="#565656"
                    	android:gravity="center" />
-               	<TextView
-                   	android:id="@+id/result4" 
-	            	android:typeface="sans" 
-	            	android:textSize="18px"
-                   	android:textColor="#565656"
-                   	android:gravity="center" />
+               	<RelativeLayout 
+			        android:gravity="center" >
+            	
+	            	<TextView
+	                	android:id="@+id/result4" 
+		            	android:layout_width="wrap_content"
+                    	android:layout_height="53px"
+                    	android:typeface="sans" 
+		            	android:textSize="18px"
+		           		android:textColor="#565656" />
+	            	
+	            	<TextView
+	                	android:id="@+id/unit4"
+	                	android:layout_width="wrap_content" 
+                    	android:layout_height="53px"
+		            	android:typeface="sans" 
+		            	android:textSize="12px"
+		           		android:textColor="#565656"
+				        android:layout_toRightOf="@id/result4"
+				        android:layout_alignBaseline="@id/result4"
+	                    android:layout_marginLeft="3px" />
+                
+                </RelativeLayout>
                	<TextView
                    	android:id="@+id/dateTime4" 
 	            	android:typeface="sans" 
@@ -381,12 +449,29 @@
 	            	android:textSize="18px"
                    	android:textColor="#565656"
                    	android:gravity="center" />
-               	<TextView
-                   	android:id="@+id/result5" 
-	            	android:typeface="sans" 
-	            	android:textSize="18px"
-                   	android:textColor="#565656"
-                   	android:gravity="center" />
+               	<RelativeLayout 
+			        android:gravity="center" >
+            	
+	            	<TextView
+	                	android:id="@+id/result5" 
+		            	android:layout_width="wrap_content"
+                    	android:layout_height="53px"
+                    	android:typeface="sans" 
+		            	android:textSize="18px"
+		           		android:textColor="#565656" />
+	            	
+	            	<TextView
+	                	android:id="@+id/unit5"
+	                	android:layout_width="wrap_content" 
+                    	android:layout_height="53px"
+		            	android:typeface="sans" 
+		            	android:textSize="12px"
+		           		android:textColor="#565656"
+				        android:layout_toRightOf="@id/result5"
+				        android:layout_alignBaseline="@id/result5"
+	                    android:layout_marginLeft="3px" />
+                
+                </RelativeLayout>
                	<TextView
                    	android:id="@+id/dateTime5" 
 	            	android:typeface="sans" 

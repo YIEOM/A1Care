@@ -119,7 +119,7 @@ public class DataStorage extends Activity {
 		}		
 	}
 		
-	public String FileCheck(int num, int type) { // Checking specific file 
+	public String FileCheck(int num, int type) { // Checking specific file
 		
 		String sdPath = SDCardState(),
 			   filePath = null;

@@ -43,8 +43,8 @@ public class TimerDisplay {
 	public TextView timeText;
 	public ImageView deviceImage;
 	
-	public Activity activity;
-	public int layoutid;
+	public static Activity activity;
+	public static int layoutid;
 	
 	public Timer timer;
 
@@ -55,7 +55,7 @@ public class TimerDisplay {
 	
 	public void TimerInit() {
 		
-		mSerialPort = new SerialPort(0);
+		mSerialPort = new SerialPort();
 		mGpioPort = new GpioPort();
 		
 		Log.w("TimerInit", "run");
@@ -76,7 +76,9 @@ public class TimerDisplay {
 						
 							mGpioPort.CartridgeSensorScan();
 													
-							RealTime();
+							RealTimeSec();
+
+							Log.w("TimerInit", "sec" + Integer.parseInt(rTime[6]));
 							
 							if(Integer.parseInt(rTime[6]) == 0) { // Whenever 00 second
 											
@@ -149,6 +151,15 @@ public class TimerDisplay {
 		}
 	}
 	
+	public void RealTimeSec() {
+		
+		Calendar c = Calendar.getInstance();
+		
+		DecimalFormat dfm = new DecimalFormat("00");
+		
+		rTime[6] = dfm.format(c.get(Calendar.SECOND));
+	}
+	
 	public void RealTime() { // Get current date and time
 	
 		Calendar c = Calendar.getInstance();
@@ -190,7 +201,13 @@ public class TimerDisplay {
 	
 	public void CurrTimeDisplay() {
 		
+//		Log.w("CurrTimeDisplay", "systemcheck : " + R.id.systemchecklayout + " layout : " + layoutid);
+//		
 		if(layoutid != R.id.systemchecklayout) {
+			
+//			Log.w("CurrTimeDisplay", "run");
+		
+			RealTime();
 			
 			timeText = (TextView) activity.findViewById(R.id.timeText);
 			
@@ -201,7 +218,7 @@ public class TimerDisplay {
 	public void ExternalDeviceDisplay() {
 		
 		if(layoutid != R.id.systemchecklayout) {
-			
+			Log.w("ExternalDeviceDisplay", "run");
 			deviceImage = (ImageView) activity.findViewById(R.id.device);
 			
 			if(ExternalDeviceBarcode == FILE_OPEN) deviceImage.setBackgroundResource(R.drawable.main_usb_c);

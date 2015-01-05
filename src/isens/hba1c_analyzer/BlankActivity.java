@@ -49,7 +49,7 @@ public class BlankActivity extends Activity {
 		mTimerDisplay = new TimerDisplay();
 		mTimerDisplay.ActivityParm(this, R.id.blanklayout);
 				
-		mSerialPort = new SerialPort(R.id.blanklayout);
+		mSerialPort = new SerialPort();
 		
 		blankState = RunActivity.AnalyzerState.InitPosition;
 		photoCheck = 0;

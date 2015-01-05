@@ -101,13 +101,6 @@ public class SerialPort {
 	
 	public static String AmpTemperature = "0";
 	
-	public int layoutid;
-	
-	SerialPort(int layoutid) {
-		
-		this.layoutid = layoutid;
-	}
-	
 	private class BoardTxThread extends Thread { // Instruction for a board
 
 		private String message;
@@ -220,7 +213,8 @@ public class SerialPort {
 					
 						pFileOutputStream.write(LF);
 						pFileOutputStream.write(CR);
-						pFileOutputStream.write("Result Data".getBytes());
+//						pFileOutputStream.write("Result Data".getBytes());
+						pFileOutputStream.write("Record Data".getBytes());
 						
 					} else if(mode == PRINTRECORD) {
 					
@@ -531,7 +525,7 @@ public class SerialPort {
 		
 		int tmpHead;
 
-		Log.w("BoardMessageForm", "tmpStrData : " + tmpStrData);
+//		Log.w("BoardMessageForm", "tmpStrData : " + tmpStrData);
 		
 		if(tmpStrData.substring(0, 1).equals("S")) {
 			
@@ -584,6 +578,8 @@ public class SerialPort {
 	public String SensorMessageOutput() {
 		
 		int tmpTail;
+
+//		Log.w("SensorMessageOutput", "SensorMsgHead : " + SensorMsgHead + " SensorMsgTail : " + SensorMsgTail);
 		
 		if(SensorMsgHead == SensorMsgTail) return "NR";
 			
@@ -761,7 +757,7 @@ public class SerialPort {
 			
 			HHbarcodeReception.append(new String(HHBarcodeAppendBuffer[num], 0, len));
 			
-			if(layoutid == R.id.resultlayout) {
+			if(TimerDisplay.layoutid == R.id.resultlayout) {
 				
 				Handler mHandler = new Handler(Looper.getMainLooper());
 

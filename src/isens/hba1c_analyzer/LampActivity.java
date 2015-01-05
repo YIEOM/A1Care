@@ -138,7 +138,7 @@ public class LampActivity extends Activity {
 		ADCAcquire(0);
 		MeasureDisplay(false, CoordinateAcquire());
 		
-		mSerialPort = new SerialPort(R.id.lamplayout);
+		mSerialPort = new SerialPort();
 	}
 	
 //	public void TestStart() {

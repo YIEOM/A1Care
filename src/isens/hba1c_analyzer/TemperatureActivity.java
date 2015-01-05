@@ -98,7 +98,7 @@ public class TemperatureActivity extends Activity {
 		
 		Temperature.InitTmp = tmp;
 		
-		mTemperature = new Temperature(R.id.temperaturelayout);
+		mTemperature = new Temperature();
 		mTemperature.TmpInit();
 		
 		setBtn.setEnabled(true);
@@ -126,7 +126,7 @@ public class TemperatureActivity extends Activity {
 			
 			final TextView tmptext = (TextView)activity.findViewById(R.id.tmptext);
 			
-			mTemperature = new Temperature(R.id.temperaturelayout);
+			mTemperature = new Temperature();
 			mTemperature.CellTmpRead();
 			
 			SerialPort.Sleep(500);

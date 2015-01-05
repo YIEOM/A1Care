@@ -41,8 +41,7 @@ public class ResultActivity extends Activity {
 	public TimerDisplay mTimerDisplay;
 	public DatabaseHander mDatabaseHander;
 	public RunActivity mRunActivity;
-	
-	
+		
 	public static EditText PatientIDText;
 	
 	private TextView HbA1cText,
@@ -240,6 +239,8 @@ public class ResultActivity extends Activity {
 	
 	public void PatientIDDisplay(final StringBuffer str) {
 		
+		
+		
 		new Thread(new Runnable() {
 		    public void run() {    
 		        runOnUiThread(new Runnable(){
@@ -276,39 +277,58 @@ public class ResultActivity extends Activity {
 	
 	public void PrintResultData() {
 		
-		StringBuffer txData = new StringBuffer();
-		DecimalFormat dfm = new DecimalFormat("0000"),
-					  pIDLenDfm = new DecimalFormat("00");
-		
-		int tempDataCnt;
-		
-		tempDataCnt = dataCnt % 9999;
-		if(tempDataCnt == 0) tempDataCnt = 9999; 
-		
-		txData.delete(0, txData.capacity());
-		
-		txData.append(getTime[0]);
-		txData.append(getTime[1]);
-		txData.append(getTime[2]);
-		txData.append(getTime[3]);
-		txData.append(getTime[4]);
-		txData.append(getTime[5]);
-		txData.append(dfm.format(tempDataCnt));
-		txData.append(Barcode.RefNum);
-		txData.append(pIDLenDfm.format(PatientIDText.getText().toString().length()));
-		txData.append(PatientIDText.getText().toString());
-		txData.append(pIDLenDfm.format(operator.length()));
-		txData.append(operator);
-		txData.append(Integer.toString((int) primaryByte)); // primary
-		Log.w("PrintResultData", "primary : " + Integer.toString((int) primaryByte));
-		txData.append(hbA1cCurr);
-		
-		mSerialPort = new SerialPort(R.id.resultlayout);
-		mSerialPort.PrinterTxStart(SerialPort.PRINTRESULT, txData);
-		
-		SerialPort.Sleep(100);
-		
-		btnState = false;
+		if(ItnData == RunActivity.NORMAL_OPERATION) {
+			
+			StringBuffer txData = new StringBuffer();
+			DecimalFormat dfm = new DecimalFormat("0000"),
+						  pIDLenDfm = new DecimalFormat("00");
+			
+			int tempDataCnt;
+			
+			tempDataCnt = dataCnt % 9999;
+			if(tempDataCnt == 0) tempDataCnt = 9999; 
+			
+			txData.delete(0, txData.capacity());
+			
+//			txData.append(getTime[0]);
+//			txData.append(getTime[1]);
+//			txData.append(getTime[2]);
+//			txData.append(getTime[3]);
+//			txData.append(getTime[4]);
+//			txData.append(getTime[5]);
+//			txData.append(dfm.format(tempDataCnt));
+//			txData.append(Barcode.RefNum);
+//			txData.append(pIDLenDfm.format(PatientIDText.getText().toString().length()));
+//			txData.append(PatientIDText.getText().toString());
+//			txData.append(pIDLenDfm.format(operator.length()));
+//			txData.append(operator);
+//			txData.append(Integer.toString((int) primaryByte)); // primary
+////			Log.w("PrintResultData", "primary : " + Integer.toString((int) primaryByte));
+//			txData.append(hbA1cCurr);
+			
+			txData.append("2014");
+			txData.append("11");
+			txData.append("25");
+			txData.append("AM");
+			txData.append("11");
+			txData.append("27");
+			txData.append("9995");
+			txData.append("BAIVA");
+			txData.append("03");
+			txData.append("PID");
+			txData.append("05");
+			txData.append("Guest");
+			txData.append("0"); // primary
+//			Log.w("PrintResultData", "primary : " + Integer.toString((int) primaryByte));
+			txData.append("5.2");
+			
+			mSerialPort = new SerialPort();
+			mSerialPort.PrinterTxStart(SerialPort.PRINTRESULT, txData);
+			
+			SerialPort.Sleep(100);
+		}
+
+		btnState = false;	
 	}
 	
 	public void UnitConvert(double hbA1cValue, byte primary) {
@@ -376,7 +396,8 @@ public class ResultActivity extends Activity {
 		String pID;
 		int pIDLen;
 		
-		UnitConvert(mRunActivity.ConvertHbA1c(ConvertActivity.Primary), ConvertActivity.Primary);
+		if(ItnData == RunActivity.NORMAL_OPERATION) UnitConvert(mRunActivity.ConvertHbA1c(ConvertActivity.Primary), ConvertActivity.Primary);
+		else ConvertActivity.Primary = 2;
 		
 		DataSaveIntent.putExtra("RunState", ItnData);
 		DataSaveIntent.putExtra("Year", getTime[0]);

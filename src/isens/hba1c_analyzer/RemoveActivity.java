@@ -29,7 +29,7 @@ public class RemoveActivity extends Activity {
 		overridePendingTransition(R.anim.fade, R.anim.hold);
 		setContentView(R.layout.remove);
 
-		mSerialPort = new SerialPort(R.id.removelayout);
+		mSerialPort = new SerialPort();
 		
 		RemoveInit();
 	}

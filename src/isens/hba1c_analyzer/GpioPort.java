@@ -160,7 +160,7 @@ public class GpioPort {
 		while(IsCheck) SerialPort.Sleep(10);
 		IsCheck = true;
 		
-		mSerialPort = new SerialPort(0);
+		mSerialPort = new SerialPort();
 		mSerialPort.BoardTx(DOOR_SENSOR, SerialPort.CtrTarget.DoorCall);
 		
 		tmpData = BoardMessage("D");
@@ -180,7 +180,7 @@ public class GpioPort {
 			
 			if(DoorActState) {
 				
-				Log.w("DoorSensorScan", "Door : " + DoorSensorState);
+//				Log.w("DoorSensorScan", "Door : " + DoorSensorState);
 				
 				switch(DoorSensorState) {		
 				
@@ -216,7 +216,7 @@ public class GpioPort {
 		while(IsCheck) SerialPort.Sleep(10);
 		IsCheck = true;
 		
-		mSerialPort = new SerialPort(0);
+		mSerialPort = new SerialPort();
 		mSerialPort.BoardTx(CARTRIDGE_SENSOR, SerialPort.CtrTarget.CartCall);
 		
 		tmpData = BoardMessage("C");
@@ -238,7 +238,7 @@ public class GpioPort {
 			
 			if(CartridgeActState) {
 
-				Log.w("CartridgeSensorScan", "Cartridge : " + CartridgeSensorState);
+//				Log.w("CartridgeSensorScan", "Cartridge : " + CartridgeSensorState);
 				
 				switch(CartridgeSensorState) {
 				
@@ -274,13 +274,13 @@ public class GpioPort {
 		int time = 0;
 		String temp = "";
 		
-		mSerialPort = new SerialPort(0);
+		mSerialPort = new SerialPort();
 		
 		while(true) {
 			
 			temp = mSerialPort.SensorMessageOutput();
 			
-			Log.w("BoardMessage", "sensor : " + sensorMsg + " temp : " + temp);
+//			Log.w("BoardMessage", "sensor : " + sensorMsg + " temp : " + temp);
 			
 			if(time++ == 20) {
 				

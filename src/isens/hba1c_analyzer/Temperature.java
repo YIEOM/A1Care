@@ -12,14 +12,6 @@ import android.widget.TextView;
 public class Temperature extends SerialPort {
 
 	TemperatureActivity mTemperatureActivity;
-	
-	int layoutid;
-	
-	Temperature(int layoutid) {
-		
-		super(layoutid);
-		this.layoutid = layoutid;
-	}
 
 	final static String TEMPERATURE_CELLBLOCK = "VT",
 						TEMPERATURE_AMBIENT   = "IA";
@@ -58,7 +50,7 @@ public class Temperature extends SerialPort {
 			BoardTx("R" + tmpString, CtrTarget.TmpSet);
 			while(!BoardMessageOutput().equals(tmpFormat.format(tmpDouble))) Sleep(100);
 			
-			if(layoutid != R.id.systemchecklayout) TimerDisplay.RXBoardFlag = false;
+			if(TimerDisplay.layoutid != R.id.systemchecklayout) TimerDisplay.RXBoardFlag = false;
 		}
 	}
 	

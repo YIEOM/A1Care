@@ -60,7 +60,6 @@
     <string name="w001">도어를 닫아주세요</string>
 	<string name="w002">카트리지를 제거해주세요</string>
 	<string name="w005">등록 ID 없음</string>
-	<string name="w006">비밀번호가 일치하지 않습니다</string>
 	<string name="w011">ID를 입력해주세요</string>
     <string name="w012">중복 사용중인 ID입니다</string>
     <string name="w013">등록 비밀번호를 입력해주세요</string>

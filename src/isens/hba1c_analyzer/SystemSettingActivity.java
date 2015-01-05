@@ -87,14 +87,14 @@ public class SystemSettingActivity extends Activity {
 		
 			public void onClick(View v) {
 			
-//				if(!btnState) {
-//					
-//					btnState = true;
-//					
-//					displayBtn.setEnabled(false);
-//
-//					WhichIntent(TargetIntent.Display);
-//				}
+				if(!btnState) {
+					
+					btnState = true;
+					
+					displayBtn.setEnabled(false);
+
+					WhichIntent(TargetIntent.Display);
+				}
 			}
 		});
 		
@@ -172,14 +172,14 @@ public class SystemSettingActivity extends Activity {
 		
 			public void onClick(View v) {
 				
-//				if(!btnState) {
-//					
-//					btnState = true;
-//					
-//					languageBtn.setEnabled(false);
-//				
-//					WhichIntent(TargetIntent.Language);
-//				}
+				if(!btnState) {
+					
+					btnState = true;
+					
+					languageBtn.setEnabled(false);
+				
+					WhichIntent(TargetIntent.Language);
+				}
 			}
 		});
 		

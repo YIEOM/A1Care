@@ -437,12 +437,14 @@ public class TimeActivity extends Activity {
 		mTimerDisplay = new TimerDisplay();
 		mTimerDisplay.TimerInit();
 		
-		SerialPort.Sleep(1000);
+		SerialPort.Sleep(1500);
 		
 		if(hour == 0) hour = 12;
 		
-		mTimerDisplay.ActivityParm(this, R.id.timelayout);
-		GetCurrTime();
+//		mTimerDisplay.ActivityParm(this, R.id.timelayout);
+//
+//		SerialPort.Sleep(500);
+//		GetCurrTime();
 	}
 	
 	public void finish() {

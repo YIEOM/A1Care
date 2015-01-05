@@ -42,7 +42,7 @@ public class SystemCheckActivity extends Activity {
 					  ERROR_660nm = 4,
 					  ERROR_750nm = 8;	
 	
-	static byte NUMBER_CELL_BLOCK_TEMP_CHECK = 60;
+	public static byte NUMBER_CELL_BLOCK_TEMP_CHECK = 60;
 	final static byte NUMBER_AMBIENT_TEMP_CHECK = 30/5;
 	final static String SHAKING_CHECK_TIME = "0030";
 	
@@ -83,7 +83,7 @@ public class SystemCheckActivity extends Activity {
 		SystemAniStart();
 	
 		/* Serial communication start */
-		mSerialPort = new SerialPort(R.id.systemchecklayout);
+		mSerialPort = new SerialPort();
 		mSerialPort.BoardSerialInit();
 		mSerialPort.BoardRxStart();
 		mSerialPort.PrinterSerialInit();
@@ -103,7 +103,7 @@ public class SystemCheckActivity extends Activity {
 		ParameterInit();
 
 		/* Temperature setting */
-		mTemperature = new Temperature(R.id.systemchecklayout); // to test
+		mTemperature = new Temperature(); // to test
 		mTemperature.TmpInit(); // to test
 		
 		BrightnessInit();
@@ -180,7 +180,7 @@ public class SystemCheckActivity extends Activity {
 				
 				case Step1Position		:
 					MotionInstruct(RunActivity.Step1st_POSITION, SerialPort.CtrTarget.PhotoSet);			
-					MotorCheck(RunActivity.Step1st_POSITION, AnalyzerState.Step1Shaking, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 1);
+					MotorCheck(RunActivity.Step1st_POSITION, AnalyzerState.Step1Shaking, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 5);
 					break;
 					
 				case Step1Shaking		:
@@ -324,26 +324,26 @@ public class SystemCheckActivity extends Activity {
 				switch(tmpNumber) {
 				
 				case FirstTmp	:
-					if(((Temperature.InitTmp - 1) < tmp) || (tmp < (Temperature.InitTmp + 1))) tmpNumber = TmpState.SecondTmp;
+					if(((Temperature.InitTmp - 1) < tmp) & (tmp < (Temperature.InitTmp + 1))) tmpNumber = TmpState.SecondTmp;
 					break;
 					
 				case SecondTmp	:
-					if(((Temperature.InitTmp - 1) < tmp) || (tmp < (Temperature.InitTmp + 1))) tmpNumber = TmpState.ThirdTmp;
+					if(((Temperature.InitTmp - 1) < tmp) & (tmp < (Temperature.InitTmp + 1))) tmpNumber = TmpState.ThirdTmp;
 					else tmpNumber = TmpState.FirstTmp;
 					break;
 					
 				case ThirdTmp	:
-					if(((Temperature.InitTmp - 1) < tmp) || (tmp < (Temperature.InitTmp + 1))) tmpNumber = TmpState.ForthTmp;
+					if(((Temperature.InitTmp - 1) < tmp) & (tmp < (Temperature.InitTmp + 1))) tmpNumber = TmpState.ForthTmp;
 					else tmpNumber = TmpState.FirstTmp;
 					break;
 					
 				case ForthTmp	:
-					if(((Temperature.InitTmp - 1) < tmp) || (tmp < (Temperature.InitTmp + 1))) tmpNumber = TmpState.FifthTmp;
+					if(((Temperature.InitTmp - 1) < tmp) & (tmp < (Temperature.InitTmp + 1))) tmpNumber = TmpState.FifthTmp;
 					else tmpNumber = TmpState.FirstTmp;
 					break;
 					
 				case FifthTmp	:
-					if(((Temperature.InitTmp - 1) < tmp) || (tmp < (Temperature.InitTmp + 1))) NUMBER_CELL_BLOCK_TEMP_CHECK = 0;
+					if(((Temperature.InitTmp - 1) < tmp) & (tmp < (Temperature.InitTmp + 1))) NUMBER_CELL_BLOCK_TEMP_CHECK = 0;
 					else tmpNumber = TmpState.FirstTmp;
 					break;
 				
@@ -581,14 +581,14 @@ public class SystemCheckActivity extends Activity {
 		
 			brightness = android.provider.Settings.System.getInt(getContentResolver(), android.provider.Settings.System.SCREEN_BRIGHTNESS);
 		
-			if((brightness % 51) != 0) {
-				
-				WindowManager.LayoutParams params = getWindow().getAttributes();
-				params.screenBrightness = (float)brightness/100;
-				getWindow().setAttributes(params);
-				
-				android.provider.Settings.System.putInt(getContentResolver(), android.provider.Settings.System.SCREEN_BRIGHTNESS, brightness);
-			}
+			if((brightness % 51) != 0) brightness = 51;
+		
+			WindowManager.LayoutParams params = getWindow().getAttributes();
+			params.screenBrightness = (float)brightness/255;
+			getWindow().setAttributes(params);
+			
+			android.provider.Settings.System.putInt(getContentResolver(), android.provider.Settings.System.SCREEN_BRIGHTNESS, brightness);
+		
 		} catch (Exception e) {
 			
 		}
