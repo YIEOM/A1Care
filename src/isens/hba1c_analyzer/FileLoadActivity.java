@@ -103,30 +103,30 @@ public class FileLoadActivity extends Activity {
 	
 	public void WhichIntent(int type) { // Activity conversion
 	
-		Intent RecordIntent = null;
+		Intent nextIntent = null;
 		
 		switch(type) {
 		
 		case CONTROL	:
-			RecordIntent = new Intent(getApplicationContext(), ControlTestActivity.class);
+			nextIntent = new Intent(getApplicationContext(), ControlTestActivity.class);
 			break;
 			
 		case PATIENT	:
-			RecordIntent = new Intent(getApplicationContext(), PatientTestActivity.class);
+			nextIntent = new Intent(getApplicationContext(), PatientTestActivity.class);
 			break;
 			
 		default	:
 			break;
 		}
 		
-		RecordIntent.putExtra("DateTime", fileDateTime);
-		RecordIntent.putExtra("TestNum", fileTestNum);
-		RecordIntent.putExtra("RefNumber", fileRefNum);
-		RecordIntent.putExtra("PatientID", filePatientID);
-		RecordIntent.putExtra("OperatorID", fileOperatorID);
-		RecordIntent.putExtra("Primary", filePrimary);
-		RecordIntent.putExtra("HbA1c", fileHbA1c);
-		startActivity(RecordIntent);
+		nextIntent.putExtra("DateTime", fileDateTime);
+		nextIntent.putExtra("TestNum", fileTestNum);
+		nextIntent.putExtra("RefNumber", fileRefNum);
+		nextIntent.putExtra("PatientID", filePatientID);
+		nextIntent.putExtra("OperatorID", fileOperatorID);
+		nextIntent.putExtra("Primary", filePrimary);
+		nextIntent.putExtra("HbA1c", fileHbA1c);
+		startActivity(nextIntent);
 				
 		finish();
 	}

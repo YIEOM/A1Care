@@ -30,7 +30,7 @@ public class ConvertActivity extends Activity {
 	
 	public TimerDisplay mTimerDisplay;
 	
-	public Button escBtn,
+	public Button backIcon,
 			      leftBtn,
 				  rightBtn;
 	
@@ -52,8 +52,8 @@ public class ConvertActivity extends Activity {
 		convertText = (TextView) findViewById(R.id.converttext);
 		
 		/*SystemSetting Activity activation*/
-		escBtn = (Button)findViewById(R.id.escicon);
-		escBtn.setOnClickListener(new View.OnClickListener() {
+		backIcon = (Button)findViewById(R.id.backicon);
+		backIcon.setOnClickListener(new View.OnClickListener() {
 		
 			public void onClick(View v) {
 			
@@ -61,7 +61,7 @@ public class ConvertActivity extends Activity {
 					
 					btnState = true;
 
-					escBtn.setEnabled(false);
+					backIcon.setEnabled(false);
 					
 					ConvertSave();
 					
@@ -169,17 +169,19 @@ public class ConvertActivity extends Activity {
 	
 	public void WhichIntent(TargetIntent Itn) { // Activity conversion
 		
+		Intent nextIntent = null;
+		
 		switch(Itn) {
 		
 		case SystemSetting	:				
-			Intent SystemSettingIntent = new Intent(getApplicationContext(), SystemSettingActivity.class);
-			startActivity(SystemSettingIntent);
+			nextIntent = new Intent(getApplicationContext(), SystemSettingActivity.class);
 			break;
 						
 		default		:	
 			break;			
 		}
 
+		startActivity(nextIntent);
 		finish();
 	}
 	

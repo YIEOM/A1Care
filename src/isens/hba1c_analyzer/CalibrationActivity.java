@@ -1419,22 +1419,23 @@ public class CalibrationActivity extends Activity{
 	
 	public void WhichIntent(TargetIntent Itn) { // Activity conversion
 		
+		Intent nextIntent = null;
+		
 		switch(Itn) {
 		
 		case Home			:				
-			Intent HomeIntent = new Intent(getApplicationContext(), HomeActivity.class);
-			startActivity(HomeIntent);
+			nextIntent = new Intent(getApplicationContext(), HomeActivity.class);
 			break;
 		
 		case Maintenance	:				
-			Intent MaintenanceIntent = new Intent(getApplicationContext(), MaintenanceActivity.class);
-			startActivity(MaintenanceIntent);
+			nextIntent = new Intent(getApplicationContext(), MaintenanceActivity.class);
 			break;
 		
 		default		:	
 			break;			
 		}
-		
+
+		startActivity(nextIntent);
 		finish();
 	}
 

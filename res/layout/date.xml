@@ -4,6 +4,12 @@
     android:layout_height="wrap_content"
     android:background="@drawable/background" >
     
+    <Button
+        android:id="@+id/backicon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/back_selector" />
+    
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -38,13 +44,6 @@
         android:layout_marginLeft="578px"
         android:layout_marginTop="15px" />
    	
-   	<Button
-        android:id="@+id/escicon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="728px"
-        android:background="@drawable/esc_selector" />
-   	        
    	<ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

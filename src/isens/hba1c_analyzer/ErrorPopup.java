@@ -22,7 +22,7 @@ public class ErrorPopup {
 	
 	public Activity activity;
 	public Context context;
-	public int layoutid;
+	public int layoutid, error;
 	
 	public View popupView;
 	public PopupWindow popupWindow;
@@ -48,6 +48,8 @@ public class ErrorPopup {
 		popupView = View.inflate(context, R.layout.errorbtnpopup, null);
 		popupWindow = new PopupWindow(popupView, 800, 480, true);
 	
+		this.error = error;
+		
 		errorText = (TextView) popupView.findViewById(R.id.errortext);
 		errorText.setText(error);
 		
@@ -76,8 +78,11 @@ public class ErrorPopup {
 		switch(layoutid) {
 		
 		case R.id.homelayout	:
-			mHomeActivity = new HomeActivity();
-			mHomeActivity.Login(activity, context, layoutid);
+			if(error != R.string.w005 && error != R.string.w011 && error != R.string.w018) {
+				
+				mHomeActivity = new HomeActivity();
+				mHomeActivity.Login(activity, context, layoutid);	
+			}
 			break;
 			
 		case R.id.actionlayout	:
@@ -100,6 +105,8 @@ public class ErrorPopup {
 		popupView = View.inflate(context, R.layout.errorpopup, null);
 		popupWindow = new PopupWindow(popupView, 800, 480, true);
 	
+		this.error = error;
+		
 		errorText = (TextView) popupView.findViewById(R.id.errortext);
 		errorText.setText(error);
 		
@@ -117,14 +124,16 @@ public class ErrorPopup {
 		if(popupWindow != null) popupWindow.dismiss();
 	}
 	
-	public void OXBtnDisplay(int text) {
+	public void OXBtnDisplay(int error) {
 		
 		hostLayout = (RelativeLayout) activity.findViewById(layoutid);
 		popupView = View.inflate(context, R.layout.oxpopup, null);
 		popupWindow = new PopupWindow(popupView, 800, 480, true);
 	
+		this.error = error;
+		
 		oxText = (TextView) popupView.findViewById(R.id.oxtext);
-		oxText.setText(text);
+		oxText.setText(error);
 		
 		yesBtn = (Button) popupView.findViewById(R.id.yesbtn);
 		yesBtn.setOnClickListener(new View.OnClickListener() {
@@ -161,7 +170,7 @@ public class ErrorPopup {
 		
 		case R.id.actionlayout	:
 			mActionActivity = new ActionActivity();
-			mActionActivity.WhichIntent(activity, context, TargetIntent.Home);
+			mActionActivity.WhichIntent(activity, context, TargetIntent.Remove);
 			break;
 			
 		case R.id.runlayout		:

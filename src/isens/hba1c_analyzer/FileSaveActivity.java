@@ -142,10 +142,10 @@ public class FileSaveActivity extends Activity {
 	
 	public void WhichIntent() { // Activity conversion
 	
-		Intent RemoveIntent = new Intent(getApplicationContext(), RemoveActivity.class);
-		RemoveIntent.putExtra("WhichIntent", whichState);
-		RemoveIntent.putExtra("DataCnt", DataCnt);
-		startActivity(RemoveIntent);
+		Intent nextIntent = new Intent(getApplicationContext(), RemoveActivity.class);
+		nextIntent.putExtra("WhichIntent", whichState);
+		nextIntent.putExtra("DataCnt", DataCnt);
+		startActivity(nextIntent);
 		finish();
 	}
 	

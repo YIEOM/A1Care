@@ -22,7 +22,7 @@ import android.graphics.Typeface;
 /*
  * 
  * Object : Development SW
- * Version : A1Care_v1.3.17-alpha
+ * Version : A1Care_v1.3.18-alpha
  * 
 */
 
@@ -49,7 +49,7 @@ public class HomeActivity extends Activity {
 				  settingBtn,
 				  recordBtn;
 	
-	public enum TargetIntent {Home, HbA1c, NA, Action, Run, Blank, Memory, Result, ResultError, Remove, Image, Date, Setting, SystemSetting, DataSetting, OperatorSetting, Time, Display, HIS, HISSetting, Export, Maintenance, FileSave, ControlFileLoad, PatientFileLoad, NextFile, PreFile, Adjustment, Sound, Calibration, Language, Correlation, Temperature, Lamp, Convert}
+	public enum TargetIntent {Home, HbA1c, NA, Action, Run, Blank, Record, Result, ResultError, Remove, Image, Date, Setting, SystemSetting, DataSetting, OperatorSetting, Time, Display, HIS, HISSetting, Export, Maintenance, FileSave, ControlFileLoad, PatientFileLoad, NextFile, PreFile, Adjustment, Sound, Calibration, Language, Correlation, Temperature, Lamp, Convert}
 	
 	public static boolean LoginFlag = true,
 						  CheckFlag;
@@ -123,7 +123,7 @@ public class HomeActivity extends Activity {
 					
 					recordBtn.setEnabled(false);
 				
-					WhichIntent(TargetIntent.Memory);
+					WhichIntent(TargetIntent.Record);
 				}
 			}
 		});
@@ -156,7 +156,7 @@ public class HomeActivity extends Activity {
 			
 			Login(this, this, R.id.homelayout);	
 			
-			if(!LoginFlag) OperatorDisplay(this, this);
+//			if(!LoginFlag) OperatorDisplay(this, this);
 		}
 	}
 	
@@ -168,7 +168,8 @@ public class HomeActivity extends Activity {
 			
 			mOperatorController = new OperatorController(activity, context, layoutid);
 			mOperatorController.LoginDisplay();
-		}
+			
+		} else OperatorDisplay(activity, context);
 		
 		btnState = false;
 	}
@@ -187,32 +188,27 @@ public class HomeActivity extends Activity {
 	
 	public void WhichIntent(TargetIntent Itn) { // Activity conversion
 		
+		Intent nextIntent = null;
+		
 		switch(Itn) {
 		
-		case Action		:				
-			Intent ActionIntent = new Intent(getApplicationContext(), ActionActivity.class);
-			startActivity(ActionIntent);
-			break;
-			
 		case Blank		:			
-			Intent BlankIntent = new Intent(getApplicationContext(), BlankActivity.class); // Change to BLANK Activity
-			startActivity(BlankIntent);
+			nextIntent = new Intent(getApplicationContext(), BlankActivity.class); // Change to BLANK Activity
 			break;
 			
-		case Memory		:			
-			Intent memoryIntent = new Intent(getApplicationContext(), MemoryActivity.class); // Change to MEMORY Activity
-			startActivity(memoryIntent);
+		case Record		:			
+			nextIntent = new Intent(getApplicationContext(), RecordActivity.class); // Change to MEMORY Activity
 			break;
 			
 		case Setting	:
-			Intent SettingIntent = new Intent(getApplicationContext(), SettingActivity.class); // Change to SETTING Activity
-			startActivity(SettingIntent);
+			nextIntent = new Intent(getApplicationContext(), SettingActivity.class); // Change to SETTING Activity
 			break;
 			
 		default			:	
 			break;
 		}
 		
+		startActivity(nextIntent);
 		finish();
 	}
 	

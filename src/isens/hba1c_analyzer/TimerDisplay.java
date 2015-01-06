@@ -78,7 +78,7 @@ public class TimerDisplay {
 													
 							RealTimeSec();
 
-							Log.w("TimerInit", "sec" + Integer.parseInt(rTime[6]));
+//							Log.w("TimerInit", "sec" + Integer.parseInt(rTime[6]));
 							
 							if(Integer.parseInt(rTime[6]) == 0) { // Whenever 00 second
 											

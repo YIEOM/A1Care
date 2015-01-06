@@ -175,11 +175,13 @@ public class ResultActivity extends Activity {
 		
 		if(ItnData == RunActivity.NORMAL_OPERATION) {
 			
-			if(HomeActivity.ANALYZER_SW == HomeActivity.DEVEL) {
+//			if(HomeActivity.ANALYZER_SW == HomeActivity.DEVEL) {
+//				
+//				RunActivity.HbA1cValue = 5.2;
+//			
+//			} else 
 				
-				RunActivity.HbA1cValue = 5.2;
-			
-			} else if(HomeActivity.ANALYZER_SW == HomeActivity.DEMO) {
+			if(HomeActivity.ANALYZER_SW == HomeActivity.DEMO) {
 				
 				int rem;
 				
@@ -388,7 +390,7 @@ public class ResultActivity extends Activity {
 	
 	public void WhichIntent(TargetIntent Itn) { // Activity conversion after intent data deliver
 		
-		Intent DataSaveIntent = new Intent(getApplicationContext(), FileSaveActivity.class);
+		Intent nextIntent = new Intent(getApplicationContext(), FileSaveActivity.class);
 		DecimalFormat photoDfm = new DecimalFormat("0.0"),
 					  absorbDfm = new DecimalFormat("0.0000"),
 					  pIDLenDfm = new DecimalFormat("00");
@@ -399,63 +401,62 @@ public class ResultActivity extends Activity {
 		if(ItnData == RunActivity.NORMAL_OPERATION) UnitConvert(mRunActivity.ConvertHbA1c(ConvertActivity.Primary), ConvertActivity.Primary);
 		else ConvertActivity.Primary = 2;
 		
-		DataSaveIntent.putExtra("RunState", ItnData);
-		DataSaveIntent.putExtra("Year", getTime[0]);
-		DataSaveIntent.putExtra("Month", getTime[1]);
-		DataSaveIntent.putExtra("Day", getTime[2]);
-		DataSaveIntent.putExtra("AmPm", getTime[3]);
-		DataSaveIntent.putExtra("Hour", getTime[4]);
-		DataSaveIntent.putExtra("Minute", getTime[5]);
-		DataSaveIntent.putExtra("DataCnt", dataCnt);
-		DataSaveIntent.putExtra("RefNumber", Barcode.RefNum);
-		DataSaveIntent.putExtra("PatientIDLen", pIDLenDfm.format(PatientIDText.getText().toString().length()));
-		DataSaveIntent.putExtra("PatientID", PatientIDText.getText().toString());
-		DataSaveIntent.putExtra("OperatorLen", pIDLenDfm.format(operator.length()));
-		DataSaveIntent.putExtra("Operator", operator);
-		DataSaveIntent.putExtra("Primary", Integer.toString((int) ConvertActivity.Primary)); // primary
-		DataSaveIntent.putExtra("Hba1cPct", hbA1cCurr);
+		nextIntent.putExtra("RunState", ItnData);
+		nextIntent.putExtra("Year", getTime[0]);
+		nextIntent.putExtra("Month", getTime[1]);
+		nextIntent.putExtra("Day", getTime[2]);
+		nextIntent.putExtra("AmPm", getTime[3]);
+		nextIntent.putExtra("Hour", getTime[4]);
+		nextIntent.putExtra("Minute", getTime[5]);
+		nextIntent.putExtra("DataCnt", dataCnt);
+		nextIntent.putExtra("RefNumber", Barcode.RefNum);
+		nextIntent.putExtra("PatientIDLen", pIDLenDfm.format(PatientIDText.getText().toString().length()));
+		nextIntent.putExtra("PatientID", PatientIDText.getText().toString());
+		nextIntent.putExtra("OperatorLen", pIDLenDfm.format(operator.length()));
+		nextIntent.putExtra("Operator", operator);
+		nextIntent.putExtra("Primary", Integer.toString((int) ConvertActivity.Primary)); // primary
+		nextIntent.putExtra("Hba1cPct", hbA1cCurr);
 		
-		DataSaveIntent.putExtra("RunMin", (int) RunActivity.runMin);
-		DataSaveIntent.putExtra("RunSec", (int) RunActivity.runSec);
-		DataSaveIntent.putExtra("BlankVal0", photoDfm.format(RunActivity.BlankValue[0]));
-		DataSaveIntent.putExtra("BlankVal1", photoDfm.format(RunActivity.BlankValue[1]));
-		DataSaveIntent.putExtra("BlankVal2", photoDfm.format(RunActivity.BlankValue[2]));
-		DataSaveIntent.putExtra("BlankVal3", photoDfm.format(RunActivity.BlankValue[3]));
-		DataSaveIntent.putExtra("St1Abs1by0", absorbDfm.format(RunActivity.Step1stAbsorb1[0]));
-		DataSaveIntent.putExtra("St1Abs1by1", absorbDfm.format(RunActivity.Step1stAbsorb1[1]));
-		DataSaveIntent.putExtra("St1Abs1by2", absorbDfm.format(RunActivity.Step1stAbsorb1[2]));
-		DataSaveIntent.putExtra("St1Abs2by0", absorbDfm.format(RunActivity.Step1stAbsorb2[0]));
-		DataSaveIntent.putExtra("St1Abs2by1", absorbDfm.format(RunActivity.Step1stAbsorb2[1]));
-		DataSaveIntent.putExtra("St1Abs2by2", absorbDfm.format(RunActivity.Step1stAbsorb2[2]));
-		DataSaveIntent.putExtra("St1Abs3by0", absorbDfm.format(RunActivity.Step1stAbsorb3[0]));
-		DataSaveIntent.putExtra("St1Abs3by1", absorbDfm.format(RunActivity.Step1stAbsorb3[1]));
-		DataSaveIntent.putExtra("St1Abs3by2", absorbDfm.format(RunActivity.Step1stAbsorb3[2]));
-		DataSaveIntent.putExtra("St2Abs1by0", absorbDfm.format(RunActivity.Step2ndAbsorb1[0]));
-		DataSaveIntent.putExtra("St2Abs1by1", absorbDfm.format(RunActivity.Step2ndAbsorb1[1]));
-		DataSaveIntent.putExtra("St2Abs1by2", absorbDfm.format(RunActivity.Step2ndAbsorb1[2]));
-		DataSaveIntent.putExtra("St2Abs2by0", absorbDfm.format(RunActivity.Step2ndAbsorb2[0]));
-		DataSaveIntent.putExtra("St2Abs2by1", absorbDfm.format(RunActivity.Step2ndAbsorb2[1]));
-		DataSaveIntent.putExtra("St2Abs2by2", absorbDfm.format(RunActivity.Step2ndAbsorb2[2]));
-		DataSaveIntent.putExtra("St2Abs3by0", absorbDfm.format(RunActivity.Step2ndAbsorb3[0]));
-		DataSaveIntent.putExtra("St2Abs3by1", absorbDfm.format(RunActivity.Step2ndAbsorb3[1]));
-		DataSaveIntent.putExtra("St2Abs3by2", absorbDfm.format(RunActivity.Step2ndAbsorb3[2]));
+		nextIntent.putExtra("RunMin", (int) RunActivity.runMin);
+		nextIntent.putExtra("RunSec", (int) RunActivity.runSec);
+		nextIntent.putExtra("BlankVal0", photoDfm.format(RunActivity.BlankValue[0]));
+		nextIntent.putExtra("BlankVal1", photoDfm.format(RunActivity.BlankValue[1]));
+		nextIntent.putExtra("BlankVal2", photoDfm.format(RunActivity.BlankValue[2]));
+		nextIntent.putExtra("BlankVal3", photoDfm.format(RunActivity.BlankValue[3]));
+		nextIntent.putExtra("St1Abs1by0", absorbDfm.format(RunActivity.Step1stAbsorb1[0]));
+		nextIntent.putExtra("St1Abs1by1", absorbDfm.format(RunActivity.Step1stAbsorb1[1]));
+		nextIntent.putExtra("St1Abs1by2", absorbDfm.format(RunActivity.Step1stAbsorb1[2]));
+		nextIntent.putExtra("St1Abs2by0", absorbDfm.format(RunActivity.Step1stAbsorb2[0]));
+		nextIntent.putExtra("St1Abs2by1", absorbDfm.format(RunActivity.Step1stAbsorb2[1]));
+		nextIntent.putExtra("St1Abs2by2", absorbDfm.format(RunActivity.Step1stAbsorb2[2]));
+		nextIntent.putExtra("St1Abs3by0", absorbDfm.format(RunActivity.Step1stAbsorb3[0]));
+		nextIntent.putExtra("St1Abs3by1", absorbDfm.format(RunActivity.Step1stAbsorb3[1]));
+		nextIntent.putExtra("St1Abs3by2", absorbDfm.format(RunActivity.Step1stAbsorb3[2]));
+		nextIntent.putExtra("St2Abs1by0", absorbDfm.format(RunActivity.Step2ndAbsorb1[0]));
+		nextIntent.putExtra("St2Abs1by1", absorbDfm.format(RunActivity.Step2ndAbsorb1[1]));
+		nextIntent.putExtra("St2Abs1by2", absorbDfm.format(RunActivity.Step2ndAbsorb1[2]));
+		nextIntent.putExtra("St2Abs2by0", absorbDfm.format(RunActivity.Step2ndAbsorb2[0]));
+		nextIntent.putExtra("St2Abs2by1", absorbDfm.format(RunActivity.Step2ndAbsorb2[1]));
+		nextIntent.putExtra("St2Abs2by2", absorbDfm.format(RunActivity.Step2ndAbsorb2[2]));
+		nextIntent.putExtra("St2Abs3by0", absorbDfm.format(RunActivity.Step2ndAbsorb3[0]));
+		nextIntent.putExtra("St2Abs3by1", absorbDfm.format(RunActivity.Step2ndAbsorb3[1]));
+		nextIntent.putExtra("St2Abs3by2", absorbDfm.format(RunActivity.Step2ndAbsorb3[2]));
 		
 		switch(Itn) {
 		
 		case Home		:							
-			DataSaveIntent.putExtra("WhichIntent", (int) HOME_ACTIVITY);
-			startActivity(DataSaveIntent);
+			nextIntent.putExtra("WhichIntent", (int) HOME_ACTIVITY);
 			break;
 
 		case Run	:			
-			DataSaveIntent.putExtra("WhichIntent", (int) ACTION_ACTIVITY);
-			startActivity(DataSaveIntent);
+			nextIntent.putExtra("WhichIntent", (int) ACTION_ACTIVITY);
 			break;
 
 		default			:	
 			break;			
 		}	
 		
+		startActivity(nextIntent);
 		finish();
 	}
 	

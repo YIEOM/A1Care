@@ -42,7 +42,8 @@ public class SystemSettingActivity extends Activity {
 	public AdjustmentFactorActivity mAdjustmentFactorActivity;
 	public ErrorPopup mErrorPopup;
 	
-	public Button escBtn,
+	public Button homeIcon,
+	 			  backIcon,
 				  displayBtn,
 				  dateBtn,
 				  timeBtn,
@@ -65,8 +66,8 @@ public class SystemSettingActivity extends Activity {
 		SystemSettingInit();
 		
 		/*Home Activity activation*/
-		escBtn = (Button)findViewById(R.id.escicon);
-		escBtn.setOnClickListener(new View.OnClickListener() {
+		homeIcon = (Button)findViewById(R.id.homeicon);
+		homeIcon.setOnClickListener(new View.OnClickListener() {
 		
 			public void onClick(View v) {
 			
@@ -74,9 +75,26 @@ public class SystemSettingActivity extends Activity {
 					
 					btnState = true;
 				
-					escBtn.setEnabled(false);
+					homeIcon.setEnabled(false);
 					
 					WhichIntent(TargetIntent.Home);
+				}
+			}
+		});
+		
+		/*Record Activity activation*/
+		backIcon = (Button)findViewById(R.id.backicon);
+		backIcon.setOnClickListener(new View.OnClickListener() {
+		
+			public void onClick(View v) {
+		
+				if(!btnState) {
+					
+					btnState = true;
+				
+					backIcon.setEnabled(false);
+					
+					WhichIntent(TargetIntent.Setting);
 				}
 			}
 		});
@@ -232,52 +250,51 @@ public class SystemSettingActivity extends Activity {
 	
 	public void WhichIntent(TargetIntent Itn) { // Activity conversion
 		
+		Intent nextIntent = null;
+		
 		switch(Itn) {
 		
 		case Home			:				
-			Intent HomeIntent = new Intent(getApplicationContext(), HomeActivity.class);
-			startActivity(HomeIntent);
+			nextIntent = new Intent(getApplicationContext(), HomeActivity.class);
 			break;
-						
+					
+		case Setting		:				
+			nextIntent = new Intent(getApplicationContext(), SettingActivity.class);
+			break;
+			
 		case Display		:				
-			Intent DisplayIntent = new Intent(getApplicationContext(), DisplayActivity.class);
-			startActivity(DisplayIntent);
+			nextIntent = new Intent(getApplicationContext(), DisplayActivity.class);
 			break;
 			
 		case Date			:				
-			Intent DateIntent = new Intent(getApplicationContext(), DateActivity.class);
-			startActivity(DateIntent);
+			nextIntent = new Intent(getApplicationContext(), DateActivity.class);
 			break;
 			
 		case Time			:				
-			Intent TimeIntent = new Intent(getApplicationContext(), TimeActivity.class);
-			startActivity(TimeIntent);
+			nextIntent = new Intent(getApplicationContext(), TimeActivity.class);
 			break;
 			
 		case Sound			:				
-			Intent SoundIntent = new Intent(getApplicationContext(), SoundActivity.class);
-			startActivity(SoundIntent);
+			nextIntent = new Intent(getApplicationContext(), SoundActivity.class);
 			break;
 			
 		case Language		:				
-			Intent LanguageIntent = new Intent(getApplicationContext(), LanguageActivity.class);
-			startActivity(LanguageIntent);
+			nextIntent = new Intent(getApplicationContext(), LanguageActivity.class);
 			break;
 
 		case Correlation	:				
-			Intent CorrelationIntent = new Intent(getApplicationContext(), CorrelationFactorActivity.class);
-			startActivity(CorrelationIntent);
+			nextIntent = new Intent(getApplicationContext(), CorrelationFactorActivity.class);
 			break;
 		
 		case Convert		:
-			Intent ConvertIntent = new Intent(getApplicationContext(), ConvertActivity.class);
-			startActivity(ConvertIntent);
+			nextIntent = new Intent(getApplicationContext(), ConvertActivity.class);
 			break;
 			
 		default		:	
 			break;			
 		}
 		
+		startActivity(nextIntent);
 		finish();
 	}
 	

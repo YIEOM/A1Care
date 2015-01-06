@@ -27,7 +27,7 @@ public class SettingActivity extends Activity {
 	public Button systemBtn,
 				  dataBtn,
 				  operatorBtn,
-				  escIcon;
+				  backIcon;
 	
 	public boolean btnState = false;
 	
@@ -98,8 +98,8 @@ public class SettingActivity extends Activity {
 		});
 		
 		/*Home Activity activation*/
-		escIcon = (Button)findViewById(R.id.escicon);
-		escIcon.setOnClickListener(new View.OnClickListener() {
+		backIcon = (Button)findViewById(R.id.backicon);
+		backIcon.setOnClickListener(new View.OnClickListener() {
 		
 			public void onClick(View v) {
 			
@@ -107,7 +107,7 @@ public class SettingActivity extends Activity {
 					
 					btnState = true;
 					
-					escIcon.setEnabled(false);
+					backIcon.setEnabled(false);
 				
 					WhichIntent(TargetIntent.Home);
 				}
@@ -275,32 +275,31 @@ public class SettingActivity extends Activity {
 
 	public void WhichIntent(TargetIntent Itn) { // Activity conversion
 		
+		Intent nextIntent = null;
+		
 		switch(Itn) {
 		
 		case Home				:				
-			Intent HomeIntent = new Intent(getApplicationContext(), HomeActivity.class);
-			startActivity(HomeIntent);
+			nextIntent = new Intent(getApplicationContext(), HomeActivity.class);
 			break;
 						
 		case SystemSetting		:
-			Intent SystemSettingIntent = new Intent(getApplicationContext(), SystemSettingActivity.class);
-			startActivity(SystemSettingIntent);
+			nextIntent = new Intent(getApplicationContext(), SystemSettingActivity.class);
 			break;
 			
 		case DataSetting		:
-			Intent DataSettingIntent = new Intent(getApplicationContext(), DataSettingActivity.class);
-			startActivity(DataSettingIntent);
+			nextIntent = new Intent(getApplicationContext(), DataSettingActivity.class);
 			break;			
 			
 		case OperatorSetting	:		
-			Intent OperatorIntent = new Intent(getApplicationContext(), OperatorSettingActivity.class);
-			startActivity(OperatorIntent);
+			nextIntent = new Intent(getApplicationContext(), OperatorSettingActivity.class);
 			break;
 			
 		default		:	
 			break;			
 		}
 		
+		startActivity(nextIntent);
 		finish(this);		
 	}
 	

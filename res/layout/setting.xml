@@ -5,11 +5,10 @@
     android:background="@drawable/background" >
     
     <Button
-        android:id="@+id/escicon"
+        android:id="@+id/backicon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="728px"
-        android:background="@drawable/esc_selector" />
+        android:background="@drawable/back_selector" />
     
     <ImageView
         android:layout_width="wrap_content"

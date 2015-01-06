@@ -1125,7 +1125,7 @@ public class RunActivity extends Activity {
 		else {
 		
 			
-		if(A < 0.16) {
+		if(A < 0.168) {
 			
 			return R.string.e111;
 		
@@ -1142,38 +1142,64 @@ public class RunActivity extends Activity {
 	
 	public int HbA1cCalculate() { // Calculation for HbA1c percentage
 		
-		double B, St, Bt, SLA, SHA, BLA, BHA, SLV, SHV, BLV, BHV, a3, b3, b32, a4, b4;
+		double B, St, Bt, C1, C2, SLA, SMA, SHA, BLA, BMA, BHA, SLV, SMV, SHV, BLV, BMV, BHV, SV, SA, BV, BA, a3, b3, a32, b32, a4, b4;
 					
-		B = Absorb2ndHandling();
+		if(HomeActivity.ANALYZER_SW == HomeActivity.NORMAL) {
+			
+			B = Absorb2ndHandling();
+			
+		} else if(HomeActivity.ANALYZER_SW == HomeActivity.DEVEL) {
+			
+			A = 0.1941;
+			B = 0.0853;	
+		}
+		
 		Log.w("tHb Calucation", "thb B : " + B);
 		St = (A - Barcode.b1)/Barcode.a1;
 		tHbDbl = St;
 		Bt = (A - Barcode.b1)/Barcode.a1 + 1;
 		
+		C1 = St * Barcode.f1 + Barcode.f2;
+		C2 = B - C1;
+		
 		SLA = St * Barcode.L / 100;
+		SMA = St * Barcode.M / 100;
 		SHA = St * Barcode.H / 100;
 		BLA = Bt * Barcode.L / 100;
+		BMA = Bt * Barcode.M / 100;
 		BHA = Bt * Barcode.H / 100;
 		
 		SLV = SLA * Barcode.a21 + Barcode.b21;
-		SHV = SHA * Barcode.a22 + Barcode.b22;
+		SMV = SMA * Barcode.a22 + Barcode.b22;
+		SHV = SHA * Barcode.a23 + Barcode.b23;
 		BLV = BLA * Barcode.a21 + Barcode.b21;
-		BHV = BHA * Barcode.a22 + Barcode.b22;
+		BMV = BMA * Barcode.a22 + Barcode.b22;
+		BHV = BHA * Barcode.a23 + Barcode.b23;
 		
-		a3 = (SHV - SLV) / (SHA - SLA);
-		b3 = SLV - (a3 * SLA);
+		SV = (SLV + SMV + SHV) / 3;
+		SA = (SLA + SMA + SHA) / 3;
 		
-		b32 = BLV - (((BHV - BLV) / (BHA - BLA)) * BLA);
+		a3 = SlopeCalculate(SA, SV, SLA, SLV, SMA, SMV, SHA, SHV);
+		b3 = SV - a3*SA;
+		
+		BV = (BLV + BMV + BHV) / 3;
+		BA = (BLA + BMA + BHA) / 3;
+		
+		a32 = SlopeCalculate(BA, BV, BLA, BLV, BMA, BMV, BHA, BHV);
+		b32 = BV - a32*BA;
 		
 		a4 = (b32 - b3) / (Bt - St);
 		b4 = b3 - (a4 * St);
 		
-		HbA1cValue = (B - (St * a4 + b4)) / a3 / St * 100; // %-HbA1c(%)
+		HbA1cValue = (C2 - (St * a4 + b4)) / a3 / St * 100; // %-HbA1c(%)
+		Log.w("tHb Calucation", "HbA1cPctDbl : " + HbA1cValue);
 		
 		HbA1cValue = (Barcode.Sm + Barcode.Ss) * HbA1cValue + (Barcode.Im + Barcode.Is); 
 		
 		HbA1cValue = CF_Slope * (AF_Slope * HbA1cValue + AF_Offset) + CF_Offset;
 		
+		Log.w("tHb Calucation", "C1 : " + C1);
+		Log.w("tHb Calucation", "SV : " + SV + "\nSA : " + SA + "\na3 : " + a3 + "\nb3 : " + b3 + "\nBV : " + BV + "\nBA : " + BA + "\na32 : " + a32 + "\nb32 : " + b32);
 		Log.w("tHb Calucation", "HbA1cPctDbl : " + HbA1cValue);
 		
 		/* TEST Mode */
@@ -1193,6 +1219,18 @@ public class RunActivity extends Activity {
 			
 			return NORMAL_OPERATION;
 		}
+	}
+	
+	public double SlopeCalculate(double x_a, double y_a, double x1, double y1, double x2, double y2,double x3, double y3) {
+		
+		double slope, numerator, denominator;
+		
+		numerator = (y1 - y_a)*(x1 - x_a) + (y2 - y_a)*(x2 - x_a) + (y3 - y_a)*(x3 - x_a);
+		denominator = (x1 - x_a)*(x1 - x_a) + (x2 - x_a)*(x2 - x_a) + (x3 - x_a)*(x3 - x_a);
+		
+		slope = numerator / denominator;
+		
+		return slope;
 	}
 	
 	public double ConvertHbA1c(byte primary) {
@@ -1404,7 +1442,7 @@ public class RunActivity extends Activity {
 
 		TimerDisplay.RXBoardFlag = false;
 		
-		Intent ResultIntent = new Intent(getApplicationContext(), ResultActivity.class);
+		Intent nextIntent = new Intent(getApplicationContext(), ResultActivity.class);
 		
 		SerialPort.Sleep(1000); // Delay of error prevention		
 		
@@ -1414,8 +1452,8 @@ public class RunActivity extends Activity {
 		
 		SerialPort.Sleep(200);
 				
-		ResultIntent.putExtra("RunState", checkError); // Error operation
-		startActivity(ResultIntent);
+		nextIntent.putExtra("RunState", checkError); // Error operation
+		startActivity(nextIntent);
 		
 		finish();
 	}

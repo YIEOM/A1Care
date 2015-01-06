@@ -196,7 +196,7 @@ public class ControlTestActivity extends Activity {
 				
 					backIcon.setEnabled(false);
 					
-					WhichIntent(TargetIntent.Memory);
+					WhichIntent(TargetIntent.Record);
 				}
 			}
 		});
@@ -467,18 +467,18 @@ public class ControlTestActivity extends Activity {
 			finish();
 			break;
 						
-		case Memory		:				
-			Intent MemoryIntent = new Intent(getApplicationContext(), MemoryActivity.class);
+		case Record		:				
+			Intent MemoryIntent = new Intent(getApplicationContext(), RecordActivity.class);
 			startActivity(MemoryIntent);
 			finish();
 			break;
 			
 		case NextFile	:
-			if((RemoveActivity.ControlDataCnt-2)/5 > MemoryActivity.DataPage) {
+			if((RemoveActivity.ControlDataCnt-2)/5 > RecordActivity.DataPage) {
 			
 				Intent NextFileIntent = new Intent(getApplicationContext(), FileLoadActivity.class);
 				NextFileIntent.putExtra("DataCnt", RemoveActivity.ControlDataCnt);
-				NextFileIntent.putExtra("DataPage", ++MemoryActivity.DataPage);
+				NextFileIntent.putExtra("DataPage", ++RecordActivity.DataPage);
 				NextFileIntent.putExtra("Type", (int) FileLoadActivity.CONTROL);
 				startActivity(NextFileIntent);
 				finish();
@@ -486,11 +486,11 @@ public class ControlTestActivity extends Activity {
 			break;
 		
 		case PreFile	:
-			if(MemoryActivity.DataPage > 0){
+			if(RecordActivity.DataPage > 0){
 			
 				Intent PreFileIntent = new Intent(getApplicationContext(), FileLoadActivity.class);
 				PreFileIntent.putExtra("DataCnt", RemoveActivity.ControlDataCnt);
-				PreFileIntent.putExtra("DataPage", --MemoryActivity.DataPage);
+				PreFileIntent.putExtra("DataPage", --RecordActivity.DataPage);
 				PreFileIntent.putExtra("Type", (int) FileLoadActivity.CONTROL);
 				startActivity(PreFileIntent);
 				finish();

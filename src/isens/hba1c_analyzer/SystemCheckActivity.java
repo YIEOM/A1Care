@@ -630,18 +630,20 @@ public class SystemCheckActivity extends Activity {
 	
 	public void WhichIntent(TargetIntent Itn) { // Activity conversion
 		
+		Intent nextIntent = null;
+		
 		switch(Itn) {
 		
 		case Home		:				
-			Intent HomeIntent = new Intent(getApplicationContext(), HomeActivity.class);
-			HomeIntent.putExtra("System Check State", checkError);
-			startActivity(HomeIntent);
+			nextIntent = new Intent(getApplicationContext(), HomeActivity.class);
+			nextIntent.putExtra("System Check State", checkError);
 			break;
 		
 		default		:	
 			break;			
 		}
 		
+		startActivity(nextIntent);
 		finish();
 	}
 	

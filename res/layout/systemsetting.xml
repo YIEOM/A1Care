@@ -4,6 +4,12 @@
     android:layout_height="match_parent"
     android:background="@drawable/background" >
     
+    <Button
+        android:id="@+id/backicon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/back_selector" />
+    
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -41,11 +47,11 @@
         android:layout_marginTop="15px" />
    		
    	<Button
-        android:id="@+id/escicon"
+        android:id="@+id/homeicon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="728px"
-        android:background="@drawable/esc_selector" />
+        android:background="@drawable/home_selector" />
    	   	
    	<RelativeLayout 
    	    android:layout_width="wrap_content"

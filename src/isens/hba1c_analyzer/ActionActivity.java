@@ -361,32 +361,32 @@ public class ActionActivity extends Activity {
 		mGpioPort = new GpioPort();
 		mGpioPort.TriggerHigh();
 		
+		Intent nextIntent = null;
+		
 		switch(Itn) {
 		
 		case Run	:	
-			Intent RunIntent = new Intent(context, RunActivity.class);
-			activity.startActivity(RunIntent);
+			nextIntent = new Intent(context, RunActivity.class);
 			break;
 						
 		case Home	:	
 			ESCButtonFlag = true;
 			
-			Intent HomeIntent = new Intent(context, HomeActivity.class);
-			activity.startActivity(HomeIntent);
+			nextIntent = new Intent(context, HomeActivity.class);
 			break;
 				
 		case Remove	:	
 			ESCButtonFlag = true;
 			
-			Intent RemoveIntent = new Intent(context, RemoveActivity.class);
-			RemoveIntent.putExtra("WhichIntent", (int) ResultActivity.COVER_ACTION_ESC);
-			activity.startActivity(RemoveIntent);
+			nextIntent = new Intent(context, RemoveActivity.class);
+			nextIntent.putExtra("WhichIntent", (int) ResultActivity.COVER_ACTION_ESC);
 			break;
 			
 		default		:	
 			break;			
 		}
 		
+		activity.startActivity(nextIntent);
 		finish(activity);
 	}
 	

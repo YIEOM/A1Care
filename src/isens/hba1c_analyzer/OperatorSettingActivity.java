@@ -457,22 +457,23 @@ public class OperatorSettingActivity extends Activity {
 	
 	public void WhichIntent(TargetIntent Itn) { // Activity conversion
 		
+		Intent nextIntent = null;
+		
 		switch(Itn) {
 		
 		case Home		:				
-			Intent HomeIntent = new Intent(getApplicationContext(), HomeActivity.class);
-			startActivity(HomeIntent);
+			nextIntent = new Intent(getApplicationContext(), HomeActivity.class);
 			break;
 						
 		case Setting	:				
-			Intent SettingIntent = new Intent(getApplicationContext(), SettingActivity.class);
-			startActivity(SettingIntent);
+			nextIntent = new Intent(getApplicationContext(), SettingActivity.class);
 			break;
 			
 		default		:	
 			break;			
 		}	
 		
+		startActivity(nextIntent);
 		finish();
 	}
 	

@@ -133,37 +133,35 @@ public class MaintenanceActivity extends Activity {
 
 	public void WhichIntent(TargetIntent Itn) { // Activity conversion
 		
+		Intent nextIntent = null;
+		
 		switch(Itn) {
 		
 		case Home			:				
-			Intent HomeIntent = new Intent(getApplicationContext(), HomeActivity.class);
-			startActivity(HomeIntent);
+			nextIntent = new Intent(getApplicationContext(), HomeActivity.class);
 			break;
 						
 		case Lamp		:				
-			Intent LampIntent = new Intent(getApplicationContext(), LampActivity.class);
-			startActivity(LampIntent);
+			nextIntent = new Intent(getApplicationContext(), LampActivity.class);
 			break;
 			
 		case Adjustment		:				
-			Intent AdjustIntent = new Intent(getApplicationContext(), AdjustmentFactorActivity.class);
-			startActivity(AdjustIntent);
+			nextIntent = new Intent(getApplicationContext(), AdjustmentFactorActivity.class);
 			break;
 
 		case Calibration		:				
-			Intent calibIntent = new Intent(getApplicationContext(), CalibrationActivity.class);
-			startActivity(calibIntent);
+			nextIntent = new Intent(getApplicationContext(), CalibrationActivity.class);
 			break;
 			
 		case Temperature		:				
-			Intent TemperatureIntent = new Intent(getApplicationContext(), TemperatureActivity.class);
-			startActivity(TemperatureIntent);
+			nextIntent = new Intent(getApplicationContext(), TemperatureActivity.class);
 			break;
 					
 		default		:	
 			break;			
 		}
 		
+		startActivity(nextIntent);
 		finish();
 	}
 	

@@ -345,23 +345,25 @@ public class BlankActivity extends Activity {
 		
 		TimerDisplay.RXBoardFlag = false;
 		
+		Intent nextIntent = null;
+		
 		switch(Itn) {
 		
 		case Home	:				
-			Intent HomeIntent = new Intent(getApplicationContext(), HomeActivity.class);
-			HomeIntent.putExtra("System Check State", (int) checkError);
-			startActivity(HomeIntent);
+			nextIntent = new Intent(getApplicationContext(), HomeActivity.class);
+			nextIntent.putExtra("System Check State", (int) checkError);
 			break;
 			
 		case Action	:				
-			Intent ActionIntent = new Intent(getApplicationContext(), ActionActivity.class);
-			startActivity(ActionIntent);
+			nextIntent = new Intent(getApplicationContext(), ActionActivity.class);
+			startActivity(nextIntent);
 			break;
 			
 		default			:	
 			break;
 		}		
 		
+		startActivity(nextIntent);
 		finish();
 	}
 	

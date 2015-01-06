@@ -11,7 +11,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class MemoryActivity extends Activity {
+public class RecordActivity extends Activity {
 
 	public TimerDisplay mTimerDisplay;
 	
@@ -30,7 +30,7 @@ public class MemoryActivity extends Activity {
 		
 		super.onCreate(savedInstanceState);
 		overridePendingTransition(R.anim.fade, R.anim.hold);
-		setContentView(R.layout.memory);			
+		setContentView(R.layout.record);			
 		
 		MemoryInit();
 
@@ -96,33 +96,33 @@ public class MemoryActivity extends Activity {
 
 	public void WhichIntent(TargetIntent Itn) { // Activity conversion
 		
+		Intent nextIntent = null;
+		
 		switch(Itn) {
 		
 		case Home				:
-			Intent HomeIntent = new Intent(getApplicationContext(), HomeActivity.class);
-			startActivity(HomeIntent);
+			nextIntent = new Intent(getApplicationContext(), HomeActivity.class);
 			break;
 			
 		case ControlFileLoad	:
-			Intent ControlFileLoadIntent = new Intent(getApplicationContext(), FileLoadActivity.class);
-			ControlFileLoadIntent.putExtra("DataCnt", RemoveActivity.ControlDataCnt); // delivering recent data number
-			ControlFileLoadIntent.putExtra("DataPage", DataPage);
-			ControlFileLoadIntent.putExtra("Type", (int) CONTROL);
-			startActivity(ControlFileLoadIntent);
+			nextIntent = new Intent(getApplicationContext(), FileLoadActivity.class);
+			nextIntent.putExtra("DataCnt", RemoveActivity.ControlDataCnt); // delivering recent data number
+			nextIntent.putExtra("DataPage", DataPage);
+			nextIntent.putExtra("Type", (int) CONTROL);
 			break;
 			
 		case PatientFileLoad	:
-			Intent PatientFileLoadIntent = new Intent(getApplicationContext(), FileLoadActivity.class);
-			PatientFileLoadIntent.putExtra("DataCnt", RemoveActivity.PatientDataCnt); // delivering recent data number
-			PatientFileLoadIntent.putExtra("DataPage", DataPage);
-			PatientFileLoadIntent.putExtra("Type", (int) PATIENT);
-			startActivity(PatientFileLoadIntent);
+			nextIntent = new Intent(getApplicationContext(), FileLoadActivity.class);
+			nextIntent.putExtra("DataCnt", RemoveActivity.PatientDataCnt); // delivering recent data number
+			nextIntent.putExtra("DataPage", DataPage);
+			nextIntent.putExtra("Type", (int) PATIENT);
 			break;
 			
 		default					:
 			break;			
 		}
 		
+		startActivity(nextIntent);
 		finish();		
 	}
 	

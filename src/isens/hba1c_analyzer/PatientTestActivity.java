@@ -184,7 +184,7 @@ public class PatientTestActivity extends Activity {
 			}
 		});
 		
-		/*Memory Activity activation*/
+		/*Record Activity activation*/
 		backIcon = (Button)findViewById(R.id.backicon);
 		backIcon.setOnClickListener(new View.OnClickListener() {
 		
@@ -196,7 +196,7 @@ public class PatientTestActivity extends Activity {
 				
 					backIcon.setEnabled(false);
 					
-					WhichIntent(TargetIntent.Memory);
+					WhichIntent(TargetIntent.Record);
 				}
 			}
 		});
@@ -469,19 +469,19 @@ public class PatientTestActivity extends Activity {
 			finish();
 			break;
 						
-		case Memory		:				
-			Intent MemoryIntent = new Intent(getApplicationContext(), MemoryActivity.class);
+		case Record		:				
+			Intent MemoryIntent = new Intent(getApplicationContext(), RecordActivity.class);
 			startActivity(MemoryIntent);
 			finish();
 			break;
 			
 		case NextFile	:
-			Log.w("Which Intent", "Patient : " + RemoveActivity.PatientDataCnt + "Data Page : " + MemoryActivity.DataPage);
-			if((RemoveActivity.PatientDataCnt-2)/5 > MemoryActivity.DataPage) {
+			Log.w("Which Intent", "Patient : " + RemoveActivity.PatientDataCnt + "Data Page : " + RecordActivity.DataPage);
+			if((RemoveActivity.PatientDataCnt-2)/5 > RecordActivity.DataPage) {
 			
 				Intent NextFileIntent = new Intent(getApplicationContext(), FileLoadActivity.class);
 				NextFileIntent.putExtra("DataCnt", RemoveActivity.PatientDataCnt);
-				NextFileIntent.putExtra("DataPage", ++MemoryActivity.DataPage);
+				NextFileIntent.putExtra("DataPage", ++RecordActivity.DataPage);
 				NextFileIntent.putExtra("Type", (int) FileLoadActivity.PATIENT);
 				startActivity(NextFileIntent);
 				finish();
@@ -489,11 +489,11 @@ public class PatientTestActivity extends Activity {
 			break;
 		
 		case PreFile	:
-			if(MemoryActivity.DataPage > 0){
+			if(RecordActivity.DataPage > 0){
 			
 				Intent PreFileIntent = new Intent(getApplicationContext(), FileLoadActivity.class);
 				PreFileIntent.putExtra("DataCnt", RemoveActivity.PatientDataCnt);
-				PreFileIntent.putExtra("DataPage", --MemoryActivity.DataPage);
+				PreFileIntent.putExtra("DataPage", --RecordActivity.DataPage);
 				PreFileIntent.putExtra("Type", (int) FileLoadActivity.PATIENT);
 				startActivity(PreFileIntent);
 				finish();

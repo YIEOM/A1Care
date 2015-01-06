@@ -153,22 +153,23 @@ public class RemoveActivity extends Activity {
 		
 		SerialPort.Sleep(1000);		
 		
+		Intent nextIntent = null;
+		
 		switch(Itn) {
 		
 		case Home		:				
-			Intent HomeIntent = new Intent(getApplicationContext(), HomeActivity.class);
-			startActivity(HomeIntent);
+			nextIntent = new Intent(getApplicationContext(), HomeActivity.class);
 			break;
 						
 		case Blank		:				
-			Intent BlankIntent = new Intent(getApplicationContext(), BlankActivity.class);
-			startActivity(BlankIntent);
+			nextIntent = new Intent(getApplicationContext(), BlankActivity.class);
 			break;
 			
 		default		:	
 			break;			
 		}
 		
+		startActivity(nextIntent);
 		finish();
 	}
 	
