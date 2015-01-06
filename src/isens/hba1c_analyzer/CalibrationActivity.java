@@ -1292,61 +1292,76 @@ public class CalibrationActivity extends Activity{
 	
 	public synchronized void HbA1cCalculation() {
 		
-		double A, 
-			   B, 
-			   St, 
-			   Bt, 
-			   SLA, 
-			   SHA, 
-			   BLA, 
-			   BHA, 
-			   SLV, 
-			   SHV, 
-			   BLV, 
-			   BHV, 
-			   a3, 
-			   b3, 
-			   b32, 
-			   a4, 
-			   b4;
+		double A, B, St, Bt, C1, C2, SLA, SMA, SHA, BLA, BMA, BHA, SLV, SMV, SHV, BLV, BMV, BHV, SV, SA, BV, BA, a3, b3, a32, b32, a4, b4;
 		
 		A = Absorb1stHandling();
 		B = Absorb2ndHandling();
 		
 		Barcode.a1 = 0.009793532;
 		Barcode.b1 = -0.028;
-		Barcode.a21 = 0.050135658;
-		Barcode.b21 = 0.0283;
-		Barcode.a22 = 0.034922675;
-		Barcode.b22 = 0.04333;
-		Barcode.L   = 4.8;
-		Barcode.H   = 9;
+		Barcode.f1  = -0.00073;
+		Barcode.f2  = 0.0361;
+		Barcode.a21 = 0.060055;
+		Barcode.b21 = -0.003032;
+		Barcode.a22 = 0.05014;
+		Barcode.b22 = -0.004829;
+		Barcode.a23 = 0.039032;
+		Barcode.b23 = -0.005064;
+		Barcode.L   = 5.1;
+		Barcode.M 	= 7.1;
+		Barcode.H   = 11.7;
 		
 		St = (A - Barcode.b1)/Barcode.a1;
 		RunActivity.tHbDbl = St;
 		Bt = (A - Barcode.b1)/Barcode.a1 + 1;
 		
+		C1 = St * Barcode.f1 + Barcode.f2;
+		C2 = B - C1;
+		
 		SLA = St * Barcode.L / 100;
+		SMA = St * Barcode.M / 100;
 		SHA = St * Barcode.H / 100;
 		BLA = Bt * Barcode.L / 100;
+		BMA = Bt * Barcode.M / 100;
 		BHA = Bt * Barcode.H / 100;
 		
 		SLV = SLA * Barcode.a21 + Barcode.b21;
-		SHV = SHA * Barcode.a22 + Barcode.b22;
+		SMV = SMA * Barcode.a22 + Barcode.b22;
+		SHV = SHA * Barcode.a23 + Barcode.b23;
 		BLV = BLA * Barcode.a21 + Barcode.b21;
-		BHV = BHA * Barcode.a22 + Barcode.b22;
+		BMV = BMA * Barcode.a22 + Barcode.b22;
+		BHV = BHA * Barcode.a23 + Barcode.b23;
 		
-		a3 = (SHV - SLV) / (SHA - SLA);
-		b3 = SLV - (a3 * SLA);
+		SV = (SLV + SMV + SHV) / 3;
+		SA = (SLA + SMA + SHA) / 3;
 		
-		b32 = BLV - (((BHV - BLV) / (BHA - BLA)) * BLA);
+		a3 = SlopeCalculate(SA, SV, SLA, SLV, SMA, SMV, SHA, SHV);
+		b3 = SV - a3*SA;
+		
+		BV = (BLV + BMV + BHV) / 3;
+		BA = (BLA + BMA + BHA) / 3;
+		
+		a32 = SlopeCalculate(BA, BV, BLA, BLV, BMA, BMV, BHA, BHV);
+		b32 = BV - a32*BA;
 		
 		a4 = (b32 - b3) / (Bt - St);
 		b4 = b3 - (a4 * St);
 		
-		RunActivity.HbA1cValue = (B - (St * a4 + b4)) / a3 / St * 100;
+		RunActivity.HbA1cValue = (C2 - (St * a4 + b4)) / a3 / St * 100; // %-HbA1c(%)
 				
 		RunActivity.HbA1cValue = RunActivity.CF_Slope * (RunActivity.AF_Slope * RunActivity.HbA1cValue + RunActivity.AF_Offset) + RunActivity.CF_Offset;
+	}
+	
+	public double SlopeCalculate(double x_a, double y_a, double x1, double y1, double x2, double y2,double x3, double y3) {
+		
+		double slope, numerator, denominator;
+		
+		numerator = (y1 - y_a)*(x1 - x_a) + (y2 - y_a)*(x2 - x_a) + (y3 - y_a)*(x3 - x_a);
+		denominator = (x1 - x_a)*(x1 - x_a) + (x2 - x_a)*(x2 - x_a) + (x3 - x_a)*(x3 - x_a);
+		
+		slope = numerator / denominator;
+		
+		return slope;
 	}
 	
 	public double Absorb1stHandling() {
