@@ -211,14 +211,14 @@ public class SettingActivity extends Activity {
 		
 		int hundredmsCnt = cnt - longClickTime;
 		
+		BtnColor(this, R.id.cheat2btn, "#30023894");
+		
 		if(hundredmsCnt > 30) {
 			
 			Log.w("Cheat mode", "2nd start");
 			
 			isCheat = true;
 			
-			BtnColor(this, R.id.cheat2btn, "#30023894");
-		
 			timer.cancel();
 			
 			mOperatorController = new OperatorController(this, this, R.id.settinglayout);

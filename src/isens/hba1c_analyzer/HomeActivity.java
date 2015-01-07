@@ -22,17 +22,19 @@ import android.graphics.Typeface;
 /*
  * 
  * Object : Development SW
- * Version : A1Care_v1.3.18-alpha
+ * Version : A1Care_v1.3.20-alpha
  * 
 */
 
 public class HomeActivity extends Activity {
 
+	final static String VERSION = "A1Care_v1.3.20-alpha";
+	
 	final static byte NORMAL = 0,
 					  DEVEL = 1, // Development
 					  DEMO = 2, // Sales department
 					  STABLE = 3, // Motion that TUVSUD require ; Operation for 2 hours
-					  ANALYZER_SW = DEVEL;
+					  ANALYZER_SW = NORMAL;
 
 	final static byte PP = 1,
 			          ES = 2,

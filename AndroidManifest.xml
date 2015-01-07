@@ -44,7 +44,7 @@
         <activity android:name="RunActivity"></activity>
         <activity android:name="BlankActivity"></activity>
         <activity android:name="ResultActivity"></activity>
-    	<activity android:name="MemoryActivity"></activity>
+    	<activity android:name="RecordActivity"></activity>
     	<activity android:name="SettingActivity"></activity>
     	<activity android:name="SystemSettingActivity"></activity>
     	<activity android:name="PatientTestActivity">

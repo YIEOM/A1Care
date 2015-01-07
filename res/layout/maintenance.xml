@@ -310,4 +310,15 @@
         android:textColor="#242424"
         android:background="@drawable/systemsetting_btn_selector" />
     
+   	<TextView
+   	    android:id="@+id/versiontext"
+	    android:layout_width="200px"
+	    android:layout_height="30px"
+	    android:layout_marginLeft="590px"
+	    android:layout_marginTop="440px"
+	    android:gravity="bottom|right"
+        android:typeface="sans"
+        android:textSize="18px"
+        android:textColor="#04A458" />
+   	
 </RelativeLayout>

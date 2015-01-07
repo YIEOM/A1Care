@@ -28,6 +28,7 @@ public class MaintenanceActivity extends Activity {
 	  			  adjustBtn,
 	  			  calibrationBtn,
 	  			  tempBtn;
+	public TextView versionText;
 	
 	public boolean btnState = false;
 	
@@ -36,6 +37,8 @@ public class MaintenanceActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		overridePendingTransition(R.anim.fade, R.anim.hold);
 		setContentView(R.layout.maintenance);
+		
+		versionText = (TextView)findViewById(R.id.versiontext);
 		
 		MaintenanceInit();
 					
@@ -129,6 +132,8 @@ public class MaintenanceActivity extends Activity {
 		
 		mTimerDisplay = new TimerDisplay();
 		mTimerDisplay.ActivityParm(this, R.id.maintenancelayout);
+		
+		versionText.setText(HomeActivity.VERSION);
 	}
 
 	public void WhichIntent(TargetIntent Itn) { // Activity conversion

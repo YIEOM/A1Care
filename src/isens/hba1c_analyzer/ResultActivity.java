@@ -292,37 +292,21 @@ public class ResultActivity extends Activity {
 			
 			txData.delete(0, txData.capacity());
 			
-//			txData.append(getTime[0]);
-//			txData.append(getTime[1]);
-//			txData.append(getTime[2]);
-//			txData.append(getTime[3]);
-//			txData.append(getTime[4]);
-//			txData.append(getTime[5]);
-//			txData.append(dfm.format(tempDataCnt));
-//			txData.append(Barcode.RefNum);
-//			txData.append(pIDLenDfm.format(PatientIDText.getText().toString().length()));
-//			txData.append(PatientIDText.getText().toString());
-//			txData.append(pIDLenDfm.format(operator.length()));
-//			txData.append(operator);
-//			txData.append(Integer.toString((int) primaryByte)); // primary
-////			Log.w("PrintResultData", "primary : " + Integer.toString((int) primaryByte));
-//			txData.append(hbA1cCurr);
-			
-			txData.append("2014");
-			txData.append("11");
-			txData.append("25");
-			txData.append("AM");
-			txData.append("11");
-			txData.append("27");
-			txData.append("9995");
-			txData.append("BAIVA");
-			txData.append("03");
-			txData.append("PID");
-			txData.append("05");
-			txData.append("Guest");
-			txData.append("0"); // primary
+			txData.append(getTime[0]);
+			txData.append(getTime[1]);
+			txData.append(getTime[2]);
+			txData.append(getTime[3]);
+			txData.append(getTime[4]);
+			txData.append(getTime[5]);
+			txData.append(dfm.format(tempDataCnt));
+			txData.append(Barcode.RefNum);
+			txData.append(pIDLenDfm.format(PatientIDText.getText().toString().length()));
+			txData.append(PatientIDText.getText().toString());
+			txData.append(pIDLenDfm.format(operator.length()));
+			txData.append(operator);
+			txData.append(Integer.toString((int) primaryByte)); // primary
 //			Log.w("PrintResultData", "primary : " + Integer.toString((int) primaryByte));
-			txData.append("5.2");
+			txData.append(hbA1cCurr);
 			
 			mSerialPort = new SerialPort();
 			mSerialPort.PrinterTxStart(SerialPort.PRINTRESULT, txData);

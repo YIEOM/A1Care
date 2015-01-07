@@ -145,7 +145,7 @@ public class SystemCheckActivity extends Activity {
 			GpioPort.DoorActState = true;			
 			GpioPort.CartridgeActState = true;
 			
-			SerialPort.Sleep(1500);
+			SerialPort.Sleep(2000);
 			
 			mErrorPopup = new ErrorPopup(activity, context, layoutid);
 			

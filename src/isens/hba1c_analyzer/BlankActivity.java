@@ -77,7 +77,7 @@ public class BlankActivity extends Activity {
 			GpioPort.DoorActState = true;			
 			GpioPort.CartridgeActState = true;
 			
-			SerialPort.Sleep(1500);
+			SerialPort.Sleep(2000);
 			
 			mErrorPopup = new ErrorPopup(activity, context, layoutid);
 			
@@ -314,7 +314,7 @@ public class BlankActivity extends Activity {
 				blankState = errState;
 				break;
 			}
-					
+			
 			if(time++ > rspTime) {
 				
 				blankState = AnalyzerState.NoResponse;
