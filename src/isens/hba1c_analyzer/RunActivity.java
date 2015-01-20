@@ -46,7 +46,8 @@ public class RunActivity extends Activity {
 						FILTER_ERROR 	 = "FE1",
 						CARTRIDGE_ERROR	 = "CE1";
 	
-	final static byte NORMAL_OPERATION = 0;
+	final static byte NORMAL_OPERATION = 0,
+					  DEMO_OPERATION   = 1;
 
 	final static byte FIRST_SHAKING_TIME = 105, // Motor shaking time, default : 6 * 105(sec) = 0630
 					  SECOND_SHAKING_TIME = 90; // Motor shaking time, default : 6 * 90(sec) = 0540
@@ -93,7 +94,9 @@ public class RunActivity extends Activity {
 	public static float AF_Slope,
 						AF_Offset,
 						CF_Slope,
-						CF_Offset;
+						CF_Offset,
+						SF_F1,
+						SF_F2;
 	
 	public AnalyzerState runState;
 	
@@ -182,6 +185,7 @@ public class RunActivity extends Activity {
 					
 					if(HomeActivity.ANALYZER_SW == HomeActivity.DEMO) {
 						
+						checkError = DEMO_OPERATION;
 						runState = AnalyzerState.Step2Position;
 						
 						Cart2ndShaking Cart2ndShakingObjDemo = new Cart2ndShaking();
@@ -568,6 +572,7 @@ public class RunActivity extends Activity {
 					if(HomeActivity.ANALYZER_SW == HomeActivity.DEMO) {
 						
 						runState = AnalyzerState.CartridgeDump;
+						checkError = DEMO_OPERATION;
 						
 						CartDump CartDumpObjDemo = new CartDump(NORMAL_OPERATION);
 						CartDumpObjDemo.start();
@@ -1040,6 +1045,8 @@ public class RunActivity extends Activity {
 	
 	public void RunInit() {
 		
+		Log.w("RunInit", "run");
+		
 		runSec = 0;
 		runMin = 0;
 		MotorShakeFlag = false;
@@ -1148,18 +1155,19 @@ public class RunActivity extends Activity {
 			
 			B = Absorb2ndHandling();
 			
-		} else if(HomeActivity.ANALYZER_SW == HomeActivity.DEVEL) {
+		} else {
 			
 			A = 0.1941;
 			B = 0.0853;	
 		}
 		
-		Log.w("tHb Calucation", "thb B : " + B);
+//		Log.w("tHb Calucation", "thb B : " + B);
 		St = (A - Barcode.b1)/Barcode.a1;
 		tHbDbl = St;
 		Bt = (A - Barcode.b1)/Barcode.a1 + 1;
 		
-		C1 = St * Barcode.f1 + Barcode.f2;
+//		C1 = St * Barcode.f1 + Barcode.f2;
+		C1 = St * RunActivity.SF_F1 + RunActivity.SF_F2;
 		C2 = B - C1;
 		
 		SLA = St * Barcode.L / 100;
@@ -1194,7 +1202,7 @@ public class RunActivity extends Activity {
 		HbA1cValue = (C2 - (St * a4 + b4)) / a3 / St * 100; // %-HbA1c(%)
 		Log.w("tHb Calucation", "HbA1cPctDbl : " + HbA1cValue);
 		
-		HbA1cValue = (Barcode.Sm + Barcode.Ss) * HbA1cValue + (Barcode.Im + Barcode.Is); 
+		HbA1cValue = (Barcode.Sm + Barcode.Ss) * HbA1cValue + (Barcode.Im + Barcode.Is);
 		
 		HbA1cValue = CF_Slope * (AF_Slope * HbA1cValue + AF_Offset) + CF_Offset;
 		

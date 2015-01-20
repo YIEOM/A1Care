@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="isens.hba1c_analyzer"
     android:versionCode="1"
-    android:versionName="1.0"
+    android:versionName="A1Care_v1.3.21-alpha"
     android:sharedUserId="android.uid.system" >
     
     <uses-sdk
@@ -84,6 +84,7 @@
     	</activity>
     	<activity android:name="MaintenanceActivity"></activity>
 		<activity android:name="LampActivity"></activity>
+		<activity android:name="FactorActivity"></activity>
 		
     </application>
     

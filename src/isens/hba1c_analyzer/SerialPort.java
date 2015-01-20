@@ -474,7 +474,7 @@ public class SerialPort {
 		} else return null;
 	}
 	
-	public void BoardRxData2() {
+	public void BoardRxData() {
 		
 		BoardRxData mBoardRxData = new BoardRxData();
 		mBoardRxData.start();
@@ -839,7 +839,19 @@ public class SerialPort {
 	}
 	
 	public void HHBarcodeSerialInit() {
-			
+		
+		try {
+
+            Runtime.getRuntime().exec("ssu -c busybox chmod 0777 /dev/ttyACM0").waitFor();
+    
+        } catch (IOException e) {
+            Log.e("OLE","Runtime Error: "+e.getMessage());
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		mFd = open("/dev/ttyACM0", 9600, 0);
 	}
 	

@@ -17,24 +17,23 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Typeface;
 
 /*
  * 
  * Object : Development SW
- * Version : A1Care_v1.3.20-alpha
  * 
-*/
+ */
 
 public class HomeActivity extends Activity {
-
-	final static String VERSION = "A1Care_v1.3.20-alpha";
 	
 	final static byte NORMAL = 0,
 					  DEVEL = 1, // Development
 					  DEMO = 2, // Sales department
 					  STABLE = 3, // Motion that TUVSUD require ; Operation for 2 hours
-					  ANALYZER_SW = NORMAL;
+					  ANALYZER_SW = DEMO;
 
 	final static byte PP = 1,
 			          ES = 2,
@@ -51,14 +50,15 @@ public class HomeActivity extends Activity {
 				  settingBtn,
 				  recordBtn;
 	
-	public enum TargetIntent {Home, HbA1c, NA, Action, Run, Blank, Record, Result, ResultError, Remove, Image, Date, Setting, SystemSetting, DataSetting, OperatorSetting, Time, Display, HIS, HISSetting, Export, Maintenance, FileSave, ControlFileLoad, PatientFileLoad, NextFile, PreFile, Adjustment, Sound, Calibration, Language, Correlation, Temperature, Lamp, Convert}
+	public enum TargetIntent {Home, HbA1c, NA, Action, Run, Blank, Record, Result, ResultError, Remove, Image, Date, Setting, SystemSetting, DataSetting, OperatorSetting, Time, Display, HIS, HISSetting, Export, Maintenance, FileSave, ControlFileLoad, PatientFileLoad, NextFile, PreFile, Adjustment, Sound, Calibration, Language, Correlation, Temperature, Lamp, Convert, Absorbance}
 	
 	public static boolean LoginFlag = true,
 						  CheckFlag;
 	
 	public static byte NumofStable = 0;
 	
-	public TextView idText;
+	public TextView idText,
+					demoVerText;
 	
 	public boolean btnState = false;
 	
@@ -144,11 +144,10 @@ public class HomeActivity extends Activity {
 		  		mPool.play(mWin, 1, 1, 0, 0, 1); // playing sound
 		      }
 		});
-		
+			
 		Intent itn = getIntent();
 		state = itn.getIntExtra("System Check State", 0);
 		
-
 		if(state != 0) {
 			
 			mErrorPopup = new ErrorPopup(this, this, R.id.homelayout);
@@ -160,6 +159,8 @@ public class HomeActivity extends Activity {
 			
 //			if(!LoginFlag) OperatorDisplay(this, this);
 		}
+		
+		DisplayDemo();
 	}
 	
 	public void Login(Activity activity, Context context, int layoutid) {
@@ -186,6 +187,17 @@ public class HomeActivity extends Activity {
 		idText = (TextView) activity.findViewById(R.id.idtext);
 		
 		idText.setText("Operator : " + id);
+	}
+	
+	public void DisplayDemo() {
+		
+		if(ANALYZER_SW == DEMO) {
+			
+			String demoVersion = "A1Care_v1.3.02-demo";
+			
+			demoVerText = (TextView) findViewById(R.id.demovertext);
+			demoVerText.setText(demoVersion);	
+		}
 	}
 	
 	public void WhichIntent(TargetIntent Itn) { // Activity conversion

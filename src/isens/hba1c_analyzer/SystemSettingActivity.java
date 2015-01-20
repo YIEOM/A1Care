@@ -39,7 +39,6 @@ public class SystemSettingActivity extends Activity {
 					  MINUTE_DOWN = 10;
 	
 	public TimerDisplay mTimerDisplay;
-	public AdjustmentFactorActivity mAdjustmentFactorActivity;
 	public ErrorPopup mErrorPopup;
 	
 	public Button homeIcon,
@@ -283,7 +282,9 @@ public class SystemSettingActivity extends Activity {
 			break;
 
 		case Correlation	:				
-			nextIntent = new Intent(getApplicationContext(), CorrelationFactorActivity.class);
+//			nextIntent = new Intent(getApplicationContext(), CorrelationFactorActivity.class);
+			nextIntent = new Intent(getApplicationContext(), FactorActivity.class);
+			nextIntent.putExtra("Factor Mode", (int) FactorActivity.CORRELATION_FACTOR);
 			break;
 		
 		case Convert		:

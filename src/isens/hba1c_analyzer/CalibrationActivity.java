@@ -1357,16 +1357,17 @@ public class CalibrationActivity extends Activity{
 			A = Absorb1stHandling();
 			B = Absorb2ndHandling();
 			
-		} else if(HomeActivity.ANALYZER_SW == HomeActivity.DEVEL) {
+		} else {
 			
 			A = 0.1941;
 			B = 0.0853;	
+		
 		}
 		
 		Barcode.a1 = 0.009793532;
 		Barcode.b1 = -0.028;
-		Barcode.f1  = -0.00077;
-		Barcode.f2  = 0.038228;
+		Barcode.f1  = -0.00080;
+		Barcode.f2  = 0.039884;
 		Barcode.a21 = 0.060055;
 		Barcode.b21 = -0.003032;
 		Barcode.a22 = 0.05014;
@@ -1381,7 +1382,8 @@ public class CalibrationActivity extends Activity{
 		RunActivity.tHbDbl = St;
 		Bt = (A - Barcode.b1)/Barcode.a1 + 1;
 		
-		C1 = St * Barcode.f1 + Barcode.f2;
+//		C1 = St * Barcode.f1 + Barcode.f2;
+		C1 = St * RunActivity.SF_F1 + RunActivity.SF_F2;
 		C2 = B - C1;
 		
 		SLA = St * Barcode.L / 100;

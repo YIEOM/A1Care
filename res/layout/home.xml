@@ -65,4 +65,15 @@
         android:layout_marginLeft="12px"
         android:layout_marginTop="450px" />
               
+    <TextView
+   	    android:id="@+id/demovertext"
+	    android:layout_width="200px"
+	    android:layout_height="30px"
+	    android:layout_marginLeft="590px"
+	    android:layout_marginTop="440px"
+	    android:gravity="bottom|right"
+        android:typeface="sans"
+        android:textSize="18px"
+        android:textColor="#04A458" />
+              
 </RelativeLayout>

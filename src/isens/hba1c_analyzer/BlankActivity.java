@@ -356,7 +356,6 @@ public class BlankActivity extends Activity {
 			
 		case Action	:				
 			nextIntent = new Intent(getApplicationContext(), ActionActivity.class);
-			startActivity(nextIntent);
 			break;
 			
 		default			:	

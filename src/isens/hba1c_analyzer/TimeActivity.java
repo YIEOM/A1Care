@@ -432,7 +432,7 @@ public class TimeActivity extends Activity {
 		c.add(Calendar.MINUTE, setMin);
 		c.add(Calendar.HOUR_OF_DAY, setHour);;
 				
-		TimerDisplay.OneHundredmsPeriod.cancel();
+		TimerDisplay.FiftymsPeriod.cancel();
 		
 		SystemClock.setCurrentTimeMillis(c.getTimeInMillis());
 		

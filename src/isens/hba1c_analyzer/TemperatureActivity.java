@@ -135,18 +135,17 @@ public class TemperatureActivity extends Activity {
 			Log.w("TmpDisplay", "tmpDouble : " + tmpDouble);
 			
 			new Thread(new Runnable() {
-			    public void run() {    
-			        runOnUiThread(new Runnable(){
-			            public void run(){
-			            	
-			            	tmptext.setText(tmpdfm.format(tmpDouble));
-			    			
-			    			readBtn.setEnabled(true);
-			            }
-			        });
-			    }
+				public void run() {    
+					runOnUiThread(new Runnable(){
+						public void run(){
+
+							tmptext.setText(tmpdfm.format(tmpDouble));
+
+							readBtn.setEnabled(true);
+						}
+					});
+				}
 			}).start();
-			
 		}
 	}
 	

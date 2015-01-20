@@ -173,7 +173,7 @@ public class ResultActivity extends Activity {
 		Intent itn = getIntent();
 		ItnData = itn.getIntExtra("RunState", 0);
 		
-		if(ItnData == RunActivity.NORMAL_OPERATION) {
+		if(ItnData == RunActivity.NORMAL_OPERATION || ItnData == RunActivity.DEMO_OPERATION) {
 			
 //			if(HomeActivity.ANALYZER_SW == HomeActivity.DEVEL) {
 //				
@@ -204,6 +204,8 @@ public class ResultActivity extends Activity {
 				default	:
 					break;
 				}
+				
+				ConvertActivity.Primary = ConvertActivity.NGSP;
 			}
 			
 			primaryByte = ConvertActivity.Primary;

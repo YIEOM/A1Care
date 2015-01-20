@@ -9,6 +9,8 @@ import java.util.Calendar;
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
@@ -27,7 +29,9 @@ public class MaintenanceActivity extends Activity {
 	  			  lampBtn,
 	  			  adjustBtn,
 	  			  calibrationBtn,
-	  			  tempBtn;
+	  			  tempBtn,
+	  			  absorbanceBtn;
+	
 	public TextView versionText;
 	
 	public boolean btnState = false;
@@ -126,6 +130,22 @@ public class MaintenanceActivity extends Activity {
 				}
 			}
 		});
+		
+		absorbanceBtn = (Button)findViewById(R.id.absorbancebtn);
+		absorbanceBtn.setOnClickListener(new View.OnClickListener() {
+		
+			public void onClick(View v) {
+				
+				if(!btnState) {
+					
+					btnState = true;
+					
+					lampBtn.setEnabled(false);
+				
+					WhichIntent(TargetIntent.Absorbance);
+				}
+			}
+		});
 	}
 	
 	public void MaintenanceInit() {
@@ -133,7 +153,23 @@ public class MaintenanceActivity extends Activity {
 		mTimerDisplay = new TimerDisplay();
 		mTimerDisplay.ActivityParm(this, R.id.maintenancelayout);
 		
-		versionText.setText(HomeActivity.VERSION);
+		PackageInfo pi = null;
+
+		try {
+
+			pi = getPackageManager().getPackageInfo(getPackageName(), 0);
+
+		} catch (NameNotFoundException e) {
+
+			// TODO Auto-generated catch block
+
+			e.printStackTrace();
+
+		}
+
+		String verSion = pi.versionName;
+		
+		versionText.setText(verSion);
 	}
 
 	public void WhichIntent(TargetIntent Itn) { // Activity conversion
@@ -151,7 +187,8 @@ public class MaintenanceActivity extends Activity {
 			break;
 			
 		case Adjustment		:				
-			nextIntent = new Intent(getApplicationContext(), AdjustmentFactorActivity.class);
+			nextIntent = new Intent(getApplicationContext(), FactorActivity.class);
+			nextIntent.putExtra("Factor Mode", (int) FactorActivity.ADJUSTMENT_FACTOR);
 			break;
 
 		case Calibration		:				
@@ -160,6 +197,11 @@ public class MaintenanceActivity extends Activity {
 			
 		case Temperature		:				
 			nextIntent = new Intent(getApplicationContext(), TemperatureActivity.class);
+			break;
+		
+		case Absorbance		:				
+			nextIntent = new Intent(getApplicationContext(), FactorActivity.class);
+			nextIntent.putExtra("Factor Mode", (int) FactorActivity.ABSORBANCE_FACTOR);
 			break;
 					
 		default		:	

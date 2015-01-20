@@ -139,10 +139,10 @@ public class SystemCheckActivity extends Activity {
 			this.context = context;
 			this.layoutid = layoutid;
 		}
-				
+		
 		public void run() {
 			
-			GpioPort.DoorActState = true;			
+			GpioPort.DoorActState = true;
 			GpioPort.CartridgeActState = true;
 			
 			SerialPort.Sleep(2000);
@@ -611,18 +611,20 @@ public class SystemCheckActivity extends Activity {
 			RemoveActivity.ControlDataCnt = 11;
 		}
 		
-		SharedPreferences AdjustmentPref = getSharedPreferences("User Define", MODE_PRIVATE);
-		RunActivity.AF_Slope = AdjustmentPref.getFloat("AF SlopeVal", 1.0f);
-		RunActivity.AF_Offset = AdjustmentPref.getFloat("AF OffsetVal", 0f);
-		RunActivity.CF_Slope = AdjustmentPref.getFloat("CF SlopeVal", 1.0f);
-		RunActivity.CF_Offset = AdjustmentPref.getFloat("CF OffsetVal", 0f);
+		SharedPreferences factorPref = getSharedPreferences("User Define", MODE_PRIVATE);
+		RunActivity.AF_Slope = factorPref.getFloat("AF SlopeVal", 1.0f);
+		RunActivity.AF_Offset = factorPref.getFloat("AF OffsetVal", 0f);
+		RunActivity.CF_Slope = factorPref.getFloat("CF SlopeVal", 1.0f);
+		RunActivity.CF_Offset = factorPref.getFloat("CF OffsetVal", 0f);
+		RunActivity.SF_F1 = factorPref.getFloat("SF Fct1stVal", 1.0f);
+		RunActivity.SF_F2 = factorPref.getFloat("SF Fct2ndVal", 0f);
 		
 		SharedPreferences convertPref = getSharedPreferences("Primary", MODE_PRIVATE);
 		ConvertActivity.Primary = (byte) convertPref.getInt("Convert", 0);
 		
-		SharedPreferences LoginPref = PreferenceManager.getDefaultSharedPreferences(this);
-		HomeActivity.LoginFlag = LoginPref.getBoolean("Activation", true);
-		HomeActivity.CheckFlag = LoginPref.getBoolean("Check Box", false);
+		SharedPreferences loginPref = PreferenceManager.getDefaultSharedPreferences(this);
+		HomeActivity.LoginFlag = loginPref.getBoolean("Activation", true);
+		HomeActivity.CheckFlag = loginPref.getBoolean("Check Box", false);
 		
 		SharedPreferences temperaturePref = getSharedPreferences("Temperature", MODE_PRIVATE);
 		Temperature.InitTmp = temperaturePref.getFloat("Cell Block", 27.0f);

@@ -35,6 +35,8 @@ public class RemoveActivity extends Activity {
 	}
 	
 	public void RemoveInit() {
+
+		Log.w("Remove", "run");
 		
 		mTimerDisplay = new TimerDisplay();
 		mTimerDisplay.ActivityParm(this, R.id.removelayout);

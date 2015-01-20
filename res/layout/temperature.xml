@@ -67,7 +67,7 @@
         android:imeOptions="actionDone"
         android:inputType="numberDecimal"
         android:longClickable="false"
-        android:background="@drawable/af_slope_box" />
+        android:background="@drawable/factor_box" />
 	
 	<Button
         android:id="@+id/readbtn"
@@ -93,6 +93,6 @@
         android:typeface="sans"
         android:textSize="40px"
         android:textColor="#00AA00"
-        android:background="@drawable/af_slope_box" />
+        android:background="@drawable/factor_box" />
 	
 </RelativeLayout>

@@ -51,7 +51,7 @@ public class LampActivity extends Activity {
 	
 	public RunActivity.AnalyzerState photoState;
 
-	public int checkError = RunActivity.NORMAL_OPERATION;
+	public int checkError;
 	
 	public boolean isNormal = true;
 	
@@ -141,53 +141,6 @@ public class LampActivity extends Activity {
 		mSerialPort = new SerialPort();
 	}
 	
-//	public void TestStart() {
-//
-//		isNormal = true;
-//		isMeasured = false;
-//		
-//		escIcon.setEnabled(false);
-//		
-//		for(int i = 0; i < 3; i++) {
-//			
-//			switch(photoState) {
-//			
-//			case MeasurePosition :
-//				MotionInstruct(RunActivity.MEASURE_POSITION, SerialPort.CtrTarget.PhotoSet);			
-//				BoardMessage(RunActivity.MEASURE_POSITION, AnalyzerState.FilterDark);
-//				break;
-//				
-//			case FilterDark :
-//				MotionInstruct(RunActivity.FILTER_DARK, SerialPort.CtrTarget.PhotoSet);
-//				BoardMessage(RunActivity.FILTER_DARK, AnalyzerState.Filter535nm);
-//				break;
-//				
-//			case Filter535nm :
-//				MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
-//				BoardMessage(RunActivity.NEXT_FILTER, AnalyzerState.Filter535nm);
-//				break;
-//				
-//			default	:
-//				break;
-//			}
-//		}
-//		
-//		if(photoState == AnalyzerState.Filter535nm) {
-//		
-//			DrawThread mDrawThread = new DrawThread(mGraph.GetHolder());
-//			mDrawThread.start();
-//
-//			PhotoMeasure mPhotoMeasure = new PhotoMeasure();
-//			mPhotoMeasure.start();
-//		
-//			cancelBtn.setEnabled(true);
-//			
-//		} else {
-//			
-//			TestCancel();
-//		}
-//	}
-	
 	public void TestStart() {
 
 		isNormal = true;
@@ -198,6 +151,7 @@ public class LampActivity extends Activity {
 		TimerDisplay.RXBoardFlag = true;
 		
 		photoState = AnalyzerState.MeasurePosition;
+		checkError = RunActivity.NORMAL_OPERATION;
 		
 		TestStart mTestStart = new TestStart(this, this, R.id.lamplayout);
 		mTestStart.start();
@@ -309,11 +263,12 @@ public class LampActivity extends Activity {
 					ADCAcquire(adc);
 					MeasureDisplay(isOn, CoordinateAcquire());
 					
-					Log.w("Photo measure", "run");
+//					Log.w("Photo measure", "run");
 					isMeasured = true;
 				
 				} else {
 					
+					checkError = R.string.e241;
 					isNormal = false;
 				}
 			}
@@ -402,7 +357,7 @@ public class LampActivity extends Activity {
 						
 						range = (float) 250/(cdn[5]*12);
 						
-						Log.w("DrawThread", "alpha : " + cdn[5]);
+//						Log.w("DrawThread", "alpha : " + cdn[5]);
 						
 						for(int i = 0; i < (f535nmValue.length-1); i++) {
 							
@@ -454,12 +409,12 @@ public class LampActivity extends Activity {
 			if(value[i] < adcMin) adcMin = (int) value[i];
 		}
 		
-		Log.w("ADCMaxMinAcquire", "Max : " + adcMax + " Min : " + adcMin);
+//		Log.w("ADCMaxMinAcquire", "Max : " + adcMax + " Min : " + adcMin);
 	}
 	
 	public int ADCDiffrence() {
 		
-		Log.w("ADCDiffrence", "difference : " + (adcMax - adcMin));
+//		Log.w("ADCDiffrence", "difference : " + (adcMax - adcMin));
 		
 		return (adcMax - adcMin)/8;
 	}

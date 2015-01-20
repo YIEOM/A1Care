@@ -112,6 +112,7 @@ public class Temperature extends SerialPort {
 			do {
 				
 				tmpData = SensorMessageOutput();
+				Sleep(10);
 			
 			} while(!tmpData.substring(1, 2).equals("T"));
 			

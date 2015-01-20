@@ -89,6 +89,8 @@ public class ActionActivity extends Activity {
 	}
 	
 	public void ActionInit(Activity activity, Context context) {
+
+		Log.w("ActionInit", "run");
 		
 		mTimerDisplay = new TimerDisplay();
 		mTimerDisplay.ActivityParm(activity, R.id.actionlayout);
@@ -351,8 +353,6 @@ public class ActionActivity extends Activity {
 	}
 		
 	public void WhichIntent(Activity activity, Context context, TargetIntent Itn) { // Activity conversion
-			
-//		SerialPort.bBarcodeRxThread.interrupt();
 		
 		TimerDisplay.RXBoardFlag = false;
 		GpioPort.CartridgeActState = false;

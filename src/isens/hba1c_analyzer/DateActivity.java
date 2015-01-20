@@ -395,7 +395,7 @@ public class DateActivity extends Activity {
 	
 	private void DateSave() { // saving the date modified
 		
-		TimerDisplay.OneHundredmsPeriod.cancel(); // finishing the running timer 
+		TimerDisplay.FiftymsPeriod.cancel(); // finishing the running timer 
 		
 		SystemClock.setCurrentTimeMillis(c.getTimeInMillis());
 

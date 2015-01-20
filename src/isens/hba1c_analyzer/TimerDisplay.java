@@ -26,7 +26,7 @@ import android.widget.TextView;
 public class TimerDisplay {
 	
 	public Handler handler = new Handler();
-	public static TimerTask OneHundredmsPeriod;
+	public static TimerTask FiftymsPeriod;
 
 	final static byte TIMER_PERIOD = 1000/20, // 1000/Hz
 					  PERIOD_1sec  = 1000/TIMER_PERIOD, // 1 second
@@ -60,7 +60,7 @@ public class TimerDisplay {
 		
 		Log.w("TimerInit", "run");
 		
-		OneHundredmsPeriod = new TimerTask() {
+		FiftymsPeriod = new TimerTask() {
 			
 			int cnt = 0;
 			
@@ -70,7 +70,7 @@ public class TimerDisplay {
 						
 						if(cnt++ == 1000) cnt = 0;
 						
-						if(RXBoardFlag) mSerialPort.BoardRxData2();
+						if(RXBoardFlag) mSerialPort.BoardRxData();
 						
 						if((cnt % PERIOD_1sec) == 0) { // One second period
 						
@@ -99,7 +99,7 @@ public class TimerDisplay {
 		};
 		
 		timer = new Timer();
-		timer.schedule(OneHundredmsPeriod, 0, TIMER_PERIOD); // Timer period : 10msec
+		timer.schedule(FiftymsPeriod, 0, TIMER_PERIOD); // Timer period : 50ms
 	}
 	
 	public void ExternalDeviceCheck() {
