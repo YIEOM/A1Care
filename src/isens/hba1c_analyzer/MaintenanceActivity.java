@@ -188,7 +188,7 @@ public class MaintenanceActivity extends Activity {
 			
 		case Adjustment		:				
 			nextIntent = new Intent(getApplicationContext(), FactorActivity.class);
-			nextIntent.putExtra("Factor Mode", (int) FactorActivity.ADJUSTMENT_FACTOR);
+			nextIntent.putExtra("Factor Mode", (int) FactorActivity.ADJUSTMENT_FACTOR_SETTING);
 			break;
 
 		case Calibration		:				
@@ -201,7 +201,7 @@ public class MaintenanceActivity extends Activity {
 		
 		case Absorbance		:				
 			nextIntent = new Intent(getApplicationContext(), FactorActivity.class);
-			nextIntent.putExtra("Factor Mode", (int) FactorActivity.ABSORBANCE_FACTOR);
+			nextIntent.putExtra("Factor Mode", (int) FactorActivity.ABSORBANCE_FACTOR_SETTING);
 			break;
 					
 		default		:	

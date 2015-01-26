@@ -1382,7 +1382,6 @@ public class CalibrationActivity extends Activity{
 		RunActivity.tHbDbl = St;
 		Bt = (A - Barcode.b1)/Barcode.a1 + 1;
 		
-//		C1 = St * Barcode.f1 + Barcode.f2;
 		C1 = St * RunActivity.SF_F1 + RunActivity.SF_F2;
 		C2 = B - C1;
 		

@@ -571,8 +571,8 @@ public class RunActivity extends Activity {
 					
 					if(HomeActivity.ANALYZER_SW == HomeActivity.DEMO) {
 						
-						runState = AnalyzerState.CartridgeDump;
 						checkError = DEMO_OPERATION;
+						runState = AnalyzerState.CartridgeDump;
 						
 						CartDump CartDumpObjDemo = new CartDump(NORMAL_OPERATION);
 						CartDumpObjDemo.start();
@@ -1166,7 +1166,6 @@ public class RunActivity extends Activity {
 		tHbDbl = St;
 		Bt = (A - Barcode.b1)/Barcode.a1 + 1;
 		
-//		C1 = St * Barcode.f1 + Barcode.f2;
 		C1 = St * RunActivity.SF_F1 + RunActivity.SF_F2;
 		C2 = B - C1;
 		

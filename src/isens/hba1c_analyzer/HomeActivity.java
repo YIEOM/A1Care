@@ -33,7 +33,7 @@ public class HomeActivity extends Activity {
 					  DEVEL = 1, // Development
 					  DEMO = 2, // Sales department
 					  STABLE = 3, // Motion that TUVSUD require ; Operation for 2 hours
-					  ANALYZER_SW = DEMO;
+					  ANALYZER_SW = NORMAL;
 
 	final static byte PP = 1,
 			          ES = 2,
@@ -194,6 +194,13 @@ public class HomeActivity extends Activity {
 		if(ANALYZER_SW == DEMO) {
 			
 			String demoVersion = "A1Care_v1.3.02-demo";
+			
+			demoVerText = (TextView) findViewById(R.id.demovertext);
+			demoVerText.setText(demoVersion);	
+		
+		} else if(ANALYZER_SW == DEVEL) {
+			
+			String demoVersion = "A1Care_v1.3-devel";
 			
 			demoVerText = (TextView) findViewById(R.id.demovertext);
 			demoVerText.setText(demoVersion);	

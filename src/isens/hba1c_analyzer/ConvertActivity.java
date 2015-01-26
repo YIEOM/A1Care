@@ -165,6 +165,8 @@ public class ConvertActivity extends Activity {
 		convertedit.commit();
 		
 		Primary = (byte) idx;
+		
+		Log.w("ConvertSave", "idx : " + idx);
 	}
 	
 	public void WhichIntent(TargetIntent Itn) { // Activity conversion

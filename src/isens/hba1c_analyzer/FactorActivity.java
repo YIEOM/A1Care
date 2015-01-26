@@ -28,9 +28,9 @@ import android.widget.Toast;
 
 public class FactorActivity extends Activity {
 	
-	final static byte CORRELATION_FACTOR = 0,
-					  ADJUSTMENT_FACTOR = 1,
-					  ABSORBANCE_FACTOR = 2;
+	final static byte CORRELATION_FACTOR_SETTING = 0,
+					  ADJUSTMENT_FACTOR_SETTING = 1,
+					  ABSORBANCE_FACTOR_SETTING = 2;
 	
 	public TimerDisplay mTimerDisplay;
 	
@@ -84,17 +84,17 @@ public class FactorActivity extends Activity {
 		
 		switch(itnData) {
 			
-		case CORRELATION_FACTOR :
+		case CORRELATION_FACTOR_SETTING :
 			DisplayImage(R.drawable.cf_title, R.drawable.cf_icon, R.drawable.af_slope, R.drawable.af_intercept, RunActivity.CF_Slope, RunActivity.CF_Offset);
 			DisplayBackButton();
 			break;
 		
-		case ADJUSTMENT_FACTOR :
+		case ADJUSTMENT_FACTOR_SETTING :
 			DisplayImage(R.drawable.af_title, R.drawable.af_icon, R.drawable.af_slope, R.drawable.af_intercept, RunActivity.AF_Slope, RunActivity.AF_Offset);
 			DisplayESCButton();
 			break;
 		
-		case ABSORBANCE_FACTOR :
+		case ABSORBANCE_FACTOR_SETTING :
 			DisplayImage(R.drawable.sf_title, R.drawable.sf_icon, R.drawable.sf_f1, R.drawable.sf_f2, RunActivity.SF_F1, RunActivity.SF_F2);
 			DisplayESCButton();
 			break;
@@ -178,17 +178,17 @@ public class FactorActivity extends Activity {
 			
 			switch(itnData) {
 			
-			case CORRELATION_FACTOR :
+			case CORRELATION_FACTOR_SETTING :
 				fct1st = RunActivity.CF_Slope;
 				fct2nd = RunActivity.CF_Offset;
 				break;
 			
-			case ADJUSTMENT_FACTOR :
+			case ADJUSTMENT_FACTOR_SETTING :
 				fct1st = RunActivity.AF_Slope;
 				fct2nd = RunActivity.AF_Offset;
 				break;
 			
-			case ABSORBANCE_FACTOR :
+			case ABSORBANCE_FACTOR_SETTING :
 				fct1st = RunActivity.SF_F1;
 				fct2nd = RunActivity.SF_F2;
 				break;
@@ -210,7 +210,7 @@ public class FactorActivity extends Activity {
 		
 		switch(itnData) {
 		
-		case CORRELATION_FACTOR :
+		case CORRELATION_FACTOR_SETTING :
 			mEdit.putFloat("CF SlopeVal", fct1st);
 			mEdit.putFloat("CF OffsetVal", fct2nd);
 			
@@ -218,7 +218,7 @@ public class FactorActivity extends Activity {
 			RunActivity.CF_Offset = fct2nd;
 			break;
 		
-		case ADJUSTMENT_FACTOR :
+		case ADJUSTMENT_FACTOR_SETTING :
 			mEdit.putFloat("AF SlopeVal", fct1st);
 			mEdit.putFloat("AF OffsetVal", fct2nd);
 			
@@ -226,7 +226,7 @@ public class FactorActivity extends Activity {
 			RunActivity.AF_Offset = fct2nd;
 			break;
 		
-		case ABSORBANCE_FACTOR :
+		case ABSORBANCE_FACTOR_SETTING :
 			mEdit.putFloat("SF Fct1stVal", fct1st);
 			mEdit.putFloat("SF Fct2ndVal", fct2nd);
 			

@@ -27,7 +27,9 @@ public class SoundActivity extends Activity {
 				  minusBtn,
 				  plusBtn;
 	
-	public ImageView barGauge;
+	public ImageView titleImage,
+	 				 iconImage, 
+	 				 barGauge;
 	
 	public int volume = 0;
 	
@@ -37,8 +39,10 @@ public class SoundActivity extends Activity {
 		
 		super.onCreate(savedInstanceState);
 		overridePendingTransition(R.anim.fade, R.anim.hold);
-		setContentView(R.layout.sound);
+		setContentView(R.layout.bargauge);
 
+		titleImage = (ImageView) findViewById(R.id.title);
+		iconImage = (ImageView) findViewById(R.id.icon);
 		barGauge = (ImageView) findViewById(R.id.bargauge);
 		
 		/*System Setting Activity activation*/
@@ -56,8 +60,7 @@ public class SoundActivity extends Activity {
 					WhichIntent(TargetIntent.SystemSetting);
 				}
 			}
-		});
-		
+		});		
 		
 		minusBtn = (Button)findViewById(R.id.minusbtn);
 		minusBtn.setOnClickListener(new View.OnClickListener() {
@@ -93,7 +96,10 @@ public class SoundActivity extends Activity {
 	public void SoundInit() {
 		
 		mTimerDisplay = new TimerDisplay();
-		mTimerDisplay.ActivityParm(this, R.id.soundlayout);
+		mTimerDisplay.ActivityParm(this, R.id.bargaugelayout);
+		
+		titleImage.setBackgroundResource(R.drawable.sound_title);
+		iconImage.setBackgroundResource(R.drawable.sound);
 	
 		audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 		

@@ -99,10 +99,6 @@ public class ActionActivity extends Activity {
 		BarcodeCheckFlag = false;
 		SerialPort.BarcodeReadStart = false;
 		
-//		mSerialPort = new SerialPort(R.id.actionlayout);
-//		mSerialPort.BarcodeSerialInit();
-//		mSerialPort.BarcodeRxStart();
-		
 		ESCButtonFlag = false;
 		btnState = false;
 		

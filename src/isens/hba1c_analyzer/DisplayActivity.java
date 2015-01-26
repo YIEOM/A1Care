@@ -20,7 +20,9 @@ public class DisplayActivity extends Activity {
 				  minusBtn,
 				  plusBtn;
 	
-	public ImageView barGauge;
+	public ImageView titleImage,
+					 iconImage, 
+					 barGauge;
 	
 	public int brightnessValue = 0;
 	
@@ -30,8 +32,10 @@ public class DisplayActivity extends Activity {
 		
 		super.onCreate(savedInstanceState);
 		overridePendingTransition(R.anim.fade, R.anim.hold);
-		setContentView(R.layout.display);
+		setContentView(R.layout.bargauge);
 		
+		titleImage = (ImageView) findViewById(R.id.title);
+		iconImage = (ImageView) findViewById(R.id.icon);
 		barGauge = (ImageView) findViewById(R.id.bargauge);
 		
 		/*SystemSetting Activity activation*/
@@ -85,12 +89,15 @@ public class DisplayActivity extends Activity {
 	public void DisplayInit() {
 		
 		mTimerDisplay = new TimerDisplay();		
-		mTimerDisplay.ActivityParm(this, R.id.displaylayout);
+		mTimerDisplay.ActivityParm(this, R.id.bargaugelayout);
+		
+		titleImage.setBackgroundResource(R.drawable.display_title);
+		iconImage.setBackgroundResource(R.drawable.display);
 		
 		try {
 			
 			brightnessValue = android.provider.Settings.System.getInt(getContentResolver(), android.provider.Settings.System.SCREEN_BRIGHTNESS);
-			Log.w("GetBrightness", "Brightness : " + brightnessValue);
+//			Log.w("GetBrightness", "Brightness : " + brightnessValue);
 			
 			GaugeDisplay();
 			
@@ -190,7 +197,7 @@ public class DisplayActivity extends Activity {
 		
 		try {
 			
-			Log.w("SetBrightness", "Brightness : " + brightnessValue);
+//			Log.w("SetBrightness", "Brightness : " + brightnessValue);
 			
 			WindowManager.LayoutParams params = getWindow().getAttributes();
 			params.screenBrightness = (float)brightnessValue/255;

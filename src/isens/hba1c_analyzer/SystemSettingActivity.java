@@ -26,17 +26,7 @@ import android.widget.Toast;
 
 public class SystemSettingActivity extends Activity {
 	
-	final static byte NONE        = 0,
-					  YEAR_UP     = 1,
-					  YEAR_DOWN   = 2,
-					  MONTH_UP    = 3,
-					  MONTH_DOWN  = 4,
-					  DAY_UP      = 5,
-					  DAY_DOWN    = 6,
-					  HOUR_UP     = 7,
-					  HOUR_DOWN   = 8,
-					  MINUTE_UP   = 9,
-					  MINUTE_DOWN = 10;
+	final static byte NONE = 0;					  
 	
 	public TimerDisplay mTimerDisplay;
 	public ErrorPopup mErrorPopup;
@@ -267,10 +257,12 @@ public class SystemSettingActivity extends Activity {
 			
 		case Date			:				
 			nextIntent = new Intent(getApplicationContext(), DateActivity.class);
+			nextIntent.putExtra("Date/Time Mode", (int) DateTimeActivity.DATE_SETTING);
 			break;
 			
 		case Time			:				
 			nextIntent = new Intent(getApplicationContext(), TimeActivity.class);
+			nextIntent.putExtra("Date/Time Mode", (int) DateTimeActivity.TIME_SETTING);
 			break;
 			
 		case Sound			:				
@@ -282,9 +274,8 @@ public class SystemSettingActivity extends Activity {
 			break;
 
 		case Correlation	:				
-//			nextIntent = new Intent(getApplicationContext(), CorrelationFactorActivity.class);
 			nextIntent = new Intent(getApplicationContext(), FactorActivity.class);
-			nextIntent.putExtra("Factor Mode", (int) FactorActivity.CORRELATION_FACTOR);
+			nextIntent.putExtra("Factor Mode", (int) FactorActivity.CORRELATION_FACTOR_SETTING);
 			break;
 		
 		case Convert		:

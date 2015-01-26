@@ -39,7 +39,7 @@ public class FileSaveActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.filesave);
+		setContentView(R.layout.file);
 		
 		Text = (TextView) findViewById(R.id.text);		
 		

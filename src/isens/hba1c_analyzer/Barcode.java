@@ -81,8 +81,6 @@ public class Barcode {
 				
 				a1 = 0.009793532;
 				b1 = -0.028;
-//				f1  = -0.00080;
-//				f2  = 0.039884;
 				a21 = 0.060055;
 				b21 = -0.003032;
 				a22 = 0.05014;
@@ -120,8 +118,6 @@ public class Barcode {
 	}
 	
 	public void BarcodeStop(boolean state) { // Turn off barcode module
-		
-//		SerialPort.bBarcodeRxThread.interrupt();
 		
 		if(state) {
 			

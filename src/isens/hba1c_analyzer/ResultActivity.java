@@ -384,8 +384,12 @@ public class ResultActivity extends Activity {
 		String pID;
 		int pIDLen;
 		
-		if(ItnData == RunActivity.NORMAL_OPERATION) UnitConvert(mRunActivity.ConvertHbA1c(ConvertActivity.Primary), ConvertActivity.Primary);
-		else ConvertActivity.Primary = 2;
+		if(ItnData == RunActivity.NORMAL_OPERATION) {
+			
+			UnitConvert(mRunActivity.ConvertHbA1c(ConvertActivity.Primary), ConvertActivity.Primary);
+			primaryByte = ConvertActivity.Primary;
+		}
+		else primaryByte = 2;
 		
 		nextIntent.putExtra("RunState", ItnData);
 		nextIntent.putExtra("Year", getTime[0]);
@@ -400,7 +404,7 @@ public class ResultActivity extends Activity {
 		nextIntent.putExtra("PatientID", PatientIDText.getText().toString());
 		nextIntent.putExtra("OperatorLen", pIDLenDfm.format(operator.length()));
 		nextIntent.putExtra("Operator", operator);
-		nextIntent.putExtra("Primary", Integer.toString((int) ConvertActivity.Primary)); // primary
+		nextIntent.putExtra("Primary", Integer.toString((int) primaryByte)); // primary
 		nextIntent.putExtra("Hba1cPct", hbA1cCurr);
 		
 		nextIntent.putExtra("RunMin", (int) RunActivity.runMin);
