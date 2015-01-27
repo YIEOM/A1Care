@@ -583,6 +583,7 @@ public class DateTimeActivity extends Activity {
 		month = c.get(Calendar.MONTH) + 1;
 		day = c.get(Calendar.DAY_OF_MONTH);
 	}
+	
 	private void changeDate(int whichDate) {
 		
 		getCurrDate();

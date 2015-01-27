@@ -142,60 +142,60 @@
    	
    	<TextView
    	    android:id="@+id/sample1text"
-   	    android:layout_width="20px"
+   	    android:layout_width="40px"
         android:layout_height="40px"
-        android:text="|\n100"
+        android:text="|\n200"
         android:typeface="sans"
         android:textSize="12px"
-        android:layout_marginLeft="210px"
+        android:layout_marginLeft="200px"
         android:layout_marginTop="386px"
         android:textColor="#565656"
         android:gravity="center" />
    	
    	<TextView
    	    android:id="@+id/sample2text"
-   	    android:layout_width="20px"
+   	    android:layout_width="40px"
         android:layout_height="40px"
-        android:text="|\n75"
+        android:text="|\n150"
         android:typeface="sans"
         android:textSize="12px"
-        android:layout_marginLeft="310px"
+        android:layout_marginLeft="300px"
         android:layout_marginTop="386px"
         android:textColor="#565656"
         android:gravity="center" />
    	
    	<TextView
    	    android:id="@+id/sample3text"
-   	    android:layout_width="20px"
+   	    android:layout_width="40px"
         android:layout_height="40px"
-        android:text="|\n50"
+        android:text="|\n100"
         android:typeface="sans"
         android:textSize="12px"
-        android:layout_marginLeft="410px"
+        android:layout_marginLeft="400px"
         android:layout_marginTop="386px"
         android:textColor="#565656"
         android:gravity="center" />
    	
    	<TextView
    	    android:id="@+id/sample4text"
-   	    android:layout_width="20px"
+   	    android:layout_width="40px"
         android:layout_height="40px"
-        android:text="|\n25"
+        android:text="|\n50"
         android:typeface="sans"
         android:textSize="12px"
-        android:layout_marginLeft="510px"
+        android:layout_marginLeft="500px"
         android:layout_marginTop="386px"
         android:textColor="#565656"
         android:gravity="center" />
    	
    	<TextView
    	    android:id="@+id/sample5text"
-   	    android:layout_width="20px"
+   	    android:layout_width="40px"
         android:layout_height="40px"
         android:text="|\n0"
         android:typeface="sans"
         android:textSize="12px"
-        android:layout_marginLeft="610px"
+        android:layout_marginLeft="600px"
         android:layout_marginTop="386px"
         android:textColor="#565656"
         android:gravity="center" />

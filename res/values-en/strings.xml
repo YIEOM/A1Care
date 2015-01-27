@@ -4,6 +4,9 @@
     <string name="app_name">HbA1c_analyzer</string> 
     <string name="action_settings">Settings</string>
         
+    <string name="shutdown">Shut down this system now?</string>
+    <string name="shuttingdown">Shutting down...</string>
+    <string name="turnoff">Turn the power off</string>
     <string name="result">Result</string>
     <string name="selection">Selection</string>
     <string name="datetime">Date/Time</string>
@@ -59,6 +62,7 @@
     <string name="delete">Confirm to delete</string>
     <string name="w001">Cover open</string>
 	<string name="w002">Please remove cartridge</string>
+	<string name="w003">Do not open cover!!</string>
     <string name="w005">This ID is not proper</string>
     <string name="w011">Please enter ID</string>
     <string name="w012">ID already in use</string>

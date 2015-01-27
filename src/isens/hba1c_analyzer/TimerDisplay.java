@@ -25,9 +25,6 @@ import android.widget.TextView;
 
 public class TimerDisplay {
 	
-	public Handler handler = new Handler();
-	public static TimerTask FiftymsPeriod;
-
 	final static byte TIMER_PERIOD = 1000/20, // 1000/Hz
 					  PERIOD_1sec  = 1000/TIMER_PERIOD, // 1 second
 					  PERIOD_250ms = 250 /TIMER_PERIOD; // 250 milisecond
@@ -36,6 +33,14 @@ public class TimerDisplay {
 			  		  FILE_OPEN 	= 1,
 			  		  FILE_NOT_OPEN = 2;
 	
+	public Timer timer;
+
+	public GpioPort mGpioPort;
+	public SerialPort mSerialPort;
+
+	public Handler handler = new Handler();
+	public static TimerTask FiftymsPeriod;
+
 	public static byte ExternalDeviceBarcode = FILE_CLOSE;
 	
 	public static String rTime[] = new String[8];
@@ -46,11 +51,6 @@ public class TimerDisplay {
 	public static Activity activity;
 	public static int layoutid;
 	
-	public Timer timer;
-
-	public GpioPort mGpioPort;
-	public SerialPort mSerialPort;
-	
 	public static boolean RXBoardFlag = false;
 	
 	public void TimerInit() {
@@ -58,7 +58,7 @@ public class TimerDisplay {
 		mSerialPort = new SerialPort();
 		mGpioPort = new GpioPort();
 		
-		Log.w("TimerInit", "run");
+//		Log.w("TimerInit", "run");
 		
 		FiftymsPeriod = new TimerTask() {
 			
@@ -74,18 +74,18 @@ public class TimerDisplay {
 						
 						if((cnt % PERIOD_1sec) == 0) { // One second period
 						
-							mGpioPort.CartridgeSensorScan();
-													
 							RealTimeSec();
-
+							
+							ExternalDeviceCheck();
+							
+							mGpioPort.CartridgeSensorScan();
+							
 //							Log.w("TimerInit", "sec" + Integer.parseInt(rTime[6]));
 							
 							if(Integer.parseInt(rTime[6]) == 0) { // Whenever 00 second
 											
 								CurrTimeDisplay();
 							}
-
-							ExternalDeviceCheck();
 							
 						} else if((cnt % PERIOD_250ms) == 0) {
 							

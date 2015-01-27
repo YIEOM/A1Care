@@ -68,4 +68,13 @@
         android:textSize="20px"
         android:textColor="#565656" />
     
+    <TextView 
+        android:id="@+id/warningText" 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="400px"
+        android:typeface="sans"
+        android:textSize="24px" />
+    
 </RelativeLayout>

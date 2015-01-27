@@ -10,6 +10,7 @@ import java.util.TimerTask;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -67,7 +68,9 @@ public class RunActivity extends Activity {
 	
 	public Button escIcon;
 	
-	public TextView runTimeText;
+	public TextView runTimeText,
+					warningText;
+	
 	public ImageView barani;
 	
 	public static double BlankValue[]     = new double[4],
@@ -83,9 +86,10 @@ public class RunActivity extends Activity {
 						 Step2ndAbsorb1[] = new double[3],
 						 Step2ndAbsorb2[] = new double[3],
 						 Step2ndAbsorb3[] = new double[3];
-		
-	public static byte runSec = 0,
-					   runMin = 0;
+	
+	public static boolean isRun = false,
+						  isStop = false;
+	
 	
 	public static double tHbDbl,
 						 HbA1cValue,
@@ -105,9 +109,10 @@ public class RunActivity extends Activity {
 	public double A;
 	
 	public boolean btnState = false;
-	
-	public static boolean isStop = false;
-	
+
+	public byte runSec,
+				runMin;
+
 	protected void onCreate(Bundle savedInstanceState) {
 	
 		super.onCreate(savedInstanceState);
@@ -166,7 +171,7 @@ public class RunActivity extends Activity {
 						MotionInstruct(ShkDf.format(30), SerialPort.CtrTarget.MotorSet);
 						ShakingAniThread ShakingAniThreadObj = new ShakingAniThread(174, 5);
 						ShakingAniThreadObj.start();
-					
+						
 					} else if(HomeActivity.ANALYZER_SW == HomeActivity.DEMO) {
 					
 						MotionInstruct(ShkDf.format(18), SerialPort.CtrTarget.MotorSet);
@@ -196,20 +201,20 @@ public class RunActivity extends Activity {
 				case ShakingMotorError	:
 					checkError = R.string.e211;
 					runState = AnalyzerState.NoWorking;
-					WhichIntent(TargetIntent.ResultError);
+					endRun(false);
 					break;
 					
 				case FilterMotorError	:
 					checkError = R.string.e212;
 					MotionInstruct(HOME_POSITION, SerialPort.CtrTarget.PhotoSet);			
 					BoardMessage(HOME_POSITION, AnalyzerState.NoWorking, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 6);
-					WhichIntent(TargetIntent.ResultError);
+					endRun(false);
 					break;
 					
 				case NoResponse 	:
 					Log.w("Cart1stShaking", "NR : " + checkError);
 					runState = AnalyzerState.NoWorking;
-					WhichIntent(TargetIntent.ResultError);
+					endRun(false);
 					break;
 					
 				case Stop			 :
@@ -295,19 +300,19 @@ public class RunActivity extends Activity {
 				case ShakingMotorError	:
 					checkError = R.string.e211;
 					runState = AnalyzerState.NoWorking;
-					WhichIntent(TargetIntent.ResultError);
+					endRun(false);
 					break;
 					
 				case FilterMotorError	:
 					checkError = R.string.e212;
 					MotionInstruct(HOME_POSITION, SerialPort.CtrTarget.PhotoSet);			
 					BoardMessage(HOME_POSITION, AnalyzerState.NoWorking, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 6);
-					WhichIntent(TargetIntent.ResultError);
+					endRun(false);
 					break;
 					
 				case NoResponse			:
 					runState = AnalyzerState.NoWorking;
-					WhichIntent(TargetIntent.ResultError);
+					endRun(false);
 					break;
 				
 				case Stop				:
@@ -384,19 +389,19 @@ public class RunActivity extends Activity {
 				case ShakingMotorError	:
 					checkError = R.string.e211;
 					runState = AnalyzerState.NoWorking;
-					WhichIntent(TargetIntent.ResultError);
+					endRun(false);
 					break;
 					
 				case FilterMotorError	:
 					checkError = R.string.e212;
 					MotionInstruct(HOME_POSITION, SerialPort.CtrTarget.PhotoSet);			
 					BoardMessage(HOME_POSITION, AnalyzerState.NoWorking, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 6);
-					WhichIntent(TargetIntent.ResultError);
+					endRun(false);
 					break;
 					
 				case NoResponse :
 					runState = AnalyzerState.NoWorking;
-					WhichIntent(TargetIntent.ResultError);
+					endRun(false);
 					break;
 					
 				case Stop			 :
@@ -473,19 +478,19 @@ public class RunActivity extends Activity {
 				case ShakingMotorError	:
 					checkError = R.string.e211;
 					runState = AnalyzerState.NoWorking;
-					WhichIntent(TargetIntent.ResultError);
+					endRun(false);
 					break;
 					
 				case FilterMotorError	:
 					checkError = R.string.e212;
 					MotionInstruct(HOME_POSITION, SerialPort.CtrTarget.PhotoSet);			
 					BoardMessage(HOME_POSITION, AnalyzerState.NoWorking, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 6);
-					WhichIntent(TargetIntent.ResultError);
+					endRun(false);
 					break;
 					
 				case NoResponse :
 					runState = AnalyzerState.NoWorking;
-					WhichIntent(TargetIntent.ResultError);
+					endRun(false);
 					break;
 					
 				case Stop			 :
@@ -551,7 +556,7 @@ public class RunActivity extends Activity {
 						MotionInstruct(ShkDf.format(30), SerialPort.CtrTarget.MotorSet);
 						ShakingAniThread ShakingAniThreadObj = new ShakingAniThread(375, 5);
 						ShakingAniThreadObj.start();
-					
+						
 					} else if(HomeActivity.ANALYZER_SW == HomeActivity.DEMO) {
 					
 						MotionInstruct(ShkDf.format(18), SerialPort.CtrTarget.MotorSet);
@@ -582,19 +587,19 @@ public class RunActivity extends Activity {
 				case ShakingMotorError	:
 					checkError = R.string.e211;
 					runState = AnalyzerState.NoWorking;
-					WhichIntent(TargetIntent.ResultError);
+					endRun(false);
 					break;
 					
 				case FilterMotorError	:
 					checkError = R.string.e212;
 					MotionInstruct(HOME_POSITION, SerialPort.CtrTarget.PhotoSet);			
 					BoardMessage(HOME_POSITION, AnalyzerState.NoWorking, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 6);
-					WhichIntent(TargetIntent.ResultError);
+					endRun(false);
 					break;
 					
 				case NoResponse :
 					runState = AnalyzerState.NoWorking;
-					WhichIntent(TargetIntent.ResultError);
+					endRun(false);
 					break;
 					
 				case Stop			 :
@@ -679,19 +684,19 @@ public class RunActivity extends Activity {
 				case ShakingMotorError	:
 					checkError = R.string.e211;
 					runState = AnalyzerState.NoWorking;
-					WhichIntent(TargetIntent.ResultError);
+					endRun(false);
 					break;
 					
 				case FilterMotorError	:
 					checkError = R.string.e212;
 					MotionInstruct(HOME_POSITION, SerialPort.CtrTarget.PhotoSet);			
 					BoardMessage(HOME_POSITION, AnalyzerState.NoWorking, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 6);
-					WhichIntent(TargetIntent.ResultError);
+					endRun(false);
 					break;
 					
 				case NoResponse :
 					runState = AnalyzerState.NoWorking;
-					WhichIntent(TargetIntent.ResultError);
+					endRun(false);
 					break;
 					
 				case Stop			 :
@@ -768,19 +773,19 @@ public class RunActivity extends Activity {
 				case ShakingMotorError	:
 					checkError = R.string.e211;
 					runState = AnalyzerState.NoWorking;
-					WhichIntent(TargetIntent.ResultError);
+					endRun(false);
 					break;
 					
 				case FilterMotorError	:
 					checkError = R.string.e212;
 					MotionInstruct(HOME_POSITION, SerialPort.CtrTarget.PhotoSet);			
 					BoardMessage(HOME_POSITION, AnalyzerState.NoWorking, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 6);
-					WhichIntent(TargetIntent.ResultError);
+					endRun(false);
 					break;
 					
 				case NoResponse :
 					runState = AnalyzerState.NoWorking;
-					WhichIntent(TargetIntent.ResultError);
+					endRun(false);
 					break;
 					
 				case Stop			 :
@@ -857,19 +862,19 @@ public class RunActivity extends Activity {
 				case ShakingMotorError	:
 					checkError = R.string.e211;
 					runState = AnalyzerState.NoWorking;
-					WhichIntent(TargetIntent.ResultError);
+					endRun(false);
 					break;
 					
 				case FilterMotorError	:
 					checkError = R.string.e212;
 					MotionInstruct(HOME_POSITION, SerialPort.CtrTarget.PhotoSet);			
 					BoardMessage(HOME_POSITION, AnalyzerState.NoWorking, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 6);
-					WhichIntent(TargetIntent.ResultError);
+					endRun(false);
 					break;
 					
 				case NoResponse :
 					runState = AnalyzerState.NoWorking;
-					WhichIntent(TargetIntent.ResultError);
+					endRun(false);
 					break;
 				
 				case Stop			 :
@@ -938,19 +943,19 @@ public class RunActivity extends Activity {
 					case ShakingMotorError	:
 						checkError = R.string.e211;
 						runState = AnalyzerState.NoWorking;
-						WhichIntent(TargetIntent.ResultError);
+						endRun(false);
 						break;
 						
 					case FilterMotorError	:
 						checkError = R.string.e212;
 						MotionInstruct(HOME_POSITION, SerialPort.CtrTarget.PhotoSet);			
 						BoardMessage(HOME_POSITION, AnalyzerState.NoWorking, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 6);
-						WhichIntent(TargetIntent.ResultError);
+						endRun(false);
 						break;
 						
 					case NoResponse :
 						runState = AnalyzerState.NoWorking;
-						WhichIntent(TargetIntent.ResultError);
+						endRun(false);
 						break;
 						
 					default	:
@@ -962,7 +967,7 @@ public class RunActivity extends Activity {
 					
 					BarAnimation(586);
 					
-					WhichIntent(TargetIntent.Result);
+					endRun(true);
 				}
 				break;
 				
@@ -970,7 +975,7 @@ public class RunActivity extends Activity {
 				
 				isStop = false;
 				runState = AnalyzerState.FilterDark;
-				Log.w("CartridgeDump", "check Error : " + checkError + " STOP : " + R.string.stop);
+//				Log.w("CartridgeDump", "check Error : " + checkError + " STOP : " + R.string.stop);
 				for(int i = 0; i < 4; i++) {
 					
 					switch(runState) {
@@ -997,19 +1002,19 @@ public class RunActivity extends Activity {
 					case ShakingMotorError	:
 						checkError = R.string.e211;
 						runState = AnalyzerState.NoWorking;
-						WhichIntent(TargetIntent.ResultError);
+						endRun(false);
 						break;
 						
 					case FilterMotorError	:
 						checkError = R.string.e212;
 						MotionInstruct(HOME_POSITION, SerialPort.CtrTarget.PhotoSet);			
 						BoardMessage(HOME_POSITION, AnalyzerState.NoWorking, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 6);
-						WhichIntent(TargetIntent.ResultError);
+						endRun(false);
 						break;
 						
 					case NoResponse :
 						runState = AnalyzerState.NoWorking;
-						WhichIntent(TargetIntent.ResultError);
+						endRun(false);
 						break;
 						
 					default	:
@@ -1021,7 +1026,7 @@ public class RunActivity extends Activity {
 				
 					BarAnimation(586);
 					
-					WhichIntent(TargetIntent.ResultError);
+					endRun(false);
 				}
 				break;
 			}
@@ -1030,25 +1035,34 @@ public class RunActivity extends Activity {
 	
 	public void RunTimeDisplay(Activity activity) { // Display running time
 		
-		if(runSec == 60) {
+		if(isRun) {
 			
-			runMin++;
-			runSec = 0;
+			runTimeText = (TextView) activity.findViewById(R.id.runTimeText);
+			warningText = (TextView) activity.findViewById(R.id.warningText);
+			
+			runTimeText.setText(Integer.toString(runMin) + " min " + Integer.toString(runSec) + " sec");
+			warningText.setText(R.string.w003);
+			if(runSec % 2 == 1) warningText.setTextColor(Color.parseColor("#FF0000"));
+			else warningText.setTextColor(Color.parseColor("#FFFFFF"));
+			
+			if(runSec-- == 0) {
+				
+				if(runMin == 0) isRun = false;
+				
+				runMin--;
+				runSec = 59;
+			}
+			
+		} else {
+			
+			runTimeText.setText("");
 		}
-		
-		runTimeText = (TextView) activity.findViewById(R.id.runTimeText);
-			
-		runTimeText.setText(Integer.toString(runMin) + " min " + Integer.toString(runSec) + " sec");
-
-		runSec++;
 	}
 	
 	public void RunInit() {
 		
-		Log.w("RunInit", "run");
+//		Log.w("RunInit", "run");
 		
-		runSec = 0;
-		runMin = 0;
 		MotorShakeFlag = false;
 		isStop = false;
 		runState = AnalyzerState.InitPosition;
@@ -1068,6 +1082,10 @@ public class RunActivity extends Activity {
 	}
 	
 	public void RunTimerInit(final Activity activity) {
+
+		isRun = true;
+		runMin = 4;
+		runSec = 20;
 		
 		TimerTask OneSecondPeriod = new TimerTask() {
 			
@@ -1249,7 +1267,7 @@ public class RunActivity extends Activity {
 		else {
 			
 			hbA1cValue = (HbA1cValue - 2.152)/0.09148;
-			Log.w("ConvertHbA1c", "IFCC value : " + hbA1cValue);
+//			Log.w("ConvertHbA1c", "IFCC value : " + hbA1cValue);
 			return hbA1cValue;	
 		}
 	}
@@ -1441,24 +1459,44 @@ public class RunActivity extends Activity {
 	
 	public void RunStop() {
 		
+		isRun = false;
+		
 		if(MotorShakeFlag) MotionInstruct(MOTOR_STOP, SerialPort.CtrTarget.MotorStop);
 		else isStop = true;
 	}
 	
-	public void WhichIntent(TargetIntent Itn) { // Activity conversion
-
-		TimerDisplay.RXBoardFlag = false;
+	public void endRun(boolean state) {
 		
+		isRun = state;
+		
+		EndRun mEndRun = new EndRun();
+		mEndRun.start();
+	}
+	
+	public class EndRun extends Thread {
+		
+		public void run() {
+			
+			TimerDisplay.RXBoardFlag = false;
+			
+//			SerialPort.Sleep(500); // Delay of error prevention		
+			
+			mErrorPopup.ErrorPopupClose();
+			
+			while(isRun) SerialPort.Sleep(100);
+			
+			runningTimer.cancel();
+			
+			SerialPort.Sleep(200);
+			
+			whichIntent();
+		}
+	}
+	
+	public void whichIntent() { // Activity conversion
+
 		Intent nextIntent = new Intent(getApplicationContext(), ResultActivity.class);
 		
-		SerialPort.Sleep(1000); // Delay of error prevention		
-		
-		mErrorPopup.ErrorPopupClose();
-		
-		runningTimer.cancel();
-		
-		SerialPort.Sleep(200);
-				
 		nextIntent.putExtra("RunState", checkError); // Error operation
 		startActivity(nextIntent);
 		

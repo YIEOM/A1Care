@@ -31,6 +31,13 @@
         android:layout_marginLeft="578px"
         android:layout_marginTop="15px" />
    		
+   	<Button
+        android:id="@+id/escicon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="728px"
+        android:background="@drawable/esc_selector" />
+   	
     <Button
         android:id="@+id/runbtn"
         android:layout_width="wrap_content"

@@ -256,12 +256,12 @@ public class SystemSettingActivity extends Activity {
 			break;
 			
 		case Date			:				
-			nextIntent = new Intent(getApplicationContext(), DateActivity.class);
+			nextIntent = new Intent(getApplicationContext(), DateTimeActivity.class);
 			nextIntent.putExtra("Date/Time Mode", (int) DateTimeActivity.DATE_SETTING);
 			break;
 			
 		case Time			:				
-			nextIntent = new Intent(getApplicationContext(), TimeActivity.class);
+			nextIntent = new Intent(getApplicationContext(), DateTimeActivity.class);
 			nextIntent.putExtra("Date/Time Mode", (int) DateTimeActivity.TIME_SETTING);
 			break;
 			

@@ -605,7 +605,7 @@ public class SerialPort {
 						BarcodeRxBuffer = new byte[BARCODE_RX_BUFFER_SIZE];
 						size = BarcodeFileInputStream.read(BarcodeRxBuffer);
 	
-						Log.w("BarcodeRxThread", "BarcodeInputBuffer : " + new String(BarcodeRxBuffer));
+//						Log.w("BarcodeRxThread", "BarcodeInputBuffer : " + new String(BarcodeRxBuffer));
 						
 						if(size > 0) {
 							

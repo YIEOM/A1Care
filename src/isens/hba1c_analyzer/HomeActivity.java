@@ -48,14 +48,18 @@ public class HomeActivity extends Activity {
 	
 	public Button runBtn,
 				  settingBtn,
-				  recordBtn;
+				  recordBtn,
+				  escIcon;
 	
-	public enum TargetIntent {Home, HbA1c, NA, Action, Run, Blank, Record, Result, ResultError, Remove, Image, Date, Setting, SystemSetting, DataSetting, OperatorSetting, Time, Display, HIS, HISSetting, Export, Maintenance, FileSave, ControlFileLoad, PatientFileLoad, NextFile, PreFile, Adjustment, Sound, Calibration, Language, Correlation, Temperature, Lamp, Convert, Absorbance}
+	public enum TargetIntent {Home, HbA1c, NA, Action, Run, Blank, Record, Result, Remove, Image, Date, Setting, SystemSetting, DataSetting, OperatorSetting, Time, Display, HIS, HISSetting, Export, Maintenance, FileSave, ControlFileLoad, PatientFileLoad, NextFile, PreFile, Adjustment, Sound, Calibration, Language, Correlation, Temperature, Lamp, Convert, Absorbance, ShutDown}
 	
 	public static boolean LoginFlag = true,
 						  CheckFlag;
 	
 	public static byte NumofStable = 0;
+	
+	public Activity activity;
+	public Context context;
 	
 	public TextView idText,
 					demoVerText;
@@ -88,7 +92,7 @@ public class HomeActivity extends Activity {
 					
 					runBtn.setEnabled(false);
 				
-					WhichIntent(TargetIntent.Blank);
+					WhichIntent(activity, context, TargetIntent.Blank);
 				}
 			}
 		});
@@ -107,7 +111,7 @@ public class HomeActivity extends Activity {
 	
 						settingBtn.setEnabled(false);
 						
-						WhichIntent(TargetIntent.Setting);				
+						WhichIntent(activity, context, TargetIntent.Setting);				
 					}
 				}
 			}
@@ -125,7 +129,23 @@ public class HomeActivity extends Activity {
 					
 					recordBtn.setEnabled(false);
 				
-					WhichIntent(TargetIntent.Record);
+					WhichIntent(activity, context, TargetIntent.Record);
+				}
+			}
+		});
+		
+		escIcon = (Button)findViewById(R.id.escicon);
+		escIcon.setOnClickListener(new View.OnClickListener() { 
+		
+			public void onClick(View v) {
+			
+				if(!btnState) {
+					
+					btnState = true;
+					
+					shutDown();
+					
+					btnState = false;
 				}
 			}
 		});
@@ -134,6 +154,9 @@ public class HomeActivity extends Activity {
 	public void HomeInit() {
 		
 		int state;
+		
+		activity = this;
+		context = this;
 		
 		mTimerDisplay = new TimerDisplay();
 		mTimerDisplay.ActivityParm(this, R.id.homelayout);
@@ -207,30 +230,40 @@ public class HomeActivity extends Activity {
 		}
 	}
 	
-	public void WhichIntent(TargetIntent Itn) { // Activity conversion
+	public void shutDown() {
+		
+		mErrorPopup = new ErrorPopup(this, this, R.id.homelayout);
+		mErrorPopup.OXBtnDisplay(R.string.shutdown);
+	}
+	
+	public void WhichIntent(Activity activity, Context context, TargetIntent Itn) { // Activity conversion
 		
 		Intent nextIntent = null;
 		
 		switch(Itn) {
 		
 		case Blank		:			
-			nextIntent = new Intent(getApplicationContext(), BlankActivity.class); // Change to BLANK Activity
+			nextIntent = new Intent(context, BlankActivity.class); // Change to BLANK Activity
 			break;
 			
 		case Record		:			
-			nextIntent = new Intent(getApplicationContext(), RecordActivity.class); // Change to MEMORY Activity
+			nextIntent = new Intent(context, RecordActivity.class); // Change to MEMORY Activity
 			break;
 			
 		case Setting	:
-			nextIntent = new Intent(getApplicationContext(), SettingActivity.class); // Change to SETTING Activity
+			nextIntent = new Intent(context, SettingActivity.class); // Change to SETTING Activity
+			break;
+			
+		case ShutDown	:
+			nextIntent = new Intent(context, ShutDownActivity.class); // Change to Shut Down Activity
 			break;
 			
 		default			:	
 			break;
 		}
 		
-		startActivity(nextIntent);
-		finish();
+		activity.startActivity(nextIntent);
+		activity.finish();
 	}
 	
 	public void finish() {

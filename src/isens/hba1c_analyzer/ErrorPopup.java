@@ -168,6 +168,11 @@ public class ErrorPopup {
 		
 		switch(layoutid) {
 		
+		case R.id.homelayout	:
+			mHomeActivity = new HomeActivity();
+			mHomeActivity.WhichIntent(activity, context, TargetIntent.ShutDown);
+			break;
+		
 		case R.id.actionlayout	:
 			mActionActivity = new ActionActivity();
 			mActionActivity.WhichIntent(activity, context, TargetIntent.Remove);

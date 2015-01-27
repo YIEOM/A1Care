@@ -47,7 +47,9 @@ public class LampActivity extends Activity {
 	
 	public boolean btnState = false;
 	
-	public double f535nmValue[] = new double[100];
+	public double f535nmValue[] = new double[200];
+	
+	public int numofSample = 0;
 	
 	public RunActivity.AnalyzerState photoState;
 
@@ -220,7 +222,16 @@ public class LampActivity extends Activity {
 				PhotoMeasure mPhotoMeasure = new PhotoMeasure(activity, context, layoutid);
 				mPhotoMeasure.start();
 			
-				cancelBtn.setEnabled(true);
+				new Thread(new Runnable() {			
+					public void run() {    
+						runOnUiThread(new Runnable(){
+							public void run() {
+
+								cancelBtn.setEnabled(true);
+							}
+						});
+					}
+				}).start();
 				break;
 				
 			default	:
@@ -261,6 +272,7 @@ public class LampActivity extends Activity {
 				if(adc != -1.0) {
 					
 					ADCAcquire(adc);
+					numofSample = ADCMaxMinAcquire(f535nmValue);
 					MeasureDisplay(isOn, CoordinateAcquire());
 					
 //					Log.w("Photo measure", "run");
@@ -359,10 +371,10 @@ public class LampActivity extends Activity {
 						
 //						Log.w("DrawThread", "alpha : " + cdn[5]);
 						
-						for(int i = 0; i < (f535nmValue.length-1); i++) {
+						for(int i = (f535nmValue.length-(numofSample-1)); i < (f535nmValue.length-1); i++) {
 							
 //							Log.w("DrawThread", "value : " + f535nmValue[i]);
-							canvas.drawLine(4*i, (float) (250-((f535nmValue[i]-cdn[4])*range)), 4*(i+1), (float) (250-((f535nmValue[i+1]-cdn[4])*range)), pnt);
+							canvas.drawLine(2*i, (float) (250-((f535nmValue[i]-cdn[4])*range)), 2*(i+1), (float) (250-((f535nmValue[i+1]-cdn[4])*range)), pnt);
 						}
 					}
 					
@@ -394,22 +406,33 @@ public class LampActivity extends Activity {
 				f535nmValue[i] = 0;
 			}
 		}
-		
-		ADCMaxMinAcquire(f535nmValue);
 	}
 	
-	public void ADCMaxMinAcquire(double value[]) {
+	public int ADCMaxMinAcquire(double value[]) {
 		
-		adcMax = Integer.MIN_VALUE;
-		adcMin = Integer.MAX_VALUE;
+		double currVal;
+		int num = 0,
+			minLmt,
+			min,
+			max;
+		
+		max = Integer.MIN_VALUE;
+		min = Integer.MAX_VALUE;
 		
 		for(int i = 0; i < value.length; i++) {
 			
-			if(value[i] > adcMax) adcMax = (int) value[i];
-			if(value[i] < adcMin) adcMin = (int) value[i];
+			currVal = value[i];
+			
+			if(currVal > 0) num++; 
+			if(currVal > max) max = (int) currVal;
+			if(currVal > 0 && currVal < min) min = (int) currVal;
 		}
 		
-//		Log.w("ADCMaxMinAcquire", "Max : " + adcMax + " Min : " + adcMin);
+		adcMax = max;
+		adcMin = min;
+		
+		Log.w("ADCMaxMinAcquire", "Max : " + adcMax + " Min : " + adcMin);
+		return num;
 	}
 	
 	public int ADCDiffrence() {

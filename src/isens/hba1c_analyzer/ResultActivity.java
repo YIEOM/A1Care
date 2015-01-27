@@ -407,8 +407,8 @@ public class ResultActivity extends Activity {
 		nextIntent.putExtra("Primary", Integer.toString((int) primaryByte)); // primary
 		nextIntent.putExtra("Hba1cPct", hbA1cCurr);
 		
-		nextIntent.putExtra("RunMin", (int) RunActivity.runMin);
-		nextIntent.putExtra("RunSec", (int) RunActivity.runSec);
+//		nextIntent.putExtra("RunMin", (int) RunActivity.runMin);
+//		nextIntent.putExtra("RunSec", (int) RunActivity.runSec);
 		nextIntent.putExtra("BlankVal0", photoDfm.format(RunActivity.BlankValue[0]));
 		nextIntent.putExtra("BlankVal1", photoDfm.format(RunActivity.BlankValue[1]));
 		nextIntent.putExtra("BlankVal2", photoDfm.format(RunActivity.BlankValue[2]));
