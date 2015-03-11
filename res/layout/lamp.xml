@@ -40,14 +40,14 @@
         android:layout_marginTop="15px" />
     	
    	<Button
-        android:id="@+id/escicon"
+        android:id="@+id/escBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="728px"
         android:background="@drawable/esc_selector" />
 
    	<ImageView
-        android:id="@+id/stateflag1" 
+        android:id="@+id/stateFlag1" 
         android:layout_width="20px"
         android:layout_height="20px"
         android:layout_marginLeft="325px"
@@ -65,14 +65,14 @@
         android:gravity="center" />
 
    	<ImageView
-        android:id="@+id/stateflag2" 
+        android:id="@+id/stateFlag2" 
         android:layout_width="20px"
         android:layout_height="20px"
         android:layout_marginLeft="465px"
         android:layout_marginTop="90px" />
    	   	
    	<TextView
-   	    android:id="@+id/adc1text"
+   	    android:id="@+id/adc1Text"
    	    android:layout_width="60px"
         android:layout_height="20px"
         android:typeface="sans"
@@ -83,7 +83,7 @@
         android:gravity="center_vertical|right" />
    	
    	<TextView
-   	    android:id="@+id/adc2text"
+   	    android:id="@+id/adc2Text"
    	    android:layout_width="60px"
         android:layout_height="20px"
         android:typeface="sans"
@@ -94,7 +94,7 @@
         android:gravity="center_vertical|right" />
    	
    	<TextView
-   	    android:id="@+id/adc3text"
+   	    android:id="@+id/adc3Text"
    	    android:layout_width="60px"
         android:layout_height="20px"
         android:typeface="sans"
@@ -105,7 +105,7 @@
         android:gravity="center_vertical|right" />
    	
    	<TextView
-   	    android:id="@+id/adc4text"
+   	    android:id="@+id/adc4Text"
    	    android:layout_width="60px"
         android:layout_height="20px"
         android:typeface="sans"
@@ -116,7 +116,7 @@
         android:gravity="center_vertical|right" />
    	
    	<TextView
-   	    android:id="@+id/adc5text"
+   	    android:id="@+id/adc5Text"
    	    android:layout_width="60px"
         android:layout_height="20px"
         android:typeface="sans"
@@ -134,14 +134,14 @@
         android:background="#50000000" >
    	    
 	   	<SurfaceView 
-	   	    android:id="@+id/graphbg"
+	   	    android:id="@+id/graphBg"
 	   	    android:layout_width="fill_parent"
 	   	    android:layout_height="fill_parent" />
    	    
    	</RelativeLayout>
    	
    	<TextView
-   	    android:id="@+id/sample1text"
+   	    android:id="@+id/sample1Text"
    	    android:layout_width="40px"
         android:layout_height="40px"
         android:text="|\n200"
@@ -153,7 +153,7 @@
         android:gravity="center" />
    	
    	<TextView
-   	    android:id="@+id/sample2text"
+   	    android:id="@+id/sample2Text"
    	    android:layout_width="40px"
         android:layout_height="40px"
         android:text="|\n150"
@@ -165,7 +165,7 @@
         android:gravity="center" />
    	
    	<TextView
-   	    android:id="@+id/sample3text"
+   	    android:id="@+id/sample3Text"
    	    android:layout_width="40px"
         android:layout_height="40px"
         android:text="|\n100"
@@ -177,7 +177,7 @@
         android:gravity="center" />
    	
    	<TextView
-   	    android:id="@+id/sample4text"
+   	    android:id="@+id/sample4Text"
    	    android:layout_width="40px"
         android:layout_height="40px"
         android:text="|\n50"
@@ -189,7 +189,7 @@
         android:gravity="center" />
    	
    	<TextView
-   	    android:id="@+id/sample5text"
+   	    android:id="@+id/sample5Text"
    	    android:layout_width="40px"
         android:layout_height="40px"
         android:text="|\n0"
@@ -212,7 +212,7 @@
         android:gravity="center" />
     
     <TextView
-        android:id="@+id/adctext"
+        android:id="@+id/adcText"
         android:layout_width="126px"
         android:layout_height="40px"
         android:layout_marginLeft="660px"
@@ -224,7 +224,59 @@
         android:background="@drawable/factor_box" />
     
     <Button
-        android:id="@+id/runbtn"
+        android:id="@+id/darkBtn"
+        android:layout_width="129px"
+        android:layout_height="40px"
+        android:layout_marginLeft="13px"
+        android:layout_marginTop="102px"
+        android:gravity="center"
+	    android:text="DARK FILTER"
+	    android:textStyle="bold"
+        android:typeface="sans"
+        android:textSize="16px"
+        android:textColor="#000000" />
+    
+    <Button
+        android:id="@+id/f535nmBtn"
+        android:layout_width="129px"
+        android:layout_height="40px"
+        android:layout_marginLeft="13px"
+        android:layout_marginTop="152px"
+        android:gravity="center"
+	    android:text="535nm FILTER"
+	    android:textStyle="bold"
+        android:typeface="sans"
+        android:textSize="16px"
+        android:textColor="#228B22" />
+    
+    <Button
+        android:id="@+id/f660nmBtn"
+        android:layout_width="129px"
+        android:layout_height="40px"
+        android:layout_marginLeft="13px"
+        android:layout_marginTop="202px"
+        android:gravity="center"
+	    android:text="660nm FILTER"
+	    android:textStyle="bold"
+        android:typeface="sans"
+        android:textSize="16px"
+        android:textColor="#DC143C" />
+    
+    <Button
+        android:id="@+id/f750nmBtn"
+        android:layout_width="129px"
+        android:layout_height="40px"
+        android:layout_marginLeft="13px"
+        android:layout_marginTop="252px"
+        android:gravity="center"
+	    android:text="750nm FILTER"
+	    android:textStyle="bold"
+        android:typeface="sans"
+        android:textSize="16px"
+        android:textColor="#800000" />
+    
+    <Button
+        android:id="@+id/runBtn"
         android:layout_width="129px"
         android:layout_height="113px"
         android:layout_marginLeft="13px"
@@ -238,7 +290,7 @@
         android:background="@drawable/quick_start_selector" />
     
     <Button
-        android:id="@+id/cancelbtn"
+        android:id="@+id/cancelBtn"
         android:layout_width="129px"
         android:layout_height="114px"
         android:layout_marginLeft="660px"

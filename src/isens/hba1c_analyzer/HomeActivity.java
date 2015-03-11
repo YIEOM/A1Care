@@ -32,12 +32,11 @@ public class HomeActivity extends Activity {
 	final static byte NORMAL = 0,
 					  DEVEL = 1, // Development
 					  DEMO = 2, // Sales department
-					  STABLE = 3, // Motion that TUVSUD require ; Operation for 2 hours
-					  ANALYZER_SW = NORMAL;
+					  ANALYZER_SW = DEVEL;
 
 	final static byte PP = 1,
 			          ES = 2,
-			          ANALYZER_DEVICE = PP;			  
+			          ANALYZER_DEVICE = PP;
 	
 	public DatabaseHander mDatabaseHander;
 	public OperatorController mOperatorController;
@@ -51,7 +50,7 @@ public class HomeActivity extends Activity {
 				  recordBtn,
 				  escIcon;
 	
-	public enum TargetIntent {Home, HbA1c, NA, Action, Run, Blank, Record, Result, Remove, Image, Date, Setting, SystemSetting, DataSetting, OperatorSetting, Time, Display, HIS, HISSetting, Export, Maintenance, FileSave, ControlFileLoad, PatientFileLoad, NextFile, PreFile, Adjustment, Sound, Calibration, Language, Correlation, Temperature, Lamp, Convert, Absorbance, ShutDown}
+	public enum TargetIntent {Home, HbA1c, NA, Action, ActionTemp, Run, Blank, BlankTemp, Record, Result, Remove, Image, Date, Setting, SystemSetting, DataSetting, OperatorSetting, Time, Display, HIS, HISSetting, Export, Maintenance, FileSave, ControlFileLoad, PatientFileLoad, NextFile, PreFile, Adjustment, Sound, Calibration, Language, Correlation, Temperature, Lamp, Convert, Absorbance, ShutDown, ScanTemp, Correction1, Correction2}
 	
 	public static boolean LoginFlag = true,
 						  CheckFlag;
@@ -74,9 +73,6 @@ public class HomeActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		overridePendingTransition(R.anim.fade, R.anim.hold);
 		setContentView(R.layout.home);
-		
-		mPool = new SoundPool(1, AudioManager.STREAM_MUSIC, 0);
-		mWin = mPool.load(this, R.raw.win, 1);
 		
 		HomeInit();
 		
@@ -103,16 +99,13 @@ public class HomeActivity extends Activity {
 		
 			public void onClick(View v) {
 				
-				if(ANALYZER_SW != DEMO) {
-				
-					if(!btnState) {
-						
-						btnState = true;
-	
-						settingBtn.setEnabled(false);
-						
-						WhichIntent(activity, context, TargetIntent.Setting);				
-					}
+				if(!btnState) {
+					
+					btnState = true;
+
+					settingBtn.setEnabled(false);
+					
+					WhichIntent(activity, context, TargetIntent.Setting);				
 				}
 			}
 		});
@@ -158,6 +151,9 @@ public class HomeActivity extends Activity {
 		activity = this;
 		context = this;
 		
+		mPool = new SoundPool(1, AudioManager.STREAM_MUSIC, 0);
+		mWin = mPool.load(this, R.raw.win, 1);
+		
 		mTimerDisplay = new TimerDisplay();
 		mTimerDisplay.ActivityParm(this, R.id.homelayout);
 		
@@ -179,8 +175,6 @@ public class HomeActivity extends Activity {
 		} else {
 			
 			Login(this, this, R.id.homelayout);	
-			
-//			if(!LoginFlag) OperatorDisplay(this, this);
 		}
 		
 		DisplayDemo();
@@ -188,7 +182,7 @@ public class HomeActivity extends Activity {
 	
 	public void Login(Activity activity, Context context, int layoutid) {
 		
-		Log.w("Login", "LoginFlag : " + LoginFlag);
+//		Log.w("Login", "LoginFlag : " + LoginFlag);
 		
 		if(LoginFlag) {
 			
@@ -214,20 +208,24 @@ public class HomeActivity extends Activity {
 	
 	public void DisplayDemo() {
 		
+		String demoVersion;
+		
 		if(ANALYZER_SW == DEMO) {
 			
-			String demoVersion = "A1Care_v1.3.02-demo";
-			
-			demoVerText = (TextView) findViewById(R.id.demovertext);
-			demoVerText.setText(demoVersion);	
+			demoVersion = "A1Care_v1.3.23-demo";
+			DisplayDemoVersion(demoVersion);	
 		
 		} else if(ANALYZER_SW == DEVEL) {
 			
-			String demoVersion = "A1Care_v1.3-devel";
-			
-			demoVerText = (TextView) findViewById(R.id.demovertext);
-			demoVerText.setText(demoVersion);	
+			demoVersion = "A1Care_v1.3-devel";
+			DisplayDemoVersion(demoVersion);
 		}
+	}
+	
+	public void DisplayDemoVersion(String version) {
+		
+		demoVerText = (TextView) findViewById(R.id.demovertext);
+		demoVerText.setText(version);
 	}
 	
 	public void shutDown() {
@@ -256,6 +254,10 @@ public class HomeActivity extends Activity {
 			
 		case ShutDown	:
 			nextIntent = new Intent(context, ShutDownActivity.class); // Change to Shut Down Activity
+			break;
+			
+		case ScanTemp	:
+			nextIntent = new Intent(context, ScanTempActivity.class);
 			break;
 			
 		default			:	

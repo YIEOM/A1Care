@@ -5,7 +5,7 @@
     android:background="@drawable/background" >
     
     <Button
-        android:id="@+id/backicon"
+        android:id="@+id/backBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/back_selector" />
@@ -58,7 +58,7 @@
         android:layout_marginTop="81px" >
    	    
    	    <Button
-	        android:id="@+id/val1stpbtn"
+	        android:id="@+id/val1stpBtn"
 	        android:layout_width="129px"
 	        android:layout_height="114px"
 	        android:background="@drawable/systemsetting_btn_selector" />
@@ -72,7 +72,7 @@
    	</RelativeLayout>
     
    	<TextView
-   	    android:id="@+id/val1sttext"
+   	    android:id="@+id/val1stText"
    	    android:layout_width="150px"
         android:layout_height="wrap_content"
         android:layout_marginLeft="162px"
@@ -89,7 +89,7 @@
         android:layout_marginTop="321px" >
    	    
    	    <Button
-	        android:id="@+id/val1stmbtn"
+	        android:id="@+id/val1stmBtn"
 	        android:layout_width="129px"
 	        android:layout_height="114px"
 	        android:background="@drawable/systemsetting_btn_selector" />
@@ -109,7 +109,7 @@
         android:layout_marginTop="81px" >
    	    
    	    <Button
-	        android:id="@+id/val2ndpbtn"
+	        android:id="@+id/val2ndpBtn"
 	        android:layout_width="129px"
 	        android:layout_height="114px"
 	        android:background="@drawable/systemsetting_btn_selector" />
@@ -123,7 +123,7 @@
    	</RelativeLayout>
    	
    	<TextView
-   	    android:id="@+id/val2ndtext"
+   	    android:id="@+id/val2ndText"
    	    android:layout_width="129px"
         android:layout_height="wrap_content"
         android:layout_marginLeft="361px"
@@ -140,7 +140,7 @@
         android:layout_marginTop="321px" >
    	    
    	    <Button
-	        android:id="@+id/val2ndmbtn"
+	        android:id="@+id/val2ndmBtn"
 	        android:layout_width="129px"
 	        android:layout_height="114px"
 	        android:background="@drawable/systemsetting_btn_selector" />
@@ -160,7 +160,7 @@
         android:layout_marginTop="81px" >
    	    
    	    <Button
-	        android:id="@+id/val3rdpbtn"
+	        android:id="@+id/val3rdpBtn"
 	        android:layout_width="129px"
 	        android:layout_height="114px"
 	        android:background="@drawable/systemsetting_btn_selector" />
@@ -174,7 +174,7 @@
    	</RelativeLayout>
    	
    	<TextView
-   	    android:id="@+id/val3rdtext"
+   	    android:id="@+id/val3rdText"
    	    android:layout_width="129px"
         android:layout_height="wrap_content"
         android:layout_marginLeft="553px"
@@ -191,7 +191,7 @@
         android:layout_marginTop="321px" >
    	    
    	    <Button
-	        android:id="@+id/val3rdmbtn"
+	        android:id="@+id/val3rdmBtn"
 	        android:layout_width="129px"
 	        android:layout_height="114px"
 	        android:background="@drawable/systemsetting_btn_selector" />

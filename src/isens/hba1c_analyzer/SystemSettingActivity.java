@@ -7,6 +7,13 @@ import java.text.DecimalFormat;
 import java.util.Calendar;
 
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
+import isens.hba1c_analyzer.View.ConvertActivity;
+import isens.hba1c_analyzer.View.CorrelationActivity;
+import isens.hba1c_analyzer.View.DateActivity;
+import isens.hba1c_analyzer.View.DisplayActivity;
+import isens.hba1c_analyzer.View.LanguageActivity;
+import isens.hba1c_analyzer.View.SoundActivity;
+import isens.hba1c_analyzer.View.TimeActivity;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -256,13 +263,11 @@ public class SystemSettingActivity extends Activity {
 			break;
 			
 		case Date			:				
-			nextIntent = new Intent(getApplicationContext(), DateTimeActivity.class);
-			nextIntent.putExtra("Date/Time Mode", (int) DateTimeActivity.DATE_SETTING);
+			nextIntent = new Intent(getApplicationContext(), DateActivity.class);
 			break;
 			
 		case Time			:				
-			nextIntent = new Intent(getApplicationContext(), DateTimeActivity.class);
-			nextIntent.putExtra("Date/Time Mode", (int) DateTimeActivity.TIME_SETTING);
+			nextIntent = new Intent(getApplicationContext(), TimeActivity.class);
 			break;
 			
 		case Sound			:				
@@ -274,8 +279,7 @@ public class SystemSettingActivity extends Activity {
 			break;
 
 		case Correlation	:				
-			nextIntent = new Intent(getApplicationContext(), FactorActivity.class);
-			nextIntent.putExtra("Factor Mode", (int) FactorActivity.CORRELATION_FACTOR_SETTING);
+			nextIntent = new Intent(getApplicationContext(), CorrelationActivity.class);
 			break;
 		
 		case Convert		:

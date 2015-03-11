@@ -84,6 +84,7 @@
         android:layout_marginTop="134px" >
    	    
    	    <Button
+	        android:id="@+id/correct1Btn"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:background="@drawable/systemsetting_btn_selector" />
@@ -97,9 +98,9 @@
 		<TextView
 		    android:layout_width="wrap_content"
 		    android:layout_height="wrap_content"
-	        android:layout_marginTop="85px" 
-	        android:layout_centerHorizontal="true"
+	        android:layout_centerInParent="true"
 	        android:gravity="center"
+		    android:text="CORRECTION\nFACTOR1"
 	        android:typeface="sans"
 	        android:textSize="18px"
 	        android:textColor="#242424" />
@@ -113,6 +114,7 @@
         android:layout_marginTop="134px" >
    	    
    	    <Button
+	        android:id="@+id/correct2Btn"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:background="@drawable/systemsetting_btn_selector" />
@@ -120,15 +122,15 @@
 		<ImageView 
 		    android:layout_width="wrap_content"
 		    android:layout_height="wrap_content"
-	        android:layout_marginTop="29px"
+	        android:layout_marginTop="27px"
 		    android:layout_centerHorizontal="true" />
 	        
 		<TextView
 		    android:layout_width="wrap_content"
 		    android:layout_height="wrap_content"
-	        android:layout_marginTop="85px" 
-	        android:layout_centerHorizontal="true"
+	        android:layout_centerInParent="true"
 	        android:gravity="center"
+		    android:text="CORRECTION\nFACTOR2"
 	        android:typeface="sans"
 	        android:textSize="18px"
 	        android:textColor="#242424" />
@@ -313,12 +315,23 @@
         android:background="@drawable/systemsetting_btn_selector" />
     
    	<TextView
-   	    android:id="@+id/versiontext"
-	    android:layout_width="200px"
+   	    android:id="@+id/fwVersionText"
+	    android:layout_width="240px"
 	    android:layout_height="30px"
-	    android:layout_marginLeft="590px"
+        android:layout_marginLeft="12px"
+	    android:layout_marginTop="410px"
+	    android:gravity="left"
+        android:typeface="sans"
+        android:textSize="18px"
+        android:textColor="#04A458" />
+   	
+   	<TextView
+   	    android:id="@+id/swVersionText"
+	    android:layout_width="240px"
+	    android:layout_height="30px"
+        android:layout_marginLeft="12px"
 	    android:layout_marginTop="440px"
-	    android:gravity="bottom|right"
+	    android:gravity="left"
         android:typeface="sans"
         android:textSize="18px"
         android:textColor="#04A458" />

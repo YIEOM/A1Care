@@ -92,13 +92,8 @@ public class FileSaveActivity extends Activity {
 		TempDataCnt = DataCnt % 9999;
 		if(TempDataCnt == 0) TempDataCnt = 9999;
 		
-		if(HomeActivity.ANALYZER_SW != HomeActivity.STABLE) {
-			
-			
 		dataType = itn.getStringExtra("RefNumber").substring(0, 1);
 	
-		} else dataType = "B";
-		
 		overallData.append(itn.getStringExtra("Year"));
 		overallData.append(itn.getStringExtra("Month"));
 		overallData.append(itn.getStringExtra("Day"));

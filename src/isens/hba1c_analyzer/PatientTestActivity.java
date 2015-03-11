@@ -296,16 +296,28 @@ public class PatientTestActivity extends Activity {
 	
 	public void GetItnData() { // getting the intent data
 		
-		Intent itn = getIntent();
+		if(HomeActivity.ANALYZER_SW != HomeActivity.DEMO) {
 		
-		dateTime = itn.getStringArrayExtra("DateTime");
-		testNum  = itn.getStringArrayExtra("TestNum");
-		refNum   = itn.getStringArrayExtra("RefNumber");
-		hbA1c    = itn.getStringArrayExtra("HbA1c");
-		pID      = itn.getStringArrayExtra("PatientID");
-		oID      = itn.getStringArrayExtra("OperatorID");
-		priStr   = itn.getStringArrayExtra("Primary");
+			Intent itn = getIntent();
+			
+			dateTime = itn.getStringArrayExtra("DateTime");
+			testNum  = itn.getStringArrayExtra("TestNum");
+			refNum   = itn.getStringArrayExtra("RefNumber");
+			hbA1c    = itn.getStringArrayExtra("HbA1c");
+			pID      = itn.getStringArrayExtra("PatientID");
+			oID      = itn.getStringArrayExtra("OperatorID");
+			priStr   = itn.getStringArrayExtra("Primary");
 		
+		} else {
+			
+			dateTime[0] = "20150305AM0900";
+			testNum [0] = "0001";
+			refNum  [0] = "DBANA";
+			hbA1c   [0] = "5.5";
+			pID     [0] = "Patient";
+			oID     [0] = "Operator";
+			priStr  [0] = "0";
+		}
 //		Log.w("GetItnData", "Cartridge Lot : " + refNum[0] + " HbA1c : " + hbA1c[0]);
 	}
 	
@@ -349,19 +361,19 @@ public class PatientTestActivity extends Activity {
 		GetItnData();
 		PatientText();
 		
-    	for(int i = 0; i < 5; i++) {
-    		
-    		if(testNum[i] != null) {
-    		
-    			TestNumText [i].setText(testNum[i]);
-    			typeStr     [i] = "HbA1c";
+		for(int i = 0; i < 5; i++) {
+			
+			if(testNum[i] != null) {
+			
+				TestNumText [i].setText(testNum[i]);
+				typeStr     [i] = "HbA1c";
 				TypeText    [i].setText(typeStr[i]);
-    			ResultText  [i].setText(hbA1c[i]);
+				ResultText  [i].setText(hbA1c[i]);
 				if(priStr[i].equals("0")) UnitText[i].setText("%");
 				else UnitText[i].setText("mmol/mol");				
-            	DateTimeText[i].setText(dateTime[i].substring(0, 4) + "." + dateTime[i].substring(4, 6) + "." + dateTime[i].substring(6, 8) + " " + dateTime[i].substring(8, 10) + " " + dateTime[i].substring(10, 12) + ":" + dateTime[i].substring(12, 14));	
-    		}	
-    	}
+	        	DateTimeText[i].setText(dateTime[i].substring(0, 4) + "." + dateTime[i].substring(4, 6) + "." + dateTime[i].substring(6, 8) + " " + dateTime[i].substring(8, 10) + " " + dateTime[i].substring(10, 12) + ":" + dateTime[i].substring(12, 14));	
+			}	
+		}
 	}
 	
 	public void PressedCheckBox(ImageButton box) { // displaying the button pressed
@@ -395,7 +407,7 @@ public class PatientTestActivity extends Activity {
 			   ran;
 		
 		if(checkFlag && testNum[boxNum - 1] != null) {
-				
+			
 			patientID.setText(pID[boxNum - 1]);
 			testDate.setText(dateTime[boxNum - 1].substring(2, 4) + "." + dateTime[boxNum - 1].substring(4, 6) + "." + dateTime[boxNum - 1].substring(6, 8) + " " + dateTime[boxNum - 1].substring(8, 10) + " " + dateTime[boxNum - 1].substring(10, 12) + ":" + dateTime[boxNum - 1].substring(12, 14));
 			typeDetailText.setText(typeStr[boxNum - 1]);

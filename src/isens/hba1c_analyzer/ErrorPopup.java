@@ -1,6 +1,7 @@
 package isens.hba1c_analyzer;
 
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
+import isens.hba1c_analyzer.View.LampActivity;
 import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
@@ -18,14 +19,15 @@ public class ErrorPopup {
 	public RunActivity mRunActivity;
 	public OperatorController mOperatorController;
 	public SystemSettingActivity mSystemSettingActivity;
-	public LampActivity mLampActivity;
+	public LampCopyActivity mLampCopyActivity;
+	public ScanTempActivity mScanTempActivity;
 	
 	public Activity activity;
 	public Context context;
 	public int layoutid, error;
 	
 	public View popupView;
-	public PopupWindow popupWindow;
+	public PopupWindow popupWindow = null;
 	public RelativeLayout hostLayout;
 	
 	public TextView errorText;
@@ -74,7 +76,8 @@ public class ErrorPopup {
 	public void ErrorBtnPopupClose() {
 		
 		popupWindow.dismiss();
-	
+		popupWindow = null;
+		
 		switch(layoutid) {
 		
 		case R.id.homelayout	:
@@ -91,8 +94,13 @@ public class ErrorPopup {
 			break;
 			
 		case R.id.lamplayout	:
-			mLampActivity = new LampActivity();
-			mLampActivity.TestCancel();
+			mLampCopyActivity = new LampCopyActivity();
+			mLampCopyActivity.cancelTest();
+			
+		case R.id.scantemplayout	:
+			mScanTempActivity = new ScanTempActivity();
+			mScanTempActivity.ActionInit(activity, context);
+			break;
 			
 		default	:
 			break;
@@ -101,27 +109,48 @@ public class ErrorPopup {
 
 	public void ErrorDisplay(int error) {
 		
-		hostLayout = (RelativeLayout) activity.findViewById(layoutid);
-		popupView = View.inflate(context, R.layout.errorpopup, null);
-		popupWindow = new PopupWindow(popupView, 800, 480, true);
-	
-		this.error = error;
+		if(popupWindow == null) {
 		
-		errorText = (TextView) popupView.findViewById(R.id.errortext);
-		errorText.setText(error);
+			hostLayout = (RelativeLayout) activity.findViewById(layoutid);
+			popupView = View.inflate(context, R.layout.errorpopup, null);
+			popupWindow = new PopupWindow(popupView, 800, 480, true);
+		
+			this.error = error;
+			
+			errorText = (TextView) popupView.findViewById(R.id.errortext);
+			errorText.setText(error);
+			
+			hostLayout.post(new Runnable() {
+				public void run() {
+			
+					popupWindow.showAtLocation(hostLayout, Gravity.CENTER, 0, 0);
+					popupWindow.setAnimationStyle(0);
+				}
+			});
+		
+		} else {
+			
+			changeErrorText(error);
+		}
+	}
+	
+	public void changeErrorText(final int error) {
 		
 		hostLayout.post(new Runnable() {
 			public void run() {
-		
-				popupWindow.showAtLocation(hostLayout, Gravity.CENTER, 0, 0);
-				popupWindow.setAnimationStyle(0);
+			
+				errorText.setText(error);
 			}
 		});
 	}
 	
 	public void ErrorPopupClose() {
 		
-		if(popupWindow != null) popupWindow.dismiss();
+		if(popupWindow != null) {
+			
+			popupWindow.dismiss();
+			popupWindow = null;
+		}
 	}
 	
 	public void OXBtnDisplay(int error) {
@@ -165,6 +194,7 @@ public class ErrorPopup {
 	public void OPopupClose() {
 		
 		popupWindow.dismiss();
+		popupWindow = null;
 		
 		switch(layoutid) {
 		
@@ -196,5 +226,16 @@ public class ErrorPopup {
 	public void XPopupClose() {
 		
 		popupWindow.dismiss();
+		popupWindow = null;
+		
+		switch(layoutid) {
+		
+		case R.id.actionlayout	:
+			ActionActivity.IsEnablePopup = false;
+			break;
+			
+		default	:
+			break;
+		}
 	}
 }

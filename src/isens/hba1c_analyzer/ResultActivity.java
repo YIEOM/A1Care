@@ -1,6 +1,8 @@
 package isens.hba1c_analyzer;
 
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
+import isens.hba1c_analyzer.Model.ConvertModel;
+import isens.hba1c_analyzer.View.ConvertActivity;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -33,7 +35,8 @@ public class ResultActivity extends Activity {
 		
 	final static byte ACTION_ACTIVITY  = 1,
 					  HOME_ACTIVITY    = 2,
-					  COVER_ACTION_ESC = 3;
+					  COVER_ACTION_ESC = 3,
+					  SCAN_ACTIVITY    = 4;
 	
 	public Temperature mTemperature;
 	public SerialPort mSerialPort;
@@ -127,7 +130,7 @@ public class ResultActivity extends Activity {
 					btnState = true;
 					
 					nextSampleBtn.setEnabled(false);
-				
+					
 					WhichIntent(TargetIntent.Run);
 				}
 			}
@@ -138,7 +141,7 @@ public class ResultActivity extends Activity {
 		
 			public void onClick(View v) {
 
-				if(!btnState & (ItnData == RunActivity.NORMAL_OPERATION)) {
+				if(!btnState) {
 					
 					btnState = true;
 					
@@ -174,12 +177,6 @@ public class ResultActivity extends Activity {
 		ItnData = itn.getIntExtra("RunState", 0);
 		
 		if(ItnData == RunActivity.NORMAL_OPERATION || ItnData == RunActivity.DEMO_OPERATION) {
-			
-//			if(HomeActivity.ANALYZER_SW == HomeActivity.DEVEL) {
-//				
-//				RunActivity.HbA1cValue = 5.2;
-//			
-//			} else 
 				
 			if(HomeActivity.ANALYZER_SW == HomeActivity.DEMO) {
 				
@@ -205,13 +202,13 @@ public class ResultActivity extends Activity {
 					break;
 				}
 				
-				ConvertActivity.Primary = ConvertActivity.NGSP;
+				ConvertModel.Primary = ConvertModel.NGSP;
 			}
 			
-			primaryByte = ConvertActivity.Primary;
+			primaryByte = ConvertModel.Primary;
 			
 			mRunActivity = new RunActivity();
-			UnitConvert(mRunActivity.ConvertHbA1c(ConvertActivity.Primary), ConvertActivity.Primary);
+			UnitConvert(mRunActivity.ConvertHbA1c(ConvertModel.Primary), ConvertModel.Primary);
 			HbA1cDisplay();
 		
 		} else if(ItnData == R.string.stop) { 
@@ -233,17 +230,9 @@ public class ResultActivity extends Activity {
 		operator = mDatabaseHander.GetLastLoginID();
 		
 		if(operator == null) operator = "Guest";
-		
-		if(HomeActivity.ANALYZER_SW == HomeActivity.STABLE) {
-			
-			if(ItnData != R.string.stop) WhichIntent(TargetIntent.Run); // Stable
-			else HomeActivity.NumofStable = 0;
-		}
 	}
 	
 	public void PatientIDDisplay(final StringBuffer str) {
-		
-		
 		
 		new Thread(new Runnable() {
 		    public void run() {    
@@ -270,13 +259,8 @@ public class ResultActivity extends Activity {
 	
 	public void GetDataCnt() {
 		
-		if(HomeActivity.ANALYZER_SW != HomeActivity.STABLE) {
-		
-		
 		if(Barcode.RefNum.substring(0, 1).equals("B")) dataCnt = RemoveActivity.ControlDataCnt;
 		else dataCnt = RemoveActivity.PatientDataCnt;
-		
-		} else dataCnt = RemoveActivity.ControlDataCnt;
 	}
 	
 	public void PrintResultData() {
@@ -314,6 +298,33 @@ public class ResultActivity extends Activity {
 			mSerialPort.PrinterTxStart(SerialPort.PRINTRESULT, txData);
 			
 			SerialPort.Sleep(100);
+		
+		} else if(ItnData == RunActivity.DEMO_OPERATION) {
+			
+			StringBuffer txData = new StringBuffer();
+			
+			txData.delete(0, txData.capacity());
+			
+			txData.append("2015");
+			txData.append("03");
+			txData.append("05");
+			txData.append("AM");
+			txData.append("09");
+			txData.append("30");
+			txData.append("0003");
+			txData.append("DBANA");
+			txData.append("07");
+			txData.append("Patient");
+			txData.append("08");
+			txData.append("Operator");
+			txData.append("0"); // primary
+//			Log.w("PrintResultData", "primary : " + Integer.toString((int) primaryByte));
+			txData.append("8.3");
+			
+			mSerialPort = new SerialPort();
+			mSerialPort.PrinterTxStart(SerialPort.PRINTRESULT, txData);
+			
+			SerialPort.Sleep(100);
 		}
 
 		btnState = false;	
@@ -325,7 +336,7 @@ public class ResultActivity extends Activity {
 		
 		hbA1cCurr = hbA1cFormat.format(hbA1cValue);
 		
-		if(primary == ConvertActivity.NGSP) {
+		if(primary == ConvertModel.NGSP) {
 			
 			unitCurr = "%";
 			rangeCurr = "4.0 - 6.0";
@@ -356,22 +367,26 @@ public class ResultActivity extends Activity {
 	
 	public void PrimaryConvert() {
 		
-		double hbA1cValue;
-		
-		if(primaryByte == ConvertActivity.NGSP) { // to IFCC
-				
-			primaryByte	= ConvertActivity.IFCC;
-			hbA1cValue = mRunActivity.ConvertHbA1c(ConvertActivity.IFCC); 
-			UnitConvert(hbA1cValue, primaryByte);
-		
-		} else {
+		if(ItnData == RunActivity.NORMAL_OPERATION || ItnData == RunActivity.DEMO_OPERATION) {
 			
-			primaryByte	= ConvertActivity.NGSP;
-			hbA1cValue = mRunActivity.ConvertHbA1c(ConvertActivity.NGSP); 
-			UnitConvert(hbA1cValue, primaryByte);
-		}
+			double hbA1cValue;
+			
+			if(primaryByte == ConvertModel.NGSP) { // to IFCC
+					
+				primaryByte	= ConvertModel.IFCC;
+				hbA1cValue = mRunActivity.ConvertHbA1c(ConvertModel.IFCC);
+				UnitConvert(hbA1cValue, primaryByte);
+			
+			} else {
+				
+				primaryByte	= ConvertModel.NGSP;
+				hbA1cValue = mRunActivity.ConvertHbA1c(ConvertModel.NGSP); 
+				UnitConvert(hbA1cValue, primaryByte);
+			}
 		
-		HbA1cDisplay();
+			HbA1cDisplay();
+		
+		} else btnState = false;
 	}
 	
 	public void WhichIntent(TargetIntent Itn) { // Activity conversion after intent data deliver
@@ -386,8 +401,8 @@ public class ResultActivity extends Activity {
 		
 		if(ItnData == RunActivity.NORMAL_OPERATION) {
 			
-			UnitConvert(mRunActivity.ConvertHbA1c(ConvertActivity.Primary), ConvertActivity.Primary);
-			primaryByte = ConvertActivity.Primary;
+			UnitConvert(mRunActivity.ConvertHbA1c(ConvertModel.Primary), ConvertModel.Primary);
+			primaryByte = ConvertModel.Primary;
 		}
 		else primaryByte = 2;
 		
@@ -442,6 +457,11 @@ public class ResultActivity extends Activity {
 			nextIntent.putExtra("WhichIntent", (int) ACTION_ACTIVITY);
 			break;
 
+		case ScanTemp	:
+			nextIntent.putExtra("WhichIntent", (int) SCAN_ACTIVITY);
+			break;
+
+			
 		default			:	
 			break;			
 		}	

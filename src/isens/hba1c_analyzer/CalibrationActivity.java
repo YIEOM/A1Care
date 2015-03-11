@@ -35,7 +35,6 @@ public class CalibrationActivity extends Activity{
 	
 	public Button escBtn,
 				  blankBtn,
-//				  scanBtn,
 				  quickBtn,
 				  fullBtn;
 	
@@ -372,17 +371,17 @@ public class CalibrationActivity extends Activity{
 				switch(calibState) {
 				
 				case InitPosition		:
-					MotionInstruct(RunActivity.HOME_POSITION, SerialPort.CtrTarget.PhotoSet);			
+					MotionInstruct(RunActivity.HOME_POSITION, SerialPort.CtrTarget.NormalSet);			
 					BoardMessage(RunActivity.HOME_POSITION, AnalyzerState.MeasurePosition, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 6);
-					break; 
+					break;
 				
 				case MeasurePosition :
-					MotionInstruct(RunActivity.MEASURE_POSITION, SerialPort.CtrTarget.PhotoSet);			
+					MotionInstruct(RunActivity.MEASURE_POSITION, SerialPort.CtrTarget.NormalSet);			
 					BoardMessage(RunActivity.MEASURE_POSITION, AnalyzerState.FilterDark, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 5);
 					break;
 					
 				case FilterDark :
-					MotionInstruct(RunActivity.FILTER_DARK, SerialPort.CtrTarget.PhotoSet);
+					MotionInstruct(RunActivity.FILTER_DARK, SerialPort.CtrTarget.NormalSet);
 					BoardMessage(RunActivity.FILTER_DARK, AnalyzerState.Filter535nm, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 5);
 					RunActivity.BlankValue[0] = 0;
 					RunActivity.BlankValue[0] = AbsorbanceMeasure(); // Dark Absorbance
@@ -390,30 +389,30 @@ public class CalibrationActivity extends Activity{
 					
 				case Filter535nm :
 					/* 535nm filter Measurement */
-					MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
+					MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.NormalSet);
 					BoardMessage(RunActivity.NEXT_FILTER, AnalyzerState.Filter660nm, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 5);
 					RunActivity.BlankValue[1] = AbsorbanceMeasure(); // Dark Absorbance
 					break;
 				
 				case Filter660nm :
-					MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
+					MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.NormalSet);
 					BoardMessage(RunActivity.NEXT_FILTER, AnalyzerState.Filter750nm, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 5);
 					RunActivity.BlankValue[2] = AbsorbanceMeasure(); // Dark Absorbance
 					break;
 				
 				case Filter750nm :
-					MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
+					MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.NormalSet);
 					BoardMessage(RunActivity.NEXT_FILTER, AnalyzerState.FilterHome, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 5);
 					RunActivity.BlankValue[3] = AbsorbanceMeasure(); // Dark Absorbance
 					break;
 				
 				case FilterHome :
-					MotionInstruct(RunActivity.FILTER_DARK, SerialPort.CtrTarget.PhotoSet);
+					MotionInstruct(RunActivity.FILTER_DARK, SerialPort.CtrTarget.NormalSet);
 					BoardMessage(RunActivity.FILTER_DARK, AnalyzerState.CartridgeHome, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 5);
 					break;
 				
 				case CartridgeHome :
-					MotionInstruct(RunActivity.HOME_POSITION, SerialPort.CtrTarget.PhotoSet);
+					MotionInstruct(RunActivity.HOME_POSITION, SerialPort.CtrTarget.NormalSet);
 					BoardMessage(RunActivity.HOME_POSITION, AnalyzerState.NormalOperation, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 5);
 					break;
 					
@@ -424,7 +423,7 @@ public class CalibrationActivity extends Activity{
 					
 				case FilterMotorError	:
 					checkError = R.string.e212;
-					MotionInstruct(RunActivity.HOME_POSITION, SerialPort.CtrTarget.PhotoSet);			
+					MotionInstruct(RunActivity.HOME_POSITION, SerialPort.CtrTarget.NormalSet);			
 					BoardMessage(RunActivity.HOME_POSITION, AnalyzerState.NoWorking, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 6);
 					break;
 					
@@ -499,12 +498,12 @@ public class CalibrationActivity extends Activity{
 				switch(calibState) {
 				
 				case InitPosition		:
-					MotionInstruct(RunActivity.HOME_POSITION, SerialPort.CtrTarget.PhotoSet);			
+					MotionInstruct(RunActivity.HOME_POSITION, SerialPort.CtrTarget.NormalSet);			
 					BoardMessage(RunActivity.HOME_POSITION, AnalyzerState.Step1Position, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 6);
 					break;
 				
 				case Step1Position	:
-					MotionInstruct(RunActivity.Step1st_POSITION, SerialPort.CtrTarget.PhotoSet);			
+					MotionInstruct(RunActivity.Step1st_POSITION, SerialPort.CtrTarget.NormalSet);			
 					BoardMessage(RunActivity.Step1st_POSITION, AnalyzerState.Step1Shaking, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 5);
 					SerialPort.Sleep(500);
 					break;
@@ -521,7 +520,7 @@ public class CalibrationActivity extends Activity{
 					
 				case FilterMotorError	:
 					checkError = R.string.e212;
-					MotionInstruct(RunActivity.HOME_POSITION, SerialPort.CtrTarget.PhotoSet);			
+					MotionInstruct(RunActivity.HOME_POSITION, SerialPort.CtrTarget.NormalSet);			
 					BoardMessage(RunActivity.HOME_POSITION, AnalyzerState.NoWorking, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 6);
 					break;
 					
@@ -554,30 +553,30 @@ public class CalibrationActivity extends Activity{
 				switch(calibState) {
 				
 				case MeasurePosition	:
-					MotionInstruct(RunActivity.MEASURE_POSITION, SerialPort.CtrTarget.PhotoSet);
+					MotionInstruct(RunActivity.MEASURE_POSITION, SerialPort.CtrTarget.NormalSet);
 					BoardMessage(RunActivity.MEASURE_POSITION, AnalyzerState.Filter535nm, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 5);
 					break;
 					
 				case Filter535nm	:
-					MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
+					MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.NormalSet);
 					BoardMessage(RunActivity.NEXT_FILTER, AnalyzerState.Filter660nm, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 5);
 					RunActivity.Step1stValue1[0] = AbsorbanceMeasure(); // 535nm Absorbance
 					break;
 					
 				case Filter660nm	:
-					MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
+					MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.NormalSet);
 					BoardMessage(RunActivity.NEXT_FILTER, AnalyzerState.Filter750nm, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 5);
 					RunActivity.Step1stValue1[1] = AbsorbanceMeasure(); // 660nm Absorbance
 					break;
 					
 				case Filter750nm	:
-					MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
+					MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.NormalSet);
 					BoardMessage(RunActivity.NEXT_FILTER, AnalyzerState.FilterDark, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 5);
 					RunActivity.Step1stValue1[2] = AbsorbanceMeasure(); // 750nm Absorbance
 					break;
 					
 				case FilterDark		:
-					MotionInstruct(RunActivity.FILTER_DARK, SerialPort.CtrTarget.PhotoSet);
+					MotionInstruct(RunActivity.FILTER_DARK, SerialPort.CtrTarget.NormalSet);
 					BoardMessage(RunActivity.FILTER_DARK, AnalyzerState.Filter535nm, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 5);
 					AbsorbCal1st();
 					measTarget = MeasTarget.Shk1stOne;
@@ -591,7 +590,7 @@ public class CalibrationActivity extends Activity{
 					
 				case FilterMotorError	:
 					checkError = R.string.e212;
-					MotionInstruct(RunActivity.HOME_POSITION, SerialPort.CtrTarget.PhotoSet);			
+					MotionInstruct(RunActivity.HOME_POSITION, SerialPort.CtrTarget.NormalSet);			
 					BoardMessage(RunActivity.HOME_POSITION, AnalyzerState.NoWorking, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 6);
 					break;
 					
@@ -625,25 +624,25 @@ public class CalibrationActivity extends Activity{
 				switch(calibState) {
 				
 				case Filter535nm	:
-					MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
+					MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.NormalSet);
 					BoardMessage(RunActivity.NEXT_FILTER, AnalyzerState.Filter660nm, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 5);
 					RunActivity.Step1stValue2[0] = AbsorbanceMeasure(); // 535nm Absorbance
 					break;
 					
 				case Filter660nm	:
-					MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
+					MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.NormalSet);
 					BoardMessage(RunActivity.NEXT_FILTER, AnalyzerState.Filter750nm, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 5);
 					RunActivity.Step1stValue2[1] = AbsorbanceMeasure(); // 660nm Absorbance
 					break;
 					
 				case Filter750nm	:
-					MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
+					MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.NormalSet);
 					BoardMessage(RunActivity.NEXT_FILTER, AnalyzerState.FilterDark, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 5);
 					RunActivity.Step1stValue2[2] = AbsorbanceMeasure(); // 750nm Absorbance
 					break;
 					
 				case FilterDark		:
-					MotionInstruct(RunActivity.FILTER_DARK, SerialPort.CtrTarget.PhotoSet);
+					MotionInstruct(RunActivity.FILTER_DARK, SerialPort.CtrTarget.NormalSet);
 					BoardMessage(RunActivity.FILTER_DARK, AnalyzerState.Filter535nm, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 5);
 					AbsorbCal1st2();
 					measTarget = MeasTarget.Shk1stTwo;
@@ -657,7 +656,7 @@ public class CalibrationActivity extends Activity{
 					
 				case FilterMotorError	:
 					checkError = R.string.e212;
-					MotionInstruct(RunActivity.HOME_POSITION, SerialPort.CtrTarget.PhotoSet);			
+					MotionInstruct(RunActivity.HOME_POSITION, SerialPort.CtrTarget.NormalSet);			
 					BoardMessage(RunActivity.HOME_POSITION, AnalyzerState.NoWorking, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 6);
 					break;
 					
@@ -690,25 +689,25 @@ public class CalibrationActivity extends Activity{
 				switch(calibState) {
 				
 				case Filter535nm	:
-					MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
+					MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.NormalSet);
 					BoardMessage(RunActivity.NEXT_FILTER, AnalyzerState.Filter660nm, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 5);
 					RunActivity.Step1stValue3[0] = AbsorbanceMeasure(); // 535nm Absorbance
 					break;
 					
 				case Filter660nm	:
-					MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
+					MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.NormalSet);
 					BoardMessage(RunActivity.NEXT_FILTER, AnalyzerState.Filter750nm, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 5);
 					RunActivity.Step1stValue3[1] = AbsorbanceMeasure(); // 750nm Absorbance
 					break;
 					
 				case Filter750nm	:
-					MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
+					MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.NormalSet);
 					BoardMessage(RunActivity.NEXT_FILTER, AnalyzerState.FilterDark, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 5);
 					RunActivity.Step1stValue3[2] = AbsorbanceMeasure(); // 750nm Absorbance
 					break;
 					
 				case FilterDark		:
-					MotionInstruct(RunActivity.FILTER_DARK, SerialPort.CtrTarget.PhotoSet);
+					MotionInstruct(RunActivity.FILTER_DARK, SerialPort.CtrTarget.NormalSet);
 					BoardMessage(RunActivity.FILTER_DARK, AnalyzerState.Step2Position, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 5);
 					AbsorbCal1st3();
 					measTarget = MeasTarget.Shk1stThree;
@@ -722,7 +721,7 @@ public class CalibrationActivity extends Activity{
 					
 				case FilterMotorError	:
 					checkError = R.string.e212;
-					MotionInstruct(RunActivity.HOME_POSITION, SerialPort.CtrTarget.PhotoSet);			
+					MotionInstruct(RunActivity.HOME_POSITION, SerialPort.CtrTarget.NormalSet);			
 					BoardMessage(RunActivity.HOME_POSITION, AnalyzerState.NoWorking, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 6);
 					break;
 					
@@ -758,7 +757,7 @@ public class CalibrationActivity extends Activity{
 				switch(calibState) {
 				
 				case Step2Position	:
-					MotionInstruct(RunActivity.Step2nd_POSITION, SerialPort.CtrTarget.PhotoSet);
+					MotionInstruct(RunActivity.Step2nd_POSITION, SerialPort.CtrTarget.NormalSet);
 					BoardMessage(RunActivity.Step2nd_POSITION, AnalyzerState.Step2Shaking, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 5);
 					SerialPort.Sleep(500);
 					break;
@@ -775,7 +774,7 @@ public class CalibrationActivity extends Activity{
 					
 				case FilterMotorError	:
 					checkError = R.string.e212;
-					MotionInstruct(RunActivity.HOME_POSITION, SerialPort.CtrTarget.PhotoSet);			
+					MotionInstruct(RunActivity.HOME_POSITION, SerialPort.CtrTarget.NormalSet);			
 					BoardMessage(RunActivity.HOME_POSITION, AnalyzerState.NoWorking, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 6);
 					break;
 					
@@ -808,30 +807,30 @@ public class CalibrationActivity extends Activity{
 				switch(calibState) {
 				
 				case MeasurePosition	:
-					MotionInstruct(RunActivity.MEASURE_POSITION, SerialPort.CtrTarget.PhotoSet);
+					MotionInstruct(RunActivity.MEASURE_POSITION, SerialPort.CtrTarget.NormalSet);
 					BoardMessage(RunActivity.MEASURE_POSITION, AnalyzerState.Filter535nm, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 6);
 					break;
 					
 				case Filter535nm	:
-					MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
+					MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.NormalSet);
 					BoardMessage(RunActivity.NEXT_FILTER, AnalyzerState.Filter660nm, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 5);
 					RunActivity.Step2ndValue1[0] = AbsorbanceMeasure(); // 535nm Absorbance
 					break;
 					
 				case Filter660nm	:
-					MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
+					MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.NormalSet);
 					BoardMessage(RunActivity.NEXT_FILTER, AnalyzerState.Filter750nm, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 5);
 					RunActivity.Step2ndValue1[1] = AbsorbanceMeasure(); // 660nm Absorbance
 					break;
 				
 				case Filter750nm	:
-					MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
+					MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.NormalSet);
 					BoardMessage(RunActivity.NEXT_FILTER, AnalyzerState.FilterDark, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 5);
 					RunActivity.Step2ndValue1[2] = AbsorbanceMeasure(); // 750nm Absorbance
 					break;
 				
 				case FilterDark		:
-					MotionInstruct(RunActivity.FILTER_DARK, SerialPort.CtrTarget.PhotoSet);
+					MotionInstruct(RunActivity.FILTER_DARK, SerialPort.CtrTarget.NormalSet);
 					BoardMessage(RunActivity.FILTER_DARK, AnalyzerState.Filter535nm, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 5);
 					AbsorbCal2nd();
 					measTarget = MeasTarget.Shk2ndOne;
@@ -845,7 +844,7 @@ public class CalibrationActivity extends Activity{
 					
 				case FilterMotorError	:
 					checkError = R.string.e212;
-					MotionInstruct(RunActivity.HOME_POSITION, SerialPort.CtrTarget.PhotoSet);			
+					MotionInstruct(RunActivity.HOME_POSITION, SerialPort.CtrTarget.NormalSet);			
 					BoardMessage(RunActivity.HOME_POSITION, AnalyzerState.NoWorking, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 6);
 					break;
 					
@@ -878,25 +877,25 @@ public class CalibrationActivity extends Activity{
 				switch(calibState) {
 				
 				case Filter535nm	:
-					MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
+					MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.NormalSet);
 					BoardMessage(RunActivity.NEXT_FILTER, AnalyzerState.Filter660nm, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 5);
 					RunActivity.Step2ndValue2[0] = AbsorbanceMeasure(); // 535nm Absorbance
 					break;
 					
 				case Filter660nm	:
-					MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
+					MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.NormalSet);
 					BoardMessage(RunActivity.NEXT_FILTER, AnalyzerState.Filter750nm, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 5);
 					RunActivity.Step2ndValue2[1] = AbsorbanceMeasure(); // 535nm Absorbance
 					break;
 					
 				case Filter750nm	:
-					MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
+					MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.NormalSet);
 					BoardMessage(RunActivity.NEXT_FILTER, AnalyzerState.FilterDark, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 5);
 					RunActivity.Step2ndValue2[2] = AbsorbanceMeasure(); // 535nm Absorbance
 					break;
 					
 				case FilterDark		:
-					MotionInstruct(RunActivity.FILTER_DARK, SerialPort.CtrTarget.PhotoSet);
+					MotionInstruct(RunActivity.FILTER_DARK, SerialPort.CtrTarget.NormalSet);
 					BoardMessage(RunActivity.FILTER_DARK, AnalyzerState.Filter535nm, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 5);
 					AbsorbCal2nd2();
 					measTarget = MeasTarget.Shk2ndTwo;
@@ -910,7 +909,7 @@ public class CalibrationActivity extends Activity{
 					
 				case FilterMotorError	:
 					checkError = R.string.e212;
-					MotionInstruct(RunActivity.HOME_POSITION, SerialPort.CtrTarget.PhotoSet);			
+					MotionInstruct(RunActivity.HOME_POSITION, SerialPort.CtrTarget.NormalSet);			
 					BoardMessage(RunActivity.HOME_POSITION, AnalyzerState.NoWorking, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 6);
 					break;
 					
@@ -943,25 +942,25 @@ public class CalibrationActivity extends Activity{
 				switch(calibState) {
 				
 				case Filter535nm	:
-					MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
+					MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.NormalSet);
 					BoardMessage(RunActivity.NEXT_FILTER, AnalyzerState.Filter660nm, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 5);
 					RunActivity.Step2ndValue3[0] = AbsorbanceMeasure(); // 535nm Absorbance
 					break;
 					
 				case Filter660nm	:
-					MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
+					MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.NormalSet);
 					BoardMessage(RunActivity.NEXT_FILTER, AnalyzerState.Filter750nm, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 5);
 					RunActivity.Step2ndValue3[1] = AbsorbanceMeasure(); // 535nm Absorbance
 					break;
 					
 				case Filter750nm	:
-					MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
+					MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.NormalSet);
 					BoardMessage(RunActivity.NEXT_FILTER, AnalyzerState.FilterDark, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 5);
 					RunActivity.Step2ndValue3[2] = AbsorbanceMeasure(); // 535nm Absorbance
 					break;
 					
 				case FilterDark		:
-					MotionInstruct(RunActivity.FILTER_DARK, SerialPort.CtrTarget.PhotoSet);
+					MotionInstruct(RunActivity.FILTER_DARK, SerialPort.CtrTarget.NormalSet);
 					BoardMessage(RunActivity.FILTER_DARK, AnalyzerState.CartridgeDump, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 5);
 					AbsorbCal2nd3();
 					measTarget = MeasTarget.Shk2ndThree;
@@ -975,7 +974,7 @@ public class CalibrationActivity extends Activity{
 					
 				case FilterMotorError	:
 					checkError = R.string.e212;
-					MotionInstruct(RunActivity.HOME_POSITION, SerialPort.CtrTarget.PhotoSet);			
+					MotionInstruct(RunActivity.HOME_POSITION, SerialPort.CtrTarget.NormalSet);			
 					BoardMessage(RunActivity.HOME_POSITION, AnalyzerState.NoWorking, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 6);
 					break;
 					
@@ -1006,12 +1005,12 @@ public class CalibrationActivity extends Activity{
 				switch(calibState) {
 				
 				case CartridgeDump	:
-					MotionInstruct(RunActivity.CARTRIDGE_DUMP, SerialPort.CtrTarget.PhotoSet);
+					MotionInstruct(RunActivity.CARTRIDGE_DUMP, SerialPort.CtrTarget.NormalSet);
 					BoardMessage(RunActivity.CARTRIDGE_DUMP, AnalyzerState.CartridgeHome, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 6);
 					break;
 					
 				case CartridgeHome	:
-					MotionInstruct(RunActivity.HOME_POSITION, SerialPort.CtrTarget.PhotoSet);
+					MotionInstruct(RunActivity.HOME_POSITION, SerialPort.CtrTarget.NormalSet);
 					BoardMessage(RunActivity.HOME_POSITION, AnalyzerState.NormalOperation, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 6);
 					break;
 					
@@ -1022,7 +1021,7 @@ public class CalibrationActivity extends Activity{
 					
 				case FilterMotorError	:
 					checkError = R.string.e212;
-					MotionInstruct(RunActivity.HOME_POSITION, SerialPort.CtrTarget.PhotoSet);			
+					MotionInstruct(RunActivity.HOME_POSITION, SerialPort.CtrTarget.NormalSet);			
 					BoardMessage(RunActivity.HOME_POSITION, AnalyzerState.NoWorking, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 6);
 					break;
 					
@@ -1041,14 +1040,14 @@ public class CalibrationActivity extends Activity{
 				HbA1cCalculation();
 				
 				new Thread(new Runnable() {
-				    public void run() {
-				        runOnUiThread(new Runnable(){
-				            public void run() {
-				
-				            	HbA1cDisplay();
-				            }
-				        });
-				    }
+					public void run() {
+						runOnUiThread(new Runnable(){
+							public void run() {
+
+								HbA1cDisplay();
+							}
+						});
+					}
 				}).start();
 				
 				ThreadRun = false;
@@ -1299,7 +1298,7 @@ public class CalibrationActivity extends Activity{
 		String rawValue;
 		double douValue = 0;
 		
-		mSerialPort.BoardTx("VH", SerialPort.CtrTarget.PhotoSet);
+		mSerialPort.BoardTx("VH", SerialPort.CtrTarget.NormalSet);
 		
 		rawValue = mSerialPort.BoardMessageOutput();			
 		
@@ -1354,20 +1353,18 @@ public class CalibrationActivity extends Activity{
 		
 		if(HomeActivity.ANALYZER_SW == HomeActivity.NORMAL) {
 			
-			A = Absorb1stHandling();
-			B = Absorb2ndHandling();
+			A = Absorb1stHandling()*RunActivity.RF1_Slope + RunActivity.RF1_Offset;
+			B = Absorb2ndHandling()*RunActivity.RF2_Slope + RunActivity.RF2_Offset;
 			
 		} else {
 			
-			A = 0.1941;
-			B = 0.0853;	
+			A = 0.45;
+			B = 0.15;	
 		
 		}
 		
 		Barcode.a1 = 0.009793532;
 		Barcode.b1 = -0.028;
-		Barcode.f1  = -0.00080;
-		Barcode.f2  = 0.039884;
 		Barcode.a21 = 0.060055;
 		Barcode.b21 = -0.003032;
 		Barcode.a22 = 0.05014;
@@ -1377,12 +1374,16 @@ public class CalibrationActivity extends Activity{
 		Barcode.L   = 5.1;
 		Barcode.M 	= 7.1;
 		Barcode.H   = 11.7;
+		Barcode.Asm = 0;
+		Barcode.Ass = 0;
+		Barcode.Aim = 0;
+		Barcode.Ais = 0;
 		
 		St = (A - Barcode.b1)/Barcode.a1;
 		RunActivity.tHbDbl = St;
 		Bt = (A - Barcode.b1)/Barcode.a1 + 1;
 		
-		C1 = St * RunActivity.SF_F1 + RunActivity.SF_F2;
+		C1 = St * (Barcode.Asm + Barcode.Ass) + Barcode.Aim + Barcode.Ais;
 		C2 = B - C1;
 		
 		SLA = St * Barcode.L / 100;

@@ -2,6 +2,8 @@ package isens.hba1c_analyzer;
 
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
 import isens.hba1c_analyzer.RunActivity.AnalyzerState;
+import isens.hba1c_analyzer.RunActivity.CartDump;
+import isens.hba1c_analyzer.RunActivity.CheckCoverError;
 import isens.hba1c_analyzer.SystemCheckActivity.MotorCheck;
 import isens.hba1c_analyzer.SystemCheckActivity.TemperatureCheck;
 import android.app.Activity;
@@ -45,6 +47,8 @@ public class BlankActivity extends Activity {
 	}                     
 	
 	public void BlankInit() {
+		
+		RunActivity.isError = false;
 		
 		mTimerDisplay = new TimerDisplay();
 		mTimerDisplay.ActivityParm(this, R.id.blanklayout);
@@ -101,24 +105,28 @@ public class BlankActivity extends Activity {
 		
 		public void run() {
 			
+			CartDump mCartDump = new CartDump();
+			
 			for(int i = 0; i < 9; i++) {
+			
+				checkMode();
 				
 				switch(blankState) {
 				
 				case InitPosition		:
-					MotionInstruct(RunActivity.HOME_POSITION, SerialPort.CtrTarget.PhotoSet);			
-					BoardMessage(RunActivity.HOME_POSITION, AnalyzerState.MeasurePosition, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 6);
+					MotionInstruct(RunActivity.HOME_POSITION, SerialPort.CtrTarget.NormalSet);			
+					BoardMessage(RunActivity.HOME_POSITION, AnalyzerState.MeasurePosition, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 10);
 					break; 
 				
 				case MeasurePosition :
-					MotionInstruct(RunActivity.MEASURE_POSITION, SerialPort.CtrTarget.PhotoSet);			
-					BoardMessage(RunActivity.MEASURE_POSITION, AnalyzerState.FilterDark, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 5);
+					MotionInstruct(RunActivity.MEASURE_POSITION, SerialPort.CtrTarget.NormalSet);			
+					BoardMessage(RunActivity.MEASURE_POSITION, AnalyzerState.FilterDark, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 10);
 					BarAnimation(178);
 					break;
 					
 				case FilterDark :
-					MotionInstruct(RunActivity.FILTER_DARK, SerialPort.CtrTarget.PhotoSet);
-					BoardMessage(RunActivity.FILTER_DARK, AnalyzerState.Filter535nm, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 5);
+					MotionInstruct(RunActivity.FILTER_DARK, SerialPort.CtrTarget.NormalSet);
+					BoardMessage(RunActivity.FILTER_DARK, AnalyzerState.Filter535nm, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 10);
 					BarAnimation(206);
 					RunActivity.BlankValue[0] = 0;
 					RunActivity.BlankValue[0] = AbsorbanceMeasure(SystemCheckActivity.MinDark, SystemCheckActivity.MaxDark, SystemCheckActivity.ERROR_DARK); // Dark Absorbance
@@ -131,22 +139,22 @@ public class BlankActivity extends Activity {
 					
 				case Filter535nm :
 					/* 535nm filter Measurement */
-					MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
-					BoardMessage(RunActivity.NEXT_FILTER, AnalyzerState.Filter660nm, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 5);
+					MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.NormalSet);
+					BoardMessage(RunActivity.NEXT_FILTER, AnalyzerState.Filter660nm, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 10);
 					BarAnimation(290);
 					RunActivity.BlankValue[1] = AbsorbanceMeasure(SystemCheckActivity.Min535, SystemCheckActivity.Max535, SystemCheckActivity.ERROR_535nm); // Dark Absorbance
 					break;
 				
 				case Filter660nm :
-					MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
-					BoardMessage(RunActivity.NEXT_FILTER, AnalyzerState.Filter750nm, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 5);
+					MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.NormalSet);
+					BoardMessage(RunActivity.NEXT_FILTER, AnalyzerState.Filter750nm, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 10);
 					BarAnimation(374);
 					RunActivity.BlankValue[2] = AbsorbanceMeasure(SystemCheckActivity.Min660, SystemCheckActivity.Max660, SystemCheckActivity.ERROR_660nm); // Dark Absorbance
 					break;
 				
 				case Filter750nm :
-					MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
-					BoardMessage(RunActivity.NEXT_FILTER, AnalyzerState.FilterHome, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 5);
+					MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.NormalSet);
+					BoardMessage(RunActivity.NEXT_FILTER, AnalyzerState.FilterHome, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 10);
 					BarAnimation(458);
 					RunActivity.BlankValue[3] = AbsorbanceMeasure(SystemCheckActivity.Min750, SystemCheckActivity.Max750, SystemCheckActivity.ERROR_750nm); // Dark Absorbance
 				
@@ -157,14 +165,14 @@ public class BlankActivity extends Activity {
 					break;
 				
 				case FilterHome :
-					MotionInstruct(RunActivity.FILTER_DARK, SerialPort.CtrTarget.PhotoSet);
-					BoardMessage(RunActivity.FILTER_DARK, AnalyzerState.CartridgeHome, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 5);
+					MotionInstruct(RunActivity.FILTER_DARK, SerialPort.CtrTarget.NormalSet);
+					BoardMessage(RunActivity.FILTER_DARK, AnalyzerState.CartridgeHome, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 10);
 					BarAnimation(542);
 					break;
 				
 				case CartridgeHome :
-					MotionInstruct(RunActivity.HOME_POSITION, SerialPort.CtrTarget.PhotoSet);
-					BoardMessage(RunActivity.HOME_POSITION, AnalyzerState.NormalOperation, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 5);
+					MotionInstruct(RunActivity.HOME_POSITION, SerialPort.CtrTarget.NormalSet);
+					BoardMessage(RunActivity.HOME_POSITION, AnalyzerState.NormalOperation, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 10);
 					BarAnimation(579);
 					break;
 					
@@ -181,26 +189,20 @@ public class BlankActivity extends Activity {
 					
 				case FilterMotorError	:
 					checkError = R.string.e212;
-					MotionInstruct(RunActivity.HOME_POSITION, SerialPort.CtrTarget.PhotoSet);			
-					BoardMessage(RunActivity.HOME_POSITION, AnalyzerState.NoWorking, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 6);
+					MotionInstruct(RunActivity.HOME_POSITION, SerialPort.CtrTarget.NormalSet);			
+					BoardMessage(RunActivity.HOME_POSITION, AnalyzerState.NoWorking, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 10);
 					WhichIntent(TargetIntent.Home);
 					break;
 				
 				case PhotoSensorError	:
-					MotionInstruct(RunActivity.FILTER_DARK, SerialPort.CtrTarget.PhotoSet);
-					BoardMessage(RunActivity.FILTER_DARK, AnalyzerState.CartridgeHome, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 5);
-					MotionInstruct(RunActivity.HOME_POSITION, SerialPort.CtrTarget.PhotoSet);			
-					BoardMessage(RunActivity.HOME_POSITION, AnalyzerState.NoWorking, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 6);
-					WhichIntent(TargetIntent.Home);
+					blankState = AnalyzerState.NoWorking;
+					mCartDump.start();
 					break;
 					
 				case LampError			:
 					checkError = R.string.e232;
-					MotionInstruct(RunActivity.FILTER_DARK, SerialPort.CtrTarget.PhotoSet);
-					BoardMessage(RunActivity.FILTER_DARK, AnalyzerState.CartridgeHome, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 5);
-					MotionInstruct(RunActivity.HOME_POSITION, SerialPort.CtrTarget.PhotoSet);			
-					BoardMessage(RunActivity.HOME_POSITION, AnalyzerState.NoWorking, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 6);
-					WhichIntent(TargetIntent.Home);
+					blankState = AnalyzerState.NoWorking;
+					mCartDump.start();
 					break;
 					
 				case NoResponse :
@@ -209,9 +211,21 @@ public class BlankActivity extends Activity {
 					WhichIntent(TargetIntent.Home);
 					break;
 					
+				case ErrorCover		:
+					checkError = R.string.e322;
+					blankState = AnalyzerState.NoWorking;
+					break;
+					
 				default	:
 					break;
 				}
+			}
+
+			if(checkError == R.string.e322) {
+				
+				mErrorPopup.ErrorDisplay(R.string.w004);
+				CheckCoverError mCheckCoverError = new CheckCoverError();
+				mCheckCoverError.start();
 			}
 		}
 	}
@@ -227,7 +241,7 @@ public class BlankActivity extends Activity {
 		String rawValue;
 		double douValue = 0;
 		
-		mSerialPort.BoardTx("VH", SerialPort.CtrTarget.PhotoSet);
+		mSerialPort.BoardTx("VH", SerialPort.CtrTarget.NormalSet);
 		
 		rawValue = mSerialPort.BoardMessageOutput();			
 		
@@ -241,11 +255,13 @@ public class BlankActivity extends Activity {
 			
 				break;
 			}
-		
+			
+			if(RunActivity.isError) break;
+			
 			SerialPort.Sleep(100);
 		}	
 		
-		if(blankState != AnalyzerState.NoResponse) {
+		if(blankState != AnalyzerState.NoResponse && !RunActivity.isError) {
 
 			douValue = Double.parseDouble(rawValue);
 			
@@ -303,7 +319,7 @@ public class BlankActivity extends Activity {
 		while(true) {
 			
 			temp = mSerialPort.BoardMessageOutput();
-			
+//			Log.w("BoardMessage", "temp : " + temp);
 			if(colRsp.equals(temp)) {
 				
 				blankState = nextState;
@@ -321,7 +337,17 @@ public class BlankActivity extends Activity {
 				break;
 			}
 			
+			if(RunActivity.isError) break;
+			
 			SerialPort.Sleep(100);
+		}
+	}
+	
+	public void checkMode() {
+		
+		if(RunActivity.isError) {
+				
+			blankState = AnalyzerState.ErrorCover;
 		}
 	}
 	
@@ -339,6 +365,100 @@ public class BlankActivity extends Activity {
 		        });
 		    }
 		}).start();	
+	}
+	
+	public class CheckCoverError extends Thread {
+		
+		public void run() {
+			
+			GpioPort.DoorActState = true;			
+			GpioPort.CartridgeActState = true;
+			
+			SerialPort.Sleep(2000);
+			
+			while(ActionActivity.DoorCheckFlag != 1) SerialPort.Sleep(100);
+			
+			GpioPort.DoorActState = false;			
+			GpioPort.CartridgeActState = false;
+			
+			mErrorPopup.ErrorDisplay(R.string.wait);
+			
+			CartDump mCartDump = new CartDump();
+			mCartDump.start();
+		}
+	}
+	
+	public class CartDump extends Thread { // Cartridge dumping motion
+		
+		public void run() {
+				
+			RunActivity.isError = false;
+			blankState = AnalyzerState.FilterDark;
+			
+			for(int i = 0; i < 3; i++) {
+				
+				checkMode();
+				
+				switch(blankState) {
+				
+				case FilterDark	:
+					MotionInstruct(RunActivity.FILTER_DARK, SerialPort.CtrTarget.NormalSet);
+					BoardMessage(RunActivity.FILTER_DARK, AnalyzerState.CartridgeHome, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 10);
+					break;
+					
+				case CartridgeHome	:
+					MotionInstruct(RunActivity.HOME_POSITION, SerialPort.CtrTarget.NormalSet);
+					BoardMessage(RunActivity.HOME_POSITION, AnalyzerState.NormalOperation, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 10);
+					break;
+					
+				case ShakingMotorError	:
+					checkError = R.string.e211;
+					blankState = AnalyzerState.NoWorking;
+					WhichIntent(TargetIntent.Home);
+					break;
+					
+				case FilterMotorError	:
+					checkError = R.string.e212;
+					MotionInstruct(RunActivity.HOME_POSITION, SerialPort.CtrTarget.NormalSet);			
+					BoardMessage(RunActivity.HOME_POSITION, AnalyzerState.NoWorking, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 10);
+					WhichIntent(TargetIntent.Home);
+					break;
+					
+				case LampError			:
+					checkError = R.string.e232;
+					CartDump mCartDump = new CartDump();
+					mCartDump.start();
+					break;
+					
+				case NoResponse :
+					checkError = R.string.e241;
+					blankState = AnalyzerState.NoWorking;
+					WhichIntent(TargetIntent.Home);
+					break;
+					
+				case ErrorCover		:
+					checkError = R.string.e322;
+					blankState = AnalyzerState.NoWorking;
+					break;
+					
+				default	:
+					break;
+				}
+			}
+			
+			if(blankState == AnalyzerState.NormalOperation) {
+			
+				mErrorPopup.ErrorPopupClose();
+				
+				WhichIntent(TargetIntent.Home);
+			
+			} else if(checkError == R.string.e322) {
+				
+				mErrorPopup.ErrorDisplay(R.string.w004);
+				CheckCoverError mCheckCoverError = new CheckCoverError();
+				mCheckCoverError.start();
+			}
+		}
 	}
 	
 	public void WhichIntent(TargetIntent Itn) { // Activity conversion

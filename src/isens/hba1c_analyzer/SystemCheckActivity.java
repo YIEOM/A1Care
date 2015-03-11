@@ -8,6 +8,9 @@ import java.io.InputStreamReader;
 import isens.hba1c_analyzer.CalibrationActivity.Cart1stShaking;
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
 import isens.hba1c_analyzer.RunActivity.AnalyzerState;
+import isens.hba1c_analyzer.Temperature.CellTmpRead;
+import isens.hba1c_analyzer.Model.ConvertModel;
+import isens.hba1c_analyzer.View.ConvertActivity;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -42,8 +45,8 @@ public class SystemCheckActivity extends Activity {
 					  ERROR_660nm = 4,
 					  ERROR_750nm = 8;	
 	
-	public static byte NUMBER_CELL_BLOCK_TEMP_CHECK = 60;
-	final static byte NUMBER_AMBIENT_TEMP_CHECK = 30/5;
+	public int numberChaberTmpCheck = 5*60; // 5 minute
+	final static byte NUMBER_AMBIENT_TMP_CHECK = 30/5; // 30 second
 	final static String SHAKING_CHECK_TIME = "0030";
 	
 	private enum TmpState {FirstTmp, SecondTmp, ThirdTmp, ForthTmp, FifthTmp}
@@ -89,12 +92,11 @@ public class SystemCheckActivity extends Activity {
 		mSerialPort.PrinterSerialInit();
 		mSerialPort.BarcodeSerialInit();
 		mSerialPort.BarcodeRxStart();
-			
+	
 		/* Timer start */
 		mTimerDisplay = new TimerDisplay();
 		mTimerDisplay.ActivityParm(this, R.id.systemchecklayout);
-		mTimerDisplay.TimerInit(); 
-		mTimerDisplay.RealTime();
+		mTimerDisplay.TimerInit();
 		
 		/* Barcode reader off */
 		mGpioPort = new GpioPort();
@@ -111,15 +113,13 @@ public class SystemCheckActivity extends Activity {
 		VolumeInit();
 		
 		/* TEST Mode */
-		if(HomeActivity.ANALYZER_SW == HomeActivity.DEVEL) {
-//			SensorCheck SensorCheckObj = new SensorCheck(thisad, this, R.id.systemchecklinear);
-//			SensorCheckObj.start();
+		if((HomeActivity.ANALYZER_SW == HomeActivity.DEVEL) || (HomeActivity.ANALYZER_SW == HomeActivity.DEMO)) {
+
 			WhichIntent(TargetIntent.Home);
 		}
 		
 		else {
 			
-		TimerDisplay.RXBoardFlag = true;
 		SensorCheck SensorCheckObj = new SensorCheck(this, this, R.id.systemchecklayout);
 		SensorCheckObj.start();
 		
@@ -141,6 +141,10 @@ public class SystemCheckActivity extends Activity {
 		}
 		
 		public void run() {
+			
+			while(TimerDisplay.RXBoardFlag) SerialPort.Sleep(10);
+			
+			TimerDisplay.RXBoardFlag = true;
 			
 			GpioPort.DoorActState = true;
 			GpioPort.CartridgeActState = true;
@@ -174,43 +178,43 @@ public class SystemCheckActivity extends Activity {
 				switch(systemState) {
 				
 				case InitPosition		:
-					MotionInstruct(RunActivity.HOME_POSITION, SerialPort.CtrTarget.PhotoSet);			
-					MotorCheck(RunActivity.HOME_POSITION, AnalyzerState.Step1Position, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 6);
+					MotionInstruct(RunActivity.HOME_POSITION, SerialPort.CtrTarget.NormalSet);			
+					MotorCheck(RunActivity.HOME_POSITION, AnalyzerState.Step1Position, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 10);
 					break;
 				
 				case Step1Position		:
-					MotionInstruct(RunActivity.Step1st_POSITION, SerialPort.CtrTarget.PhotoSet);			
-					MotorCheck(RunActivity.Step1st_POSITION, AnalyzerState.Step1Shaking, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 5);
+					MotionInstruct(RunActivity.Step1st_POSITION, SerialPort.CtrTarget.NormalSet);			
+					MotorCheck(RunActivity.Step1st_POSITION, AnalyzerState.Step1Shaking, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 10);
 					break;
 					
 				case Step1Shaking		:
 					MotionInstruct(SHAKING_CHECK_TIME, SerialPort.CtrTarget.MotorSet);
-					MotorCheck(RunActivity.MOTOR_COMPLETE, AnalyzerState.Step2Position, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 6);
+					MotorCheck(RunActivity.MOTOR_COMPLETE, AnalyzerState.Step2Position, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 10);
 					break;
 					
 				case Step2Position		:
-					MotionInstruct(RunActivity.Step2nd_POSITION, SerialPort.CtrTarget.PhotoSet);
-					MotorCheck(RunActivity.Step2nd_POSITION, AnalyzerState.Step2Shaking, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 3);
+					MotionInstruct(RunActivity.Step2nd_POSITION, SerialPort.CtrTarget.NormalSet);
+					MotorCheck(RunActivity.Step2nd_POSITION, AnalyzerState.Step2Shaking, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 10);
 					break;
 					
 				case Step2Shaking		:
 					MotionInstruct(SHAKING_CHECK_TIME, SerialPort.CtrTarget.MotorSet);
-					MotorCheck(RunActivity.MOTOR_COMPLETE, AnalyzerState.MeasurePosition, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 6);
+					MotorCheck(RunActivity.MOTOR_COMPLETE, AnalyzerState.MeasurePosition, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 10);
 					break;
 					
 				case MeasurePosition	:
-					MotionInstruct(RunActivity.MEASURE_POSITION, SerialPort.CtrTarget.PhotoSet);
-					MotorCheck(RunActivity.MEASURE_POSITION, AnalyzerState.MeasureDark, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 2);
+					MotionInstruct(RunActivity.MEASURE_POSITION, SerialPort.CtrTarget.NormalSet);
+					MotorCheck(RunActivity.MEASURE_POSITION, AnalyzerState.MeasureDark, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 10);
 					break;
 					
 				case MeasureDark		:
 					PhotoCheck(AnalyzerState.Filter535nm, MaxDark, MinDark, ERROR_DARK, 1);
-					PhotoErrorCheck();
+					if(HomeActivity.ANALYZER_SW == HomeActivity.NORMAL) PhotoErrorCheck();
 					break;
 					
 				case Filter535nm		:
-					MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
-					MotorCheck(RunActivity.NEXT_FILTER, AnalyzerState.Measure535nm, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 2);
+					MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.NormalSet);
+					MotorCheck(RunActivity.NEXT_FILTER, AnalyzerState.Measure535nm, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 5);
 					break;
 					
 				case Measure535nm		:
@@ -218,8 +222,8 @@ public class SystemCheckActivity extends Activity {
 					break;
 					
 				case Filter660nm		:
-					MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
-					MotorCheck(RunActivity.NEXT_FILTER, AnalyzerState.Measure660nm, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 2);
+					MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.NormalSet);
+					MotorCheck(RunActivity.NEXT_FILTER, AnalyzerState.Measure660nm, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 5);
 					break;
 					
 				case Measure660nm		:
@@ -227,31 +231,33 @@ public class SystemCheckActivity extends Activity {
 					break;
 					
 				case Filter750nm		:
-					MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.PhotoSet);
-					MotorCheck(RunActivity.NEXT_FILTER, AnalyzerState.Measure750nm, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 2);
+					MotionInstruct(RunActivity.NEXT_FILTER, SerialPort.CtrTarget.NormalSet);
+					MotorCheck(RunActivity.NEXT_FILTER, AnalyzerState.Measure750nm, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 5);
 					break;
 					
 				case Measure750nm		:
 					PhotoCheck(AnalyzerState.FilterDark, Max750, Min750, ERROR_750nm, 1);
-					PhotoErrorCheck();
+					if(HomeActivity.ANALYZER_SW == HomeActivity.NORMAL) PhotoErrorCheck();
 					break;
 					
 				case FilterDark			:
-					MotionInstruct(RunActivity.FILTER_DARK, SerialPort.CtrTarget.PhotoSet);
-					MotorCheck(RunActivity.FILTER_DARK, AnalyzerState.CartridgeDump, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 1);
+					MotionInstruct(RunActivity.FILTER_DARK, SerialPort.CtrTarget.NormalSet);
+					MotorCheck(RunActivity.FILTER_DARK, AnalyzerState.CartridgeDump, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 5);
 					break;
 					
 				case CartridgeDump		:
-					MotionInstruct(RunActivity.CARTRIDGE_DUMP, SerialPort.CtrTarget.PhotoSet);
-					MotorCheck(RunActivity.CARTRIDGE_DUMP, AnalyzerState.CartridgeHome, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 6);
+					MotionInstruct(RunActivity.CARTRIDGE_DUMP, SerialPort.CtrTarget.NormalSet);
+					MotorCheck(RunActivity.CARTRIDGE_DUMP, AnalyzerState.CartridgeHome, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 10);
 					break;
 					
 				case CartridgeHome		:
-					MotionInstruct(RunActivity.HOME_POSITION, SerialPort.CtrTarget.PhotoSet);
-					MotorCheck(RunActivity.HOME_POSITION, AnalyzerState.NormalOperation, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 2);
+					MotionInstruct(RunActivity.HOME_POSITION, SerialPort.CtrTarget.NormalSet);
+					MotorCheck(RunActivity.HOME_POSITION, AnalyzerState.NormalOperation, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 10);
 					break;
 					
 				case NormalOperation	:
+					TimerDisplay.RXBoardFlag = false;
+					
 					if(HomeActivity.ANALYZER_SW == HomeActivity.NORMAL) {
 					
 						TemperatureCheck TemperatureCheckObj = new TemperatureCheck();
@@ -263,36 +269,41 @@ public class SystemCheckActivity extends Activity {
 				case ShakingMotorError	:
 					checkError = R.string.e211;
 					systemState = AnalyzerState.NoWorking;
+					TimerDisplay.RXBoardFlag = false;
 					WhichIntent(HomeActivity.TargetIntent.Home);
 					break;
 					
 				case FilterMotorError	:
 					checkError = R.string.e212;
-					MotionInstruct(RunActivity.HOME_POSITION, SerialPort.CtrTarget.PhotoSet);			
-					MotorCheck(RunActivity.HOME_POSITION, AnalyzerState.NoWorking, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 6);
+					MotionInstruct(RunActivity.HOME_POSITION, SerialPort.CtrTarget.NormalSet);			
+					MotorCheck(RunActivity.HOME_POSITION, AnalyzerState.NoWorking, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 10);
+					TimerDisplay.RXBoardFlag = false;
 					WhichIntent(HomeActivity.TargetIntent.Home);
 					break;
 				
 				case PhotoSensorError	:
-					MotionInstruct(RunActivity.FILTER_DARK, SerialPort.CtrTarget.PhotoSet);
-					MotorCheck(RunActivity.FILTER_DARK, AnalyzerState.NoWorking, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 3);
-					MotionInstruct(RunActivity.HOME_POSITION, SerialPort.CtrTarget.PhotoSet);			
-					MotorCheck(RunActivity.HOME_POSITION, AnalyzerState.NoWorking, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 6);
+					MotionInstruct(RunActivity.FILTER_DARK, SerialPort.CtrTarget.NormalSet);
+					MotorCheck(RunActivity.FILTER_DARK, AnalyzerState.NoWorking, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 5);
+					MotionInstruct(RunActivity.HOME_POSITION, SerialPort.CtrTarget.NormalSet);			
+					MotorCheck(RunActivity.HOME_POSITION, AnalyzerState.NoWorking, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 10);
+					TimerDisplay.RXBoardFlag = false;
 					WhichIntent(HomeActivity.TargetIntent.Home);
 					break;
 					
 				case LampError			:
 					checkError = R.string.e232;
-					MotionInstruct(RunActivity.FILTER_DARK, SerialPort.CtrTarget.PhotoSet);
-					MotorCheck(RunActivity.FILTER_DARK, AnalyzerState.NoWorking, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 3);
-					MotionInstruct(RunActivity.HOME_POSITION, SerialPort.CtrTarget.PhotoSet);			
-					MotorCheck(RunActivity.HOME_POSITION, AnalyzerState.NoWorking, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 6);
+					MotionInstruct(RunActivity.FILTER_DARK, SerialPort.CtrTarget.NormalSet);
+					MotorCheck(RunActivity.FILTER_DARK, AnalyzerState.NoWorking, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 10);
+					MotionInstruct(RunActivity.HOME_POSITION, SerialPort.CtrTarget.NormalSet);			
+					MotorCheck(RunActivity.HOME_POSITION, AnalyzerState.NoWorking, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 10);
+					TimerDisplay.RXBoardFlag = false;
 					WhichIntent(HomeActivity.TargetIntent.Home);
 					break;
 					
 				case NoResponse			:
 					checkError = R.string.e241;
 					systemState = AnalyzerState.NoWorking;
+					TimerDisplay.RXBoardFlag = false;
 					WhichIntent(HomeActivity.TargetIntent.Home);
 					break;
 					
@@ -311,15 +322,11 @@ public class SystemCheckActivity extends Activity {
 			double tmp = 0;
 			tmpNumber = TmpState.FirstTmp;
 			
-			for(i = 0; i < NUMBER_CELL_BLOCK_TEMP_CHECK; i++) {
+			for(i = 0; i < numberChaberTmpCheck; i++) {
 				
-				mTemperature.CellTmpRead();
+				tmp = mTemperature.CellTmpRead();
 				
-				SerialPort.Sleep(300);
-				
-				tmp = mTemperature.CellTmpValue();
-				
-				Log.w("TemperatureCheck", "Cell Temperature : " + tmp);
+//				Log.w("TemperatureCheck", "Cell Temperature : " + tmp);
 				
 				switch(tmpNumber) {
 				
@@ -343,7 +350,7 @@ public class SystemCheckActivity extends Activity {
 					break;
 					
 				case FifthTmp	:
-					if(((Temperature.InitTmp - 1) < tmp) & (tmp < (Temperature.InitTmp + 1))) NUMBER_CELL_BLOCK_TEMP_CHECK = 0;
+					if(((Temperature.InitTmp - 1) < tmp) & (tmp < (Temperature.InitTmp + 1))) numberChaberTmpCheck = 0;
 					else tmpNumber = TmpState.FirstTmp;
 					break;
 				
@@ -354,17 +361,13 @@ public class SystemCheckActivity extends Activity {
 				 SerialPort.Sleep(1000);
 			}
 			
-			if(i != NUMBER_CELL_BLOCK_TEMP_CHECK) {
+			if(i != numberChaberTmpCheck) {
 			
 				tmp = 0;
 				
-				for(i = 0; i < NUMBER_AMBIENT_TEMP_CHECK; i++) {
+				for(i = 0; i < NUMBER_AMBIENT_TMP_CHECK; i++) {
 					
-					mTemperature.AmbTmpRead();
-					
-					SerialPort.Sleep(300);
-					
-					tmp += mTemperature.AmbTmpValue();
+					tmp += mTemperature.AmbTmpRead();
 
 					Log.w("TemperatureCheck", "Amb Temperature : " + tmp);
 					
@@ -373,7 +376,7 @@ public class SystemCheckActivity extends Activity {
 				
 				TimerDisplay.RXBoardFlag = false;
 				
-				if((Temperature.MinAmbTmp < tmp/NUMBER_AMBIENT_TEMP_CHECK) & (tmp/NUMBER_AMBIENT_TEMP_CHECK < Temperature.MaxAmbTmp)) {
+				if((Temperature.MinAmbTmp < tmp/NUMBER_AMBIENT_TMP_CHECK) && (tmp/NUMBER_AMBIENT_TMP_CHECK < Temperature.MaxAmbTmp)) {
 					
 					SerialPort.Sleep(300000);
 					
@@ -441,7 +444,7 @@ public class SystemCheckActivity extends Activity {
 		String rawValue;
 		double douValue = 0;
 		
-		mSerialPort.BoardTx("VH", SerialPort.CtrTarget.PhotoSet);
+		mSerialPort.BoardTx("VH", SerialPort.CtrTarget.NormalSet);
 		
 		rawValue = mSerialPort.BoardMessageOutput();			
 		
@@ -475,7 +478,7 @@ public class SystemCheckActivity extends Activity {
 		
 		temp = mSerialPort.BoardMessageOutput();
 		
-		Log.w("Motor check", "temp : " + temp);
+//		Log.w("Motor check", "temp : " + temp);
 		
 		if(colRsp.equals(temp)) systemState = nextState;
 		else if(errRsp.equals(temp)) systemState = errState;
@@ -489,7 +492,7 @@ public class SystemCheckActivity extends Activity {
 		
 		RunActivity.BlankValue[0] = 0;
 		
-		mSerialPort.BoardTx("VH", SerialPort.CtrTarget.PhotoSet);
+		mSerialPort.BoardTx("VH", SerialPort.CtrTarget.NormalSet);
 		
 		SerialPort.Sleep(rspTime * 1000);
 		
@@ -616,14 +619,17 @@ public class SystemCheckActivity extends Activity {
 		RunActivity.AF_Offset = factorPref.getFloat("AF OffsetVal", 0f);
 		RunActivity.CF_Slope = factorPref.getFloat("CF SlopeVal", 1.0f);
 		RunActivity.CF_Offset = factorPref.getFloat("CF OffsetVal", 0f);
-		RunActivity.SF_F1 = factorPref.getFloat("SF Fct1stVal", 1.0f);
+		RunActivity.RF1_Slope = factorPref.getFloat("RF1 SlopeVal", 1.0f);
+		RunActivity.RF1_Offset = factorPref.getFloat("RF1 OffsetVal", 0f);
+		RunActivity.RF2_Slope = factorPref.getFloat("RF2 SlopeVal", 1.0f);
+		RunActivity.RF2_Offset = factorPref.getFloat("RF2 OffsetVal", 0f);
+		RunActivity.SF_F1 = factorPref.getFloat("SF Fct1stVal", 0f);
 		RunActivity.SF_F2 = factorPref.getFloat("SF Fct2ndVal", 0f);
 		
 		SharedPreferences convertPref = getSharedPreferences("Primary", MODE_PRIVATE);
-		ConvertActivity.Primary = (byte) convertPref.getInt("Convert", 0);
+		ConvertModel.Primary = (byte) convertPref.getInt("Convert", 0);
 		
 		SharedPreferences loginPref = PreferenceManager.getDefaultSharedPreferences(this);
-		HomeActivity.LoginFlag = loginPref.getBoolean("Activation", true);
 		HomeActivity.CheckFlag = loginPref.getBoolean("Check Box", false);
 		
 		SharedPreferences temperaturePref = getSharedPreferences("Temperature", MODE_PRIVATE);

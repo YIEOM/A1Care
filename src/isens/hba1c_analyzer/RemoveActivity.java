@@ -17,8 +17,8 @@ public class RemoveActivity extends Activity {
 	public SerialPort mSerialPort;
 	public TimerDisplay mTimerDisplay;
 	
-	public AnimationDrawable RemoveAni;
-	public ImageView RemoveImage;
+	public AnimationDrawable removeAni;
+	public ImageView removeImage;
 	
 	public static int PatientDataCnt,
 					  ControlDataCnt;
@@ -54,9 +54,6 @@ public class RemoveActivity extends Activity {
 			
 			User1stAction();
 			
-			if((HomeActivity.ANALYZER_SW != HomeActivity.STABLE) || (ResultActivity.ItnData == R.string.stop)) { // Stable
-			
-			
 			GpioPort.DoorActState = true;
 			GpioPort.CartridgeActState = true;
 	
@@ -75,20 +72,14 @@ public class RemoveActivity extends Activity {
 			whichIntent = itn.getIntExtra("WhichIntent", 0);
 			
 			if(whichIntent != ResultActivity.COVER_ACTION_ESC) {
-			
-				if(HomeActivity.ANALYZER_SW != HomeActivity.STABLE) {
-					
 					
 				if(Barcode.RefNum.substring(0, 1).equals("B")) ControlDataCnt = itn.getIntExtra("DataCnt", 0);	
 				else PatientDataCnt = itn.getIntExtra("DataCnt", 0);
 					
-						
-				} else ControlDataCnt = itn.getIntExtra("DataCnt", 0);
-				
 				DataCntSave();			
 			}
 						
-			RemoveAni.stop();
+			removeAni.stop();
 			
 			switch(whichIntent) {
 			
@@ -104,36 +95,27 @@ public class RemoveActivity extends Activity {
 				WhichIntent(TargetIntent.Home);
 				break;
 				
+			case ResultActivity.SCAN_ACTIVITY	:
+				WhichIntent(TargetIntent.ScanTemp);
+				break;
+				
 			default	:
 				break;
-			}
-			
-			
-			} else {
-				
-				SerialPort.Sleep(5000);		
-				
-				if(HomeActivity.NumofStable++ < 25) WhichIntent(TargetIntent.Blank);
-				else {
-					
-					HomeActivity.NumofStable = 0;
-					WhichIntent(TargetIntent.Home);
-				}
 			}
 		}
 	}
 	
 	public void User1stAction() { // Cartridge remove animation start
 		
-		RemoveImage = (ImageView)findViewById(R.id.removeAct1);
-		RemoveAni = (AnimationDrawable)RemoveImage.getBackground();
+		removeImage = (ImageView)findViewById(R.id.removeAct1);
+		removeAni = (AnimationDrawable)removeImage.getBackground();
 		
 		new Thread(new Runnable() {
 		    public void run() {    
 		        runOnUiThread(new Runnable(){
 		            public void run() {
 		            	
-		            	RemoveAni.start();
+		            	removeAni.start();
 		            }
 		        });
 		    }
@@ -153,8 +135,6 @@ public class RemoveActivity extends Activity {
 	
 	public void WhichIntent(TargetIntent Itn) { // Activity conversion
 		
-		SerialPort.Sleep(1000);		
-		
 		Intent nextIntent = null;
 		
 		switch(Itn) {
@@ -165,6 +145,10 @@ public class RemoveActivity extends Activity {
 						
 		case Blank		:				
 			nextIntent = new Intent(getApplicationContext(), BlankActivity.class);
+			break;
+			
+		case ScanTemp	:				
+			nextIntent = new Intent(getApplicationContext(), ScanTempActivity.class);
 			break;
 			
 		default		:	

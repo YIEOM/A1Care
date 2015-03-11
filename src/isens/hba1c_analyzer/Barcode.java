@@ -15,15 +15,11 @@ public class Barcode {
 						a22ref = 0.035, 
 						b22ref = 0.04;
 	
-	private GpioPort BarcodeGpio;
-	
 	private float refScale[] = {1f, 1f, 1f, 1f, 0.6f, 1.4f, 1f};
 	
 	public static String RefNum;
 	public static double a1, 
 						 b1,
-						 f1,
-						 f2,
 						 a21, 
 						 b21, 
 						 a22, 
@@ -34,7 +30,7 @@ public class Barcode {
 						 M,
 						 H;
 	
-	public static double Sm, Im, Ss, Is;
+	public static double Sm, Im, Ss, Is, Asm, Aim, Ass, Ais;
 	
 	public void BarcodeCheck(StringBuffer buffer) { // Check a barcode data
 		
@@ -56,8 +52,6 @@ public class Barcode {
 
 			try {
 				
-				DecimalFormat dfm = new DecimalFormat("00");
-				
 				/* Classification for each digit barcode */
 				test   = (int) buffer.charAt(0) - 64;
 				scale = refScale[test - 1];
@@ -72,12 +66,18 @@ public class Barcode {
 				
 				RefNum = buffer.substring(0, 5);
 				
-				Sm = 0.0237 * ((int) buffer.charAt(6) - 43) + 0.1;
-				Im = 0.158 * ((int) buffer.charAt(7) - 43) - 6;
-				Ss = 0.0003*((int) buffer.charAt(8) - 43);
-				Is = 0.002*((int) buffer.charAt(9) - 43);
+				Sm = 0.0237 * (((int) buffer.charAt(6) - 42) - 1) + 0.1;
+				Im = 0.158 * (((int) buffer.charAt(7) - 42) - 1) - 6;
+				Ss = 0.0003 * (((int) buffer.charAt(8) - 42) - 1);
+				Is = 0.002 * (((int) buffer.charAt(9) - 42) - 1);
 				
-//				Log.w("Barcode", "sm : " + Sm + " im : " + Im + " ss : " + Ss + " is : " + Is);
+				Asm = 0.000316 * (((int) buffer.charAt(10) - 42) - 1) - 0.01;
+				Aim = 0.00237 * (((int) buffer.charAt(11) - 42) - 1) - 0.1;
+				Ass = 0.000004 * (((int) buffer.charAt(12) - 42) - 1);
+				Ais = 0.00003 * (((int) buffer.charAt(13) - 42) - 1);
+				
+				Log.w("Barcode", "sm : " + Sm + " im : " + Im + " ss : " + Ss + " is : " + Is);
+				Log.w("Barcode", "asm idx : " + ((int) buffer.charAt(10) - 42) + " aim idx : " + ((int) buffer.charAt(11) - 42) + " ass idx : " + ((int) buffer.charAt(12) - 42) + " ais idx : " + ((int) buffer.charAt(13) - 42));
 				
 				a1 = 0.009793532;
 				b1 = -0.028;
@@ -93,9 +93,10 @@ public class Barcode {
 			
 				sum = (test + year + month + day + line + locate) % 10; // Checksum bit
 				
-				Log.w("Barcode", "scale : " + scale + " test : " + test + " year : " + year + " month : " + month + " day : " + day + " line : " + line + " locate : " + locate + " check : " + check);
-				Log.w("Barcode", "a1ref : " + scale * a1ref + " b1ref : " + scale * b1ref + " a21ref : " + scale * a21ref + " b21ref : " + scale * b21ref + " a22ref : " + scale * a22ref + " b22ref : " + scale * b22ref);
-				Log.w("Barcode", "a1 : " + a1 + " b1 : " + b1 + " a21 : " + a21 + " b21 : " + b21 + " a22 : " + a22 + " b22 : " + b22 + " L : " + L + " H : " + H);
+//				Log.w("Barcode", "scale : " + scale + " test : " + test + " year : " + year + " month : " + month + " day : " + day + " line : " + line + " locate : " + locate + " check : " + check);
+//				Log.w("Barcode", "a1ref : " + scale * a1ref + " b1ref : " + scale * b1ref + " a21ref : " + scale * a21ref + " b21ref : " + scale * b21ref + " a22ref : " + scale * a22ref + " b22ref : " + scale * b22ref);
+//				Log.w("Barcode", "a1 : " + a1 + " b1 : " + b1 + " a21 : " + a21 + " b21 : " + b21 + " a22 : " + a22 + " b22 : " + b22 + " L : " + L + " H : " + H);
+				Log.w("Barcode", "asm : " + Asm + " aim : " + Aim + " ass : " + Ass + " ais : " + Ais);
 				
 				if( sum == check ) { // Whether or not the correct barcode code
 	
@@ -118,6 +119,8 @@ public class Barcode {
 	}
 	
 	public void BarcodeStop(boolean state) { // Turn off barcode module
+		
+		Log.w("BarcodeStop", "state : " + state);
 		
 		if(state) {
 			

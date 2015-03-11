@@ -2,6 +2,7 @@ package isens.hba1c_analyzer;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View.OnCreateContextMenuListener;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
@@ -18,6 +19,8 @@ public class ShutDownActivity extends Activity {
 	
 	public AniShutDown mAniShutDown;
 	
+	public boolean isShutDown = false;
+	
 	protected void onCreate(Bundle savedInstanceState) {
 		
 		super.onCreate(savedInstanceState);
@@ -32,13 +35,13 @@ public class ShutDownActivity extends Activity {
 	
 	public void initShutDown() {
 		
-		mAniShutDown = new AniShutDown();
-		mAniShutDown.start();
-		
 		shutDown();
 	}
 	
 	public void shutDown() {
+		
+		mAniShutDown = new AniShutDown();
+		mAniShutDown.start();
 		
 		TimerDisplay.ExternalDeviceBarcode = TimerDisplay.FILE_CLOSE;
 		
@@ -46,6 +49,8 @@ public class ShutDownActivity extends Activity {
 		
 		mDatabaseHander = new DatabaseHander(this);
 		mDatabaseHander.UpdateGuestLogIn();
+		
+		isShutDown = true;
 	}
 	
 	public class AniShutDown extends Thread {
@@ -55,26 +60,28 @@ public class ShutDownActivity extends Activity {
 			Animation ani = new RotateAnimation(0, 360, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
 		
 			shutDownText.setText(R.string.shuttingdown);
-			shutDownIcon.setBackgroundResource(R.drawable.blank_bar);
+			shutDownIcon.setBackgroundResource(R.drawable.shutdown_icon);
 			
 			ani.setDuration(1000);
 			ani.setRepeatCount(1);
-			
-			shutDownIcon.startAnimation(ani);
-			
-			SerialPort.Sleep(2000);
+
+			do {
+
+				shutDownIcon.startAnimation(ani);
+				SerialPort.Sleep(2000);
+					
+			} while(!isShutDown);			
 			
 			new Thread(new Runnable() {
-			    public void run() {    
-			         runOnUiThread(new Runnable(){
-			             public void run() {
-			            	 
-			     			shutDownText.setText(R.string.turnoff);
-			             }
-			         });
-			     }
-			 }).start();
+				public void run() {    
+					runOnUiThread(new Runnable(){
+						public void run() {
 
+							shutDownText.setText(R.string.turnoff);
+						}
+					});
+				}
+			}).start();
 		}
 	}
 }

@@ -1,5 +1,7 @@
 package isens.hba1c_analyzer;
 
+import isens.hba1c_analyzer.Model.Hardware;
+
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -42,8 +44,7 @@ public class SerialPort {
 	public static FileInputStream HHBarcodeFileInputStream;
 	public static HHBarcodeRxThread hBarcodeRxThread;
 	
-	public enum CtrTarget {PhotoSet, TmpSet, TmpCall, MotorSet, AmbientTmpCall, CartCall, DoorCall, MotorStop}
-	public enum RxTarget {Board, Barcode}
+	public enum CtrTarget {MotorSet, NormalSet}
 	
 	final static byte STX = 0x02,
 					  ETX = 0x03,
@@ -428,8 +429,8 @@ public class SerialPort {
 
 						BoardInputBuffer = new byte[BOARD_INPUT_BUFFER];
 						size = BoardFileInputStream.read(BoardInputBuffer);
-						Log.w("BoardRxThread", "BoardInputBuffer : " + new String(BoardInputBuffer));
-						BoardRxData(size);
+						Log.w("BoardRxThread", "BoardInputBuffer : " + new String(BoardInputBuffer) + " size : " + size);
+						BoardDataReceive(size);
 					}
 					
 				} catch (IOException e) {
@@ -441,7 +442,7 @@ public class SerialPort {
 		}
 	}
 	
-	public synchronized void BoardRxData(int size) {
+	public synchronized void BoardDataReceive(int size) {
 		
 		int tmpHead;
 		
@@ -449,7 +450,7 @@ public class SerialPort {
 		
 		if(tmpHead != BoardInputTail) {
 			
-			for(int i = 0; i < size; i++) { 
+			for(int i = 0; i < size; i++) {
 				
 				BoardRxBuffer[tmpHead][i] = BoardInputBuffer[i];
 			}
@@ -468,7 +469,8 @@ public class SerialPort {
 			
 			tmpTail = (BoardInputTail + 1) % BOARD_INPUT_MASK;
 			BoardInputTail = tmpTail;
-					
+//			Log.w("BoardInputData", "BoardRxBuffer : " + BoardRxBuffer[tmpTail]);
+				
 			return BoardRxBuffer[tmpTail];	
 		
 		} else return null;
@@ -521,73 +523,91 @@ public class SerialPort {
 		}
 	}
 	
-	public void BoardMessageForm(String tmpStrData) {
+	public void BoardMessageForm(String tempStrData) {
 		
-		int tmpHead;
+		String tempStr;
 
-//		Log.w("BoardMessageForm", "tmpStrData : " + tmpStrData);
+		tempStr = tempStrData.substring(0, 1);
 		
-		if(tmpStrData.substring(0, 1).equals("S")) {
+//		Log.w("BoardMessageForm", "tmpStrData : " + tmpStrData);
+		if(!tempStr.equals("S") && !tempStr.equals("E")){
 			
-			SensorMessageBuffer(tmpStrData);
+			BoardMessageBuffer(tempStrData);
+//			Log.w("BoardMessageForm", "tmpStrData : " + tempStrData);
 			
-		} else if(tmpStrData.substring(0, 1).equals("E")) {
+		} else if(tempStr.equals("S")) {
 			
+			SensorMessageBuffer(tempStrData);
+//			Log.w("BoardMessageForm", "tmpStrData : " + tempStrData);
 		} else {
-				
-			tmpHead = (BoardMsgHead + 1) % UART_RX_MASK;
 			
-			if(BoardMsgTail != tmpHead) {
-				
-				BoardMsgBuffer[tmpHead] = tmpStrData;
-				BoardMsgHead = tmpHead;
-				
-			} else {
-				
-			}	
+			if(tempStrData.substring(0, 2).equals("ED")) { 
+			
+			RunActivity.isError = true;
+//			Log.w("BoardMessageForm", "tmpStrData : " + tempStrData);
+			
+			}
+		}
+	}
+	
+	public void BoardMessageBuffer(String tempData) {
+		
+		int tempHead;
+		
+		tempHead = (BoardMsgHead + 1) % UART_RX_MASK;
+		
+		if(BoardMsgTail != tempHead) {
+			
+			BoardMsgBuffer[tempHead] = tempData;
+			BoardMsgHead = tempHead;
+//			Log.w("BoardMessageBuffer", "tmpStrData : " + tempData);
+					
+		} else {
+			
 		}
 	}
 	
 	public String BoardMessageOutput() {
 		
-		int tmpTail;
+		int tempTail;
 		
 //		Log.w("BoardMessageOutput", "BoardMsgHead : " + BoardMsgHead + " BoardMsgTail : " + BoardMsgTail);
 		
-		if(BoardMsgHead == BoardMsgTail) return "NR";
+		if(BoardMsgHead == BoardMsgTail) return Hardware.NO_RESPONSE;
 		
-		tmpTail = (BoardMsgTail + 1) % UART_RX_MASK;
-		BoardMsgTail = tmpTail;
+		tempTail = (BoardMsgTail + 1) % UART_RX_MASK;
+		BoardMsgTail = tempTail;
 		
-		return BoardMsgBuffer[tmpTail];
+		return BoardMsgBuffer[tempTail];
 	}
 	
-	public void SensorMessageBuffer(String tmpData) {
+	public void SensorMessageBuffer(String tempData) {
 		
-		int tmpHead;
+		int tempHead;
 		
-		tmpHead = (SensorMsgHead + 1) % UART_RX_MASK;
+		tempHead = (SensorMsgHead + 1) % UART_RX_MASK;
 		
-		if(SensorMsgTail != tmpHead) {
+		if(SensorMsgTail != tempHead) {
 			
-			SensorMsgBuffer[tmpHead] = tmpData;
-			SensorMsgHead = tmpHead;
+			SensorMsgBuffer[tempHead] = tempData;
+			SensorMsgHead = tempHead;
+			Log.w("SensorMessageBuffer", "tmpStrData : " + tempData);
 		}
 	}
 	
 	public String SensorMessageOutput() {
 		
-		int tmpTail;
+		int tempTail;
 
 //		Log.w("SensorMessageOutput", "SensorMsgHead : " + SensorMsgHead + " SensorMsgTail : " + SensorMsgTail);
 		
 		if(SensorMsgHead == SensorMsgTail) return "NR";
 			
-		tmpTail = SensorMsgTail + 1;
-		if(tmpTail == UART_RX_MASK) tmpTail = 0;
-		SensorMsgTail = tmpTail;
+		tempTail = SensorMsgTail + 1;
+		if(tempTail == UART_RX_MASK) tempTail = 0;
+		SensorMsgTail = tempTail;
 		
-		return SensorMsgBuffer[tmpTail];
+		return SensorMsgBuffer[tempTail];
 	}
 	
 	public class BarcodeRxThread extends Thread { // Receiving from a barcode sensor
@@ -786,13 +806,9 @@ public class SerialPort {
 	
 	public void BoardRxStart() {
 		
-		BoardFileInputStream = new FileInputStream(BoardFd);
-				
+		BoardFileInputStream = new FileInputStream(BoardFd);				
 		mBoardRxThread = new BoardRxThread();
 		mBoardRxThread.start();
-		
-		BoardRxData BoardRxDataObj = new BoardRxData();
-		BoardRxDataObj.start();
 	}
 	
 	public synchronized void BoardTx(String str, CtrTarget trg) {

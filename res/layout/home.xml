@@ -36,7 +36,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="728px"
-        android:background="@drawable/esc_selector" />
+        android:layout_marginTop="6px"
+        android:background="@drawable/shutdown_selector" />
    	
     <Button
         android:id="@+id/runbtn"

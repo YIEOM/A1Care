@@ -28,11 +28,14 @@ public class TemperatureActivity extends Activity {
 	public Temperature mTemperature;
 	public TimerDisplay mTimerDisplay;
 	
-	public Button escBtn,
-				  setBtn,
-				  readBtn;	
+	public Handler runHandler = new Handler();
+	public Timer runningTimer;
 	
-//	public TextView tmptext;
+	public Button escBtn,
+				  setBtn;	
+	
+	public TextView chamTmpText,
+					ambTmpText;
 	
 	public EditText tmpEText;
 		
@@ -66,17 +69,6 @@ public class TemperatureActivity extends Activity {
 			}
 		});
 		
-		readBtn = (Button)findViewById(R.id.readbtn);
-		readBtn.setOnClickListener(new View.OnClickListener() {
-		
-			public void onClick(View v) {
-		
-				readBtn.setEnabled(false);
-				
-				TmpDisplay();
-			}
-		});
-		
 		TemperatureInit();
 	}
 	
@@ -86,6 +78,10 @@ public class TemperatureActivity extends Activity {
 		mTimerDisplay.ActivityParm(this, R.id.temperaturelayout);
 		
 		tmpEText.setText(Float.toString(Temperature.InitTmp));
+		chamTmpText = (TextView)findViewById(R.id.chamTmpText);
+		ambTmpText = (TextView)findViewById(R.id.ambTmpText);
+		
+		RunTimerInit();
 	}
 
 	public void TmpSave(float tmp) {
@@ -122,26 +118,20 @@ public class TemperatureActivity extends Activity {
 		public void run() {
 			
 			final DecimalFormat tmpdfm = new DecimalFormat("0.0");
-			final double tmpDouble;
-			
-			final TextView tmptext = (TextView)activity.findViewById(R.id.tmptext);
+			final double chamTmp,
+						 ambTmp;
 			
 			mTemperature = new Temperature();
-			mTemperature.CellTmpRead();
-			
-			SerialPort.Sleep(500);
-			
-			tmpDouble = mTemperature.CellTmpValue();
-			Log.w("TmpDisplay", "tmpDouble : " + tmpDouble);
+			chamTmp = mTemperature.CellTmpRead();
+			ambTmp = mTemperature.AmbTmpRead(); 
 			
 			new Thread(new Runnable() {
 				public void run() {    
 					runOnUiThread(new Runnable(){
 						public void run(){
 
-							tmptext.setText(tmpdfm.format(tmpDouble));
-
-							readBtn.setEnabled(true);
+							chamTmpText.setText(tmpdfm.format(chamTmp));
+							ambTmpText.setText(tmpdfm.format(ambTmp));
 						}
 					});
 				}
@@ -149,7 +139,29 @@ public class TemperatureActivity extends Activity {
 		}
 	}
 	
+	public void RunTimerInit() {
+
+		TimerTask FiveHundredmsPeriod = new TimerTask() {
+			
+			public void run() {
+				Runnable updater = new Runnable() {
+					public void run() {
+						
+						TmpDisplay();
+					}
+				};
+				
+				runHandler.post(updater);		
+			}
+		};
+		
+		runningTimer = new Timer();
+		runningTimer.schedule(FiveHundredmsPeriod, 0, 500); // Timer period : 500msec
+	}
+	
 	public void WhichIntent(TargetIntent Itn) { // Activity conversion
+		
+		runningTimer.cancel();
 		
 		Intent nextIntent = null;
 		

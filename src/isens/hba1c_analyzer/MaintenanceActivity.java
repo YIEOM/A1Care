@@ -7,6 +7,13 @@ import java.text.DecimalFormat;
 import java.util.Calendar;
 
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
+import isens.hba1c_analyzer.SerialPort.CtrTarget;
+import isens.hba1c_analyzer.Temperature.CellTmpRead;
+import isens.hba1c_analyzer.View.AbsorbanceActivity;
+import isens.hba1c_analyzer.View.AdjustmentActivity;
+import isens.hba1c_analyzer.View.Correction1Activity;
+import isens.hba1c_analyzer.View.Correction2Activity;
+import isens.hba1c_analyzer.View.LampActivity;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
@@ -23,16 +30,21 @@ import android.widget.TimePicker;
 
 public class MaintenanceActivity extends Activity {
 	
+	final static String FW_VERSION =  "QV";
+	
 	public TimerDisplay mTimerDisplay;
+	public SerialPort mSerialPort;
 	
 	public Button escBtn,
 	  			  lampBtn,
 	  			  adjustBtn,
 	  			  calibrationBtn,
 	  			  tempBtn,
-	  			  absorbanceBtn;
+	  			  absorbanceBtn,
+	  			  correct1Btn,
+	  			  correct2Btn;
 	
-	public TextView versionText;
+	public TextView swVersionText, fwVersionText;
 	
 	public boolean btnState = false;
 	
@@ -42,7 +54,8 @@ public class MaintenanceActivity extends Activity {
 		overridePendingTransition(R.anim.fade, R.anim.hold);
 		setContentView(R.layout.maintenance);
 		
-		versionText = (TextView)findViewById(R.id.versiontext);
+		swVersionText = (TextView)findViewById(R.id.swVersionText);
+		fwVersionText = (TextView)findViewById(R.id.fwVersionText);
 		
 		MaintenanceInit();
 					
@@ -146,6 +159,38 @@ public class MaintenanceActivity extends Activity {
 				}
 			}
 		});
+		
+		correct1Btn = (Button)findViewById(R.id.correct1Btn);
+		correct1Btn.setOnClickListener(new View.OnClickListener() {
+		
+			public void onClick(View v) {
+				
+				if(!btnState) {
+					
+					btnState = true;
+					
+					correct1Btn.setEnabled(false);
+				
+					WhichIntent(TargetIntent.Correction1);
+				}
+			}
+		});
+
+		correct2Btn = (Button)findViewById(R.id.correct2Btn);
+		correct2Btn.setOnClickListener(new View.OnClickListener() {
+		
+			public void onClick(View v) {
+				
+				if(!btnState) {
+					
+					btnState = true;
+					
+					correct2Btn.setEnabled(false);
+				
+					WhichIntent(TargetIntent.Correction2);
+				}
+			}
+		});
 	}
 	
 	public void MaintenanceInit() {
@@ -153,23 +198,101 @@ public class MaintenanceActivity extends Activity {
 		mTimerDisplay = new TimerDisplay();
 		mTimerDisplay.ActivityParm(this, R.id.maintenancelayout);
 		
-		PackageInfo pi = null;
-
-		try {
-
-			pi = getPackageManager().getPackageInfo(getPackageName(), 0);
-
-		} catch (NameNotFoundException e) {
-
-			// TODO Auto-generated catch block
-
-			e.printStackTrace();
-
-		}
-
-		String verSion = pi.versionName;
+		DisplayVersion mDisplayVersion = new DisplayVersion();
+		mDisplayVersion.start();
+	}
+	
+	public class DisplayVersion extends Thread {
 		
-		versionText.setText(verSion);
+		String swVersion, fwVersion;
+		
+		PackageInfo pi = null;
+		
+		public void run() {
+			
+			try {
+
+				pi = getPackageManager().getPackageInfo(getPackageName(), 0);
+
+			} catch (NameNotFoundException e) {
+
+				// TODO Auto-generated catch block
+
+				e.printStackTrace();
+			}
+
+			swVersion = pi.versionName;
+			
+			fwVersion = getFwVersion();
+			
+			new Thread(new Runnable() {
+				public void run() {
+					runOnUiThread(new Runnable(){
+						public void run() {
+	
+							swVersionText.setText("SW : " + swVersion);
+							fwVersionText.setText("FW : " + fwVersion);
+						}
+					});
+				}
+			}).start();
+		}
+	}
+	
+	public String getFwVersion() {
+		
+		GetFwVersion mGetFwVersion = new GetFwVersion();
+		mGetFwVersion.start();
+		
+		try {
+			mGetFwVersion.join();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return mGetFwVersion.getVersion();
+	}
+	
+	public class GetFwVersion extends Thread {
+		
+		String version;
+		
+		public void run() {
+			
+			String temp = "NR";
+			int cnt = 0;
+			
+			TimerDisplay.RXBoardFlag = true;
+			
+			mSerialPort = new SerialPort();
+			mSerialPort.BoardTx(FW_VERSION, CtrTarget.NormalSet);
+			
+			do {	
+			
+				temp = mSerialPort.BoardMessageOutput();
+
+				Log.w("GetFwVersion", "temp : " + temp);
+				
+				if(cnt++ == 15) {
+					
+					temp = "Nothing";
+					break;
+				}
+				
+				SerialPort.Sleep(100);
+			
+			} while(temp.equals("NR"));
+			
+			TimerDisplay.RXBoardFlag = false;
+			
+			version = temp;
+		}
+		
+		public String getVersion() {
+			
+			return version;
+		}
 	}
 
 	public void WhichIntent(TargetIntent Itn) { // Activity conversion
@@ -183,27 +306,33 @@ public class MaintenanceActivity extends Activity {
 			break;
 						
 		case Lamp		:				
-			nextIntent = new Intent(getApplicationContext(), LampActivity.class);
+			nextIntent = new Intent(getApplicationContext(), LampCopyActivity.class);
 			break;
 			
 		case Adjustment		:				
-			nextIntent = new Intent(getApplicationContext(), FactorActivity.class);
-			nextIntent.putExtra("Factor Mode", (int) FactorActivity.ADJUSTMENT_FACTOR_SETTING);
+			nextIntent = new Intent(getApplicationContext(), AdjustmentActivity.class);
 			break;
 
-		case Calibration		:				
+		case Calibration	:				
 			nextIntent = new Intent(getApplicationContext(), CalibrationActivity.class);
 			break;
 			
-		case Temperature		:				
+		case Temperature	:				
 			nextIntent = new Intent(getApplicationContext(), TemperatureActivity.class);
 			break;
 		
 		case Absorbance		:				
-			nextIntent = new Intent(getApplicationContext(), FactorActivity.class);
-			nextIntent.putExtra("Factor Mode", (int) FactorActivity.ABSORBANCE_FACTOR_SETTING);
+			nextIntent = new Intent(getApplicationContext(), AbsorbanceActivity.class);
 			break;
 					
+		case Correction1		:				
+			nextIntent = new Intent(getApplicationContext(), Correction1Activity.class);
+			break;
+		
+		case Correction2		:				
+			nextIntent = new Intent(getApplicationContext(), Correction2Activity.class);
+			break;
+		
 		default		:	
 			break;			
 		}

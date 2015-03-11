@@ -51,7 +51,8 @@ public class ActionActivity extends Activity {
 	
 	public static boolean IsCorrectBarcode = false, 
 						  BarcodeCheckFlag = false;	
-	public static boolean ESCButtonFlag = false;
+	public static boolean IsEnablePopup = false,
+						  ESCButtonFlag = false;
 	
 	public static byte CartridgeCheckFlag, 
 					   DoorCheckFlag;
@@ -74,7 +75,7 @@ public class ActionActivity extends Activity {
 		
 			public void onClick(View v) {
 			
-				if(!btnState && (HomeActivity.ANALYZER_SW != HomeActivity.STABLE)) {
+				if(!btnState) {
 				
 					btnState = true;
 					
@@ -127,9 +128,6 @@ public class ActionActivity extends Activity {
 //			Log.w("BarcodeScan", "BarcodeCheckFlag : " + BarcodeCheckFlag);
 			SerialPort.BarcodeBufIndex = 0;
 			
-			if(HomeActivity.ANALYZER_SW != HomeActivity.STABLE) { // STABLE
-			
-				
 			Trigger();
 			
 			while(!BarcodeCheckFlag) {
@@ -139,12 +137,6 @@ public class ActionActivity extends Activity {
 			}
 
 			timer.cancel();
-			
-			} else {
-				
-				SerialPort.Sleep(5000);
-				IsCorrectBarcode = true;
-			}
 			
 			if(!ESCButtonFlag) { 
 				
@@ -178,19 +170,15 @@ public class ActionActivity extends Activity {
 			/* Cartridge insertion action */
 			CartridgeAniStart(activity);
 			
-			if(HomeActivity.ANALYZER_SW != HomeActivity.STABLE) { // STABLE
-				
 			TimerDisplay.RXBoardFlag = true;
 				
 			GpioPort.CartridgeActState = true;
 			
-			while(ActionActivity.CartridgeCheckFlag != 1) { // to test
+			while(ActionActivity.CartridgeCheckFlag != 1 || IsEnablePopup) { // to test
 			
 				if(ESCButtonFlag) break;
 				SerialPort.Sleep(100);
 			}
-			
-			} else SerialPort.Sleep(2000);
 			
 			if(!ESCButtonFlag) {  // to test
 				
@@ -228,19 +216,15 @@ public class ActionActivity extends Activity {
 			/* Cover close action */
 			CoverAniStart(activity);
 			
-			if(HomeActivity.ANALYZER_SW != HomeActivity.STABLE) { // STABLE
-				
-			
 			GpioPort.DoorActState = true;
 			
-			while((ActionActivity.DoorCheckFlag != 1) | (ActionActivity.CartridgeCheckFlag != 1)) {
+			while((ActionActivity.DoorCheckFlag != 1) || (ActionActivity.CartridgeCheckFlag != 1) || IsEnablePopup) {
 				
 				if(ESCButtonFlag) break;
 				SerialPort.Sleep(100);
 			}
 			
-			
-			} else SerialPort.Sleep(2000);
+			CoverAniStop(activity);
 			
 			if(!ESCButtonFlag) {
 				
@@ -305,6 +289,20 @@ public class ActionActivity extends Activity {
 		    }
 		}).start();
 	}
+	
+	public void CoverAniStop(Activity activity) {
+		
+		new Thread(new Runnable() {
+		    public void run() {    
+		        runOnUiThread(new Runnable(){
+		            public void run(){
+		  
+						scanAni.stop();
+					}
+		        });
+		    }
+		}).start();
+	}
 		
 	public void Trigger() {
 		
@@ -344,6 +342,8 @@ public class ActionActivity extends Activity {
 	
 	public void ESC() {
 		
+		IsEnablePopup = true;
+		
 		mErrorPopup = new ErrorPopup(this, this, R.id.actionlayout); // to test
 		mErrorPopup.OXBtnDisplay(R.string.esc);
 	}
@@ -353,6 +353,7 @@ public class ActionActivity extends Activity {
 		TimerDisplay.RXBoardFlag = false;
 		GpioPort.CartridgeActState = false;
 		GpioPort.DoorActState = false;
+		IsEnablePopup = false;
 		
 		mGpioPort = new GpioPort();
 		mGpioPort.TriggerHigh();

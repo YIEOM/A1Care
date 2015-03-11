@@ -296,16 +296,28 @@ public class ControlTestActivity extends Activity {
 	
 	public void GetItnData() { // getting the intent data
 		
-		Intent itn = getIntent();
+		if(HomeActivity.ANALYZER_SW != HomeActivity.DEMO) {
+			
+			Intent itn = getIntent();
+			
+			dateTime = itn.getStringArrayExtra("DateTime");
+			testNum  = itn.getStringArrayExtra("TestNum");
+			refNum   = itn.getStringArrayExtra("RefNumber");
+			hbA1c    = itn.getStringArrayExtra("HbA1c");
+			pID      = itn.getStringArrayExtra("PatientID");
+			oID      = itn.getStringArrayExtra("OperatorID");
+			priStr   = itn.getStringArrayExtra("Primary");
 		
-		dateTime = itn.getStringArrayExtra("DateTime");
-		testNum  = itn.getStringArrayExtra("TestNum");
-		refNum   = itn.getStringArrayExtra("RefNumber");
-		hbA1c    = itn.getStringArrayExtra("HbA1c");
-		pID      = itn.getStringArrayExtra("PatientID");
-		oID      = itn.getStringArrayExtra("OperatorID");
-		priStr   = itn.getStringArrayExtra("Primary");
-		
+		} else {
+			
+			dateTime[0] = "20150305AM0900";
+			testNum [0] = "0001";
+			refNum  [0] = "DBANA";
+			hbA1c   [0] = "5.5";
+			pID     [0] = "Patient";
+			oID     [0] = "Operator";
+			priStr  [0] = "0";
+		}
 //		Log.w("GetItnData", "Cartridge Lot : " + refNum[0] + " HbA1c : " + hbA1c[0]);
 	}
 		
@@ -347,8 +359,8 @@ public class ControlTestActivity extends Activity {
 		GetItnData();
 		ControlText();
 		
-    	for(int i = 0; i < 5; i++) {
-    		
+		for(int i = 0; i < 5; i++) {
+		
     		if(testNum[i] != null) {
     		
     			TestNumText [i].setText(testNum[i]);
@@ -417,7 +429,7 @@ public class ControlTestActivity extends Activity {
 			testNo.setText(testNum[boxNum - 1]);
 			operatorID.setText(oID[boxNum - 1]);
 			result.setText(hbA1c[boxNum - 1] + unit);
-			
+				
 			detailViewBtn.setEnabled(false);
 			detailPopup.showAtLocation(cTestLayout, Gravity.CENTER, 0, 0);
 			detailPopup.setAnimationStyle(0);
