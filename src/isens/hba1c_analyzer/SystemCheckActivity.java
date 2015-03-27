@@ -153,12 +153,20 @@ public class SystemCheckActivity extends Activity {
 			
 			mErrorPopup = new ErrorPopup(activity, context, layoutid);
 			
-			if(ActionActivity.CartridgeCheckFlag != 0) mErrorPopup.ErrorDisplay(R.string.w002);
-			while(ActionActivity.CartridgeCheckFlag != 0) SerialPort.Sleep(100);
-			mErrorPopup.ErrorPopupClose();
+//			if(ActionActivity.CartridgeCheckFlag != 0) mErrorPopup.ErrorDisplay(R.string.w002);
+//			while(ActionActivity.CartridgeCheckFlag != 0) SerialPort.Sleep(100);
+//			
+//			if(ActionActivity.DoorCheckFlag != 1) mErrorPopup.ErrorDisplay(R.string.w001);
+//			while(ActionActivity.DoorCheckFlag != 1) SerialPort.Sleep(100);
+//			mErrorPopup.ErrorPopupClose();
 			
-			if(ActionActivity.DoorCheckFlag != 1) mErrorPopup.ErrorDisplay(R.string.w001);
-			while(ActionActivity.DoorCheckFlag != 1) SerialPort.Sleep(100);
+			while(ActionActivity.DoorCheckFlag != 1 || ActionActivity.CartridgeCheckFlag != 0) {
+				
+				if(ActionActivity.CartridgeCheckFlag != 0) mErrorPopup.ErrorDisplay(R.string.w002);
+				else if(ActionActivity.DoorCheckFlag != 1) mErrorPopup.ErrorDisplay(R.string.w001);
+				
+				SerialPort.Sleep(100);
+			}
 			mErrorPopup.ErrorPopupClose();
 			
 			GpioPort.DoorActState = false;			
@@ -363,6 +371,8 @@ public class SystemCheckActivity extends Activity {
 			
 			if(i != numberChaberTmpCheck) {
 			
+				SerialPort.Sleep(300000);
+				
 				tmp = 0;
 				
 				for(i = 0; i < NUMBER_AMBIENT_TMP_CHECK; i++) {
@@ -377,8 +387,6 @@ public class SystemCheckActivity extends Activity {
 				TimerDisplay.RXBoardFlag = false;
 				
 				if((Temperature.MinAmbTmp < tmp/NUMBER_AMBIENT_TMP_CHECK) && (tmp/NUMBER_AMBIENT_TMP_CHECK < Temperature.MaxAmbTmp)) {
-					
-					SerialPort.Sleep(300000);
 					
 					WhichIntent(TargetIntent.Home);
 				
@@ -606,6 +614,7 @@ public class SystemCheckActivity extends Activity {
 		SharedPreferences DcntPref = getSharedPreferences("Data Counter", MODE_PRIVATE);
 		RemoveActivity.PatientDataCnt = DcntPref.getInt("PatientDataCnt", 1);
 		RemoveActivity.ControlDataCnt = DcntPref.getInt("ControlDataCnt", 1);
+		Log.w("ParameterInit", ""+ RemoveActivity.PatientDataCnt);
 		
 		/* TEST Mode */
 		if(HomeActivity.ANALYZER_SW == HomeActivity.DEVEL) {

@@ -1,5 +1,5 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/setting3layout"
+    android:id="@+id/setting4Layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/background" >
@@ -45,9 +45,9 @@
         android:layout_marginTop="15px" />
    	        
    	<RelativeLayout 
-   	    android:layout_width="60px"
-   	    android:layout_height="60px"
-        android:layout_marginLeft="370px"
+   	    android:layout_width="wrap_content"
+   	    android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
         android:layout_marginTop="88px"
         android:gravity="center" >
    	

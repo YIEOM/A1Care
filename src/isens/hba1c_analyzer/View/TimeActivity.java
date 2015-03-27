@@ -48,7 +48,7 @@ public class TimeActivity extends Activity implements TimeIView{
 		overridePendingTransition(R.anim.fade, R.anim.hold);
 		setContentView(R.layout.datetime);
 		
-		mTimePresenter = new TimePresenter(this, this, this, R.layout.datetime);
+		mTimePresenter = new TimePresenter(this, this, this, R.id.dateTimeLayout);
 		mTimePresenter.init();
 	}
 	

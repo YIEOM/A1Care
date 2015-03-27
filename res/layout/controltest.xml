@@ -488,7 +488,27 @@
 	<RelativeLayout 
    	    android:layout_width="wrap_content"
    	    android:layout_height="wrap_content"
-   	    android:layout_marginLeft="511px"
+        android:layout_marginLeft="512px"
+        android:layout_marginTop="403px" >
+   	    
+   	    <Button
+	        android:id="@+id/exportbtn"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:background="@drawable/pdr_btn_selector" />
+   	    
+		<ImageView 
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_centerInParent="true"
+		    android:src="@drawable/usb_icon" />
+	        
+   	</RelativeLayout>
+	
+	<RelativeLayout 
+   	    android:layout_width="wrap_content"
+   	    android:layout_height="wrap_content"
+   	    android:layout_marginLeft="420px"
         android:layout_marginTop="403px" >
    	    
    	    <Button
@@ -544,5 +564,16 @@
 	        android:src="@drawable/pdr_right_icon" />
 	        
    	</RelativeLayout>
+	
+	<TextView
+        android:id="@+id/pagetext" 
+        android:layout_width="80px"
+        android:layout_height="30px"
+        android:typeface="sans"
+        android:textStyle="bold"
+        android:textSize="20px"
+        android:textColor="#565656"
+        android:layout_marginLeft="25px"
+        android:layout_marginTop="405px" />
 	
 </RelativeLayout>

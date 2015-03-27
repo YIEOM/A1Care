@@ -1,8 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/actionlayout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/ani_scan_bg" >
+    android:layout_height="match_parent" >
       
     <ImageView
         android:layout_width="wrap_content"
@@ -42,8 +42,7 @@
         android:id="@+id/userAct1"
         android:layout_marginTop="64px"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/useract1" />
+        android:layout_height="wrap_content" />
     
     <ImageView
         android:id="@+id/userAct4"

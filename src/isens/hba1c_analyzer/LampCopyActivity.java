@@ -187,7 +187,7 @@ public class LampCopyActivity extends Activity {
 	public void LampInit() {
 		
 		mTimerDisplay = new TimerDisplay();
-		mTimerDisplay.ActivityParm(this, R.id.lamplayout);
+		mTimerDisplay.ActivityParm(this, R.id.lampLayout);
 		
 		adcText = (TextView) findViewById(R.id.adcText);
 		stateFlag1 = (ImageView) findViewById(R.id.stateFlag1);
@@ -266,7 +266,7 @@ public class LampCopyActivity extends Activity {
 		photoState = AnalyzerState.MeasurePosition;
 		checkError = RunActivity.NORMAL_OPERATION;
 		
-		TestStart mTestStart = new TestStart(this, this, R.id.lamplayout);
+		TestStart mTestStart = new TestStart(this, this, R.id.lampLayout);
 		mTestStart.start();
 	}
 	

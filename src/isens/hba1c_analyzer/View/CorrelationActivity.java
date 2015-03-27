@@ -55,7 +55,7 @@ public class CorrelationActivity extends Activity implements FactorIView{
 		overridePendingTransition(R.anim.fade, R.anim.hold);
 		setContentView(R.layout.setting2);
 		
-		mCorrelationPresenter = new CorrelationPresenter(this, this, this, R.layout.setting2);
+		mCorrelationPresenter = new CorrelationPresenter(this, this, this, R.id.setting2Layout);
 		mCorrelationPresenter.init();
 		
 //		if(HomeActivity.ANALYZER_SW == HomeActivity.DEVEL) {

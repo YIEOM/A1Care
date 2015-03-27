@@ -374,7 +374,7 @@ public class OperatorController {
 		
 		if(id.equals("ENGINEER")) {
 	
-			if(passEText.getText().toString().equals("")) {
+			if(password.equals("ENGINEER")) {
 					
 				popupWindow.dismiss();
 				
@@ -476,7 +476,7 @@ public class OperatorController {
 						} else {
 							
 							mErrorPopup = new ErrorPopup(activity, context, layoutid);
-							mErrorPopup.ErrorBtnDisplay(R.string.w015);
+							mErrorPopup.ErrorBtnDisplay(R.string.w018);
 						}
 						
 					} else {

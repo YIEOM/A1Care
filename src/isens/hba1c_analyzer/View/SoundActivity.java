@@ -42,7 +42,7 @@ public class SoundActivity extends Activity implements SoundIView {
 		overridePendingTransition(R.anim.fade, R.anim.hold);
 		setContentView(R.layout.setting3);
 		
-		mSoundPresenter = new SoundPresenter(this, this, this, R.layout.setting3);
+		mSoundPresenter = new SoundPresenter(this, this, this, R.id.setting3Layout);
 		mSoundPresenter.init();
 	}
 	

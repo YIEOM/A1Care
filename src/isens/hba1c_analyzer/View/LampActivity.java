@@ -60,7 +60,7 @@ public class LampActivity extends Activity implements LampIView{
 		overridePendingTransition(R.anim.fade, R.anim.hold);
 		setContentView(R.layout.lamp);
 		
-		mLampPresenter = new LampPresenter(this, this, this, R.layout.lamp);
+		mLampPresenter = new LampPresenter(this, this, this, R.id.lampLayout);
 		mLampPresenter.init();
 	}
 	

@@ -56,7 +56,7 @@
    	<RelativeLayout 
    	    android:layout_width="wrap_content"
    	    android:layout_height="wrap_content"
-   	    android:layout_marginLeft="30px"
+   	    android:layout_marginLeft="175px"
         android:layout_marginTop="134px" >
    	    
    	    <Button
@@ -88,7 +88,7 @@
  	<RelativeLayout 
    	    android:layout_width="wrap_content"
    	    android:layout_height="wrap_content"
-   	    android:layout_marginLeft="182px"
+   	    android:layout_marginLeft="328px"
         android:layout_marginTop="134px" >
    	    
    	    <Button
@@ -120,7 +120,7 @@
  	<RelativeLayout 
    	    android:layout_width="wrap_content"
    	    android:layout_height="wrap_content"
-   	    android:layout_marginLeft="335px"
+   	    android:layout_marginLeft="481px"
         android:layout_marginTop="134px" >
    	    
    	    <Button
@@ -152,8 +152,8 @@
  	<RelativeLayout 
    	    android:layout_width="wrap_content"
    	    android:layout_height="wrap_content"
-   	    android:layout_marginLeft="486px"
-        android:layout_marginTop="134px" >
+   	    android:layout_marginLeft="175px"
+        android:layout_marginTop="269px" >
    	    
    	    <Button
 	        android:id="@+id/soundbtn"
@@ -180,12 +180,12 @@
 	        android:textColor="#242424" />
 		    
    	</RelativeLayout>			
-   	
+ 	
  	<RelativeLayout 
    	    android:layout_width="wrap_content"
    	    android:layout_height="wrap_content"
-   	    android:layout_marginLeft="639px"
-        android:layout_marginTop="134px" >
+   	    android:layout_marginLeft="328px"
+        android:layout_marginTop="269px" >
    	    
    	    <Button
 	        android:id="@+id/languagebtn"
@@ -212,43 +212,11 @@
 	        android:textColor="#242424" />
 		    
    	</RelativeLayout>
- 	
- 	<RelativeLayout 
-   	    android:layout_width="wrap_content"
-   	    android:layout_height="wrap_content"
-   	    android:layout_marginLeft="30px"
-        android:layout_marginTop="269px" >
-   	    
-   	    <Button
-	        android:id="@+id/collelationbtn"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:background="@drawable/systemsetting_btn_selector" />
-   	    
-		<ImageView 
-		    android:layout_width="wrap_content"
-		    android:layout_height="wrap_content"
-	        android:layout_marginTop="25px"
-		    android:layout_centerHorizontal="true"
-	        android:src="@drawable/cf_icon" />
-	        
-		<TextView
-		    android:layout_width="wrap_content"
-		    android:layout_height="wrap_content"
-	        android:layout_marginTop="70px" 
-	        android:layout_centerHorizontal="true"
-	        android:gravity="center"
-		    android:text="CORRELATION\nFACTOR"
-	        android:typeface="sans"
-	        android:textSize="18px"
-	        android:textColor="#242424" />
-		    
-   	</RelativeLayout>
    	
  	<RelativeLayout 
    	    android:layout_width="wrap_content"
    	    android:layout_height="wrap_content"
-   	    android:layout_marginLeft="182px"
+   	    android:layout_marginLeft="481px"
         android:layout_marginTop="269px" >
    	    
    	    <Button
@@ -260,56 +228,21 @@
 		<ImageView 
 		    android:layout_width="wrap_content"
 		    android:layout_height="wrap_content"
-	        android:layout_marginTop="25px"
+	        android:layout_marginTop="15px"
 		    android:layout_centerHorizontal="true"
 	        android:src="@drawable/convert_icon" />
 	        
 		<TextView
 		    android:layout_width="wrap_content"
 		    android:layout_height="wrap_content"
-	        android:layout_marginTop="85px" 
+	        android:layout_marginTop="70px" 
 	        android:layout_centerHorizontal="true"
 	        android:gravity="center"
-		    android:text="CONVERT"
+		    android:text="UNIT\nSELECTION"
 	        android:typeface="sans"
 	        android:textSize="18px"
 	        android:textColor="#242424" />
   	    
    	</RelativeLayout>
  	      	 
- 	<RelativeLayout 
-   	    android:layout_width="wrap_content"
-   	    android:layout_height="wrap_content"
-   	    android:layout_marginLeft="335px"
-        android:layout_marginTop="269px" >
-   	    
-   	    <Button
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:background="@drawable/systemsetting_btn_selector" />
-   	     
-   	</RelativeLayout>
-        
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-  	    android:layout_marginLeft="486px"
-        android:layout_marginTop="269px"
-        android:gravity="center"
-        android:typeface="sans"
-        android:textSize="18px"
-        android:textColor="#242424"
-        android:background="@drawable/systemsetting_btn_selector" />
-    
-   	<Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-  	    android:layout_marginLeft="639px"
-        android:layout_marginTop="269px"
-        android:gravity="center"
-	    android:typeface="sans"
-        android:textSize="18px"
-        android:textColor="#242424"
-        android:background="@drawable/systemsetting_btn_selector" />
-    	        
 </RelativeLayout>

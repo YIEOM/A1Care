@@ -2,13 +2,22 @@
 <animation-list xmlns:android="http://schemas.android.com/apk/res/android"
     android:oneshot="false" >
 	
-    <item android:drawable="@drawable/ani_scan_1" android:duration="200" />
-    <item android:drawable="@drawable/ani_scan_4" android:duration="60" />
-    <item android:drawable="@drawable/ani_scan_7" android:duration="70" />
-    <item android:drawable="@drawable/ani_scan_10" android:duration="80" />
-    <item android:drawable="@drawable/ani_scan_12" android:duration="90" />
-    <item android:drawable="@drawable/ani_scan_14" android:duration="100" />
-    <item android:drawable="@drawable/ani_scan_16" android:duration="110" />
+    <item android:drawable="@drawable/ani_scan_01" android:duration="200" />
+    <item android:drawable="@drawable/ani_scan_02" android:duration="20" />
+    <item android:drawable="@drawable/ani_scan_03" android:duration="20" />
+    <item android:drawable="@drawable/ani_scan_04" android:duration="40" />
+    <item android:drawable="@drawable/ani_scan_05" android:duration="40" />
+    <item android:drawable="@drawable/ani_scan_06" android:duration="60" />
+    <item android:drawable="@drawable/ani_scan_07" android:duration="60" />
+    <item android:drawable="@drawable/ani_scan_08" android:duration="80" />
+    <item android:drawable="@drawable/ani_scan_09" android:duration="80" />
+    <item android:drawable="@drawable/ani_scan_10" android:duration="90" />
+    <item android:drawable="@drawable/ani_scan_11" android:duration="90" />
+    <item android:drawable="@drawable/ani_scan_12" android:duration="100" />
+    <item android:drawable="@drawable/ani_scan_13" android:duration="100" />
+    <item android:drawable="@drawable/ani_scan_14" android:duration="110" />
+    <item android:drawable="@drawable/ani_scan_15" android:duration="110" />
+    <item android:drawable="@drawable/ani_scan_16" android:duration="120" />
     <item android:drawable="@drawable/ani_scan_17" android:duration="120" />
     <item android:drawable="@drawable/ani_scan_18" android:duration="130" />
     <item android:drawable="@drawable/ani_scan_19" android:duration="140" />

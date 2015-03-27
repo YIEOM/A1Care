@@ -2,8 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:background="@drawable/popup_bg"
-    android:orientation="vertical" >
+    android:background="@drawable/popup_bg" >
     
     <TextView
         android:id="@+id/errortext"
@@ -15,4 +14,25 @@
         android:textSize="28px"
         android:textColor="#FFFFFF" />
 
+    <Button 
+        android:id="@+id/errorbtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="222px"
+        android:layout_centerHorizontal="true" />
+    
+    <Button 
+        android:id="@+id/yesbtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="227px"
+        android:layout_marginTop="222px" />
+
+   	<Button 
+        android:id="@+id/nobtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="402px"
+        android:layout_marginTop="222px" />
+    
 </RelativeLayout>

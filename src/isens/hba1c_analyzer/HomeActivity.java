@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.RotateAnimation;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -32,16 +34,22 @@ public class HomeActivity extends Activity {
 	final static byte NORMAL = 0,
 					  DEVEL = 1, // Development
 					  DEMO = 2, // Sales department
-					  ANALYZER_SW = DEVEL;
+					  ANALYZER_SW = NORMAL;
 
 	final static byte PP = 1,
 			          ES = 2,
 			          ANALYZER_DEVICE = PP;
+
+	public static final byte A1C_QC = 1,
+							 A1C    = 0;
+	
+	public static byte MEASURE_MODE;
 	
 	public DatabaseHander mDatabaseHander;
 	public OperatorController mOperatorController;
 	public ErrorPopup mErrorPopup;
 	public TimerDisplay mTimerDisplay;
+	public ShutDownPopup mShutDownPopup;
 	
 	public SoundPool mPool;
 	
@@ -50,7 +58,7 @@ public class HomeActivity extends Activity {
 				  recordBtn,
 				  escIcon;
 	
-	public enum TargetIntent {Home, HbA1c, NA, Action, ActionTemp, Run, Blank, BlankTemp, Record, Result, Remove, Image, Date, Setting, SystemSetting, DataSetting, OperatorSetting, Time, Display, HIS, HISSetting, Export, Maintenance, FileSave, ControlFileLoad, PatientFileLoad, NextFile, PreFile, Adjustment, Sound, Calibration, Language, Correlation, Temperature, Lamp, Convert, Absorbance, ShutDown, ScanTemp, Correction1, Correction2}
+	public enum TargetIntent {Home, HbA1c, NA, Action, ActionQC, Run, RunQC, Blank, BlankQC, Record, Result, ResultQC, Remove, Image, Date, Setting, SystemSetting, DataSetting, OperatorSetting, FunctionalTest, Time, Display, HIS, HISSetting, Export, Maintenance, FileSave, ControlFileLoad, PatientFileLoad, NextFile, PreFile, Adjustment, Sound, Calibration, Language, Correlation, Temperature, Lamp, Convert, Absorbance, ShutDown, ScanTemp, Correction1, Correction2}
 	
 	public static boolean LoginFlag = true,
 						  CheckFlag;
@@ -63,7 +71,8 @@ public class HomeActivity extends Activity {
 	public TextView idText,
 					demoVerText;
 	
-	public boolean btnState = false;
+	public boolean btnState = false,
+				   isShutDown = false;
 	
 	public int mWin;
 	
@@ -88,6 +97,8 @@ public class HomeActivity extends Activity {
 					
 					runBtn.setEnabled(false);
 				
+					MEASURE_MODE = A1C;
+					
 					WhichIntent(activity, context, TargetIntent.Blank);
 				}
 			}
@@ -136,7 +147,7 @@ public class HomeActivity extends Activity {
 					
 					btnState = true;
 					
-					shutDown();
+					ESC();
 					
 					btnState = false;
 				}
@@ -151,19 +162,6 @@ public class HomeActivity extends Activity {
 		activity = this;
 		context = this;
 		
-		mPool = new SoundPool(1, AudioManager.STREAM_MUSIC, 0);
-		mWin = mPool.load(this, R.raw.win, 1);
-		
-		mTimerDisplay = new TimerDisplay();
-		mTimerDisplay.ActivityParm(this, R.id.homelayout);
-		
-		mPool.setOnLoadCompleteListener(new OnLoadCompleteListener() {
-		      public void onLoadComplete(SoundPool mPool, int sampleId, int status) {
-
-		  		mPool.play(mWin, 1, 1, 0, 0, 1); // playing sound
-		      }
-		});
-			
 		Intent itn = getIntent();
 		state = itn.getIntExtra("System Check State", 0);
 		
@@ -176,6 +174,19 @@ public class HomeActivity extends Activity {
 			
 			Login(this, this, R.id.homelayout);	
 		}
+		
+//		mPool = new SoundPool(1, AudioManager.STREAM_MUSIC, 0);
+//		mWin = mPool.load(context, R.raw.beep, 1);
+		
+		mTimerDisplay = new TimerDisplay();
+		mTimerDisplay.ActivityParm(this, R.id.homelayout);
+		
+//		mPool.setOnLoadCompleteListener(new OnLoadCompleteListener() {
+//		      public void onLoadComplete(SoundPool mPool, int sampleId, int status) {
+//
+//		  		mPool.play(mWin, 1, 1, 0, 0, 1); // playing sound
+//		      }
+//		});
 		
 		DisplayDemo();
 	}
@@ -228,10 +239,67 @@ public class HomeActivity extends Activity {
 		demoVerText.setText(version);
 	}
 	
-	public void shutDown() {
+	public void ESC() {
 		
 		mErrorPopup = new ErrorPopup(this, this, R.id.homelayout);
 		mErrorPopup.OXBtnDisplay(R.string.shutdown);
+	}
+	
+	public void shutDown(Activity activity, Context context, int layoutid) {
+		
+		AniShutDown mAniShutDown = new AniShutDown(activity, context, layoutid);
+		mAniShutDown.start();
+		
+		TimerDisplay.ExternalDeviceBarcode = TimerDisplay.FILE_CLOSE;
+		
+		TimerDisplay.FiftymsPeriod.cancel();
+		
+		isShutDown = true;
+	}
+	
+	public class AniShutDown extends Thread {
+		
+		private Activity activity;
+		private Context context;
+		private int layoutid;
+		
+		public AniShutDown(Activity activity, Context context, int layoutid) {
+			
+			this.activity = activity;
+			this.context = context;
+			this.layoutid = layoutid;
+		}
+		
+		public void run() {
+			
+			mShutDownPopup = new ShutDownPopup(activity, context, layoutid);
+			mShutDownPopup.ShutDownDisplay();
+			
+			do {
+
+				mShutDownPopup.setText(R.string.shuttingdown);
+				mShutDownPopup.setImage(R.drawable.shutdown_point_1);
+				SerialPort.Sleep(500);
+				mShutDownPopup.setImage(R.drawable.shutdown_point_2);
+				SerialPort.Sleep(500);
+				mShutDownPopup.setImage(R.drawable.shutdown_point_3);
+				SerialPort.Sleep(500);
+				mShutDownPopup.setImage(R.drawable.shutdown_point_1);
+				SerialPort.Sleep(500);
+				mShutDownPopup.setImage(R.drawable.shutdown_point_2);
+				SerialPort.Sleep(500);
+				mShutDownPopup.setImage(R.drawable.shutdown_point_3);
+				SerialPort.Sleep(500);
+				mShutDownPopup.setImage(R.drawable.shutdown_point_1);
+				SerialPort.Sleep(500);
+				mShutDownPopup.setImage(R.drawable.shutdown_point_2);
+				SerialPort.Sleep(500);
+				mShutDownPopup.setImage(R.drawable.shutdown_point_3);
+					
+			} while(!isShutDown);
+			
+			mShutDownPopup.setText(R.string.turnoff);
+		}
 	}
 	
 	public void WhichIntent(Activity activity, Context context, TargetIntent Itn) { // Activity conversion
@@ -242,6 +310,7 @@ public class HomeActivity extends Activity {
 		
 		case Blank		:			
 			nextIntent = new Intent(context, BlankActivity.class); // Change to BLANK Activity
+			nextIntent.putExtra("Mode", (int) HomeActivity.A1C);
 			break;
 			
 		case Record		:			
@@ -251,15 +320,7 @@ public class HomeActivity extends Activity {
 		case Setting	:
 			nextIntent = new Intent(context, SettingActivity.class); // Change to SETTING Activity
 			break;
-			
-		case ShutDown	:
-			nextIntent = new Intent(context, ShutDownActivity.class); // Change to Shut Down Activity
-			break;
-			
-		case ScanTemp	:
-			nextIntent = new Intent(context, ScanTempActivity.class);
-			break;
-			
+				
 		default			:	
 			break;
 		}

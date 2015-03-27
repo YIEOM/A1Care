@@ -145,24 +145,7 @@ public class SystemSettingActivity extends Activity {
 				}
 			}
 		});
-		
-		/*Correlation Factor Activity activation*/
-		collelationBtn = (Button)findViewById(R.id.collelationbtn);
-		collelationBtn.setOnClickListener(new View.OnClickListener() {
-		
-			public void onClick(View v) {
 				
-				if(!btnState) {
-					
-					btnState = true;
-					
-					collelationBtn.setEnabled(false);
-				
-					WhichIntent(TargetIntent.Correlation);
-				}
-			}
-		});
-		
 		/*Sound Activity activation*/
 		soundBtn = (Button)findViewById(R.id.soundbtn);
 		soundBtn.setOnClickListener(new View.OnClickListener() {
@@ -278,10 +261,6 @@ public class SystemSettingActivity extends Activity {
 			nextIntent = new Intent(getApplicationContext(), LanguageActivity.class);
 			break;
 
-		case Correlation	:				
-			nextIntent = new Intent(getApplicationContext(), CorrelationActivity.class);
-			break;
-		
 		case Convert		:
 			nextIntent = new Intent(getApplicationContext(), ConvertActivity.class);
 			break;

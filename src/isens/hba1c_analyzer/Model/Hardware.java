@@ -118,7 +118,7 @@ public class Hardware {
 				break;
 			}
 							
-			if(RunActivity.isError) break;
+			if(RunActivity.IsError) break;
 			
 			SerialPort.Sleep(100);
 			
@@ -174,7 +174,7 @@ public class Hardware {
 			
 			else if(message.equals(FILTER_ERROR)) state = AnalyzerState.FilterMotorError;
 			
-		} else if(RunActivity.isError) state = AnalyzerState.ErrorCover;
+		} else if(RunActivity.IsError) state = AnalyzerState.ErrorCover;
 		
 		else state = AnalyzerState.NoResponse;
 		

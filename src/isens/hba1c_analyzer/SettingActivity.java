@@ -5,6 +5,7 @@ import java.util.TimerTask;
 
 import isens.hba1c_analyzer.CalibrationActivity.TargetMode;
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
+import isens.hba1c_analyzer.View.FunctionalTestActivity;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -27,6 +28,7 @@ public class SettingActivity extends Activity {
 	public Button systemBtn,
 				  dataBtn,
 				  operatorBtn,
+				  functionalBtn,
 				  backIcon;
 	
 	public boolean btnState = false;
@@ -94,6 +96,22 @@ public class SettingActivity extends Activity {
 //				}
 				
 				/* */
+			}
+		});
+		
+		functionalBtn = (Button)findViewById(R.id.functionalbtn);
+		functionalBtn.setOnClickListener(new View.OnClickListener() {
+		
+			public void onClick(View v) {
+			
+//				if(!btnState) {
+//				
+//					btnState = true;
+//					
+//					functionalBtn.setEnabled(false);
+//				
+//					WhichIntent(TargetIntent.FunctionalTest);
+//				}
 			}
 		});
 		
@@ -293,6 +311,10 @@ public class SettingActivity extends Activity {
 			
 		case OperatorSetting	:		
 			nextIntent = new Intent(getApplicationContext(), OperatorSettingActivity.class);
+			break;
+			
+		case FunctionalTest	:		
+			nextIntent = new Intent(getApplicationContext(), FunctionalTestActivity.class);
 			break;
 			
 		default		:	

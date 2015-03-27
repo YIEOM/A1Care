@@ -32,7 +32,7 @@ public class DisplayActivity extends Activity implements DisplayIView {
 		overridePendingTransition(R.anim.fade, R.anim.hold);
 		setContentView(R.layout.setting3);
 		
-		mDisplayPresenter = new DisplayPresenter(this, this, this, R.layout.setting3);
+		mDisplayPresenter = new DisplayPresenter(this, this, this, R.id.setting3Layout);
 		mDisplayPresenter.init();
 	}
 	

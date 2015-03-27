@@ -61,11 +61,11 @@ public class RunActivity extends Activity {
 	
 	public Button escIcon;
 	
-	public TextView runTimeText,
-					warningText;
+	public TextView runTimeText;
 	
-	public ImageView barani;
-	
+	public ImageView barani,
+				 	 warning;
+		
 	public static double BlankValue[]     = new double[4],
 						 Step1stValue1[]  = new double[3],
 						 Step1stValue2[]  = new double[3],
@@ -80,13 +80,13 @@ public class RunActivity extends Activity {
 						 Step2ndAbsorb2[] = new double[3],
 						 Step2ndAbsorb3[] = new double[3];
 	
-	public static boolean isRun,
-						  isStop,
-						  isError;
+	public static boolean IsRun,
+						  IsStop,
+						  IsError;
 	
 	public static double tHbDbl,
 						 HbA1cValue,
-						 douValue;
+						 DouValue;
 	
 	public static float AF_Slope,
 						AF_Offset,
@@ -117,8 +117,9 @@ public class RunActivity extends Activity {
 		setContentView(R.layout.run);
 		
 		mSerialPort = new SerialPort(); // to test
+		mErrorPopup = new ErrorPopup(this, this, R.id.runlayout);
 		
-		/* esc pop-up window activation */
+				/* esc pop-up window activation */
 		escIcon = (Button)findViewById(R.id.escicon);
 		escIcon.setOnClickListener(new View.OnClickListener() {
 		
@@ -975,12 +976,12 @@ public class RunActivity extends Activity {
 					endRun(false);
 					break;
 				
-				case Stop			 :
+				case Stop		:
 					checkError = R.string.stop;
 					runState = AnalyzerState.NoWorking;
 					break;
 				
-				case ErrorCover		:
+				case ErrorCover	:
 					checkError = R.string.e322;
 					runState = AnalyzerState.NoWorking;
 					break;
@@ -1093,8 +1094,8 @@ public class RunActivity extends Activity {
 				
 			default	:
 				
-				isStop = false;
-				isError = false;
+				IsStop = false;
+				IsError = false;
 				runState = AnalyzerState.FilterDark;
 				
 				for(int i = 0; i < 6; i++) {
@@ -1176,19 +1177,18 @@ public class RunActivity extends Activity {
 	
 	public void RunTimeDisplay(Activity activity) { // Display running time
 		
-		if(isRun) {
+		if(IsRun) {
 			
 			runTimeText = (TextView) activity.findViewById(R.id.runTimeText);
-			warningText = (TextView) activity.findViewById(R.id.warningText);
+			warning = (ImageView) activity.findViewById(R.id.warning);
 			
 			runTimeText.setText(Integer.toString(runMin) + " min " + Integer.toString(runSec) + " sec");
-			warningText.setText(R.string.w003);
-			if(runSec % 2 == 1) warningText.setTextColor(Color.parseColor("#FF0000"));
-			else warningText.setTextColor(Color.parseColor("#FFFFFF"));
+			if(runSec % 2 == 1) warning.setBackgroundResource(R.drawable.dnod_1);
+			else warning.setBackgroundResource(R.drawable.dnod_2);
 			
 			if(runSec-- == 0) {
 				
-				if(runMin == 0) isRun = false;
+				if(runMin == 0) IsRun = false;
 				
 				runMin--;
 				runSec = 59;
@@ -1205,15 +1205,13 @@ public class RunActivity extends Activity {
 //		Log.w("RunInit", "run");
 		
 		MotorShakeFlag = false;
-		isStop = false;
-		isError = false;
+		IsStop = false;
+		IsError = false;
 		runState = AnalyzerState.InitPosition;
 		checkError = NORMAL_OPERATION;
 		
 		mTimerDisplay = new TimerDisplay();
 		mTimerDisplay.ActivityParm(this, R.id.runlayout);
-		
-		mErrorPopup = new ErrorPopup(this, this, R.id.runlayout);
 		
 		BarAnimation(162);
 		RunTimerInit(this);
@@ -1225,7 +1223,7 @@ public class RunActivity extends Activity {
 	
 	public void RunTimerInit(final Activity activity) {
 
-		isRun = true;
+		IsRun = true;
 		if(HomeActivity.ANALYZER_SW == HomeActivity.DEVEL) {
 			
 			runMin = 1;
@@ -1279,19 +1277,19 @@ public class RunActivity extends Activity {
 			
 			temp = mSerialPort.BoardMessageOutput();
 
-			if(temp.equals(colRsp)) {
+			if(colRsp.equals(temp)) {
 					
 				runState = nextState;
 				break;
 			
-			} else if(temp.equals(errRsp)) {
+			} else if(errRsp.equals(temp)) {
 				
 				runState = errState;
 				break;
 			
 			} else if(temp.equals(MOTOR_STOP)) {
 				
-				isStop = true;
+				IsStop = true;
 				break;
 			}
 
@@ -1302,7 +1300,7 @@ public class RunActivity extends Activity {
 				break;
 			}
 			
-			if(isError) break;
+			if(IsError || RunActivity.IsStop) break;
 			
 			SerialPort.Sleep(100);
 		}
@@ -1314,21 +1312,20 @@ public class RunActivity extends Activity {
 		String rawValue;
 		
 		mSerialPort.BoardTx("VH", SerialPort.CtrTarget.NormalSet);
-		Log.w("AbsorbanceMeasure", "instruction : " + "VH");
+//		Log.w("AbsorbanceMeasure", "instruction : " + "VH");
 		
 		do {
 		
-			time++;
 			rawValue = mSerialPort.BoardMessageOutput();			
 			 
-			if(time > 50) {
+			if(time++ > 50) {
 				
 				runState = AnalyzerState.NoResponse;
 				checkError = R.string.e241;
 				break;
 			}
 				
-			if(isError) break;
+			if(IsError || IsStop) break;
 			
 			SerialPort.Sleep(100);
 			
@@ -1336,14 +1333,14 @@ public class RunActivity extends Activity {
 		
 		try {
 			
-			douValue = Double.parseDouble(rawValue);	
+			DouValue = Double.parseDouble(rawValue);	
 		
 		} catch(NumberFormatException e) {
 			
-			douValue = 0.0;
+			DouValue = 0.0;
 		}
 		
-		return (douValue - BlankValue[0]);	
+		return (DouValue - BlankValue[0]);	
 	}
 	
 	public int tHbCalculate() {
@@ -1624,19 +1621,19 @@ public class RunActivity extends Activity {
 	
 	public void RunStop() {
 		
-		isRun = false;
+		IsRun = false;
 		
 		if(MotorShakeFlag) MotionInstruct(MOTOR_STOP, SerialPort.CtrTarget.NormalSet);
-		else isStop = true;
+		else IsStop = true;
 	}
 	
 	public void checkMode() {
 		
-		if(isError) {
+		if(IsError) {
 			
 			runState = AnalyzerState.ErrorCover;
 		
-		} else if(!isError && isStop) {
+		} else if(!IsError && IsStop) {
 			
 			runState = AnalyzerState.Stop;
 		}
@@ -1646,7 +1643,7 @@ public class RunActivity extends Activity {
 		
 		public void run() {
 			
-			isRun = false;
+			IsRun = false;
 			
 			GpioPort.DoorActState = true;			
 			GpioPort.CartridgeActState = true;
@@ -1667,7 +1664,7 @@ public class RunActivity extends Activity {
 	
 	public void endRun(boolean state) {
 		
-		isRun = state;
+		IsRun = state;
 		
 		EndRun mEndRun = new EndRun();
 		mEndRun.start();
@@ -1681,7 +1678,7 @@ public class RunActivity extends Activity {
 			
 			mErrorPopup.ErrorPopupClose();
 			
-			while(isRun) SerialPort.Sleep(100);
+			while(IsRun) SerialPort.Sleep(100);
 			
 			runningTimer.cancel();
 			

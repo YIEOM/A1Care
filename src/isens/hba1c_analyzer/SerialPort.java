@@ -543,7 +543,7 @@ public class SerialPort {
 			
 			if(tempStrData.substring(0, 2).equals("ED")) { 
 			
-			RunActivity.isError = true;
+			RunActivity.IsError = true;
 //			Log.w("BoardMessageForm", "tmpStrData : " + tempStrData);
 			
 			}

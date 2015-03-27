@@ -55,7 +55,7 @@ public class AdjustmentActivity extends Activity implements FactorIView{
 		overridePendingTransition(R.anim.fade, R.anim.hold);
 		setContentView(R.layout.setting2);
 		
-		mAdjustmentPresenter = new AdjustmentPresenter(this, this, this, R.layout.setting2);
+		mAdjustmentPresenter = new AdjustmentPresenter(this, this, this, R.id.setting2Layout);
 		mAdjustmentPresenter.init();
 		
 //		if(HomeActivity.ANALYZER_SW == HomeActivity.DEVEL) {

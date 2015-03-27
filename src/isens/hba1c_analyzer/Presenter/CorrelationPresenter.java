@@ -88,7 +88,7 @@ public class CorrelationPresenter {
 		
 		mFactorModel.setFactor((int) FactorModel.CORRELATION_FACTOR, "CF SlopeVal", fct1st, "CF OffsetVal", fct2nd);
 		
-		mActivityChange.whichIntent(TargetIntent.SystemSetting);
+		mActivityChange.whichIntent(TargetIntent.Maintenance);
 		mActivityChange.finish();
 	}
 }

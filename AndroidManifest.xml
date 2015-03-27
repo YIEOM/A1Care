@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="isens.hba1c_analyzer"
     android:versionCode="1"
-    android:versionName="A1Care_v1.3.23-alpha"
+    android:versionName="v1.3.00-R"
     android:sharedUserId="android.uid.system" >
     
     <uses-sdk
@@ -81,6 +81,7 @@
 		<activity android:name="isens.hba1c_analyzer.View.Correction1Activity"></activity>
 		<activity android:name="isens.hba1c_analyzer.View.Correction2Activity"></activity>
 		<activity android:name="isens.hba1c_analyzer.View.AbsorbanceActivity"></activity>
+    	<activity android:name="isens.hba1c_analyzer.View.FunctionalTestActivity"></activity>
     	<activity android:name="ActionTempActivity"></activity>
 		<activity android:name="BlankTempActivity"></activity>
 		<activity android:name="ScanTempActivity"></activity>

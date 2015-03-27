@@ -47,7 +47,7 @@
    	<RelativeLayout 
    	    android:layout_width="wrap_content"
    	    android:layout_height="wrap_content"
-   	    android:layout_marginLeft="114px"
+   	    android:layout_marginLeft="130px"
         android:layout_marginTop="137px" >
    	    
    	    <Button
@@ -83,38 +83,6 @@
         android:layout_marginTop="137px" >
    	    
    	    <Button
-	        android:id="@+id/databtn"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:background="@drawable/settingmodebtn_selector" />
-   	    
-		<ImageView 
-		    android:layout_width="wrap_content"
-		    android:layout_height="wrap_content"
-	        android:layout_marginTop="30px"
-		    android:layout_centerHorizontal="true"
-	        android:src="@drawable/settingmode_icon2" />
-	        
-		<TextView
-		    android:layout_width="wrap_content"
-		    android:layout_height="wrap_content"
-	        android:layout_marginTop="180px" 
-	        android:layout_centerHorizontal="true"
-		    android:gravity="center"
-		    android:text="DATA\nSETTING"
-	        android:typeface="sans"
-	        android:textSize="20px"
-	        android:textColor="#565656" />
-		    
-   	</RelativeLayout>
-
- 	<RelativeLayout 
-   	    android:layout_width="wrap_content"
-   	    android:layout_height="wrap_content"
-   	    android:layout_marginLeft="514px"
-        android:layout_marginTop="137px" >
-   	    
-   	    <Button
 	        android:id="@+id/operatorbtn"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
@@ -140,6 +108,38 @@
 		    
    	</RelativeLayout>
    		
+ 	<RelativeLayout 
+   	    android:layout_width="wrap_content"
+   	    android:layout_height="wrap_content"
+   	    android:layout_marginLeft="498px"
+        android:layout_marginTop="137px" >
+   	    
+   	    <Button
+	        android:id="@+id/functionalbtn"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:background="@drawable/settingmodebtn_selector" />
+   	    
+		<ImageView 
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+	        android:layout_marginTop="30px"
+		    android:layout_centerHorizontal="true"
+	        android:src="@drawable/settingmode_icon4" />
+	        
+		<TextView
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+	        android:layout_marginTop="180px" 
+	        android:layout_centerHorizontal="true"
+		    android:gravity="center"
+		    android:text="FUNCTIONAL\nTEST"
+	        android:typeface="sans"
+	        android:textSize="20px"
+	        android:textColor="#565656" />
+		    
+   	</RelativeLayout>
+ 	
  	<Button
 		android:id="@+id/cheat1btn"
 		android:layout_width="50px"

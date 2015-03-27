@@ -47,7 +47,7 @@ public class LanguageActivity extends Activity implements LanguageIView {
 		overridePendingTransition(R.anim.fade, R.anim.hold);
 		setContentView(R.layout.setting4);
 		
-		mLanguagePresenter = new LanguagePresenter(this, this, this, R.layout.setting4);
+		mLanguagePresenter = new LanguagePresenter(this, this, this, R.id.setting4Layout);
 		mLanguagePresenter.init();
 	}
 	
@@ -108,11 +108,11 @@ public class LanguageActivity extends Activity implements LanguageIView {
 					break;
 					
 				case R.id.leftBtn	:
-					mLanguagePresenter.changeLanguageDown();
+//					mLanguagePresenter.changeLanguageDown();
 					break;
 					
 				case R.id.rightBtn	:
-					mLanguagePresenter.changeLanguageUp();
+//					mLanguagePresenter.changeLanguageUp();
 					break;
 					
 				default	:

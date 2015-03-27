@@ -49,7 +49,7 @@ public class ConvertActivity extends Activity implements ConvertIView{
 		overridePendingTransition(R.anim.fade, R.anim.hold);
 		setContentView(R.layout.setting4);
 		
-		mConvertPresenter = new ConvertPresenter(this, this, this, R.layout.setting4);
+		mConvertPresenter = new ConvertPresenter(this, this, this, R.id.setting4Layout);
 		mConvertPresenter.init();
 	}
 	

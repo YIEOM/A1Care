@@ -1,5 +1,5 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/setting2layout"
+    android:id="@+id/setting3Layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bargauge_bg" >

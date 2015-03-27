@@ -15,12 +15,12 @@ import android.widget.TextView;
 public class ErrorPopup {
 	
 	public HomeActivity mHomeActivity;
+	public BlankActivity mBlankActivity;
 	public ActionActivity mActionActivity;
 	public RunActivity mRunActivity;
 	public OperatorController mOperatorController;
 	public SystemSettingActivity mSystemSettingActivity;
 	public LampCopyActivity mLampCopyActivity;
-	public ScanTempActivity mScanTempActivity;
 	
 	public Activity activity;
 	public Context context;
@@ -44,81 +44,27 @@ public class ErrorPopup {
 		this.layoutid = layoutid;
 	}
 	
-	public void ErrorBtnDisplay(int error) {
+	public void setDisplayId() {
 		
 		hostLayout = (RelativeLayout) activity.findViewById(layoutid);
-		popupView = View.inflate(context, R.layout.errorbtnpopup, null);
-		popupWindow = new PopupWindow(popupView, 800, 480, true);
+		popupView = View.inflate(context, R.layout.errorpopup, null);
+		popupWindow = new PopupWindow(popupView, 800 , 480, true);
 	
-		this.error = error;
-		
 		errorText = (TextView) popupView.findViewById(R.id.errortext);
-		errorText.setText(error);
-		
 		errorBtn = (Button) popupView.findViewById(R.id.errorbtn);
-		errorBtn.setOnClickListener(new View.OnClickListener() {
-			
-			public void onClick(View v) {
-				
-				ErrorBtnPopupClose();
-			}
-		});
-		
-		hostLayout.post(new Runnable() {
-			public void run() {
-		
-				popupWindow.showAtLocation(hostLayout, Gravity.CENTER, 0, 0);
-				popupWindow.setAnimationStyle(0);
-			}
-		});
+		yesBtn = (Button) popupView.findViewById(R.id.yesbtn);
+		noBtn = (Button) popupView.findViewById(R.id.nobtn);
 	}
 	
-	public void ErrorBtnPopupClose() {
+	public void ErrorBtnDisplay(final int error) {
 		
-		popupWindow.dismiss();
-		popupWindow = null;
-		
-		switch(layoutid) {
-		
-		case R.id.homelayout	:
-			if(error != R.string.w005 && error != R.string.w011 && error != R.string.w018) {
-				
-				mHomeActivity = new HomeActivity();
-				mHomeActivity.Login(activity, context, layoutid);	
-			}
-			break;
-			
-		case R.id.actionlayout	:
-			mActionActivity = new ActionActivity();
-			mActionActivity.ActionInit(activity, context);
-			break;
-			
-		case R.id.lamplayout	:
-			mLampCopyActivity = new LampCopyActivity();
-			mLampCopyActivity.cancelTest();
-			
-		case R.id.scantemplayout	:
-			mScanTempActivity = new ScanTempActivity();
-			mScanTempActivity.ActionInit(activity, context);
-			break;
-			
-		default	:
-			break;
-		}
-	}
-
-	public void ErrorDisplay(int error) {
+		this.error = error;
 		
 		if(popupWindow == null) {
 		
-			hostLayout = (RelativeLayout) activity.findViewById(layoutid);
-			popupView = View.inflate(context, R.layout.errorpopup, null);
-			popupWindow = new PopupWindow(popupView, 800, 480, true);
-		
-			this.error = error;
+			setDisplayId();
 			
-			errorText = (TextView) popupView.findViewById(R.id.errortext);
-			errorText.setText(error);
+			setErrorBtnDisplay(error);
 			
 			hostLayout.post(new Runnable() {
 				public void run() {
@@ -130,18 +76,106 @@ public class ErrorPopup {
 		
 		} else {
 			
-			changeErrorText(error);
+			hostLayout.post(new Runnable() {
+				public void run() {
+				
+					setErrorBtnDisplay(error);
+				}
+			});
 		}
 	}
 	
-	public void changeErrorText(final int error) {
+	public void setErrorBtnDisplay(int error) {
 		
-		hostLayout.post(new Runnable() {
-			public void run() {
+		errorText.setText(error);
+		
+		errorBtn.setBackgroundResource(R.drawable.popup_button_selector);
+		errorBtn.setOnClickListener(new View.OnClickListener() {
 			
-				errorText.setText(error);
+			public void onClick(View v) {
+				
+				ErrorBtnPopupClose();
 			}
 		});
+		
+		yesBtn.setBackgroundResource(0);
+		noBtn.setBackgroundResource(0);
+	}
+	
+	public void ErrorBtnPopupClose() {
+		
+		switch(layoutid) {
+		
+		case R.id.homelayout	:
+			ErrorPopupClose();
+			
+			if(error != R.string.w005 && error != R.string.w011 && error != R.string.w018) {
+				
+				mHomeActivity = new HomeActivity();
+				mHomeActivity.Login(activity, context, layoutid);	
+			}
+			break;
+			
+		case R.id.actionlayout	:
+			ErrorPopupClose();
+			mActionActivity = new ActionActivity();
+			mActionActivity.ActionInit(activity, context);
+			break;
+			
+		case R.id.lampLayout	:
+			ErrorPopupClose();
+			mLampCopyActivity = new LampCopyActivity();
+			mLampCopyActivity.cancelTest();
+			
+		case R.id.resultlayout	:
+			ErrorPopupClose();
+			break;
+			
+		case R.id.operatorlayout	:
+			ErrorPopupClose();
+			break;
+			
+		default	:
+			break;
+		}
+	}
+
+	public void ErrorDisplay(final int error) {
+		
+		this.error = error;
+		
+		if(popupWindow == null) {
+		
+			setDisplayId();
+			
+			setErrorDisplay(error);
+			
+			hostLayout.post(new Runnable() {
+				public void run() {
+			
+					popupWindow.showAtLocation(hostLayout, Gravity.CENTER, 0, 0);
+					popupWindow.setAnimationStyle(0);
+				}
+			});
+		
+		} else {
+			
+			hostLayout.post(new Runnable() {
+				public void run() {
+				
+					setErrorDisplay(error);
+				}
+			});
+		}
+	}
+	
+	public void setErrorDisplay(int error) {
+		
+		errorText.setText(error);
+		
+		errorBtn.setBackgroundResource(0);
+		yesBtn.setBackgroundResource(0);
+		noBtn.setBackgroundResource(0);
 	}
 	
 	public void ErrorPopupClose() {
@@ -153,18 +187,42 @@ public class ErrorPopup {
 		}
 	}
 	
-	public void OXBtnDisplay(int error) {
+	public void OXBtnDisplay(final int error) {
 		
-		hostLayout = (RelativeLayout) activity.findViewById(layoutid);
-		popupView = View.inflate(context, R.layout.oxpopup, null);
-		popupWindow = new PopupWindow(popupView, 800, 480, true);
-	
 		this.error = error;
 		
-		oxText = (TextView) popupView.findViewById(R.id.oxtext);
-		oxText.setText(error);
+		if(popupWindow == null) {
 		
-		yesBtn = (Button) popupView.findViewById(R.id.yesbtn);
+			setDisplayId();
+		
+			setOXBtnDisplay(error);
+			
+			hostLayout.post(new Runnable() {
+				public void run() {
+			
+					popupWindow.showAtLocation(hostLayout, Gravity.CENTER, 0, 0);
+					popupWindow.setAnimationStyle(0);
+				}
+			});
+			
+		} else {
+			
+			hostLayout.post(new Runnable() {
+				public void run() {
+				
+					setOXBtnDisplay(error);
+				}
+			});
+		}
+	}
+	
+	public void setOXBtnDisplay(int error) {
+		
+		errorText.setText(error);
+		
+		errorBtn.setBackgroundResource(0);
+		
+		yesBtn.setBackgroundResource(R.drawable.popup_yes_selector);
 		yesBtn.setOnClickListener(new View.OnClickListener() {
 			
 			public void onClick(View v) {
@@ -172,8 +230,8 @@ public class ErrorPopup {
 				OPopupClose();
 			}
 		});
-	
-		noBtn = (Button) popupView.findViewById(R.id.nobtn);
+
+		noBtn.setBackgroundResource(R.drawable.popup_no_selector);
 		noBtn.setOnClickListener(new View.OnClickListener() {
 			
 			public void onClick(View v) {
@@ -181,29 +239,26 @@ public class ErrorPopup {
 				XPopupClose();
 			}
 		});
-		
-		hostLayout.post(new Runnable() {
-			public void run() {
-		
-				popupWindow.showAtLocation(hostLayout, Gravity.CENTER, 0, 0);
-				popupWindow.setAnimationStyle(0);
-			}
-		});
 	}
 	
 	public void OPopupClose() {
 		
-		popupWindow.dismiss();
-		popupWindow = null;
-		
 		switch(layoutid) {
 		
 		case R.id.homelayout	:
+			ErrorPopupClose();			
 			mHomeActivity = new HomeActivity();
-			mHomeActivity.WhichIntent(activity, context, TargetIntent.ShutDown);
+			mHomeActivity.shutDown(activity, context, layoutid);
 			break;
 		
+		case R.id.blanklayout	:
+			ErrorDisplay(R.string.wait);
+			mBlankActivity = new BlankActivity();
+			mBlankActivity.BlankStop();
+			break;
+			
 		case R.id.actionlayout	:
+			ErrorPopupClose();			
 			mActionActivity = new ActionActivity();
 			mActionActivity.WhichIntent(activity, context, TargetIntent.Remove);
 			break;
@@ -215,6 +270,7 @@ public class ErrorPopup {
 			break;
 			
 		case R.id.systemsettinglayout	:
+			ErrorPopupClose();			
 			mSystemSettingActivity = new SystemSettingActivity();
 			mSystemSettingActivity.SettingParameterInit();
 			
@@ -225,8 +281,7 @@ public class ErrorPopup {
 
 	public void XPopupClose() {
 		
-		popupWindow.dismiss();
-		popupWindow = null;
+		ErrorPopupClose();
 		
 		switch(layoutid) {
 		

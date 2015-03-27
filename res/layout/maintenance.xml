@@ -143,7 +143,8 @@
    	    android:layout_marginLeft="486px"
         android:layout_marginTop="134px" >
    	    
-   	    <Button
+   	     <Button
+	        android:id="@+id/collelationbtn"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:background="@drawable/systemsetting_btn_selector" />
@@ -151,15 +152,17 @@
 		<ImageView 
 		    android:layout_width="wrap_content"
 		    android:layout_height="wrap_content"
-	        android:layout_marginTop="35px"
-		    android:layout_centerHorizontal="true" />
+	        android:layout_marginTop="25px"
+		    android:layout_centerHorizontal="true"
+	        android:src="@drawable/cf_icon" />
 	        
 		<TextView
 		    android:layout_width="wrap_content"
 		    android:layout_height="wrap_content"
-	        android:layout_marginTop="85px" 
+	        android:layout_marginTop="70px" 
 	        android:layout_centerHorizontal="true"
 	        android:gravity="center"
+		    android:text="CORRELATION\nFACTOR"
 	        android:typeface="sans"
 	        android:textSize="18px"
 	        android:textColor="#242424" />
@@ -316,7 +319,7 @@
     
    	<TextView
    	    android:id="@+id/fwVersionText"
-	    android:layout_width="240px"
+	    android:layout_width="300px"
 	    android:layout_height="30px"
         android:layout_marginLeft="12px"
 	    android:layout_marginTop="410px"
@@ -327,9 +330,20 @@
    	
    	<TextView
    	    android:id="@+id/swVersionText"
-	    android:layout_width="240px"
+	    android:layout_width="300px"
 	    android:layout_height="30px"
         android:layout_marginLeft="12px"
+	    android:layout_marginTop="440px"
+	    android:gravity="left"
+        android:typeface="sans"
+        android:textSize="18px"
+        android:textColor="#04A458" />
+   	
+   	<TextView
+   	    android:id="@+id/osVersionText"
+	    android:layout_width="300px"
+	    android:layout_height="30px"
+        android:layout_marginLeft="488px"
 	    android:layout_marginTop="440px"
 	    android:gravity="left"
         android:typeface="sans"

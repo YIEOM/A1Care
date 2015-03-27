@@ -26,7 +26,7 @@ public class DateActivity extends Activity implements DateIView {
 		overridePendingTransition(R.anim.fade, R.anim.hold);
 		setContentView(R.layout.datetime);
 		
-		mDatePresenter = new DatePresenter(this, this, this, R.layout.datetime);
+		mDatePresenter = new DatePresenter(this, this, this, R.id.dateTimeLayout);
 		mDatePresenter.init();
 	}
 	

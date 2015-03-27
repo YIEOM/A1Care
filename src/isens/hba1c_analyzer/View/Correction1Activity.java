@@ -56,7 +56,7 @@ public class Correction1Activity extends Activity implements FactorIView{
 		overridePendingTransition(R.anim.fade, R.anim.hold);
 		setContentView(R.layout.setting2);
 		
-		mCorrectionPresenter = new Correction1Presenter(this, this, this, R.layout.setting2);
+		mCorrectionPresenter = new Correction1Presenter(this, this, this, R.id.setting2Layout);
 		mCorrectionPresenter.init();
 		
 //		if(HomeActivity.ANALYZER_SW == HomeActivity.DEVEL) {

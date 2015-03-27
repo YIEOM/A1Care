@@ -147,10 +147,6 @@ public class RemoveActivity extends Activity {
 			nextIntent = new Intent(getApplicationContext(), BlankActivity.class);
 			break;
 			
-		case ScanTemp	:				
-			nextIntent = new Intent(getApplicationContext(), ScanTempActivity.class);
-			break;
-			
 		default		:	
 			break;			
 		}

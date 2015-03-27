@@ -3,9 +3,12 @@ package isens.hba1c_analyzer.Model;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import isens.hba1c_analyzer.BlankActivity;
+import isens.hba1c_analyzer.HomeActivity;
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
 import isens.hba1c_analyzer.MaintenanceActivity;
 import isens.hba1c_analyzer.R;
+import isens.hba1c_analyzer.SettingActivity;
 import isens.hba1c_analyzer.SystemSettingActivity;
 
 public class ActivityChange {
@@ -32,6 +35,18 @@ public class ActivityChange {
 			nextIntent = new Intent(context, MaintenanceActivity.class);
 			break;
 			
+		case Setting	:				
+			nextIntent = new Intent(context, SettingActivity.class);
+			break;
+						
+		case Home	:
+			nextIntent = new Intent(context, HomeActivity.class);
+			break;
+			
+		case Blank	:				
+			nextIntent = new Intent(context, BlankActivity.class);
+			break;
+					
 		default		:	
 			break;			
 		}

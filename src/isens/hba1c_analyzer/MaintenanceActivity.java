@@ -13,6 +13,7 @@ import isens.hba1c_analyzer.View.AbsorbanceActivity;
 import isens.hba1c_analyzer.View.AdjustmentActivity;
 import isens.hba1c_analyzer.View.Correction1Activity;
 import isens.hba1c_analyzer.View.Correction2Activity;
+import isens.hba1c_analyzer.View.CorrelationActivity;
 import isens.hba1c_analyzer.View.LampActivity;
 import android.app.Activity;
 import android.content.Intent;
@@ -42,9 +43,10 @@ public class MaintenanceActivity extends Activity {
 	  			  tempBtn,
 	  			  absorbanceBtn,
 	  			  correct1Btn,
-	  			  correct2Btn;
+	  			  correct2Btn,
+	  			  collelationBtn;
 	
-	public TextView swVersionText, fwVersionText;
+	public TextView swVersionText, fwVersionText, osVersionText;
 	
 	public boolean btnState = false;
 	
@@ -56,6 +58,7 @@ public class MaintenanceActivity extends Activity {
 		
 		swVersionText = (TextView)findViewById(R.id.swVersionText);
 		fwVersionText = (TextView)findViewById(R.id.fwVersionText);
+		osVersionText = (TextView)findViewById(R.id.osVersionText);
 		
 		MaintenanceInit();
 					
@@ -191,6 +194,23 @@ public class MaintenanceActivity extends Activity {
 				}
 			}
 		});
+		
+		/*Correlation Factor Activity activation*/
+		collelationBtn = (Button)findViewById(R.id.collelationbtn);
+		collelationBtn.setOnClickListener(new View.OnClickListener() {
+		
+			public void onClick(View v) {
+				
+				if(!btnState) {
+					
+					btnState = true;
+					
+					collelationBtn.setEnabled(false);
+				
+					WhichIntent(TargetIntent.Correlation);
+				}
+			}
+		});
 	}
 	
 	public void MaintenanceInit() {
@@ -204,7 +224,7 @@ public class MaintenanceActivity extends Activity {
 	
 	public class DisplayVersion extends Thread {
 		
-		String swVersion, fwVersion;
+		String swVersion, fwVersion, osVersion;
 		
 		PackageInfo pi = null;
 		
@@ -225,13 +245,16 @@ public class MaintenanceActivity extends Activity {
 			
 			fwVersion = getFwVersion();
 			
+			osVersion = getOSVersion();
+			
 			new Thread(new Runnable() {
 				public void run() {
 					runOnUiThread(new Runnable(){
 						public void run() {
 	
-							swVersionText.setText("SW : " + swVersion);
-							fwVersionText.setText("FW : " + fwVersion);
+							swVersionText.setText("SW version : " + swVersion);
+							fwVersionText.setText("FW version : " + fwVersion);
+							osVersionText.setText("OS version : " + osVersion);
 						}
 					});
 				}
@@ -262,6 +285,8 @@ public class MaintenanceActivity extends Activity {
 			
 			String temp = "NR";
 			int cnt = 0;
+			
+			while(TimerDisplay.RXBoardFlag) SerialPort.Sleep(10);
 			
 			TimerDisplay.RXBoardFlag = true;
 			
@@ -295,6 +320,64 @@ public class MaintenanceActivity extends Activity {
 		}
 	}
 
+	public String getOSVersion() {
+		
+		GetOSVersion mGetOSVersion = new GetOSVersion();
+		mGetOSVersion.start();
+		
+		try {
+			mGetOSVersion.join();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return mGetOSVersion.getVersion();
+	}
+	
+	public class GetOSVersion extends Thread {
+		
+		String version;
+		
+		public void run() {
+			
+			try {
+				
+				int cnt = 0;
+				
+				Process shell = Runtime.getRuntime().exec("getprop ro.build.version.os");
+
+				BufferedReader br = new BufferedReader(new InputStreamReader(shell.getInputStream()));
+				String line = "", temp = "";
+				
+				while((line = br.readLine()) != null) {
+				
+					if(line.substring(0, 3).equals("ICS")) {
+					
+						Log.w("GetOSVersion", "temp : " + line);
+						
+						temp = line;
+					}
+				}
+				
+				br.close();
+
+				version = temp;
+				
+			} catch (IOException e) {
+		
+				version	= "Nothing";			
+				throw new RuntimeException(e);
+			}
+			
+		}
+		
+		public String getVersion() {
+			
+			return version;
+		}
+	}
+	
 	public void WhichIntent(TargetIntent Itn) { // Activity conversion
 		
 		Intent nextIntent = null;
@@ -331,6 +414,10 @@ public class MaintenanceActivity extends Activity {
 		
 		case Correction2		:				
 			nextIntent = new Intent(getApplicationContext(), Correction2Activity.class);
+			break;
+		
+		case Correlation	:				
+			nextIntent = new Intent(getApplicationContext(), CorrelationActivity.class);
 			break;
 		
 		default		:	

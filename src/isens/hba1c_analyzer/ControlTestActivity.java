@@ -42,7 +42,8 @@ public class ControlTestActivity extends Activity {
 					ref,
 					testNo,
 					operatorID,
-					result;
+					result,
+					pageText;
 	
 	public Button homeIcon,
 				  backIcon,
@@ -50,7 +51,8 @@ public class ControlTestActivity extends Activity {
 				  nextViewBtn,
 				  preViewBtn,
 				  printBtn,
-				  cancleBtn;
+				  cancleBtn,
+				  exportBtn;
 	
 	public ImageButton checkBoxBtn1,
 					   checkBoxBtn2,
@@ -284,6 +286,15 @@ public class ControlTestActivity extends Activity {
 				}
 			}
 		});
+		
+		exportBtn = (Button)findViewById(R.id.exportbtn);
+		exportBtn.setOnClickListener(new View.OnClickListener() {
+			
+			public void onClick(View v) {
+				
+				
+			}
+		});
 	}	
 	
 	public void ControlInit() {
@@ -352,6 +363,8 @@ public class ControlTestActivity extends Activity {
 		ResultText  [4] = (TextView) findViewById(R.id.result5);
 		UnitText    [4] = (TextView) findViewById(R.id.unit5);
 		DateTimeText[4] = (TextView) findViewById(R.id.dateTime5);
+		
+		pageText = (TextView) findViewById(R.id.pagetext);
 	}
 	
 	public void ControlDisplay() { // displaying the patient data
@@ -372,6 +385,17 @@ public class ControlTestActivity extends Activity {
             	DateTimeText[i].setText(dateTime[i].substring(0, 4) + "." + dateTime[i].substring(4, 6) + "." + dateTime[i].substring(6, 8) + " " + dateTime[i].substring(8, 10) + " " + dateTime[i].substring(10, 12) + ":" + dateTime[i].substring(12, 14));	
     		}	
     	}
+	
+		PageDisplay();
+	}
+	
+	public void PageDisplay() {
+		
+		int tPage = (RemoveActivity.PatientDataCnt+3)/5;
+		if(tPage == 0) tPage = 1;
+		String page = Integer.toString(RecordActivity.DataPage+1) + " / " + Integer.toString(tPage);
+		
+		pageText.setText(page);
 	}
 	
 	public void PressedCheckBox(ImageButton box) { // displaying the button pressed
