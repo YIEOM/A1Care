@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.PopupWindow;
@@ -37,6 +38,8 @@ public class ErrorPopup {
 	public Button yesBtn, 
 	   			  noBtn;
 	
+	private boolean btnState = false;
+	
 	public ErrorPopup(Activity activity, Context context, int layoutid) {
 		
 		this.activity = activity;
@@ -55,13 +58,102 @@ public class ErrorPopup {
 		yesBtn = (Button) popupView.findViewById(R.id.yesbtn);
 		noBtn = (Button) popupView.findViewById(R.id.nobtn);
 	}
+		
+	public void setErrorButtonClick() {
+		
+		errorBtn.setBackgroundResource(R.drawable.popup_button_selector);
+		errorBtn.setOnTouchListener(mErrorTouchListener);
+	}
+	
+	public void setButtonState(int btnId, boolean state) {
+		
+		popupView.findViewById(btnId).setEnabled(state);
+	}
+	
+	Button.OnTouchListener mErrorTouchListener = new View.OnTouchListener() {
+		
+		@Override
+		public boolean onTouch(View v, MotionEvent event) {
+			
+			switch(event.getAction()) {
+			
+			case MotionEvent.ACTION_UP	:
+				
+				if(!btnState) {
+
+					btnState = true;			
+				
+					switch(v.getId()) {
+				
+					case R.id.errorbtn		:
+						ErrorBtnPopupClose();
+						btnState = false;
+						break;
+						
+					default	:
+						break;
+					}
+				
+					break;
+				}
+			}
+			
+			return false;
+		}
+	};
+	
+		
+	public void setOXButtonClick() {
+		
+		yesBtn.setBackgroundResource(R.drawable.popup_yes_selector);
+		yesBtn.setOnTouchListener(mOXTouchListener);
+		noBtn.setBackgroundResource(R.drawable.popup_no_selector);
+		noBtn.setOnTouchListener(mOXTouchListener);
+	}
+	
+	Button.OnTouchListener mOXTouchListener = new View.OnTouchListener() {
+		
+		@Override
+		public boolean onTouch(View v, MotionEvent event) {
+			
+			switch(event.getAction()) {
+			
+			case MotionEvent.ACTION_UP	:
+					
+				if(!btnState) {
+
+					btnState = true;			
+				
+					switch(v.getId()) {
+						
+					case R.id.yesbtn	:
+						OPopupClose();
+						btnState = false;
+						break;
+					
+					case R.id.nobtn		:
+						XPopupClose();
+						btnState = false;
+						break;
+					
+					default	:
+						break;
+					}
+				}
+			
+				break;
+			}
+			
+			return false;
+		}
+	};
 	
 	public void ErrorBtnDisplay(final int error) {
 		
 		this.error = error;
 		
 		if(popupWindow == null) {
-		
+					
 			setDisplayId();
 			
 			setErrorBtnDisplay(error);
@@ -88,18 +180,10 @@ public class ErrorPopup {
 	public void setErrorBtnDisplay(int error) {
 		
 		errorText.setText(error);
+		setErrorButtonClick();
 		
-		errorBtn.setBackgroundResource(R.drawable.popup_button_selector);
-		errorBtn.setOnClickListener(new View.OnClickListener() {
-			
-			public void onClick(View v) {
-				
-				ErrorBtnPopupClose();
-			}
-		});
-		
-		yesBtn.setBackgroundResource(0);
-		noBtn.setBackgroundResource(0);
+		yesBtn.setVisibility(View.GONE);
+		noBtn.setVisibility(View.GONE);
 	}
 	
 	public void ErrorBtnPopupClose() {
@@ -173,9 +257,9 @@ public class ErrorPopup {
 		
 		errorText.setText(error);
 		
-		errorBtn.setBackgroundResource(0);
-		yesBtn.setBackgroundResource(0);
-		noBtn.setBackgroundResource(0);
+		errorBtn.setVisibility(View.GONE);
+		yesBtn.setVisibility(View.GONE);
+		noBtn.setVisibility(View.GONE);
 	}
 	
 	public void ErrorPopupClose() {
@@ -194,7 +278,7 @@ public class ErrorPopup {
 		if(popupWindow == null) {
 		
 			setDisplayId();
-		
+			
 			setOXBtnDisplay(error);
 			
 			hostLayout.post(new Runnable() {
@@ -220,25 +304,9 @@ public class ErrorPopup {
 		
 		errorText.setText(error);
 		
-		errorBtn.setBackgroundResource(0);
+		errorBtn.setVisibility(View.GONE);
 		
-		yesBtn.setBackgroundResource(R.drawable.popup_yes_selector);
-		yesBtn.setOnClickListener(new View.OnClickListener() {
-			
-			public void onClick(View v) {
-				
-				OPopupClose();
-			}
-		});
-
-		noBtn.setBackgroundResource(R.drawable.popup_no_selector);
-		noBtn.setOnClickListener(new View.OnClickListener() {
-			
-			public void onClick(View v) {
-				
-				XPopupClose();
-			}
-		});
+		setOXButtonClick();
 	}
 	
 	public void OPopupClose() {

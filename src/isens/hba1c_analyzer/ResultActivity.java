@@ -14,12 +14,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
+import android.media.AudioManager;
+import android.media.SoundPool;
+import android.media.SoundPool.OnLoadCompleteListener;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -56,8 +60,6 @@ public class ResultActivity extends Activity {
 					 RangeText,
 					 UnitText;
 	
-//	public RelativeLayout resultLinear;
-	
 	private Button homeIcon,
 				   printBtn,
 				   nextSampleBtn,
@@ -78,6 +80,10 @@ public class ResultActivity extends Activity {
 	
 	public boolean btnState = false;
 	
+	public SoundPool mPool;
+
+	public int mWin;
+	
 	protected void onCreate(Bundle savedInstanceState) {
 		
 		super.onCreate(savedInstanceState);
@@ -87,82 +93,83 @@ public class ResultActivity extends Activity {
 		PatientIDText = (EditText) findViewById(R.id.patientidtext);
 		
 		ResultInit();
+	}
+	
+	public void setButtonId() {
 		
-		/*Home Activity activation*/
 		homeIcon = (Button)findViewById(R.id.homeicon);
-		homeIcon.setOnClickListener(new View.OnClickListener() {
+		printBtn = (Button)findViewById(R.id.printbtn);
+		nextSampleBtn = (Button)findViewById(R.id.nextsamplebtn);
+		convertBtn = (Button)findViewById(R.id.convertbtn);
+	}
+	
+	public void setButtonClick() {
 		
-			public void onClick(View v) {
+		homeIcon.setOnTouchListener(mTouchListener);
+		printBtn.setOnTouchListener(mTouchListener);
+		nextSampleBtn.setOnTouchListener(mTouchListener);
+		convertBtn.setOnTouchListener(mTouchListener);
+	}
+	
+	public void setButtonState(int btnId, boolean state, Activity activity) {
+		
+		activity.findViewById(btnId).setEnabled(state);
+	}
+	
+	Button.OnTouchListener mTouchListener = new View.OnTouchListener() {
+		
+		@Override
+		public boolean onTouch(View v, MotionEvent event) {
+			
+			switch(event.getAction()) {
+			
+			case MotionEvent.ACTION_UP	:
 				
 				if(!btnState) {
-					
+
 					btnState = true;
 					
-					homeIcon.setEnabled(false);
+					switch(v.getId()) {
+				
+					case R.id.homeicon		:
+						WhichIntent(TargetIntent.Home);
+						break;
+						
+					case R.id.printbtn		:
+						PrintResultData();
+						break;
 					
-					WhichIntent(TargetIntent.Home);
+					case R.id.nextsamplebtn	:
+						WhichIntent(TargetIntent.Run);
+						break;
+					
+					case R.id.convertbtn	:
+						SerialPort.Sleep(200);
+						PrimaryConvert();
+						break;
+						
+					default	:
+						break;
+					}
 				}
-			}
-		});
-		
-		printBtn = (Button)findViewById(R.id.printbtn);
-		printBtn.setOnClickListener(new View.OnClickListener() {
-		
-			public void onClick(View v) {
 			
-				if(!btnState) {
-					
-					btnState = true;
-					
-					PrintResultData();
-				}
+				break;
 			}
-		});
-		
-		/*Test Activity activation*/
-		nextSampleBtn = (Button)findViewById(R.id.nextsamplebtn);
-		nextSampleBtn.setOnClickListener(new View.OnClickListener() {
-		
-			public void onClick(View v) {
-
-				if(!btnState) {
-					
-					btnState = true;
-					
-					nextSampleBtn.setEnabled(false);
-					
-					WhichIntent(TargetIntent.Run);
-				}
-			}
-		});
-		
-		convertBtn = (Button)findViewById(R.id.convertbtn);
-		convertBtn.setOnClickListener(new View.OnClickListener() {
-		
-			public void onClick(View v) {
-
-				if(!btnState) {
-					
-					btnState = true;
-					
-					SerialPort.Sleep(200);
-					
-					PrimaryConvert();
-				}
-			}
-		});		
-	}
+			
+			return false;
+		}
+	};
 	
 	public void ResultInit() {
 
+		setButtonId();
+		setButtonClick();
+		
 		mTimerDisplay = new TimerDisplay();
 		mTimerDisplay.ActivityParm(this, R.id.resultlayout);
 		
 		GetCurrTime();
 		GetDataCnt();
-		
-//		mTemperature = new Temperature(R.id.resultlayout);
-//		cellBlockEndTmp = mTemperature.CellTmpRead();
 		
 		HbA1cText = (TextView) findViewById(R.id.hba1cPct);
 		HbA1cUnitText = (TextView) findViewById(R.id.hba1cUnit);
@@ -230,6 +237,16 @@ public class ResultActivity extends Activity {
 		operator = mDatabaseHander.GetLastLoginID();
 		
 		if(operator == null) operator = "Guest";
+		
+		mPool = new SoundPool(1, AudioManager.STREAM_MUSIC, 0);
+		mWin = mPool.load(this, R.raw.result_bgm, 1);
+		
+		mPool.setOnLoadCompleteListener(new OnLoadCompleteListener() {
+		      public void onLoadComplete(SoundPool mPool, int sampleId, int status) {
+
+		  		mPool.play(mWin, 1, 1, 0, 0, 1); // playing sound
+		      }
+		});
 	}
 	
 	public void PatientIDDisplay(final StringBuffer str) {

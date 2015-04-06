@@ -105,99 +105,130 @@ public class LampCopyActivity extends Activity {
 		setContentView(R.layout.lamp);
 		
 		LampInit();
-		
-		/*Home Activity activation*/
-		escIcon = (Button)findViewById(R.id.escBtn);
-		escIcon.setOnClickListener(new View.OnClickListener() {
-		
-			public void onClick(View v) {
-			
-				if(!btnState) {
-					
-					btnState = true;
-					
-					escIcon.setEnabled(false);
-				
-					WhichIntent(TargetIntent.Maintenance);
-				}
-			}
-		});
-		
-		runBtn = (Button)findViewById(R.id.runBtn);
-		runBtn.setOnClickListener(new View.OnClickListener() {
-		
-			public void onClick(View v) {
-		
-				runBtn.setEnabled(false);
-				
-				TestStart();
-			}
-		});
-		
-		cancelBtn = (Button)findViewById(R.id.cancelBtn);
-		cancelBtn.setOnClickListener(new View.OnClickListener() {
-		
-			public void onClick(View v) {
-
-				cancelBtn.setEnabled(false);
-				
-				cancelTest();
-			}
-		});
-		
-		darkBtn = (Button)findViewById(R.id.darkBtn);
-		darkBtn.setOnClickListener(new View.OnClickListener() {
-		
-			public void onClick(View v) {
-
-				displayFilterBtn((int) FILTER_DARK);
-			}
-		});
-		
-		f535nmBtn = (Button)findViewById(R.id.f535nmBtn);
-		f535nmBtn.setOnClickListener(new View.OnClickListener() {
-		
-			public void onClick(View v) {
-
-				displayFilterBtn((int) FILTER_535nm);
-			}
-		});
-		
-		f660nmBtn = (Button)findViewById(R.id.f660nmBtn);
-		f660nmBtn.setOnClickListener(new View.OnClickListener() {
-		
-			public void onClick(View v) {
-
-				displayFilterBtn((int) FILTER_660nm);
-			}
-		});
-		
-		f750nmBtn = (Button)findViewById(R.id.f750nmBtn);
-		f750nmBtn.setOnClickListener(new View.OnClickListener() {
-		
-			public void onClick(View v) {
-				
-				displayFilterBtn((int) FILTER_750nm);
-			}
-		});
-		
-		displayFilterBtn((int) FILTER_535nm);
 	}
 	
-	public void LampInit() {
+	public void setImageId() {
 		
-		mTimerDisplay = new TimerDisplay();
-		mTimerDisplay.ActivityParm(this, R.id.lampLayout);
-		
-		adcText = (TextView) findViewById(R.id.adcText);
 		stateFlag1 = (ImageView) findViewById(R.id.stateFlag1);
-		stateFlag2 = (ImageView) findViewById(R.id.stateFlag2);
-		
+		stateFlag2 = (ImageView) findViewById(R.id.stateFlag2);	
+	}
+	
+	public void setTextId() {
+
+		adcText = (TextView) findViewById(R.id.adcText);
 		adc1Text = (TextView) findViewById(R.id.adc1Text);
 		adc2Text = (TextView) findViewById(R.id.adc2Text);
 		adc3Text = (TextView) findViewById(R.id.adc3Text);
 		adc4Text = (TextView) findViewById(R.id.adc4Text);
 		adc5Text = (TextView) findViewById(R.id.adc5Text);
+	}
+	
+	public void setButtonId() {
+		
+		escIcon = (Button)findViewById(R.id.escBtn);
+		runBtn = (Button)findViewById(R.id.runBtn);
+		cancelBtn = (Button)findViewById(R.id.cancelBtn);
+		darkBtn = (Button)findViewById(R.id.darkBtn);
+		f535nmBtn = (Button)findViewById(R.id.f535nmBtn);
+		f660nmBtn = (Button)findViewById(R.id.f660nmBtn);
+		f750nmBtn = (Button)findViewById(R.id.f750nmBtn);
+	}
+	
+	public void setButtonClick() {
+		
+		escIcon.setOnTouchListener(mTouchListener);
+		runBtn.setOnTouchListener(mTouchListener);
+		cancelBtn.setOnTouchListener(mTouchListener);
+		darkBtn.setOnTouchListener(mTouchListener);
+		f535nmBtn.setOnTouchListener(mTouchListener);
+		f660nmBtn.setOnTouchListener(mTouchListener);
+		f750nmBtn.setOnTouchListener(mTouchListener);
+	}
+	
+	public void setButtonState(int btnId, boolean state) {
+		
+		findViewById(btnId).setEnabled(state);
+	}
+	
+	Button.OnTouchListener mTouchListener = new View.OnTouchListener() {
+		
+		@Override
+		public boolean onTouch(View v, MotionEvent event) {
+			
+			switch(event.getAction()) {
+			
+			case MotionEvent.ACTION_UP	:
+				
+				if(!btnState) {
+
+					btnState = true;
+					
+					switch(v.getId()) {
+				
+					case R.id.escBtn	:
+						WhichIntent(TargetIntent.Maintenance);
+						break;
+						
+					case R.id.runBtn	:
+						setButtonState(R.id.runBtn, false);
+						TestStart();
+						break;
+					
+					case R.id.cancelBtn	:
+						setButtonState(R.id.cancelBtn, false);
+						cancelTest();
+						break;
+						
+					default	:
+						break;
+					}
+				}
+
+				btnState = false;
+				break;
+				
+			case MotionEvent.ACTION_DOWN	:
+				
+				switch(v.getId()) {
+			
+				case R.id.darkBtn	:
+					displayFilterBtn((int) FILTER_DARK);
+					break;
+					
+				case R.id.f535nmBtn	:
+					displayFilterBtn((int) FILTER_535nm);
+					break;
+					
+				case R.id.f660nmBtn	:
+					displayFilterBtn((int) FILTER_660nm);
+					break;
+				
+				case R.id.f750nmBtn	:
+					displayFilterBtn((int) FILTER_750nm);
+					break;
+					
+				default	:
+					break;
+				}
+				
+				break;
+			}
+			
+			return false;
+		}
+	};
+	
+	public void LampInit() {
+		
+		setImageId();
+		setTextId();
+		setButtonId();
+		setButtonClick();
+		
+		displayFilterBtn((int) FILTER_535nm);
+		
+		mTimerDisplay = new TimerDisplay();
+		mTimerDisplay.ActivityParm(this, R.id.lampLayout);
 		
 		mSurfaceView = (SurfaceView) findViewById(R.id.graphBg);
 		
@@ -252,11 +283,12 @@ public class LampCopyActivity extends Activity {
 		isNormal = true;
 		isMeasured = false;
 		
-		escIcon.setEnabled(false);
-		darkBtn.setEnabled(false);
-		f535nmBtn.setEnabled(false);
-		f660nmBtn.setEnabled(false);
-		f750nmBtn.setEnabled(false);
+		setButtonState(R.id.escBtn, false);
+		setButtonState(R.id.runBtn, false);
+		setButtonState(R.id.darkBtn, false);
+		setButtonState(R.id.f535nmBtn, false);
+		setButtonState(R.id.f660nmBtn, false);
+		setButtonState(R.id.f750nmBtn, false);
 		
 		CancelTest mCancelTest = new CancelTest();
 		mCancelTest.start();
@@ -372,6 +404,8 @@ public class LampCopyActivity extends Activity {
 			mErrorPopup.ErrorBtnDisplay(checkError);
 			break;
 		}
+		
+		btnState = false;
 	}
 	
 	public class PhotoMeasure extends Thread {
@@ -662,12 +696,14 @@ public class LampCopyActivity extends Activity {
 				runOnUiThread(new Runnable(){
 					public void run() {
 
-						runBtn.setEnabled(true);
-						escIcon.setEnabled(true);
-						darkBtn.setEnabled(true);
-						f535nmBtn.setEnabled(true);
-						f660nmBtn.setEnabled(true);
-						f750nmBtn.setEnabled(true);
+						setButtonState(R.id.escBtn, true);
+						setButtonState(R.id.runBtn, true);
+						setButtonState(R.id.darkBtn, true);
+						setButtonState(R.id.f535nmBtn, true);
+						setButtonState(R.id.f660nmBtn, true);
+						setButtonState(R.id.f750nmBtn, true);
+						
+						btnState = false;
 					}
 				});
 			}

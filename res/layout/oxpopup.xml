@@ -18,7 +18,7 @@
         android:id="@+id/yesbtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="208px"
+        android:layout_marginLeft="227px"
         android:layout_marginTop="222px"
         android:background="@drawable/popup_yes_selector" />
 
@@ -26,7 +26,7 @@
         android:id="@+id/nobtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="417px"
+        android:layout_marginLeft="402px"
         android:layout_marginTop="222px"
         android:background="@drawable/popup_no_selector" />
    	        

@@ -69,7 +69,7 @@ public class AdjustmentPresenter {
 		mFactorIView.setEditText(fct1st, fct2nd);
 	}
 	
-	public void enableAllBtn() {
+	public void enabledAllBtn() {
 
 		mFactorIView.setButtonState(R.id.backBtn, true);
 	}

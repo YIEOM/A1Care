@@ -87,6 +87,11 @@ public class ControlTestActivity extends Activity {
 		detailPopupView = View.inflate(this, R.layout.detailviewpopup, null);
 		detailPopup = new PopupWindow(detailPopupView, 526, 264, true);
 		
+		ControlInit();
+	}	
+	
+	public void setTextId() {
+		
 		patientID = (TextView) detailPopupView.findViewById(R.id.patient);
 		testDate = (TextView) detailPopupView.findViewById(R.id.testdate);
 		typeDetailText = (TextView) detailPopupView.findViewById(R.id.type);
@@ -96,208 +101,184 @@ public class ControlTestActivity extends Activity {
 		testNo = (TextView) detailPopupView.findViewById(R.id.testno);
 		operatorID = (TextView) detailPopupView.findViewById(R.id.operator);
 		result = (TextView) detailPopupView.findViewById(R.id.result);
+	}
+	
+	public void setButtonId() {
 		
-		ControlInit();
+		homeIcon = (Button)findViewById(R.id.homeicon);
+		backIcon = (Button)findViewById(R.id.backicon);
+		preViewBtn = (Button)findViewById(R.id.previousviewbtn);
+		detailViewBtn = (Button)findViewById(R.id.detailviewbtn);
+		nextViewBtn = (Button)findViewById(R.id.nextviewbtn);
+		printBtn = (Button)detailPopupView.findViewById(R.id.printbtn);
+		cancleBtn = (Button)detailPopupView.findViewById(R.id.canclebtn);
+		exportBtn = (Button)findViewById(R.id.exportbtn);
+	}
+	
+	public void setButtonClick() {
+		
+		homeIcon.setOnTouchListener(mTouchListener);
+		backIcon.setOnTouchListener(mTouchListener);
+		preViewBtn.setOnTouchListener(mTouchListener);
+		detailViewBtn.setOnTouchListener(mTouchListener);
+		nextViewBtn.setOnTouchListener(mTouchListener);
+		printBtn.setOnTouchListener(mTouchListener);
+		cancleBtn.setOnTouchListener(mTouchListener);
+		exportBtn.setOnTouchListener(mTouchListener);
+	}
+	
+	public void setButtonState(int btnId, boolean state) {
+		
+		findViewById(btnId).setEnabled(state);
+	}
+	
+	public void setImageButtonId() {
 		
 		checkBoxBtn1 = (ImageButton) findViewById(R.id.chdckbox1);
-		checkBoxBtn1.setOnTouchListener(new OnTouchListener() {
+		checkBoxBtn2 = (ImageButton) findViewById(R.id.chdckbox2);
+		checkBoxBtn3 = (ImageButton) findViewById(R.id.chdckbox3);
+		checkBoxBtn4 = (ImageButton) findViewById(R.id.chdckbox4);
+		checkBoxBtn5 = (ImageButton) findViewById(R.id.chdckbox5);
+	}
+	
+	public void setImageButtonClick() {
+		
+		checkBoxBtn1.setOnTouchListener(mImageTouchListener);
+		checkBoxBtn2.setOnTouchListener(mImageTouchListener);
+		checkBoxBtn3.setOnTouchListener(mImageTouchListener);
+		checkBoxBtn4.setOnTouchListener(mImageTouchListener);
+		checkBoxBtn5.setOnTouchListener(mImageTouchListener);
+	}
+	
+	Button.OnTouchListener mTouchListener = new View.OnTouchListener() {
+		
+		@Override
+		public boolean onTouch(View v, MotionEvent event) {
 			
-			public boolean onTouch(View v, MotionEvent event) {
+			switch(event.getAction()) {
+			
+			case MotionEvent.ACTION_UP	:
 				
-				if(event.getAction() == MotionEvent.ACTION_DOWN) { 
+				if(!btnState) {
 
+					btnState = true;
+
+					switch(v.getId()) {
+				
+					case R.id.homeicon	:
+						WhichIntent(TargetIntent.Home);
+						break;
+					
+					case R.id.backicon	:
+						WhichIntent(TargetIntent.Record);
+						break;
+					
+					case R.id.previousviewbtn	:
+						WhichIntent(TargetIntent.PreFile);
+						btnState = false;
+						break;
+						
+					case R.id.detailviewbtn	:
+						DisplayDetailView();
+						cancleBtn.setEnabled(true);
+						break;
+						
+					case R.id.nextviewbtn	:
+						WhichIntent(TargetIntent.NextFile);
+						btnState = false;
+						break;
+					
+					case R.id.printbtn	:
+						PrintRecordData();
+						break;
+					
+					case R.id.canclebtn	:
+
+						cancleBtn.setEnabled(false);
+						detailPopup.dismiss();
+						detailViewBtn.setEnabled(true);
+						btnState = false;
+						break;
+						
+					case R.id.exportbtn	:
+						btnState = false;
+						break;
+						
+					default	:
+						break;
+					}
+					
+					break;
+				}
+			}
+			
+			return false;
+		}
+	};
+	
+	ImageButton.OnTouchListener mImageTouchListener = new View.OnTouchListener() {
+		
+		@Override
+		public boolean onTouch(View v, MotionEvent event) {
+			
+			switch(event.getAction()) {
+			
+			case MotionEvent.ACTION_UP	:
+				
+				switch(v.getId()) {
+				
+				case R.id.chdckbox1	:
 					boxNum = 1;
 					PressedCheckBox(checkBoxBtn1);
-				}
-				return false;
-			}
-		});
-		
-		checkBoxBtn2 = (ImageButton) findViewById(R.id.chdckbox2);
-		checkBoxBtn2.setOnTouchListener(new OnTouchListener() {
-			
-			public boolean onTouch(View v, MotionEvent event) {
-				
-				if(event.getAction() == MotionEvent.ACTION_DOWN) { 
+					break;
 					
+				case R.id.chdckbox2	:
 					boxNum = 2;
 					PressedCheckBox(checkBoxBtn2);
-				}
-				return false;
-			}
-		});
-		
-		checkBoxBtn3 = (ImageButton) findViewById(R.id.chdckbox3);
-		checkBoxBtn3.setOnTouchListener(new OnTouchListener() {
-			
-			public boolean onTouch(View v, MotionEvent event) {
+					break;
 				
-				if(event.getAction() == MotionEvent.ACTION_DOWN) { 
-					
+				case R.id.chdckbox3	:
 					boxNum = 3;
 					PressedCheckBox(checkBoxBtn3);
-				}
-				return false;
-			}
-		});
-		
-		checkBoxBtn4 = (ImageButton) findViewById(R.id.chdckbox4);
-		checkBoxBtn4.setOnTouchListener(new View.OnTouchListener() {
-			
-			public boolean onTouch(View v, MotionEvent event) {
-	
-				if(event.getAction() == MotionEvent.ACTION_DOWN) { 
-					
+					break;
+				
+				case R.id.chdckbox4	:
 					boxNum = 4;
 					PressedCheckBox(checkBoxBtn4);
-				}
-				return false;
-			}
-		});
-		
-		checkBoxBtn5 = (ImageButton) findViewById(R.id.chdckbox5);
-		checkBoxBtn5.setOnTouchListener(new View.OnTouchListener() {
-			
-			public boolean onTouch(View v, MotionEvent event) {
+					break;
 				
-				if(event.getAction() == MotionEvent.ACTION_DOWN) { 
-					
+				case R.id.chdckbox5	:
 					boxNum = 5;
 					PressedCheckBox(checkBoxBtn5);
-				}
-				return false;
-			}
-		});
-		
-		/*Home Activity activation*/
-		homeIcon = (Button)findViewById(R.id.homeicon);
-		homeIcon.setOnClickListener(new View.OnClickListener() {
-		
-			public void onClick(View v) {
-		
-				if(!btnState) {
-					
-					btnState = true;
+					break;
+				}		
 				
-					homeIcon.setEnabled(false);
-					
-					WhichIntent(TargetIntent.Home);
-				}
+				break;
 			}
-		});
-		
-		/*Memory Activity activation*/
-		backIcon = (Button)findViewById(R.id.backicon);
-		backIcon.setOnClickListener(new View.OnClickListener() {
-		
-			public void onClick(View v) {
-		
-				if(!btnState) {
-					
-					btnState = true;
-				
-					backIcon.setEnabled(false);
-					
-					WhichIntent(TargetIntent.Record);
-				}
-			}
-		});
-		
-		preViewBtn = (Button)findViewById(R.id.previousviewbtn);
-		preViewBtn.setOnClickListener(new View.OnClickListener() {
 			
-			public void onClick(View v) {
-			
-				if(!btnState) {
-					
-					btnState = true;
-				
-					preViewBtn.setEnabled(false);
-					
-					WhichIntent(TargetIntent.PreFile);
-				}
-			}
-		});
-		
-		/*DetailView pop-up window activation*/
-		detailViewBtn = (Button)findViewById(R.id.detailviewbtn);
-		detailViewBtn.setOnClickListener(new View.OnClickListener() {
-			
-			public void onClick(View v) {
-				
-				if(!btnState) {
-			
-					btnState = true;
-					
-					DisplayDetailView();
-					cancleBtn.setEnabled(true);
-				}
-			}
-		});
-		
-		nextViewBtn = (Button)findViewById(R.id.nextviewbtn);
-		nextViewBtn.setOnClickListener(new View.OnClickListener() {
-			
-			public void onClick(View v) {
-			
-				if(!btnState) {
-					
-					btnState = true;
-					
-					nextViewBtn.setEnabled(false);
-					
-					WhichIntent(TargetIntent.NextFile);
-				}
-			}
-		});
-		
-		/*Printer operation activation*/
-		printBtn = (Button)detailPopupView.findViewById(R.id.printbtn);
-		printBtn.setOnClickListener(new View.OnClickListener() {
-			
-			public void onClick(View v) {
-				
-				if(!btnState) {
-					
-					btnState = true;
-					
-					PrintRecordData();
-				}
-			}
-		});
-		
-		/*DetailView pop-up window termination*/
-		cancleBtn = (Button)detailPopupView.findViewById(R.id.canclebtn);
-		cancleBtn.setOnClickListener(new View.OnClickListener() {
-			
-			public void onClick(View v) {
-				
-				if(!btnState) {
-					
-					btnState = true;
-					
-					cancleBtn.setEnabled(false);
+			return false;
+		}
+	};
+	
+	public void enabledAllBtn() {
 
-					detailPopup.dismiss();
-					
-					detailViewBtn.setEnabled(true);
-					
-					btnState = false;
-				}
-			}
-		});
+		setButtonState(R.id.homeicon, true);
+	}
+	
+	public void unenabledAllBtn() {
+
+		setButtonState(R.id.homeicon, false);
 		
-		exportBtn = (Button)findViewById(R.id.exportbtn);
-		exportBtn.setOnClickListener(new View.OnClickListener() {
-			
-			public void onClick(View v) {
-				
-				
-			}
-		});
-	}	
+		btnState = false;
+	}
 	
 	public void ControlInit() {
+		
+		setTextId();
+		setButtonId();
+		setButtonClick();
+		setImageButtonId();
+		setImageButtonClick();
 		
 		mTimerDisplay = new TimerDisplay();
 		mTimerDisplay.ActivityParm(this, R.id.ctestlayout);
@@ -391,7 +372,7 @@ public class ControlTestActivity extends Activity {
 	
 	public void PageDisplay() {
 		
-		int tPage = (RemoveActivity.PatientDataCnt+3)/5;
+		int tPage = (RemoveActivity.ControlDataCnt+3)/5;
 		if(tPage == 0) tPage = 1;
 		String page = Integer.toString(RecordActivity.DataPage+1) + " / " + Integer.toString(tPage);
 		

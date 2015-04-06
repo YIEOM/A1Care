@@ -93,7 +93,7 @@ public class TimePresenter {
 		
 		display();
 		
-		enableAllBtn();
+		enabledAllBtn();
 	}
 
 	public void changeHourUp() {
@@ -104,7 +104,7 @@ public class TimePresenter {
 		
 		display();
 		
-		enableAllBtn();
+		enabledAllBtn();
 	}
 	
 	public void changeHourAutoUp() {
@@ -122,7 +122,7 @@ public class TimePresenter {
 		
 		display();
 		
-		enableAllBtn();
+		enabledAllBtn();
 	}
 	
 	public void changeHourAutoDown() {
@@ -140,7 +140,7 @@ public class TimePresenter {
 		
 		display();
 		
-		enableAllBtn();
+		enabledAllBtn();
 	}
 	
 	public void changeMinuteAutoUp() {
@@ -158,7 +158,7 @@ public class TimePresenter {
 		
 		display();
 		
-		enableAllBtn();
+		enabledAllBtn();
 	}
 	
 	public void changeMinuteAutoDown() {
@@ -178,7 +178,7 @@ public class TimePresenter {
 		mTimeIView.setText(amPm, hour, minute);
 	}
 	
-	public void enableAllBtn() {
+	public void enabledAllBtn() {
 
 		mTimeIView.setButtonState(R.id.backBtn, true);
 		mTimeIView.setButtonState(R.id.val1stpBtn, true);

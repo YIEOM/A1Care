@@ -99,7 +99,7 @@ public class LanguageActivity extends Activity implements LanguageIView {
 			
 			switch(event.getAction()) {
 			
-			case MotionEvent.ACTION_DOWN	:
+			case MotionEvent.ACTION_UP	:
 				
 				switch(v.getId()) {
 			

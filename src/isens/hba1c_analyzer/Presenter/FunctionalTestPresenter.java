@@ -53,7 +53,7 @@ public class FunctionalTestPresenter {
 		mTimerDisplay.ActivityParm(activity, layout);
 	}
 	
-	public void enableAllBtn() {
+	public void enabledAllBtn() {
 
 		mFunctionalTestIView.setButtonState(R.id.backBtn, true);
 		mFunctionalTestIView.setButtonState(R.id.homeBtn, true);

@@ -6,6 +6,7 @@ import android.media.SoundPool.OnLoadCompleteListener;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
@@ -84,86 +85,101 @@ public class HomeActivity extends Activity {
 		setContentView(R.layout.home);
 		
 		HomeInit();
+	}
+	
+	public void setButtonId(Activity activity) {
 		
-		/*Test Activity activation*/
-		runBtn = (Button)findViewById(R.id.runbtn);
-		runBtn.setOnClickListener(new View.OnClickListener() { 
+		runBtn = (Button)activity.findViewById(R.id.runbtn);
+		settingBtn = (Button)activity.findViewById(R.id.settingbtn);
+		recordBtn = (Button)activity.findViewById(R.id.recordbtn);
+		escIcon = (Button)activity.findViewById(R.id.escicon);
+	}
+	
+	public void setButtonClick() {
 		
-			public void onClick(View v) {
+		runBtn.setOnTouchListener(mTouchListener);
+		settingBtn.setOnTouchListener(mTouchListener);
+		recordBtn.setOnTouchListener(mTouchListener);
+		escIcon.setOnTouchListener(mTouchListener);
+	}
+	
+	public void setButtonState(int btnId, boolean state, Activity activity) {
+		
+		activity.findViewById(btnId).setEnabled(state);
+	}
+	
+	Button.OnTouchListener mTouchListener = new View.OnTouchListener() {
+		
+		@Override
+		public boolean onTouch(View v, MotionEvent event) {
 			
-				if(!btnState) {
-		
-					btnState = true;
-					
-					runBtn.setEnabled(false);
-				
-					MEASURE_MODE = A1C;
-					
-					WhichIntent(activity, context, TargetIntent.Blank);
-				}
-			}
-		});
-		
-		/*Setting Activity activation*/
-		settingBtn = (Button)findViewById(R.id.settingbtn);
-		settingBtn.setOnClickListener(new View.OnClickListener() {
-		
-			public void onClick(View v) {
+			switch(event.getAction()) {
+			
+			case MotionEvent.ACTION_UP	:
 				
 				if(!btnState) {
-					
-					btnState = true;
 
-					settingBtn.setEnabled(false);
-					
-					WhichIntent(activity, context, TargetIntent.Setting);				
-				}
-			}
-		});
-		
-		/*Memory Activity activation*/
-		recordBtn = (Button)findViewById(R.id.recordbtn);
-		recordBtn.setOnClickListener(new View.OnClickListener() { 
-		
-			public void onClick(View v) {
-			
-				if(!btnState) {
-					
 					btnState = true;
 					
-					recordBtn.setEnabled(false);
+					switch(v.getId()) {
 				
-					WhichIntent(activity, context, TargetIntent.Record);
+					case R.id.escicon		:
+						ESC();
+						btnState = false;
+						break;
+						
+					case R.id.runbtn		:
+						MEASURE_MODE = A1C;
+						WhichIntent(activity, context, TargetIntent.Blank);
+						break;
+					
+					case R.id.settingbtn	:
+						WhichIntent(activity, context, TargetIntent.Setting);
+						break;
+					
+					case R.id.recordbtn		:
+						WhichIntent(activity, context, TargetIntent.Record);
+						break;
+						
+					default	:
+						break;
+					}
 				}
-			}
-		});
-		
-		escIcon = (Button)findViewById(R.id.escicon);
-		escIcon.setOnClickListener(new View.OnClickListener() { 
-		
-			public void onClick(View v) {
 			
-				if(!btnState) {
-					
-					btnState = true;
-					
-					ESC();
-					
-					btnState = false;
-				}
+				break;
 			}
-		});
+			
+			return false;
+		}
+	};
+	
+	public void enableAllBtn(Activity activtiy) {
+
+		setButtonState(R.id.escicon, true, activtiy);
+		setButtonState(R.id.runbtn, true, activtiy);
+		setButtonState(R.id.settingbtn, true, activtiy);
+		setButtonState(R.id.recordbtn, true, activtiy);
+	}
+	
+	public void unenabledAllBtn(Activity activtiy) {
+		
+		setButtonState(R.id.escicon, false, activtiy);
+		setButtonState(R.id.runbtn, false, activtiy);
+		setButtonState(R.id.settingbtn, false, activtiy);
+		setButtonState(R.id.recordbtn, false, activtiy);
 	}
 	
 	public void HomeInit() {
 		
-		int state;
-		
+		setButtonId(this);
+		unenabledAllBtn(this);
+		setButtonClick();
+				
 		activity = this;
 		context = this;
 		
 		Intent itn = getIntent();
-		state = itn.getIntExtra("System Check State", 0);
+		int state = itn.getIntExtra("System Check State", 0);
 		
 		if(state != 0) {
 			
@@ -175,19 +191,19 @@ public class HomeActivity extends Activity {
 			Login(this, this, R.id.homelayout);	
 		}
 		
-//		mPool = new SoundPool(1, AudioManager.STREAM_MUSIC, 0);
-//		mWin = mPool.load(context, R.raw.beep, 1);
-		
 		mTimerDisplay = new TimerDisplay();
 		mTimerDisplay.ActivityParm(this, R.id.homelayout);
 		
-//		mPool.setOnLoadCompleteListener(new OnLoadCompleteListener() {
-//		      public void onLoadComplete(SoundPool mPool, int sampleId, int status) {
-//
-//		  		mPool.play(mWin, 1, 1, 0, 0, 1); // playing sound
-//		      }
-//		});
+		mPool = new SoundPool(1, AudioManager.STREAM_MUSIC, 0);
+		mWin = mPool.load(this, R.raw.booting_bgm, 1);
 		
+		mPool.setOnLoadCompleteListener(new OnLoadCompleteListener() {
+		      public void onLoadComplete(SoundPool mPool, int sampleId, int status) {
+
+		  		mPool.play(mWin, 1, 1, 0, 0, 1); // playing sound
+		      }
+		});
+
 		DisplayDemo();
 	}
 	
@@ -215,6 +231,8 @@ public class HomeActivity extends Activity {
 		idText = (TextView) activity.findViewById(R.id.idtext);
 		
 		idText.setText("Operator : " + id);
+		
+		enableAllBtn(activity);
 	}
 	
 	public void DisplayDemo() {

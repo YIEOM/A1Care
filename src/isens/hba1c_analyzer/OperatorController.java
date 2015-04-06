@@ -1,5 +1,7 @@
 package isens.hba1c_analyzer;
 
+import isens.hba1c_analyzer.HomeActivity.TargetIntent;
+
 import java.util.ResourceBundle;
 
 import android.app.Activity;
@@ -11,6 +13,7 @@ import android.renderscript.Sampler.Value;
 import android.text.Layout;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -65,7 +68,7 @@ public class OperatorController {
 
 	public TextView delOperatorText;
 
-	
+	public String id;
 	public boolean btnState = false;
 	
 	public OperatorController(Activity activity, Context context, int layoutid) {
@@ -74,6 +77,60 @@ public class OperatorController {
 		this.context = context;
 		this.layoutid = layoutid;
 	}
+	
+	public void setLoginButtonId(View popupView) {
+		
+		loginBtn = (Button)popupView.findViewById(R.id.loginbtn);
+		guestBtn = (Button)popupView.findViewById(R.id.guestbtn);
+		checkBtn = (Button)popupView.findViewById(R.id.checkbtn);
+	}
+	
+	public void setLoginButtonClick() {
+		
+		loginBtn.setOnTouchListener(mLoginTouchListener);
+		guestBtn.setOnTouchListener(mLoginTouchListener);
+		checkBtn.setOnTouchListener(mLoginTouchListener);
+	}
+	
+	Button.OnTouchListener mLoginTouchListener = new View.OnTouchListener() {
+		
+		@Override
+		public boolean onTouch(View v, MotionEvent event) {
+			
+			switch(event.getAction()) {
+			
+			case MotionEvent.ACTION_UP	:
+				
+				if(!btnState) {
+
+					btnState = true;
+					
+					switch(v.getId()) {
+				
+					case R.id.loginbtn	:
+						LoginCheck();
+						break;
+						
+					case R.id.guestbtn	:
+						LoginGuest();
+						break;
+					
+					case R.id.checkbtn	:
+						CheckBoxDisplay(checkBtn);
+						btnState = false;
+						break;
+					
+					default	:
+						break;
+					}
+				}
+			
+				break;
+			}
+			
+			return false;
+		}
+	};
 	
 	public void LoginDisplay() {
 		
@@ -84,49 +141,8 @@ public class OperatorController {
 		oIDEText = (EditText) popupView.findViewById(R.id.loginoid);
 		passEText = (EditText) popupView.findViewById(R.id.loginpass);
 		
-		loginBtn = (Button)popupView.findViewById(R.id.loginbtn);
-		loginBtn.setOnClickListener(new View.OnClickListener() {
-			
-			public void onClick(View v) {
-			
-				if(!btnState) {
-					
-					btnState = true;
-					
-					LoginCheck();
-				}
-			}
-		});
-		
-		guestBtn = (Button)popupView.findViewById(R.id.guestbtn);
-		guestBtn.setOnClickListener(new View.OnClickListener() {
-			
-			public void onClick(View v) {
-			
-				if(!btnState) {
-					
-					btnState = true;
-					
-					LoginGuest();
-				}
-			}
-		});
-		
-		checkBtn = (Button)popupView.findViewById(R.id.checkbtn);
-		checkBtn.setOnClickListener(new View.OnClickListener() { 
-			
-			public void onClick(View v) {
-	
-				if(!btnState) {
-					
-					btnState = true;
-				
-					CheckBoxDisplay(checkBtn);
-					
-					btnState = false;
-				}
-			}
-		});
+		setLoginButtonId(popupView);
+		setLoginButtonClick();
 		
 		hostLayout.post(new Runnable() {
 			public void run() {
@@ -137,6 +153,60 @@ public class OperatorController {
 			}
 		});
 	}
+	
+	public void setOperatorButtonId(View popupView) {
+		
+		loginBtn = (Button)popupView.findViewById(R.id.loginbtn);
+		cancelBtn = (Button)popupView.findViewById(R.id.cancelbtn);
+		checkBtn = (Button)popupView.findViewById(R.id.checkbtn);
+	}
+	
+	public void setOperatorButtonClick() {
+		
+		loginBtn.setOnTouchListener(mOperatorTouchListener);
+		cancelBtn.setOnTouchListener(mOperatorTouchListener);
+		checkBtn.setOnTouchListener(mOperatorTouchListener);
+	}
+	
+	Button.OnTouchListener mOperatorTouchListener = new View.OnTouchListener() {
+		
+		@Override
+		public boolean onTouch(View v, MotionEvent event) {
+			
+			switch(event.getAction()) {
+			
+			case MotionEvent.ACTION_UP	:
+				
+				if(!btnState) {
+
+					btnState = true;
+					
+					switch(v.getId()) {
+				
+					case R.id.loginbtn	:
+						LoginCheck();
+						break;
+						
+					case R.id.cancelbtn	:
+						PopupClose();
+						break;
+						
+					case R.id.checkbtn	:
+						CheckBoxDisplay(checkBtn);
+						btnState = false;
+						break;
+					
+					default	:
+						break;
+					}
+				}
+			
+				break;
+			}
+			
+			return false;
+		}
+	};
 	
 	public void OperatorLoginDisplay(String id) {
 		
@@ -149,49 +219,8 @@ public class OperatorController {
 		
 		oIDEText.setText(id);
 		
-		loginBtn = (Button)popupView.findViewById(R.id.loginbtn);
-		loginBtn.setOnClickListener(new View.OnClickListener() {
-			
-			public void onClick(View v) {
-			
-				if(!btnState) {
-					
-					btnState = true;
-					
-					LoginCheck();
-				}
-			}
-		});
-		
-		cancelBtn = (Button)popupView.findViewById(R.id.cancelbtn);
-		cancelBtn.setOnClickListener(new View.OnClickListener() {
-			
-			public void onClick(View v) {
-			
-				if(!btnState) {
-					
-					btnState = true;
-					
-					PopupClose();
-				}
-			}
-		});
-		
-		checkBtn = (Button)popupView.findViewById(R.id.checkbtn);
-		checkBtn.setOnClickListener(new View.OnClickListener() { 
-			
-			public void onClick(View v) {
-	
-				if(!btnState) {
-					
-					btnState = true;
-				
-					CheckBoxDisplay(checkBtn);
-					
-					btnState = false;
-				}
-			}
-		});
+		setOperatorButtonId(popupView);
+		setOperatorButtonClick();
 		
 		hostLayout.post(new Runnable() {
 			public void run() {
@@ -293,11 +322,14 @@ public class OperatorController {
 		
 			checkBtn.setBackgroundResource(R.drawable.login_checkbox_check);
 		
-			id = mDatabaseHander.GetLastLoginID();
-			password = mDatabaseHander.GetPassword(id);
+			if(layoutid == R.id.homelayout) {
 			
-			oIDEText.setText(id);
-			passEText.setText(password);
+				id = mDatabaseHander.GetLastLoginID();
+				password = mDatabaseHander.GetPassword(id);
+				
+				oIDEText.setText(id);
+				passEText.setText(password);
+			}
 			
 		} else {
 			
@@ -318,7 +350,54 @@ public class OperatorController {
 			btn.setBackgroundResource(R.drawable.login_checkbox_check);
 		}
 	}
+		
+	public void setEngineerButtonId(View popupView) {
+		
+		loginBtn = (Button)popupView.findViewById(R.id.loginbtn);
+		cancelBtn = (Button)popupView.findViewById(R.id.cancelbtn);
+	}
 	
+	public void setEngineerButtonClick() {
+		
+		loginBtn.setOnTouchListener(mEngineerTouchListener);
+		cancelBtn.setOnTouchListener(mEngineerTouchListener);
+	}
+	
+	Button.OnTouchListener mEngineerTouchListener = new View.OnTouchListener() {
+		
+		@Override
+		public boolean onTouch(View v, MotionEvent event) {
+			
+			switch(event.getAction()) {
+			
+			case MotionEvent.ACTION_UP	:
+				
+				if(!btnState) {
+
+					btnState = true;
+					
+					switch(v.getId()) {
+				
+					case R.id.loginbtn	:
+						EngineerLoginCheck();
+						break;
+						
+					case R.id.cancelbtn	:
+						EngineerPopupClose();
+						break;
+					
+					default	:
+						break;
+					}
+				}
+			
+				break;
+			}
+			
+			return false;
+		}
+	};
+		
 	public void EngineerLoginDisplay() {
 		
 		hostLayout = (RelativeLayout)activity.findViewById(layoutid);
@@ -330,33 +409,8 @@ public class OperatorController {
 		
 		oIDEText.setText("ENGINEER");
 		
-		loginBtn = (Button)popupView.findViewById(R.id.loginbtn);
-		loginBtn.setOnClickListener(new View.OnClickListener() {
-			
-			public void onClick(View v) {
-			
-				if(!btnState) {
-					
-					btnState = true;
-					
-					EngineerLoginCheck();
-				}
-			}
-		});
-		
-		cancelBtn = (Button)popupView.findViewById(R.id.cancelbtn);
-		cancelBtn.setOnClickListener(new View.OnClickListener() {
-			
-			public void onClick(View v) {
-			
-				if(!btnState) {
-					
-					btnState = true;
-					
-					EngineerPopupClose();
-				}
-			}
-		});
+		setEngineerButtonId(popupView);
+		setEngineerButtonClick();
 		
 		hostLayout.post(new Runnable() {
 			public void run() {
@@ -394,6 +448,54 @@ public class OperatorController {
 		popupWindow.dismiss();
 	}
 	
+	public void setAddButtonId(View popupView) {
+		
+		addDoneBtn = (Button)popupView.findViewById(R.id.donebtn);
+		addCancelBtn = (Button)popupView.findViewById(R.id.cancelbtn);
+	}
+	
+	public void setAddButtonClick() {
+		
+		addDoneBtn.setOnTouchListener(mAddTouchListener);
+		addCancelBtn.setOnTouchListener(mAddTouchListener);
+	}
+	
+	Button.OnTouchListener mAddTouchListener = new View.OnTouchListener() {
+		
+		@Override
+		public boolean onTouch(View v, MotionEvent event) {
+			
+			switch(event.getAction()) {
+			
+			case MotionEvent.ACTION_UP	:
+				
+				if(!btnState) {
+
+					btnState = true;
+					
+					switch(v.getId()) {
+				
+					case R.id.donebtn	:
+						AddOperator();
+						break;
+						
+					case R.id.cancelbtn	:
+						PopupClose();
+						btnState = false;
+						break;
+					
+					default	:
+						break;
+					}
+				}
+			
+				break;
+			}
+			
+			return false;
+		}
+	};
+	
 	public void AddOperatorDisplay() {
 
 		hostLayout = (RelativeLayout)activity.findViewById(layoutid);
@@ -404,37 +506,8 @@ public class OperatorController {
 		addPasswordEText = (EditText)popupView.findViewById(R.id.password);
 		addCPasswordEText = (EditText)popupView.findViewById(R.id.cpassword);
 		
-		/*Add new account activation*/
-		addDoneBtn = (Button)popupView.findViewById(R.id.donebtn);
-		addDoneBtn.setOnClickListener(new View.OnClickListener() {
-			
-			public void onClick(View v) {
-				
-				if(!btnState) {
-					
-					btnState = true;
-				
-					AddOperator();
-				}
-			}
-		});
-		
-		/*AddOperator pop-up window termination*/
-		addCancelBtn = (Button)popupView.findViewById(R.id.canclebtn);
-		addCancelBtn.setOnClickListener(new View.OnClickListener() {
-			
-			public void onClick(View v) {
-				
-				if(!btnState) {
-					
-					btnState = true;
-					
-					PopupClose();
-				
-					btnState = false;
-				}
-			}
-		});
+		setAddButtonId(popupView);
+		setAddButtonClick();
 		
 		hostLayout.post(new Runnable() {
 			public void run() {
@@ -506,6 +579,55 @@ public class OperatorController {
 		btnState = false;
 	}
 	
+	public void setModButtonId(View popupView) {
+		
+		modDoneBtn = (Button)popupView.findViewById(R.id.donebtn);
+		modCancelBtn = (Button)popupView.findViewById(R.id.canclebtn);		
+	}
+	
+	public void setModButtonClick() {
+		
+		modDoneBtn.setOnTouchListener(mModTouchListener);
+		modCancelBtn.setOnTouchListener(mModTouchListener);
+	}
+	
+	Button.OnTouchListener mModTouchListener = new View.OnTouchListener() {
+		
+		@Override
+		public boolean onTouch(View v, MotionEvent event) {
+			
+			switch(event.getAction()) {
+			
+			case MotionEvent.ACTION_UP	:
+				
+				if(!btnState) {
+
+					btnState = true;
+					
+					switch(v.getId()) {
+				
+					case R.id.donebtn	:
+						ModOperator();
+						btnState = false;
+						break;
+						
+					case R.id.cancelbtn	:
+						PopupClose();						
+						btnState = false;
+						break;
+					
+					default	:
+						break;
+					}
+				}
+			
+				break;
+			}
+			
+			return false;
+		}
+	};
+	
 	public void ModOperatorDisplay(String id) {
 		
 		hostLayout = (RelativeLayout)activity.findViewById(layoutid);
@@ -519,40 +641,9 @@ public class OperatorController {
 		
 		modOperatorText.setText(id);
 		
-		/*Modify account activation*/
-		modDoneBtn = (Button)popupView.findViewById(R.id.donebtn);
-		modDoneBtn.setOnClickListener(new View.OnClickListener() {
-			
-			public void onClick(View v) {
+		setModButtonId(popupView);
+		setModButtonClick();
 				
-				if(!btnState) {
-					
-					btnState = true;
-				
-					ModOperator();
-					
-					btnState = false;
-				}
-			}
-		});
-		
-		/*ModOperator pop-up window termination*/
-		modCancelBtn = (Button)popupView.findViewById(R.id.canclebtn);
-		modCancelBtn.setOnClickListener(new View.OnClickListener() {
-			
-			public void onClick(View v) {
-				
-				if(!btnState) {
-					
-					btnState = true;
-					
-					PopupClose();
-					
-					btnState = false;
-				}
-			}
-		});
-		
 		hostLayout.post(new Runnable() {
 			public void run() {
 		
@@ -622,7 +713,56 @@ public class OperatorController {
 		}
 	}
 	
-	public void DelOperatorDisplay(final String id) {
+	public void setDelButtonId(View popupView) {
+		
+		delOkBtn = (Button)popupView.findViewById(R.id.yesbtn);
+		delCancelBtn = (Button)popupView.findViewById(R.id.nobtn);
+	}
+	
+	public void setDelButtonClick() {
+		
+		delOkBtn.setOnTouchListener(mDelTouchListener);
+		delCancelBtn.setOnTouchListener(mDelTouchListener);
+	}
+	
+	Button.OnTouchListener mDelTouchListener = new View.OnTouchListener() {
+		
+		@Override
+		public boolean onTouch(View v, MotionEvent event) {
+			
+			switch(event.getAction()) {
+			
+			case MotionEvent.ACTION_UP	:
+				
+				if(!btnState) {
+
+					btnState = true;
+					
+					switch(v.getId()) {
+				
+					case R.id.yesbtn	:
+						DelOperator(id);
+						btnState = false;
+						break;
+						
+					case R.id.nobtn	:
+						PopupClose();
+						btnState = false;
+						break;
+					
+					default	:
+						break;
+					}
+				}
+			
+				break;
+			}
+			
+			return false;
+		}
+	};
+	
+	public void DelOperatorDisplay(String id) {
 		
 		hostLayout = (RelativeLayout)activity.findViewById(layoutid);
 		popupView = View.inflate(context, R.layout.oxpopup, null);
@@ -632,39 +772,10 @@ public class OperatorController {
 		
 		delOperatorText.setText("ID : " + id + " " + context.getResources().getText((R.string.delete)));
 		
-		/*Delete account activation*/
-		delOkBtn = (Button)popupView.findViewById(R.id.yesbtn);
-		delOkBtn.setOnClickListener(new View.OnClickListener() {
-			
-			public void onClick(View v) {
-				
-				if(!btnState) {
-					
-					btnState = true;
-				
-					DelOperator(id);
-					
-					btnState = false;
-				}
-			}
-		});
+		this.id = id;
 		
-		/*DelOperator pop-up window termination*/
-		delCancelBtn = (Button)popupView.findViewById(R.id.nobtn);
-		delCancelBtn.setOnClickListener(new View.OnClickListener() {
-			
-			public void onClick(View v) {
-				
-				if(!btnState) {
-					
-					btnState = true;
-					
-					PopupClose();
-				
-					btnState = false;
-				}
-			}
-		});
+		setDelButtonId(popupView);
+		setDelButtonClick();
 		
 		hostLayout.post(new Runnable() {
 			public void run() {

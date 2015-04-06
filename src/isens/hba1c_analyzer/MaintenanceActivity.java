@@ -22,6 +22,7 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -56,164 +57,116 @@ public class MaintenanceActivity extends Activity {
 		overridePendingTransition(R.anim.fade, R.anim.hold);
 		setContentView(R.layout.maintenance);
 		
+		MaintenanceInit();
+	}
+	
+	public void setTextId() {
+
 		swVersionText = (TextView)findViewById(R.id.swVersionText);
 		fwVersionText = (TextView)findViewById(R.id.fwVersionText);
 		osVersionText = (TextView)findViewById(R.id.osVersionText);
 		
-		MaintenanceInit();
-					
-		/*Home Activity activation*/
-		escBtn = (Button)findViewById(R.id.escicon);
-		escBtn.setOnClickListener(new View.OnClickListener() {
-		
-			public void onClick(View v) {
-			
-				if(!btnState) {
-					
-					btnState = true;
-				
-					escBtn.setEnabled(false);
-					
-					WhichIntent(TargetIntent.Home);
-				}
-			}
-		});
-		
-		/*Adjustment Factor Activity activation*/
-		adjustBtn = (Button)findViewById(R.id.adjustbtn);
-		adjustBtn.setOnClickListener(new View.OnClickListener() {
-		
-			public void onClick(View v) {
-				
-				if(!btnState) {
-					
-					btnState = true;
-					
-					adjustBtn.setEnabled(false);
-				
-					WhichIntent(TargetIntent.Adjustment);
-				}
-			}
-		});
-		
-		/*Calibration Activity activation*/
-		calibrationBtn = (Button)findViewById(R.id.calibrationbtn);
-		calibrationBtn.setOnClickListener(new View.OnClickListener() {
-		
-			public void onClick(View v) {
-				
-				if(!btnState) {
-					
-					btnState = true;
-					
-					calibrationBtn.setEnabled(false);
-				
-					WhichIntent(TargetIntent.Calibration);
-				}
-			}
-		});
-		
-		/*Temperature Activity activation*/
-		tempBtn = (Button)findViewById(R.id.tempbtn);
-		tempBtn.setOnClickListener(new View.OnClickListener() {
-		
-			public void onClick(View v) {
-				
-				if(!btnState) {
-					
-					btnState = true;
-					
-					tempBtn.setEnabled(false);
-				
-					WhichIntent(TargetIntent.Temperature);
-				}
-			}
-		});
-		
-		/*Lamp Intensity Activity activation*/
-		lampBtn = (Button)findViewById(R.id.lampbtn);
-		lampBtn.setOnClickListener(new View.OnClickListener() {
-		
-			public void onClick(View v) {
-				
-				if(!btnState) {
-					
-					btnState = true;
-					
-					lampBtn.setEnabled(false);
-				
-					WhichIntent(TargetIntent.Lamp);
-				}
-			}
-		});
-		
-		absorbanceBtn = (Button)findViewById(R.id.absorbancebtn);
-		absorbanceBtn.setOnClickListener(new View.OnClickListener() {
-		
-			public void onClick(View v) {
-				
-				if(!btnState) {
-					
-					btnState = true;
-					
-					lampBtn.setEnabled(false);
-				
-					WhichIntent(TargetIntent.Absorbance);
-				}
-			}
-		});
-		
-		correct1Btn = (Button)findViewById(R.id.correct1Btn);
-		correct1Btn.setOnClickListener(new View.OnClickListener() {
-		
-			public void onClick(View v) {
-				
-				if(!btnState) {
-					
-					btnState = true;
-					
-					correct1Btn.setEnabled(false);
-				
-					WhichIntent(TargetIntent.Correction1);
-				}
-			}
-		});
-
-		correct2Btn = (Button)findViewById(R.id.correct2Btn);
-		correct2Btn.setOnClickListener(new View.OnClickListener() {
-		
-			public void onClick(View v) {
-				
-				if(!btnState) {
-					
-					btnState = true;
-					
-					correct2Btn.setEnabled(false);
-				
-					WhichIntent(TargetIntent.Correction2);
-				}
-			}
-		});
-		
-		/*Correlation Factor Activity activation*/
-		collelationBtn = (Button)findViewById(R.id.collelationbtn);
-		collelationBtn.setOnClickListener(new View.OnClickListener() {
-		
-			public void onClick(View v) {
-				
-				if(!btnState) {
-					
-					btnState = true;
-					
-					collelationBtn.setEnabled(false);
-				
-					WhichIntent(TargetIntent.Correlation);
-				}
-			}
-		});
 	}
 	
+	public void setButtonId() {
+		
+		escBtn = (Button)findViewById(R.id.escicon);
+		adjustBtn = (Button)findViewById(R.id.adjustbtn);
+		calibrationBtn = (Button)findViewById(R.id.calibrationbtn);
+		tempBtn = (Button)findViewById(R.id.tempbtn);
+		lampBtn = (Button)findViewById(R.id.lampbtn);
+		absorbanceBtn = (Button)findViewById(R.id.absorbancebtn);
+		correct1Btn = (Button)findViewById(R.id.correct1Btn);
+		correct2Btn = (Button)findViewById(R.id.correct2Btn);
+		collelationBtn = (Button)findViewById(R.id.collelationbtn);
+	}
+	
+	public void setButtonClick() {
+		
+		escBtn.setOnTouchListener(mTouchListener);
+		adjustBtn.setOnTouchListener(mTouchListener);
+		calibrationBtn.setOnTouchListener(mTouchListener);
+		tempBtn.setOnTouchListener(mTouchListener);
+		lampBtn.setOnTouchListener(mTouchListener);
+		absorbanceBtn.setOnTouchListener(mTouchListener);
+		correct1Btn.setOnTouchListener(mTouchListener);
+		correct2Btn.setOnTouchListener(mTouchListener);
+		collelationBtn.setOnTouchListener(mTouchListener);
+	}
+	
+	public void setButtonState(int btnId, boolean state) {
+		
+		findViewById(btnId).setEnabled(state);
+	}
+	
+	Button.OnTouchListener mTouchListener = new View.OnTouchListener() {
+		
+		@Override
+		public boolean onTouch(View v, MotionEvent event) {
+			
+			switch(event.getAction()) {
+			
+			case MotionEvent.ACTION_UP	:
+				
+				if(!btnState) {
+
+					btnState = true;
+					
+					switch(v.getId()) {
+				
+					case R.id.escicon	:
+						WhichIntent(TargetIntent.Home);
+						break;
+						
+					case R.id.adjustbtn	:
+						WhichIntent(TargetIntent.Adjustment);
+						break;
+					
+					case R.id.calibrationbtn	:
+						WhichIntent(TargetIntent.Calibration);
+						break;
+					
+					case R.id.tempbtn	:
+						WhichIntent(TargetIntent.Temperature);
+						break;
+						
+					case R.id.lampbtn	:
+						WhichIntent(TargetIntent.Lamp);
+						break;
+						
+					case R.id.absorbancebtn	:
+						WhichIntent(TargetIntent.Absorbance);
+						break;
+					
+					case R.id.correct1Btn	:
+						WhichIntent(TargetIntent.Correction1);
+						break;
+						
+					case R.id.correct2Btn	:
+						WhichIntent(TargetIntent.Correction2);
+						break;
+						
+					case R.id.collelationbtn	:
+						WhichIntent(TargetIntent.Correlation);
+						break;
+						
+					default	:
+						break;
+					}
+				}
+			
+				break;
+			}
+			
+			return false;
+		}
+	};
+	
 	public void MaintenanceInit() {
+		
+		setTextId();
+		setButtonId();
+		setButtonClick();
 		
 		mTimerDisplay = new TimerDisplay();
 		mTimerDisplay.ActivityParm(this, R.id.maintenancelayout);

@@ -57,115 +57,114 @@ public class SettingActivity extends Activity {
 		setContentView(R.layout.setting);
 		
 		SettingInit();
-		
-		/*System setting Activity activation*/
-		systemBtn = (Button)findViewById(R.id.systembtn);
-		systemBtn.setOnClickListener(new View.OnClickListener() {
-		
-			public void onClick(View v) {
-				
-				if(!btnState) {
-					
-					btnState = true;
-					
-					systemBtn.setEnabled(false);
-					
-					WhichIntent(TargetIntent.SystemSetting);
-				}
-			}
-		});
-		
-		/*Operator setting Activity activation*/
-		operatorBtn = (Button)findViewById(R.id.operatorbtn);
-		operatorBtn.setOnClickListener(new View.OnClickListener() {
-		
-			public void onClick(View v) {
-			
-				/* */
-//				if(HomeActivity.ANALYZER_SW == HomeActivity.DEVEL) {
-				
-				if(!btnState) {
-				
-					btnState = true;
-					
-					operatorBtn.setEnabled(false);
-				
-					WhichIntent(TargetIntent.OperatorSetting);
-				}
-				
-//				}
-				
-				/* */
-			}
-		});
-		
-		functionalBtn = (Button)findViewById(R.id.functionalbtn);
-		functionalBtn.setOnClickListener(new View.OnClickListener() {
-		
-			public void onClick(View v) {
-			
-//				if(!btnState) {
-//				
-//					btnState = true;
-//					
-//					functionalBtn.setEnabled(false);
-//				
-//					WhichIntent(TargetIntent.FunctionalTest);
-//				}
-			}
-		});
-		
-		/*Home Activity activation*/
-		backIcon = (Button)findViewById(R.id.backicon);
-		backIcon.setOnClickListener(new View.OnClickListener() {
-		
-			public void onClick(View v) {
-			
-				if(!btnState) {
-					
-					btnState = true;
-					
-					backIcon.setEnabled(false);
-				
-					WhichIntent(TargetIntent.Home);
-				}
-			}
-		});
-		
-		cheat1Btn = (Button)findViewById(R.id.cheat1btn);
-		cheat1Btn.setOnClickListener(new View.OnClickListener() {
-		
-			public void onClick(View v) {
-			
-				Cheat1stModeStart();
-			}
-		});
-		
-		cheat2Btn = (Button)findViewById(R.id.cheat2btn);
-		cheat2Btn.setOnTouchListener(new View.OnTouchListener() {
-				
-			public boolean onTouch(View v, MotionEvent event) {
-				
-				switch(event.getAction()) {
-				
-				case MotionEvent.ACTION_DOWN	:
-					PressedBtn();
-					break;
-					
-				case MotionEvent.ACTION_UP		:
-					TakeOffBtn();
-					break;
-					
-				default	:
-					break;
-				}
-				
-				return false;
-			}
-		});	
 	}
 	
+	public void setButtonId() {
+		
+		systemBtn = (Button)findViewById(R.id.systembtn);
+		operatorBtn = (Button)findViewById(R.id.operatorbtn);
+		functionalBtn = (Button)findViewById(R.id.functionalbtn);
+		backIcon = (Button)findViewById(R.id.backicon);
+		cheat1Btn = (Button)findViewById(R.id.cheat1btn);
+		cheat2Btn = (Button)findViewById(R.id.cheat2btn);
+	}
+	
+	public void setButtonClick() {
+		
+		systemBtn.setOnTouchListener(mTouchListener);
+		operatorBtn.setOnTouchListener(mTouchListener);
+		functionalBtn.setOnTouchListener(mTouchListener);
+		backIcon.setOnTouchListener(mTouchListener);
+		cheat1Btn.setOnTouchListener(mTouchListener);
+		cheat2Btn.setOnTouchListener(mTouchListener);
+	}
+	
+	public void setButtonState(int btnId, boolean state, Activity activity) {
+		
+		activity.findViewById(btnId).setEnabled(state);
+	}
+	
+	Button.OnTouchListener mTouchListener = new View.OnTouchListener() {
+		
+		@Override
+		public boolean onTouch(View v, MotionEvent event) {
+			
+			switch(event.getAction()) {
+			
+			case MotionEvent.ACTION_UP	:
+				
+				if(!btnState) {
+
+					btnState = true;
+					
+					switch(v.getId()) {
+				
+					case R.id.systembtn		:
+						TakeOffBtn();
+						WhichIntent(TargetIntent.SystemSetting);
+						break;
+						
+					case R.id.operatorbtn	:
+						TakeOffBtn();
+						WhichIntent(TargetIntent.OperatorSetting);
+						break;
+					
+					case R.id.functionalbtn	:
+						TakeOffBtn();
+						btnState = false;
+						break;
+					
+					case R.id.backicon	:
+						WhichIntent(TargetIntent.Home);
+						break;
+						
+					case R.id.cheat1btn	:
+						Cheat1stModeStart();
+						btnState = false;
+						break;
+					
+					case R.id.cheat2btn	:
+						TakeOffBtn();
+						btnState = false;
+						break;
+						
+					default	:
+						break;
+					}
+				}
+			
+				break;
+				
+			case MotionEvent.ACTION_DOWN	:
+				
+				if(!btnState) {
+
+					btnState = true;
+					
+					switch(v.getId()) {
+				
+					case R.id.cheat2btn	:
+						PressedBtn();
+						break;
+						
+					default	:
+						break;
+					}
+					
+					btnState = false;
+				}
+			
+				break;
+			}
+			
+			return false;
+		}
+	};
+	
 	public void SettingInit() {
+		
+		setButtonId();
+		setButtonClick();
 		
 		mTimerDisplay = new TimerDisplay();
 		mTimerDisplay.ActivityParm(this, R.id.settinglayout);

@@ -63,7 +63,7 @@ public class LanguagePresenter {
 		
 		display();
 		
-		enableAllBtn();
+		enabledAllBtn();
 	}
 
 	public void changeLanguageDown() {
@@ -74,7 +74,7 @@ public class LanguagePresenter {
 		
 		display();
 		
-		enableAllBtn();
+		enabledAllBtn();
 	}
 	
 	public void display() {
@@ -85,7 +85,7 @@ public class LanguagePresenter {
 		mLanguageIView.setText(language);
 	}
 	
-	public void enableAllBtn() {
+	public void enabledAllBtn() {
 
 		mLanguageIView.setButtonState(R.id.backBtn, true);
 		mLanguageIView.setButtonState(R.id.leftBtn, true);

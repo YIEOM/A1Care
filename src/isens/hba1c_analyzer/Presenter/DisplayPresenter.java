@@ -53,7 +53,7 @@ public class DisplayPresenter {
 		displayBarGauge(value);
 		mDisplay.setBrightnessValue(value);
 
-		enableAllBtn();
+		enabledAllBtn();
 	}
 	
 	public void downBrightness() {
@@ -66,7 +66,7 @@ public class DisplayPresenter {
 		displayBarGauge(value);
 		mDisplay.setBrightnessValue(value);
 		
-		enableAllBtn();
+		enabledAllBtn();
 	}
 	
 	public void displayBarGauge(int Value) {
@@ -74,7 +74,7 @@ public class DisplayPresenter {
 		mDisplayIView.setBarGaugeImage(mDisplay.getBarGauageImage(Value));
 	}
 	
-	public void enableAllBtn() {
+	public void enabledAllBtn() {
 		
 		mDisplayIView.setButtonState(R.id.backBtn, true);
 		mDisplayIView.setButtonState(R.id.minusBtn, true);

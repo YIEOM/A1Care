@@ -10,8 +10,10 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
@@ -91,6 +93,11 @@ public class CalibrationActivity extends Activity{
 		overridePendingTransition(R.anim.fade, R.anim.hold);
 		setContentView(R.layout.calibration);
 		
+		CalibrationInit();
+	}
+	
+	public void setTextId() {
+		
 		deviceState = (TextView) findViewById(R.id.devicestate);
 		
 		oneOne = (TextView) findViewById(R.id.oneone);
@@ -100,7 +107,7 @@ public class CalibrationActivity extends Activity{
 		twoOne = (TextView) findViewById(R.id.twoone);
 		twoTwo = (TextView) findViewById(R.id.twotwo);
 		twoThree = (TextView) findViewById(R.id.twothree);
-
+	
 		fourOne = (TextView) findViewById(R.id.fourone);
 		fourTwo = (TextView) findViewById(R.id.fourtwo);
 		fourThree = (TextView) findViewById(R.id.fourthree);
@@ -119,92 +126,95 @@ public class CalibrationActivity extends Activity{
 		
 		hba1cStr = (TextView) findViewById(R.id.HbA1cText);
 		tHbStr = (TextView) findViewById(R.id.tHbText);
+	}
+	
+	public void setButtonId() {
 		
 		escBtn = (Button)findViewById(R.id.escicon);
-		escBtn.setOnClickListener(new View.OnClickListener() {
-		
-			public void onClick(View v) {
-			
-				if(!btnState) {
-				
-					btnState = true;
-
-					escBtn.setEnabled(false);
-					
-					WhichIntent(TargetIntent.Maintenance);
-				}
-			}
-		});
-		
 		blankBtn = (Button)findViewById(R.id.blankbtn);
-		blankBtn.setOnClickListener(new View.OnClickListener() { 
-		
-			public void onClick(View v) {
-			
-				if(!btnState) {
-					
-					btnState = true;
-					
-					blankBtn.setEnabled(false);
-					
-					BlankMode();
-				}
-			}
-		});
-		
-//		scanBtn = (Button)findViewById(R.id.scanbtn);
-//		scanBtn.setOnClickListener(new View.OnClickListener() { 
-//		
-//			public void onClick(View v) {
-//				
-//				if(!btnState) {
-//					
-//					btnState = true;
-//					
-//					scanBtn.setEnabled(false);
-//					
-//					BarcodeStart();
-//				}
-//			}
-//		});
-
-		
 		quickBtn = (Button)findViewById(R.id.quickbtn);
-		quickBtn.setOnClickListener(new View.OnClickListener() {
-		
-			public void onClick(View v) {
-			
-				if(!btnState) {
-					
-					btnState = true;
-					
-					quickBtn.setEnabled(false);
-					
-					QuickMode();
-				}
-			}
-		});
-		
 		fullBtn = (Button)findViewById(R.id.fullbtn);
-		fullBtn.setOnClickListener(new View.OnClickListener() {
+	}
+	
+	public void setButtonClick() {
 		
-			public void onClick(View v) {
-
+		escBtn.setOnTouchListener(mTouchListener);
+		blankBtn.setOnTouchListener(mTouchListener);
+		quickBtn.setOnTouchListener(mTouchListener);
+		fullBtn.setOnTouchListener(mTouchListener);
+	}
+	
+	public void setButtonState(int btnId, boolean state) {
+		
+		findViewById(btnId).setEnabled(state);
+	}
+	
+	Button.OnTouchListener mTouchListener = new View.OnTouchListener() {
+		
+		@Override
+		public boolean onTouch(View v, MotionEvent event) {
+			
+			switch(event.getAction()) {
+			
+			case MotionEvent.ACTION_UP	:
+				
 				if(!btnState) {
-					
+
 					btnState = true;
+
+					switch(v.getId()) {
+				
+					case R.id.escicon	:
+						WhichIntent(TargetIntent.Maintenance);
+						break;
+						
+					case R.id.blankbtn	:
+						BlankMode();
+						break;
 					
-					fullBtn.setEnabled(false);
+					case R.id.quickbtn	:
+						QuickMode();
+						break;
 					
-					FullMode();
+					case R.id.fullbtn	:
+						FullMode();
+						break;
+					
+					default	:
+						break;
+					}
+					
+					break;
 				}
 			}
-		});
+			
+			return false;
+		}
+	};
+	
+	public void enabledAllBtn() {
+
+		setButtonState(R.id.escicon, true);
+		setButtonState(R.id.blankbtn, true);
+		setButtonState(R.id.quickbtn, true);
+		setButtonState(R.id.fullbtn, true);
+	}
+	
+	public void unenabledAllBtn() {
+
+		setButtonState(R.id.escicon, false);
+		setButtonState(R.id.blankbtn, false);
+		setButtonState(R.id.quickbtn, false);
+		setButtonState(R.id.fullbtn, false);
 		
-		CalibrationInit();
+		btnState = false;
 	}
 	
 	public void CalibrationInit() {
+		
+		setTextId();
+		setButtonId();
+		setButtonClick();
 		
 		mTimerDisplay = new TimerDisplay();
 		mTimerDisplay.ActivityParm(this, R.id.caliblayout);
@@ -334,21 +344,12 @@ public class CalibrationActivity extends Activity{
 			break;
 		}
 		
-		btnState = false;
-		
-		blankBtn.setEnabled(true);
-//		scanBtn.setEnabled(true);
-		quickBtn.setEnabled(true);
-		fullBtn.setEnabled(true);
-		escBtn.setEnabled(true);
+		enabledAllBtn();
 	}
 	
 	public void BlankMode() {
 		
-		escBtn.setEnabled(false);
-//		scanBtn.setEnabled(false);
-		quickBtn.setEnabled(false);
-		fullBtn.setEnabled(false);
+		unenabledAllBtn();
 		
 		targetMode = TargetMode.Blank;
 		calibState = AnalyzerState.InitPosition;
@@ -444,10 +445,7 @@ public class CalibrationActivity extends Activity{
 	
 	public void QuickMode() {
 		
-		blankBtn.setEnabled(false);
-//		scanBtn.setEnabled(false);
-		fullBtn.setEnabled(false);
-		escBtn.setEnabled(false);
+		unenabledAllBtn();
 		
 		targetMode = TargetMode.Quick;
 		calibState = AnalyzerState.InitPosition;
@@ -465,10 +463,7 @@ public class CalibrationActivity extends Activity{
 	
 	public void FullMode() {
 		
-		blankBtn.setEnabled(false);
-//		scanBtn.setEnabled(false);
-		quickBtn.setEnabled(false);
-		escBtn.setEnabled(false);
+		unenabledAllBtn();
 		
 		targetMode = TargetMode.Full;
 		calibState = AnalyzerState.InitPosition;
@@ -1234,10 +1229,7 @@ public class CalibrationActivity extends Activity{
 	
 	public void BarcodeStart() {
 
-		blankBtn.setEnabled(false);
-		quickBtn.setEnabled(false);
-		fullBtn.setEnabled(false);
-		escBtn.setEnabled(false);
+		unenabledAllBtn();
 		
 		CalValueDisplay();
 		
@@ -1280,11 +1272,7 @@ public class CalibrationActivity extends Activity{
 			            	
 			            	btnState = false;
 			            	
-			            	blankBtn.setEnabled(true);
-			    			quickBtn.setEnabled(true);
-			    			fullBtn.setEnabled(true);
-//			    			scanBtn.setEnabled(true);
-			    			escBtn.setEnabled(true);
+			            	enabledAllBtn();
 			            }
 			        });
 			    }

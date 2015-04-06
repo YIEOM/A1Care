@@ -8,6 +8,8 @@ import java.io.InputStreamReader;
 import isens.hba1c_analyzer.CalibrationActivity.Cart1stShaking;
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
 import isens.hba1c_analyzer.RunActivity.AnalyzerState;
+import isens.hba1c_analyzer.RunActivity.CartDump;
+import isens.hba1c_analyzer.RunActivity.CheckCoverError;
 import isens.hba1c_analyzer.Temperature.CellTmpRead;
 import isens.hba1c_analyzer.Model.ConvertModel;
 import isens.hba1c_analyzer.View.ConvertActivity;
@@ -31,13 +33,13 @@ import android.widget.TextView;
 
 public class SystemCheckActivity extends Activity {
 	
-	final static double MaxDark = 5000,
-						MinDark = 3000,
+	final static double MaxDark = 10000,
+						MinDark = 2000,
 						Max535  = 300000,
-						Min535  = 100000,
-						Max660  = 500000,
-						Min660  = 200000,
-						Max750  = 800000,
+						Min535  = 70000,
+						Max660  = 600000,
+						Min660  = 150000,
+						Max750  = 990000,
 						Min750  = 400000;
 
 	final static byte ERROR_DARK  = 1,
@@ -70,6 +72,7 @@ public class SystemCheckActivity extends Activity {
 	
 	private byte photoCheck;
 	public int checkError;
+	private boolean isRunMotorCheck, isRunTemperatureCheck;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -103,14 +106,12 @@ public class SystemCheckActivity extends Activity {
 		mGpioPort.TriggerHigh();
 		
 		ParameterInit();
-
+		BrightnessInit();
+		VolumeInit();
+		
 		/* Temperature setting */
 		mTemperature = new Temperature(); // to test
 		mTemperature.TmpInit(); // to test
-		
-		BrightnessInit();
-		
-		VolumeInit();
 		
 		/* TEST Mode */
 		if((HomeActivity.ANALYZER_SW == HomeActivity.DEVEL) || (HomeActivity.ANALYZER_SW == HomeActivity.DEMO)) {
@@ -119,10 +120,11 @@ public class SystemCheckActivity extends Activity {
 		}
 		
 		else {
-			
-		SensorCheck SensorCheckObj = new SensorCheck(this, this, R.id.systemchecklayout);
-		SensorCheckObj.start();
 		
+		mErrorPopup = new ErrorPopup(this, this, R.id.systemchecklayout);
+			
+		SensorCheck SensorCheckObj = new SensorCheck();
+		SensorCheckObj.start();
 		
 		}
 	}
@@ -132,13 +134,6 @@ public class SystemCheckActivity extends Activity {
 		Activity activity;
 		Context context;
 		int layoutid;
-		
-		public SensorCheck(Activity activity, Context context, int layoutid) {
-			
-			this.activity = activity;
-			this.context = context;
-			this.layoutid = layoutid;
-		}
 		
 		public void run() {
 			
@@ -150,15 +145,6 @@ public class SystemCheckActivity extends Activity {
 			GpioPort.CartridgeActState = true;
 			
 			SerialPort.Sleep(2000);
-			
-			mErrorPopup = new ErrorPopup(activity, context, layoutid);
-			
-//			if(ActionActivity.CartridgeCheckFlag != 0) mErrorPopup.ErrorDisplay(R.string.w002);
-//			while(ActionActivity.CartridgeCheckFlag != 0) SerialPort.Sleep(100);
-//			
-//			if(ActionActivity.DoorCheckFlag != 1) mErrorPopup.ErrorDisplay(R.string.w001);
-//			while(ActionActivity.DoorCheckFlag != 1) SerialPort.Sleep(100);
-//			mErrorPopup.ErrorPopupClose();
 			
 			while(ActionActivity.DoorCheckFlag != 1 || ActionActivity.CartridgeCheckFlag != 0) {
 				
@@ -181,7 +167,14 @@ public class SystemCheckActivity extends Activity {
 		
 		public void run() {
 			
-			for(int i = 0; i < 17; i++) {
+			photoCheck = 0;
+			systemState = AnalyzerState.InitPosition;
+			checkError = RunActivity.NORMAL_OPERATION;
+			RunActivity.IsError = false;
+			
+			for(int i = 0; i < 18; i++) {
+				
+				checkMode();
 				
 				switch(systemState) {
 				
@@ -212,7 +205,12 @@ public class SystemCheckActivity extends Activity {
 					
 				case MeasurePosition	:
 					MotionInstruct(RunActivity.MEASURE_POSITION, SerialPort.CtrTarget.NormalSet);
-					MotorCheck(RunActivity.MEASURE_POSITION, AnalyzerState.MeasureDark, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 10);
+					MotorCheck(RunActivity.MEASURE_POSITION, AnalyzerState.FilterDark, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 10);
+					break;
+					
+				case FilterDark			:
+					MotionInstruct(RunActivity.FILTER_DARK, SerialPort.CtrTarget.NormalSet);
+					MotorCheck(RunActivity.FILTER_DARK, AnalyzerState.MeasureDark, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 5);
 					break;
 					
 				case MeasureDark		:
@@ -244,11 +242,11 @@ public class SystemCheckActivity extends Activity {
 					break;
 					
 				case Measure750nm		:
-					PhotoCheck(AnalyzerState.FilterDark, Max750, Min750, ERROR_750nm, 1);
+					PhotoCheck(AnalyzerState.FilterHome, Max750, Min750, ERROR_750nm, 1);
 					if(HomeActivity.ANALYZER_SW == HomeActivity.NORMAL) PhotoErrorCheck();
 					break;
 					
-				case FilterDark			:
+				case FilterHome			:
 					MotionInstruct(RunActivity.FILTER_DARK, SerialPort.CtrTarget.NormalSet);
 					MotorCheck(RunActivity.FILTER_DARK, AnalyzerState.CartridgeDump, RunActivity.FILTER_ERROR, AnalyzerState.FilterMotorError, 5);
 					break;
@@ -315,9 +313,26 @@ public class SystemCheckActivity extends Activity {
 					WhichIntent(HomeActivity.TargetIntent.Home);
 					break;
 					
+				case ErrorCover		:
+					checkError = R.string.e322;
+					systemState = AnalyzerState.NoWorking;
+					break;
+					
 				default	:
 					break;
 				}
+			}
+
+			switch(checkError) {
+				
+			case R.string.e322		:
+				mErrorPopup.ErrorDisplay(R.string.w004);					
+				CheckCoverError mCheckCoverError = new CheckCoverError();
+				mCheckCoverError.start();
+				break;
+			
+			default	:
+				break;
 			}
 		}
 	}
@@ -371,7 +386,7 @@ public class SystemCheckActivity extends Activity {
 			
 			if(i != numberChaberTmpCheck) {
 			
-				SerialPort.Sleep(300000);
+				SerialPort.Sleep(480000);
 				
 				tmp = 0;
 				
@@ -446,7 +461,42 @@ public class SystemCheckActivity extends Activity {
 //		}
 //	}
 	
-	public synchronized double AbsorbanceMeasure(double min, double max) { // Absorbance measurement
+	public void MotorCheck(String colRsp, AnalyzerState nextState, String errRsp, AnalyzerState errState, int rspTime) {
+		
+		int time = 0;
+		String temp = "";
+		
+		rspTime = rspTime * 10;
+		
+		while(true) {
+			
+			temp = mSerialPort.BoardMessageOutput();
+			
+			if(colRsp.equals(temp)) {
+				
+				systemState = nextState;
+				break;
+			
+			} else if(errRsp.equals(temp)) {
+				
+				systemState = errState;
+				break;
+			}
+			
+			if(time++ > rspTime) {
+				
+				systemState = AnalyzerState.NoResponse;
+				checkError = R.string.e241;
+				break;
+			}
+			
+			if(RunActivity.IsError) break;
+			
+			SerialPort.Sleep(100);
+		}
+	}
+	
+	public void PhotoCheck(AnalyzerState nextState, double max, double min, byte errBits, int rspTime) {
 		
 		int time = 0;
 		String rawValue;
@@ -454,67 +504,36 @@ public class SystemCheckActivity extends Activity {
 		
 		mSerialPort.BoardTx("VH", SerialPort.CtrTarget.NormalSet);
 		
-		rawValue = mSerialPort.BoardMessageOutput();			
+		do {
 		
-		while(rawValue.length() != 8) {
-		
-			rawValue = mSerialPort.BoardMessageOutput();			
-				
-			if(time++ > 50) systemState = AnalyzerState.NoResponse;
+			rawValue = mSerialPort.BoardMessageOutput();
+			
+			if(time++ > 50)	break;
+			
+			if(RunActivity.IsError) break;
 			
 			SerialPort.Sleep(100);
-		}
 		
-		if(systemState != AnalyzerState.NoResponse) {
-
-			douValue = Double.parseDouble(rawValue);
-			
-			if((min < douValue) & (douValue < max)) {
+		} while(rawValue.length() != 8);	
+		
+		if(!RunActivity.IsError) {
+		
+			try {
 				
-				return (douValue - RunActivity.BlankValue[0]);
+				douValue = Double.parseDouble(rawValue);
+				
+				if((min > douValue) || (douValue > max)) photoCheck += errBits;
+				
+				systemState = nextState;
+				
+			} catch(NumberFormatException e) {
+				
+				douValue = 0.0;
+				
+				systemState = AnalyzerState.NoResponse;
+				checkError = R.string.e241;
 			}
 		}
-		
-		return 0.0;
-	}
-	
-	public void MotorCheck(String colRsp, AnalyzerState nextState, String errRsp, AnalyzerState errState, int rspTime) {
-		
-		String temp = "";
-		
-		SerialPort.Sleep(rspTime * 1000);
-		
-		temp = mSerialPort.BoardMessageOutput();
-		
-//		Log.w("Motor check", "temp : " + temp);
-		
-		if(colRsp.equals(temp)) systemState = nextState;
-		else if(errRsp.equals(temp)) systemState = errState;
-		else systemState = AnalyzerState.NoResponse;
-	}
-	
-	public void PhotoCheck(AnalyzerState nextState, double max, double min, byte errBits, int rspTime) {
-		
-		String tempStr = "";
-		double tempDouble = 0.0;
-		
-		RunActivity.BlankValue[0] = 0;
-		
-		mSerialPort.BoardTx("VH", SerialPort.CtrTarget.NormalSet);
-		
-		SerialPort.Sleep(rspTime * 1000);
-		
-		tempStr = mSerialPort.BoardMessageOutput();
-
-		if(tempStr.length() == 8) {
-			
-			tempDouble = Double.parseDouble(tempStr);
-			
-			if(!(min < tempDouble) | !(tempDouble < max)) photoCheck += errBits;
-			
-			systemState = nextState;
-			
-		} else systemState = AnalyzerState.NoResponse;
 	}
 	
 	public void PhotoErrorCheck() {
@@ -607,10 +626,6 @@ public class SystemCheckActivity extends Activity {
 	
 	public void ParameterInit() { // Load to saved various parameter
 		
-		photoCheck = 0;
-		systemState = AnalyzerState.InitPosition;
-		checkError = RunActivity.NORMAL_OPERATION;
-		
 		SharedPreferences DcntPref = getSharedPreferences("Data Counter", MODE_PRIVATE);
 		RemoveActivity.PatientDataCnt = DcntPref.getInt("PatientDataCnt", 1);
 		RemoveActivity.ControlDataCnt = DcntPref.getInt("ControlDataCnt", 1);
@@ -619,8 +634,8 @@ public class SystemCheckActivity extends Activity {
 		/* TEST Mode */
 		if(HomeActivity.ANALYZER_SW == HomeActivity.DEVEL) {
 			
-			RemoveActivity.PatientDataCnt = 11;
-			RemoveActivity.ControlDataCnt = 11;
+			RemoveActivity.PatientDataCnt = 17;
+			RemoveActivity.ControlDataCnt = 1;
 		}
 		
 		SharedPreferences factorPref = getSharedPreferences("User Define", MODE_PRIVATE);
@@ -643,6 +658,36 @@ public class SystemCheckActivity extends Activity {
 		
 		SharedPreferences temperaturePref = getSharedPreferences("Temperature", MODE_PRIVATE);
 		Temperature.InitTmp = temperaturePref.getFloat("Cell Block", 27.0f);
+	}
+	
+	public void checkMode() {
+		
+		if(RunActivity.IsError) {
+			
+			systemState = AnalyzerState.ErrorCover;		
+		}
+	}
+	
+	public class CheckCoverError extends Thread {
+		
+		public void run() {
+			
+			GpioPort.DoorActState = true;			
+			GpioPort.CartridgeActState = true;
+			
+			SerialPort.Sleep(2000);
+			
+			while(ActionActivity.DoorCheckFlag != 1) SerialPort.Sleep(100);
+			mErrorPopup.ErrorPopupClose();
+			
+			GpioPort.DoorActState = false;			
+			GpioPort.CartridgeActState = false;
+
+			Log.w("CheckCoverError", "run");
+			
+			MotorCheck MotorCheckObj = new MotorCheck();
+			MotorCheckObj.start();
+		}
 	}
 	
 	public void WhichIntent(TargetIntent Itn) { // Activity conversion

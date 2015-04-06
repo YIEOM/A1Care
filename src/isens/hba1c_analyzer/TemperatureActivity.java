@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
@@ -38,7 +39,9 @@ public class TemperatureActivity extends Activity {
 					ambTmpText;
 	
 	public EditText tmpEText;
-		
+
+	public boolean btnState = false;	
+	
 	protected void onCreate(Bundle savedInstanceState) {
 		
 		super.onCreate(savedInstanceState);
@@ -46,33 +49,61 @@ public class TemperatureActivity extends Activity {
 		
 		tmpEText = (EditText) findViewById(R.id.tmpetext);
 		
-		/*System setting Activity activation*/
-		escBtn = (Button)findViewById(R.id.escicon);
-		escBtn.setOnClickListener(new View.OnClickListener() {
-		
-			public void onClick(View v) {
-		
-				escBtn.setEnabled(false);
-				
-				WhichIntent(TargetIntent.Maintenance);
-			}
-		});
-		
-		setBtn = (Button)findViewById(R.id.setbtn);
-		setBtn.setOnClickListener(new View.OnClickListener() {
-		
-			public void onClick(View v) {
-		
-				setBtn.setEnabled(false);
-				
-				TmpSave(Float.valueOf(tmpEText.getText().toString()).floatValue());
-			}
-		});
-		
 		TemperatureInit();
 	}
 	
+	public void setButtonId() {
+	
+		escBtn = (Button)findViewById(R.id.escicon);
+		setBtn = (Button)findViewById(R.id.setbtn);
+	}
+	
+	public void setButtonClick() {
+		
+		escBtn.setOnTouchListener(mTouchListener);
+		setBtn.setOnTouchListener(mTouchListener);
+	}
+	
+	Button.OnTouchListener mTouchListener = new View.OnTouchListener() {
+		
+		@Override
+		public boolean onTouch(View v, MotionEvent event) {
+			
+			switch(event.getAction()) {
+			
+			case MotionEvent.ACTION_UP	:
+				
+				if(!btnState) {
+
+					btnState = true;
+					
+					switch(v.getId()) {
+				
+					case R.id.escicon		:
+						WhichIntent(TargetIntent.Maintenance);
+						break;
+						
+					case R.id.setbtn		:
+						TmpSave(Float.valueOf(tmpEText.getText().toString()).floatValue());
+						btnState = false;
+						break;
+					
+					default	:
+						break;
+					}
+				}
+			
+				break;
+			}
+			
+			return false;
+		}
+	};
+	
 	public void TemperatureInit() {
+		
+		setButtonId();
+		setButtonClick();
 		
 		mTimerDisplay = new TimerDisplay();
 		mTimerDisplay.ActivityParm(this, R.id.temperaturelayout);

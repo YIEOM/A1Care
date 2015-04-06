@@ -85,7 +85,7 @@ public class SoundActivity extends Activity implements SoundIView {
 			
 			switch(event.getAction()) {
 			
-			case MotionEvent.ACTION_DOWN	:
+			case MotionEvent.ACTION_UP	:
 				
 				switch(v.getId()) {
 			

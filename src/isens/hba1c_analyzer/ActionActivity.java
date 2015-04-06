@@ -22,6 +22,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -75,29 +76,72 @@ public class ActionActivity extends Activity {
 		overridePendingTransition(R.anim.fade, R.anim.hold);
 		setContentView(R.layout.action);
 		
-		/* Esc Pop-up window activation */
-		escBtn = (Button)findViewById(R.id.escicon);
-		escBtn.setOnClickListener(new View.OnClickListener() {
+		ActionInit(this, this);
+	}
+	
+	public void setButtonId() {
 		
-			public void onClick(View v) {
+		escBtn = (Button)findViewById(R.id.escicon);
+	}
+	
+	public void setButtonClick() {
+		
+		escBtn.setOnTouchListener(mTouchListener);
+	}
+	
+	public void setButtonState(int btnId, boolean state) {
+		
+		findViewById(btnId).setEnabled(state);
+	}
+	
+	Button.OnTouchListener mTouchListener = new View.OnTouchListener() {
+		
+		@Override
+		public boolean onTouch(View v, MotionEvent event) {
 			
-				if(!btnState) {
+			switch(event.getAction()) {
+			
+			case MotionEvent.ACTION_UP	:
 				
+				if(!btnState) {
+
 					btnState = true;
 					
-					ESC();
-					
-					btnState = false;
+					switch(v.getId()) {
+				
+					case R.id.escicon		:
+						ESC();
+						btnState = false;
+						break;
+						
+					default	:
+						break;
+					}
 				}
+			
+				break;
 			}
-		});
+			
+			return false;
+		}
+	};
+	
+	public void enabledAllBtn() {
+
+		setButtonState(R.id.escicon, true);
+	}
+	
+	public void unenabledAllBtn() {
 		
-		ActionInit(this, this);
+		setButtonState(R.id.escicon, false);
+		
+		btnState = false;
 	}
 	
 	public void ActionInit(Activity activity, Context context) {
 
-		Log.w("ActionInit", "run");
+		setButtonId();
+		setButtonClick();
 		
 		mTimerDisplay = new TimerDisplay();
 		mTimerDisplay.ActivityParm(activity, R.id.actionlayout);

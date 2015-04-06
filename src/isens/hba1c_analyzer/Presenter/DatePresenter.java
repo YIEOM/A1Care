@@ -91,7 +91,7 @@ public class DatePresenter {
 		
 		display();
 		
-		enableAllBtn();
+		enabledAllBtn();
 	}
 	
 	public void changeYearAutoUp() {
@@ -109,7 +109,7 @@ public class DatePresenter {
 		
 		display();
 		
-		enableAllBtn();
+		enabledAllBtn();
 	}
 	
 	public void changeYearAutoDown() {
@@ -127,7 +127,7 @@ public class DatePresenter {
 		
 		display();
 		
-		enableAllBtn();
+		enabledAllBtn();
 	}
 	
 	public void changeMonthAutoUp() {
@@ -145,7 +145,7 @@ public class DatePresenter {
 		
 		display();
 		
-		enableAllBtn();
+		enabledAllBtn();
 	}
 	
 	public void changeMonthAutoDown() {
@@ -163,14 +163,14 @@ public class DatePresenter {
 		
 		display();
 		
-		enableAllBtn();
+		enabledAllBtn();
 	}
 	
 	public void changeDayAutoUp() {
 		
 		mDateIView.setButtonState(R.id.val3rdpBtn, true);
 		
-		initTimer((int) DateModel.YEAR_UP);
+		initTimer((int) DateModel.DAY_UP);
 	}
 
 	public void changeDayDown() {
@@ -181,7 +181,7 @@ public class DatePresenter {
 		
 		display();
 		
-		enableAllBtn();
+		enabledAllBtn();
 	}
 	
 	public void changeDayAutoDown() {
@@ -201,7 +201,7 @@ public class DatePresenter {
 		mDateIView.setText(year, month, day);
 	}
 	
-	public void enableAllBtn() {
+	public void enabledAllBtn() {
 
 		mDateIView.setButtonState(R.id.backBtn, true);
 		mDateIView.setButtonState(R.id.val1stpBtn, true);

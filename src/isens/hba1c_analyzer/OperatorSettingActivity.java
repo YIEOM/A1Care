@@ -35,9 +35,6 @@ public class OperatorSettingActivity extends Activity {
 	public DatabaseHander mDatabaseHander;
 	public TimerDisplay mTimerDisplay;
 	
-	public static TextView TimeText;
-	public static ImageView deviceImage;
-	
 	private Button homeIcon,
 				   backIcon,
 				   addOperatorBtn,
@@ -74,209 +71,168 @@ public class OperatorSettingActivity extends Activity {
 		overridePendingTransition(R.anim.fade, R.anim.hold);
 		setContentView(R.layout.operatorsetting);
 		
-		TimeText = (TextView) findViewById(R.id.timeText);
-		deviceImage = (ImageView) findViewById(R.id.device);
-		
 		OperatorInit();
+	}	
+	
+	public void setButtonId() {
 		
-		/*Home Activity activation*/
 		homeIcon = (Button)findViewById(R.id.homeicon);
-		homeIcon.setOnClickListener(new View.OnClickListener() {
+		preViewBtn = (Button)findViewById(R.id.previousviewbtn);
+		loginBtn = (Button)findViewById(R.id.loginbtn);
+		modOperatorBtn = (Button)findViewById(R.id.modifybtn);
+		addOperatorBtn = (Button)findViewById(R.id.addbtn);
+		delOperatorBtn = (Button)findViewById(R.id.deletebtn);
+		nextViewBtn = (Button)findViewById(R.id.nextviewbtn);
+		backIcon = (Button)findViewById(R.id.backicon);
+	}
+	
+	public void setButtonClick() {
 		
-			public void onClick(View v) {
-
-				if(!btnState) {
-					
-					btnState = true;
-					homeIcon.setEnabled(false);
-					
-					WhichIntent(TargetIntent.Home);
-				}
-			}
-		});
+		homeIcon.setOnTouchListener(mTouchListener);
+		preViewBtn.setOnTouchListener(mTouchListener);
+		loginBtn.setOnTouchListener(mTouchListener);
+		modOperatorBtn.setOnTouchListener(mTouchListener);
+		addOperatorBtn.setOnTouchListener(mTouchListener);
+		delOperatorBtn.setOnTouchListener(mTouchListener);
+		nextViewBtn.setOnTouchListener(mTouchListener);
+		backIcon.setOnTouchListener(mTouchListener);
+	}
+	
+	public void setImageButtonId() {
 		
 		checkBoxBtn1 = (ImageButton) findViewById(R.id.chdckbox1);
-		checkBoxBtn1.setOnTouchListener(new OnTouchListener() {
+		checkBoxBtn2 = (ImageButton) findViewById(R.id.chdckbox2);
+		checkBoxBtn3 = (ImageButton) findViewById(R.id.chdckbox3);
+		checkBoxBtn4 = (ImageButton) findViewById(R.id.chdckbox4);
+		checkBoxBtn5 = (ImageButton) findViewById(R.id.chdckbox5);
+	}
+	
+	public void setImageButtonClick() {
+		
+		checkBoxBtn1.setOnTouchListener(mImageTouchListener);
+		checkBoxBtn2.setOnTouchListener(mImageTouchListener);
+		checkBoxBtn3.setOnTouchListener(mImageTouchListener);
+		checkBoxBtn4.setOnTouchListener(mImageTouchListener);
+		checkBoxBtn5.setOnTouchListener(mImageTouchListener);
+	}
+	
+	Button.OnTouchListener mTouchListener = new View.OnTouchListener() {
+		
+		@Override
+		public boolean onTouch(View v, MotionEvent event) {
 			
-			public boolean onTouch(View v, MotionEvent event) {
+			switch(event.getAction()) {
+			
+			case MotionEvent.ACTION_UP	:
 				
-				if(event.getAction() == MotionEvent.ACTION_DOWN) { 
+				if(!btnState) {
+
+					btnState = true;
+
+					switch(v.getId()) {
+				
+					case R.id.homeicon	:
+						WhichIntent(TargetIntent.Home);
+						break;
 					
+					case R.id.previousviewbtn	:
+						TurnPage(PRE_VIEW);
+						btnState = false;
+						break;
+					
+					case R.id.loginbtn	:
+						Login();
+						btnState = false;
+						break;
+					
+					case R.id.modifybtn	:
+						Modify();
+						btnState = false;
+						break;
+					
+					case R.id.addbtn	:
+						Add();
+						btnState = false;
+						break;
+					
+					case R.id.deletebtn	:
+						Delete();
+						btnState = false;
+						break;
+					
+					case R.id.nextviewbtn	:
+						TurnPage(NEXT_VIEW);
+						btnState = false;
+						break;
+					
+					case R.id.backicon	:
+						WhichIntent(TargetIntent.Setting);
+						break;
+						
+					default	:
+						break;
+					}
+					
+					break;
+				}
+			}
+			
+			return false;
+		}
+	};
+	
+	ImageButton.OnTouchListener mImageTouchListener = new View.OnTouchListener() {
+		
+		@Override
+		public boolean onTouch(View v, MotionEvent event) {
+			
+			switch(event.getAction()) {
+			
+			case MotionEvent.ACTION_UP	:
+				
+				switch(v.getId()) {
+				
+				case R.id.chdckbox1	:
 					boxNum = 1;
 					PressedCheckBox(checkBoxBtn1);
-				}
-				return false;
-			}
-		});
-		
-		checkBoxBtn2 = (ImageButton) findViewById(R.id.chdckbox2);
-		checkBoxBtn2.setOnTouchListener(new OnTouchListener() {
-			
-			public boolean onTouch(View v, MotionEvent event) {
-				
-				if(event.getAction() == MotionEvent.ACTION_DOWN) { 
+					break;
 					
+				case R.id.chdckbox2	:
 					boxNum = 2;
 					PressedCheckBox(checkBoxBtn2);
-				}
-				return false;
-			}
-		});
-		
-		checkBoxBtn3 = (ImageButton) findViewById(R.id.chdckbox3);
-		checkBoxBtn3.setOnTouchListener(new OnTouchListener() {
-			
-			public boolean onTouch(View v, MotionEvent event) {
+					break;
 				
-				if(event.getAction() == MotionEvent.ACTION_DOWN) { 
-					
+				case R.id.chdckbox3	:
 					boxNum = 3;
 					PressedCheckBox(checkBoxBtn3);
-				}
-				return false;
-			}
-		});
-		
-		checkBoxBtn4 = (ImageButton) findViewById(R.id.chdckbox4);
-		checkBoxBtn4.setOnTouchListener(new View.OnTouchListener() {
-			
-			public boolean onTouch(View v, MotionEvent event) {
-	
-				if(event.getAction() == MotionEvent.ACTION_DOWN) { 
-					
+					break;
+				
+				case R.id.chdckbox4	:
 					boxNum = 4;
 					PressedCheckBox(checkBoxBtn4);
-				}
-				return false;
-			}
-		});
-		
-		checkBoxBtn5 = (ImageButton) findViewById(R.id.chdckbox5);
-		checkBoxBtn5.setOnTouchListener(new View.OnTouchListener() {
-			
-			public boolean onTouch(View v, MotionEvent event) {
+					break;
 				
-				if(event.getAction() == MotionEvent.ACTION_DOWN) { 
-					
+				case R.id.chdckbox5	:
 					boxNum = 5;
 					PressedCheckBox(checkBoxBtn5);
-				}
-				return false;
-			}
-		});
-		
-		preViewBtn = (Button)findViewById(R.id.previousviewbtn);
-		preViewBtn.setOnClickListener(new View.OnClickListener() {
-			
-			public void onClick(View v) {
-			
-				if(!btnState) {
+					break;
+				}		
 				
-					TurnPage(PRE_VIEW);
-				}
+				break;
 			}
-		});
-		
-		/*Login Operator pop-up window activation*/
-		loginBtn = (Button)findViewById(R.id.loginbtn);
-		loginBtn.setOnClickListener(new View.OnClickListener() {
 			
-			public void onClick(View v) {
-			
-				if(!btnState) {
-					
-					btnState = true;
-					
-					Login();
-					
-					btnState = false;
-				}
-			}
-		});
-		
-		/*Modify Operator pop-up window activation*/
-		modOperatorBtn = (Button)findViewById(R.id.modifybtn);
-		modOperatorBtn.setOnClickListener(new View.OnClickListener() {
-			
-			public void onClick(View v) {
-			
-				if(!btnState) {
-					
-					btnState = true;
-				
-					Modify();
-					
-					btnState = false;
-				}
-			}
-		});
-		
-		/*Addition Operator pop-up window activation*/
-		addOperatorBtn = (Button)findViewById(R.id.addbtn);
-		addOperatorBtn.setOnClickListener(new View.OnClickListener() {
-			
-			public void onClick(View v) {
-			
-				if(!btnState) {
-					
-					btnState = true;
-				
-					Add();
-					
-					btnState = false;
-				}
-			}
-		});
-		
-		/* Delete Operator pop-up window activation */
-		delOperatorBtn = (Button)findViewById(R.id.deletebtn);
-		delOperatorBtn.setOnClickListener(new View.OnClickListener() {
-			
-			public void onClick(View v) {
-			
-				if(!btnState) {
-					
-					btnState = true;
-				
-					Delete();
-					
-					btnState = false;
-				}
-			}
-		});
-		
-		nextViewBtn = (Button)findViewById(R.id.nextviewbtn);
-		nextViewBtn.setOnClickListener(new View.OnClickListener() {
-			
-			public void onClick(View v) {
-			
-				if(!btnState) {
-					
-					TurnPage(NEXT_VIEW);
-				}
-			}
-		});
-		
-		/*Setting Activity activation*/
-		backIcon = (Button)findViewById(R.id.backicon);
-		backIcon.setOnClickListener(new View.OnClickListener() {
-		
-			public void onClick(View v) {
-
-				if(!btnState) {
-					
-					btnState = true;
-					backIcon.setEnabled(false);
-					
-					WhichIntent(TargetIntent.Setting);
-				}
-			}
-		});
-	}	
+			return false;
+		}
+	};
 	
 	public void OperatorInit() {
 		
 		int count;
+		
+		setButtonId();
+		setButtonClick();
+		setImageButtonId();
+		setImageButtonClick();		
 		
 		mTimerDisplay = new TimerDisplay();
 		mTimerDisplay.ActivityParm(this, R.id.operatorlayout);

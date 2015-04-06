@@ -21,6 +21,7 @@ import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -60,145 +61,101 @@ public class SystemSettingActivity extends Activity {
 		setContentView(R.layout.systemsetting);
 		
 		SystemSettingInit();
-		
-		/*Home Activity activation*/
-		homeIcon = (Button)findViewById(R.id.homeicon);
-		homeIcon.setOnClickListener(new View.OnClickListener() {
-		
-			public void onClick(View v) {
-			
-				if(!btnState) {
-					
-					btnState = true;
-				
-					homeIcon.setEnabled(false);
-					
-					WhichIntent(TargetIntent.Home);
-				}
-			}
-		});
-		
-		/*Record Activity activation*/
-		backIcon = (Button)findViewById(R.id.backicon);
-		backIcon.setOnClickListener(new View.OnClickListener() {
-		
-			public void onClick(View v) {
-		
-				if(!btnState) {
-					
-					btnState = true;
-				
-					backIcon.setEnabled(false);
-					
-					WhichIntent(TargetIntent.Setting);
-				}
-			}
-		});
-		
-		/*Display Activity activation*/
-		displayBtn = (Button)findViewById(R.id.displaybtn);
-		displayBtn.setOnClickListener(new View.OnClickListener() {
-		
-			public void onClick(View v) {
-			
-				if(!btnState) {
-					
-					btnState = true;
-					
-					displayBtn.setEnabled(false);
-
-					WhichIntent(TargetIntent.Display);
-				}
-			}
-		});
-		
-		/*Date Activity activation*/
-		dateBtn = (Button)findViewById(R.id.datebtn);
-		dateBtn.setOnClickListener(new View.OnClickListener() {
-		
-			public void onClick(View v) {
-				
-				if(!btnState) {
-					
-					btnState = true;
-					
-					dateBtn.setEnabled(false);
-				
-					WhichIntent(TargetIntent.Date);
-				}
-			}
-		});
-		
-		/*Time Activity activation*/
-		timeBtn = (Button)findViewById(R.id.timebtn);
-		timeBtn.setOnClickListener(new View.OnClickListener() {
-		
-			public void onClick(View v) {
-				
-				if(!btnState) {
-					
-					btnState = true;
-					
-					timeBtn.setEnabled(false);
-				
-					WhichIntent(TargetIntent.Time);
-				}
-			}
-		});
-				
-		/*Sound Activity activation*/
-		soundBtn = (Button)findViewById(R.id.soundbtn);
-		soundBtn.setOnClickListener(new View.OnClickListener() {
-		
-			public void onClick(View v) {
-				
-				if(!btnState) {
-					
-					btnState = true;
-					
-					soundBtn.setEnabled(false);
-				
-					WhichIntent(TargetIntent.Sound);
-				}
-			}
-		});
-		
-		/*Language Activity activation*/
-		languageBtn = (Button)findViewById(R.id.languagebtn);
-		languageBtn.setOnClickListener(new View.OnClickListener() {
-		
-			public void onClick(View v) {
-				
-				if(!btnState) {
-					
-					btnState = true;
-					
-					languageBtn.setEnabled(false);
-				
-					WhichIntent(TargetIntent.Language);
-				}
-			}
-		});
-		
-		convertBtn = (Button)findViewById(R.id.convertbtn);
-		convertBtn.setOnClickListener(new View.OnClickListener() {
-		
-			public void onClick(View v) {
-				
-				if(!btnState) {
-					
-					btnState = true;
-					
-					convertBtn.setEnabled(false);
-				
-					WhichIntent(TargetIntent.Convert);
-				}
-			}
-		});
 	}
+	
+	public void setButtonId() {
+		
+		homeIcon = (Button)findViewById(R.id.homeicon);
+		backIcon = (Button)findViewById(R.id.backicon);
+		displayBtn = (Button)findViewById(R.id.displaybtn);
+		dateBtn = (Button)findViewById(R.id.datebtn);
+		timeBtn = (Button)findViewById(R.id.timebtn);
+		soundBtn = (Button)findViewById(R.id.soundbtn);
+		languageBtn = (Button)findViewById(R.id.languagebtn);
+		convertBtn = (Button)findViewById(R.id.convertbtn);
+	}
+	
+	public void setButtonClick() {
+		
+		homeIcon.setOnTouchListener(mTouchListener);
+		backIcon.setOnTouchListener(mTouchListener);
+		displayBtn.setOnTouchListener(mTouchListener);
+		dateBtn.setOnTouchListener(mTouchListener);
+		timeBtn.setOnTouchListener(mTouchListener);
+		soundBtn.setOnTouchListener(mTouchListener);
+		languageBtn.setOnTouchListener(mTouchListener);
+		convertBtn.setOnTouchListener(mTouchListener);
+	}
+	
+	public void setButtonState(int btnId, boolean state, Activity activity) {
+		
+		activity.findViewById(btnId).setEnabled(state);
+	}
+	
+	Button.OnTouchListener mTouchListener = new View.OnTouchListener() {
+		
+		@Override
+		public boolean onTouch(View v, MotionEvent event) {
+			
+			switch(event.getAction()) {
+			
+			case MotionEvent.ACTION_UP	:
+				
+				if(!btnState) {
+
+					btnState = true;
+					
+					switch(v.getId()) {
+				
+					case R.id.homeicon		:
+						WhichIntent(TargetIntent.Home);
+						break;
+						
+					case R.id.backicon		:
+						WhichIntent(TargetIntent.Setting);
+						break;
+					
+					case R.id.displaybtn	:
+						WhichIntent(TargetIntent.Display);
+						break;
+					
+					case R.id.datebtn	:
+						WhichIntent(TargetIntent.Date);
+						break;
+						
+					case R.id.timebtn		:
+						WhichIntent(TargetIntent.Time);
+						break;
+						
+					case R.id.soundbtn		:
+						WhichIntent(TargetIntent.Sound);
+						break;
+					
+					case R.id.languagebtn	:
+						WhichIntent(TargetIntent.Language);
+						break;
+					
+					case R.id.convertbtn	:
+						WhichIntent(TargetIntent.Convert);
+						break;
+						
+					default	:
+						break;
+					}
+				}
+			
+				break;
+			}
+			
+			return false;
+		}
+	};
 	
 	public void SystemSettingInit() {
 
+		setButtonId();
+		setButtonClick();
+		
 		mTimerDisplay = new TimerDisplay();
 		mTimerDisplay.ActivityParm(this, R.id.systemsettinglayout);
 	}

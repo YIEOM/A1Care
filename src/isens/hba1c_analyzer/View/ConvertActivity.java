@@ -101,7 +101,7 @@ public class ConvertActivity extends Activity implements ConvertIView{
 			
 			switch(event.getAction()) {
 			
-			case MotionEvent.ACTION_DOWN	:
+			case MotionEvent.ACTION_UP	:
 				
 				switch(v.getId()) {
 			

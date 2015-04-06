@@ -344,6 +344,17 @@
 	    android:layout_width="300px"
 	    android:layout_height="30px"
         android:layout_marginLeft="488px"
+	    android:layout_marginTop="410px"
+	    android:gravity="left"
+        android:typeface="sans"
+        android:textSize="18px"
+        android:textColor="#04A458" />
+   	
+   	<TextView
+   	    android:id="@+id/hwVersionText"
+	    android:layout_width="300px"
+	    android:layout_height="30px"
+        android:layout_marginLeft="488px"
 	    android:layout_marginTop="440px"
 	    android:gravity="left"
         android:typeface="sans"

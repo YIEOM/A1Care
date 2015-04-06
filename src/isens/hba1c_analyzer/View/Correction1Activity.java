@@ -121,7 +121,7 @@ public class Correction1Activity extends Activity implements FactorIView{
 			
 			switch(event.getAction()) {
 			
-			case MotionEvent.ACTION_DOWN	:
+			case MotionEvent.ACTION_UP	:
 				
 				switch(v.getId()) {
 			

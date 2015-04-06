@@ -1,5 +1,6 @@
 package isens.hba1c_analyzer;
 
+import isens.hba1c_analyzer.HomeActivity.TargetIntent;
 import isens.hba1c_analyzer.Model.ConvertModel;
 import java.text.DecimalFormat;
 import java.util.Timer;
@@ -7,10 +8,10 @@ import java.util.TimerTask;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -119,25 +120,55 @@ public class RunActivity extends Activity {
 		mSerialPort = new SerialPort(); // to test
 		mErrorPopup = new ErrorPopup(this, this, R.id.runlayout);
 		
-				/* esc pop-up window activation */
-		escIcon = (Button)findViewById(R.id.escicon);
-		escIcon.setOnClickListener(new View.OnClickListener() {
-		
-			public void onClick(View v) {
-			
-				if(!btnState) {
-					
-					btnState = true;
-				
-					ESC();
-					
-					btnState = false;
-				}
-			}
-		});
-	
 		RunInit();
 	}
+	
+	public void setButtonId() {
+		
+		escIcon = (Button)findViewById(R.id.escicon);
+	}
+	
+	public void setButtonClick() {
+		
+		escIcon.setOnTouchListener(mTouchListener);
+	}
+	
+	public void setButtonState(int btnId, boolean state, Activity activity) {
+		
+		activity.findViewById(btnId).setEnabled(state);
+	}
+	
+	Button.OnTouchListener mTouchListener = new View.OnTouchListener() {
+		
+		@Override
+		public boolean onTouch(View v, MotionEvent event) {
+			
+			switch(event.getAction()) {
+			
+			case MotionEvent.ACTION_UP	:
+				
+				if(!btnState) {
+
+					btnState = true;
+					
+					switch(v.getId()) {
+				
+					case R.id.escicon		:
+						ESC();
+						btnState = false;
+						break;
+										
+					default	:
+						break;
+					}
+				}
+			
+				break;
+			}
+			
+			return false;
+		}
+	};
 	
 	public class Cart1stShaking extends Thread { // First shaking motion
 
@@ -1149,8 +1180,7 @@ public class RunActivity extends Activity {
 						
 					case ErrorCover		:
 						checkError = R.string.e322;
-						runState = AnalyzerState.NoWorking;
-						
+						runState = AnalyzerState.NoWorking;						
 						break;
 						
 					default	:
@@ -1202,7 +1232,8 @@ public class RunActivity extends Activity {
 	
 	public void RunInit() {
 		
-//		Log.w("RunInit", "run");
+		setButtonId();
+		setButtonClick();
 		
 		MotorShakeFlag = false;
 		IsStop = false;
@@ -1312,18 +1343,12 @@ public class RunActivity extends Activity {
 		String rawValue;
 		
 		mSerialPort.BoardTx("VH", SerialPort.CtrTarget.NormalSet);
-//		Log.w("AbsorbanceMeasure", "instruction : " + "VH");
 		
 		do {
 		
 			rawValue = mSerialPort.BoardMessageOutput();			
 			 
-			if(time++ > 50) {
-				
-				runState = AnalyzerState.NoResponse;
-				checkError = R.string.e241;
-				break;
-			}
+			if(time++ > 50) break;
 				
 			if(IsError || IsStop) break;
 			
@@ -1338,6 +1363,9 @@ public class RunActivity extends Activity {
 		} catch(NumberFormatException e) {
 			
 			DouValue = 0.0;
+			
+			runState = AnalyzerState.NoResponse;
+			checkError = R.string.e241;	
 		}
 		
 		return (DouValue - BlankValue[0]);	
@@ -1361,10 +1389,9 @@ public class RunActivity extends Activity {
 			
 			return R.string.e112;
 		
-		} else 
-			return NORMAL_OPERATION;
+		} else
 		
-		
+			return NORMAL_OPERATION;		
 		}
 	}
 	
@@ -1379,7 +1406,7 @@ public class RunActivity extends Activity {
 		} else {
 			
 			A = 0.45;
-			B = 0.15;	
+			B = 0.15;
 		}
 		
 //		Log.w("tHb Calucation", "thb B' : " + B);
@@ -1455,7 +1482,6 @@ public class RunActivity extends Activity {
 		
 		numerator = (y1 - y_a)*(x1 - x_a) + (y2 - y_a)*(x2 - x_a) + (y3 - y_a)*(x3 - x_a);
 		denominator = (x1 - x_a)*(x1 - x_a) + (x2 - x_a)*(x2 - x_a) + (x3 - x_a)*(x3 - x_a);
-		
 		slope = numerator/denominator;
 		
 		return slope;
@@ -1473,8 +1499,7 @@ public class RunActivity extends Activity {
 			
 			return hbA1cValue;	
 		}
-	}
-	
+	}	
 	
 	public double Absorb1stHandling() {
 		
@@ -1519,8 +1544,6 @@ public class RunActivity extends Activity {
 		sum = abs[0] + abs[1] + abs[2];
 		
 		avg = (sum - abs[idx]) / 2;
-		
-//		Log.w("Absorb1stHandling", "thb A : " + avg);
 		
 		return avg;
 	}

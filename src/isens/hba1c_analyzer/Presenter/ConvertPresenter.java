@@ -65,7 +65,7 @@ public class ConvertPresenter {
 		
 		display();
 		
-		enableAllBtn();
+		enabledAllBtn();
 	}
 
 	public void changePrimaryDown() {
@@ -76,7 +76,7 @@ public class ConvertPresenter {
 		
 		display();
 		
-		enableAllBtn();
+		enabledAllBtn();
 	}
 	
 	public void display() {
@@ -87,7 +87,7 @@ public class ConvertPresenter {
 		mConvertIView.setText(primary);
 	}
 	
-	public void enableAllBtn() {
+	public void enabledAllBtn() {
 
 		mConvertIView.setButtonState(R.id.backBtn, true);
 		mConvertIView.setButtonState(R.id.leftBtn, true);

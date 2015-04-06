@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -33,61 +34,71 @@ public class RecordActivity extends Activity {
 		setContentView(R.layout.record);			
 		
 		MemoryInit();
-
-		/*Patient Test Activity activation*/
-		patientBtn = (Button)findViewById(R.id.patientbtn);
-		patientBtn.setOnClickListener(new View.OnClickListener() {
-		
-			public void onClick(View v) {
-		
-				if(!btnState) {
-					
-					btnState = true;
-					
-					patientBtn.setEnabled(false);
-					
-					WhichIntent(TargetIntent.PatientFileLoad);
-				}
-			}
-		});
-		
-		/*Control Test Activity activation*/
-		controlBtn = (Button)findViewById(R.id.controlbtn);
-		controlBtn.setOnClickListener(new View.OnClickListener() {
-		
-			public void onClick(View v) {
-		
-				if(!btnState) {
-					
-					btnState = true;
-					
-					controlBtn.setEnabled(false);
-				
-					WhichIntent(TargetIntent.ControlFileLoad);
-				}
-			}
-		});
-	
-		/*Home Activity activation*/
-		backIcon = (Button)findViewById(R.id.backicon);
-		backIcon.setOnClickListener(new View.OnClickListener() {
-		
-			public void onClick(View v) {
-		
-				if(!btnState) {
-					
-					btnState = true;
-					
-					backIcon.setEnabled(false);
-				
-					WhichIntent(TargetIntent.Home);
-				}
-			}
-		});
 	}	
+	
+	public void setButtonId() {
+		
+		patientBtn = (Button)findViewById(R.id.patientbtn);
+		controlBtn = (Button)findViewById(R.id.controlbtn);
+		backIcon = (Button)findViewById(R.id.backicon);
+	}
+	
+	public void setButtonClick() {
+		
+		patientBtn.setOnTouchListener(mTouchListener);
+		controlBtn.setOnTouchListener(mTouchListener);
+		backIcon.setOnTouchListener(mTouchListener);
+	}
+	
+	public void setButtonState(int btnId, boolean state, Activity activity) {
+		
+		activity.findViewById(btnId).setEnabled(state);
+	}
+	
+	Button.OnTouchListener mTouchListener = new View.OnTouchListener() {
+		
+		@Override
+		public boolean onTouch(View v, MotionEvent event) {
+			
+			switch(event.getAction()) {
+			
+			case MotionEvent.ACTION_UP	:
+				
+				if(!btnState) {
+
+					btnState = true;
+					
+					switch(v.getId()) {
+				
+					case R.id.patientbtn	:
+						WhichIntent(TargetIntent.PatientFileLoad);
+						break;
+						
+					case R.id.controlbtn	:
+						WhichIntent(TargetIntent.ControlFileLoad);
+						break;
+					
+					case R.id.backicon		:
+						WhichIntent(TargetIntent.Home);
+						break;
+				
+					default	:
+						break;
+					}
+				}
+			
+				break;
+			}
+			
+			return false;
+		}
+	};
 	
 	public void MemoryInit() {
 
+		setButtonId();
+		setButtonClick();
+		
 		mTimerDisplay = new TimerDisplay();
 		mTimerDisplay.ActivityParm(this, R.id.memorylayout);
 		

@@ -20,6 +20,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -60,27 +61,73 @@ public class BlankActivity extends Activity {
 		
 		mErrorPopup = new ErrorPopup(this, this, R.id.blanklayout);
 		
-		/* esc pop-up window activation */
-		escIcon = (Button)findViewById(R.id.escicon);
-		escIcon.setOnClickListener(new View.OnClickListener() {
-		
-			public void onClick(View v) {
-			
-				if(!btnState) {
-					
-					btnState = true;
-				
-					ESC();
-					
-					btnState = false;
-				}
-			}
-		});
-		
 		BlankInit();
 	}                     
 	
+	public void setButtonId() {
+		
+		escIcon = (Button)findViewById(R.id.escicon);
+	}
+	
+	public void setButtonClick() {
+		
+		escIcon.setOnTouchListener(mTouchListener);
+	}
+	
+	public void setButtonState(int btnId, boolean state) {
+		
+		findViewById(btnId).setEnabled(state);
+	}
+	
+	Button.OnTouchListener mTouchListener = new View.OnTouchListener() {
+		
+		@Override
+		public boolean onTouch(View v, MotionEvent event) {
+			
+			switch(event.getAction()) {
+			
+			case MotionEvent.ACTION_UP	:
+				
+				if(!btnState) {
+
+					btnState = true;
+					
+					switch(v.getId()) {
+				
+					case R.id.escicon		:
+						ESC();
+						btnState = false;
+						break;
+							
+					default	:
+						break;
+					}
+				}
+			
+				break;
+			}
+			
+			return false;
+		}
+	};
+	
+	public void enabledAllBtn() {
+
+		setButtonState(R.id.escicon, true);
+	}
+	
+	public void unenabledAllBtn() {
+		
+		setButtonState(R.id.escicon, false);
+		
+		btnState = false;
+	}
+	
 	public void BlankInit() {
+		
+		setButtonId();
+		unenabledAllBtn();
+		setButtonClick();
 		
 		RunActivity.IsStop = false;
 		RunActivity.IsError = false;
@@ -90,8 +137,6 @@ public class BlankActivity extends Activity {
 		mTimerDisplay.ActivityParm(this, R.id.blanklayout);
 				
 		mSerialPort = new SerialPort();
-		
-		setButtonState(this, false);
 		
 		blankState = RunActivity.AnalyzerState.InitPosition;
 		photoCheck = 0;
@@ -123,13 +168,6 @@ public class BlankActivity extends Activity {
 			
 			SerialPort.Sleep(2000);
 			
-//			if(ActionActivity.CartridgeCheckFlag != 0) mErrorPopup.ErrorDisplay(R.string.w002);
-//			while(ActionActivity.CartridgeCheckFlag != 0) SerialPort.Sleep(100);
-//			
-//			if(ActionActivity.DoorCheckFlag != 1) mErrorPopup.ErrorDisplay(R.string.w001);
-//			while(ActionActivity.DoorCheckFlag != 1) SerialPort.Sleep(100);
-//			mErrorPopup.ErrorPopupClose();
-			
 			while(ActionActivity.DoorCheckFlag != 1 || ActionActivity.CartridgeCheckFlag != 0) {
 			
 				if(ActionActivity.CartridgeCheckFlag != 0) mErrorPopup.ErrorDisplay(R.string.w002);
@@ -147,7 +185,7 @@ public class BlankActivity extends Activity {
 					runOnUiThread(new Runnable(){
 						public void run() {
 
-							setButtonState(activity, true);
+							enabledAllBtn();
 						}
 					});
 				}
@@ -156,12 +194,6 @@ public class BlankActivity extends Activity {
 			BlankStep BlankStepObj = new BlankStep();
 			BlankStepObj.start();
 		}
-	}
-	
-	public void setButtonState(Activity activity, boolean state) {
-		
-		escIcon = (Button)activity.findViewById(R.id.escicon);
-		escIcon.setEnabled(state);
 	}
 	
 	public class BlankStep extends Thread { // Blank run
@@ -308,18 +340,11 @@ public class BlankActivity extends Activity {
 		
 		mSerialPort.BoardTx("VH", SerialPort.CtrTarget.NormalSet);
 		
-		rawValue = mSerialPort.BoardMessageOutput();			
-		
 		do {
 		
 			rawValue = mSerialPort.BoardMessageOutput();			
-				
-			if(time++ > 50) {
-				
-				blankState = AnalyzerState.NoResponse;
-				checkError = R.string.e241;
-				break;
-			} 
+			
+			if(time++ > 50)	break;
 			
 			if(RunActivity.IsError || RunActivity.IsStop) break;
 			
@@ -336,6 +361,9 @@ public class BlankActivity extends Activity {
 		} catch(NumberFormatException e) {
 			
 			douValue = 0.0;
+			
+			blankState = AnalyzerState.NoResponse;
+			checkError = R.string.e241;
 		}
 		
 		return (douValue - RunActivity.BlankValue[0]);
@@ -488,7 +516,6 @@ public class BlankActivity extends Activity {
 					break;
 					
 				case NoResponse :
-					checkError = R.string.e241;
 					blankState = AnalyzerState.NoWorking;
 					WhichIntent(TargetIntent.Home);
 					break;

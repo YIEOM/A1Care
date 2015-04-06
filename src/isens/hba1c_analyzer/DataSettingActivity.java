@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -36,60 +37,82 @@ public class DataSettingActivity extends Activity {
 		setContentView(R.layout.datasetting);
 		
 		DataSettingInit();
-					
-		/*Setting Activity activation*/
+	}
+	
+	public void setButtonId() {
+		
 		backBtn = (Button)findViewById(R.id.backicon);
-		backBtn.setOnClickListener(new View.OnClickListener() {
-		
-			public void onClick(View v) {
-			
-				if(!btnState) {
-					
-					btnState = true;
-
-					backBtn.setEnabled(false);
-					
-					WhichIntent(TargetIntent.Setting);
-				}
-			}
-		});
-		
-		/*Home Activity activation*/
 		homeBtn = (Button)findViewById(R.id.homeicon);
-		homeBtn.setOnClickListener(new View.OnClickListener() {
-		
-			public void onClick(View v) {
-			
-				if(!btnState) {
-					
-					btnState = true;
-
-					homeBtn.setEnabled(false);
-
-					WhichIntent(TargetIntent.Home);
-				}
-			}
-		});
-		
-		/*Export Activity activation*/
 		exportBtn = (Button)findViewById(R.id.exportbtn);
-		exportBtn.setOnClickListener(new View.OnClickListener() {
+	}
+	
+	public void setButtonClick() {
 		
-			public void onClick(View v) {
+		backBtn.setOnTouchListener(mTouchListener);
+		homeBtn.setOnTouchListener(mTouchListener);
+		exportBtn.setOnTouchListener(mTouchListener);
+	}
+	
+	public void setButtonState(int btnId, boolean state) {
 		
+		findViewById(btnId).setEnabled(state);
+	}
+	
+	Button.OnTouchListener mTouchListener = new View.OnTouchListener() {
+		
+		@Override
+		public boolean onTouch(View v, MotionEvent event) {
+			
+			switch(event.getAction()) {
+			
+			case MotionEvent.ACTION_UP	:
+				
 				if(!btnState) {
-					
+
 					btnState = true;
 
-					exportBtn.setEnabled(false);
+					switch(v.getId()) {
 				
-					WhichIntent(TargetIntent.Export);
+					case R.id.backBtn	:
+						WhichIntent(TargetIntent.Setting);
+						break;
+					
+					case R.id.homeBtn	:
+						WhichIntent(TargetIntent.Home);
+						break;
+					
+					case R.id.exportbtn	:
+						WhichIntent(TargetIntent.Export);
+						break;
+						
+					default	:
+						break;
+					}
+					
+					break;
 				}
 			}
-		});
+			
+			return false;
+		}
+	};
+	
+	public void enabledAllBtn() {
+
+		setButtonState(R.id.homeicon, true);
+	}
+	
+	public void unenabledAllBtn() {
+
+		setButtonState(R.id.homeicon, false);
+		
+		btnState = false;
 	}
 	
 	public void DataSettingInit() {
+		
+		setButtonId();
+		setButtonClick();
 		
 		mTimerDisplay = new TimerDisplay();
 		mTimerDisplay.ActivityParm(this, R.id.datalayout);

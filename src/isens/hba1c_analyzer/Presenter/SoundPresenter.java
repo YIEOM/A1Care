@@ -53,7 +53,7 @@ public class SoundPresenter {
 		displayBarGauge(volume);
 		mSound.setSoundVolume(volume);
 		
-		enableAllBtn();
+		enabledAllBtn();
 	}
 	
 	public void downSound() {
@@ -66,7 +66,7 @@ public class SoundPresenter {
 		displayBarGauge(volume);
 		mSound.setSoundVolume(volume);
 
-		enableAllBtn();
+		enabledAllBtn();
 	}
 	
 	public void displayBarGauge(int volume) {
@@ -74,7 +74,7 @@ public class SoundPresenter {
 		mSoundIView.setBarGaugeImage(mSound.getBarGauageImage(volume));
 	}
 	
-	public void enableAllBtn() {
+	public void enabledAllBtn() {
 		
 		mSoundIView.setButtonState(R.id.backBtn, true);
 		mSoundIView.setButtonState(R.id.minusBtn, true);
