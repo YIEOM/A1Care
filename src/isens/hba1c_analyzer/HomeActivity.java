@@ -35,7 +35,7 @@ public class HomeActivity extends Activity {
 	final static byte NORMAL = 0,
 					  DEVEL = 1, // Development
 					  DEMO = 2, // Sales department
-					  ANALYZER_SW = NORMAL;
+					  ANALYZER_SW = DEVEL;
 
 	final static byte PP = 1,
 			          ES = 2,
@@ -194,15 +194,15 @@ public class HomeActivity extends Activity {
 		mTimerDisplay = new TimerDisplay();
 		mTimerDisplay.ActivityParm(this, R.id.homelayout);
 		
-		mPool = new SoundPool(1, AudioManager.STREAM_MUSIC, 0);
-		mWin = mPool.load(this, R.raw.booting_bgm, 1);
-		
-		mPool.setOnLoadCompleteListener(new OnLoadCompleteListener() {
-		      public void onLoadComplete(SoundPool mPool, int sampleId, int status) {
-
-		  		mPool.play(mWin, 1, 1, 0, 0, 1); // playing sound
-		      }
-		});
+//		mPool = new SoundPool(1, AudioManager.STREAM_MUSIC, 0);
+//		mWin = mPool.load(this, R.raw.booting_bgm, 1);
+//		
+//		mPool.setOnLoadCompleteListener(new OnLoadCompleteListener() {
+//		      public void onLoadComplete(SoundPool mPool, int sampleId, int status) {
+//
+//		  		mPool.play(mWin, 1, 1, 0, 0, 1); // playing sound
+//		      }
+//		});
 
 		DisplayDemo();
 	}

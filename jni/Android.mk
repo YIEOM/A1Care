@@ -18,7 +18,7 @@ LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
 LOCAL_MODULE_TAGS := user
-LOCAL_PACKAGE_NAME := HbA1c_analyzer_clinical
+LOCAL_PACKAGE_NAME := A1Care_analyzer
 LOCAL_CERTIFICATE := platform
 include $(BUILD_PACKAGE)
 

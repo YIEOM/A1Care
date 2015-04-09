@@ -238,15 +238,15 @@ public class ResultActivity extends Activity {
 		
 		if(operator == null) operator = "Guest";
 		
-		mPool = new SoundPool(1, AudioManager.STREAM_MUSIC, 0);
-		mWin = mPool.load(this, R.raw.result_bgm, 1);
-		
-		mPool.setOnLoadCompleteListener(new OnLoadCompleteListener() {
-		      public void onLoadComplete(SoundPool mPool, int sampleId, int status) {
-
-		  		mPool.play(mWin, 1, 1, 0, 0, 1); // playing sound
-		      }
-		});
+//		mPool = new SoundPool(1, AudioManager.STREAM_MUSIC, 0);
+//		mWin = mPool.load(this, R.raw.result_bgm, 1);
+//		
+//		mPool.setOnLoadCompleteListener(new OnLoadCompleteListener() {
+//		      public void onLoadComplete(SoundPool mPool, int sampleId, int status) {
+//
+//		  		mPool.play(mWin, 1, 1, 0, 0, 1); // playing sound
+//		      }
+//		});
 	}
 	
 	public void PatientIDDisplay(final StringBuffer str) {

@@ -87,15 +87,15 @@ public class SoundModel {
 			
 			audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, volume, 0);
 			
-			SoundPool mPool = new SoundPool(1, AudioManager.STREAM_MUSIC, 0);
-			mWin = mPool.load(context, R.raw.beep, 1);
-			
-			mPool.setOnLoadCompleteListener(new OnLoadCompleteListener() {
-			      public void onLoadComplete(SoundPool mPool, int sampleId, int status) {
-
-			  		mPool.play(mWin, 1, 1, 0, 0, 1); // playing sound
-			      }
-			});
+//			SoundPool mPool = new SoundPool(1, AudioManager.STREAM_MUSIC, 0);
+//			mWin = mPool.load(context, R.raw.beep, 1);
+//			
+//			mPool.setOnLoadCompleteListener(new OnLoadCompleteListener() {
+//			      public void onLoadComplete(SoundPool mPool, int sampleId, int status) {
+//
+//			  		mPool.play(mWin, 1, 1, 0, 0, 1); // playing sound
+//			      }
+//			});
 			
 		} catch(Exception e) {
 			
