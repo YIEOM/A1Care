@@ -35,7 +35,7 @@ public class HomeActivity extends Activity {
 	final static byte NORMAL = 0,
 					  DEVEL = 1, // Development
 					  DEMO = 2, // Sales department
-					  ANALYZER_SW = DEVEL;
+					  ANALYZER_SW = NORMAL;
 
 	final static byte PP = 1,
 			          ES = 2,
