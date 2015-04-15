@@ -329,7 +329,7 @@ public class SettingActivity extends Activity {
 		isC1Pressed = false;
 		isC2Pressed = false;
 		
-		Intent MaintenanceIntent = new Intent(context, MaintenanceActivity.class);
+		Intent MaintenanceIntent = new Intent(context, EngineerActivity.class);
 		activity.startActivity(MaintenanceIntent);
 		
 		finish(activity);		

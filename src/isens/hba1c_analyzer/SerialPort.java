@@ -429,7 +429,7 @@ public class SerialPort {
 
 						BoardInputBuffer = new byte[BOARD_INPUT_BUFFER];
 						size = BoardFileInputStream.read(BoardInputBuffer);
-						Log.w("BoardRxThread", "BoardInputBuffer : " + new String(BoardInputBuffer) + " size : " + size);
+//						Log.w("BoardRxThread", "BoardInputBuffer : " + new String(BoardInputBuffer) + " size : " + size);
 						BoardDataReceive(size);
 					}
 					
@@ -591,7 +591,7 @@ public class SerialPort {
 			
 			SensorMsgBuffer[tempHead] = tempData;
 			SensorMsgHead = tempHead;
-			Log.w("SensorMessageBuffer", "tmpStrData : " + tempData);
+//			Log.w("SensorMessageBuffer", "tmpStrData : " + tempData);
 		}
 	}
 	
@@ -658,7 +658,7 @@ public class SerialPort {
 		for(int i = 0; i < size; i++) {
 
 			BarcodeAppendBuffer[BarcodeBufCnt][BarcodeBufIndex++] = BarcodeRxBuffer[i]; // bufCnt : number of each buffer, bufIndex : bit index of one buffer
-			Log.w("BarcodeDataReceive", "BarcodeRxBuffer : " + Character.toString((char) BarcodeRxBuffer[i]));
+//			Log.w("BarcodeDataReceive", "BarcodeRxBuffer : " + Character.toString((char) BarcodeRxBuffer[i]));
 		}	
 		
 		if(BarcodeBufIndex > 18 | BarcodeBufIndex < 2) {
@@ -715,7 +715,7 @@ public class SerialPort {
 						HHBarcodeRxBuffer = new byte[BARCODE_RX_BUFFER_SIZE];
 						size = HHBarcodeFileInputStream.read(HHBarcodeRxBuffer);
 						
-						Log.w("HHBarcodeRxThread", "HHBarcodeInputBuffer : " + new String(HHBarcodeRxBuffer));
+//						Log.w("HHBarcodeRxThread", "HHBarcodeInputBuffer : " + new String(HHBarcodeRxBuffer));
 						
 						if(size > 0) {
 								
@@ -861,7 +861,7 @@ public class SerialPort {
             Runtime.getRuntime().exec("ssu -c busybox chmod 0777 /dev/ttyACM0").waitFor();
     
         } catch (IOException e) {
-            Log.e("OLE","Runtime Error: "+e.getMessage());
+//            Log.e("OLE","Runtime Error: "+e.getMessage());
             e.printStackTrace();
         } catch (InterruptedException e) {
 			// TODO Auto-generated catch block

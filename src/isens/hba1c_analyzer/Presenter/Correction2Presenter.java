@@ -88,7 +88,7 @@ public class Correction2Presenter {
 		
 		mFactorModel.setFactor((int) FactorModel.CORRECTION_FACTOR2, "RF2 SlopeVal", fct1st, "RF2 OffsetVal", fct2nd);
 		
-		mActivityChange.whichIntent(TargetIntent.Maintenance);
+		mActivityChange.whichIntent(TargetIntent.Engineer);
 		mActivityChange.finish();
 	}
 }

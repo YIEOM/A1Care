@@ -16,8 +16,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="128px"
         android:layout_marginTop="20px"
-        android:src="@drawable/m_title"
-        android:background="#00000000" />
+        android:src="@drawable/engineer_title" />
             
     <ImageView
         android:id="@+id/device" 
@@ -41,7 +40,7 @@
         android:layout_marginTop="15px" />
    		
    	<Button
-        android:id="@+id/escicon"
+        android:id="@+id/escBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="728px"
@@ -54,7 +53,7 @@
         android:layout_marginTop="134px" >
    	    
    	    <Button
-	        android:id="@+id/lampbtn"
+	        android:id="@+id/lampBtn"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:background="@drawable/systemsetting_btn_selector" />
@@ -63,18 +62,20 @@
 		    android:layout_width="wrap_content"
 		    android:layout_height="wrap_content"
 	        android:layout_marginTop="25px"
-		    android:layout_centerHorizontal="true" />
+		    android:layout_centerHorizontal="true"
+	        android:src="@drawable/lamp_icon" />
 	        
 		<TextView
 		    android:layout_width="wrap_content"
 		    android:layout_height="wrap_content"
-	        android:layout_centerInParent="true"
+		    android:layout_marginTop="70px"
+	        android:layout_centerHorizontal="true"
 	        android:gravity="center"
 		    android:text="LAMP\nINTENSITY"
 	        android:typeface="sans"
 	        android:textSize="18px"
 	        android:textColor="#242424" />
-		    
+		
    	</RelativeLayout>
 
  	<RelativeLayout 
@@ -84,7 +85,7 @@
         android:layout_marginTop="134px" >
    	    
    	    <Button
-	        android:id="@+id/correct1Btn"
+	        android:id="@+id/f535Btn"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:background="@drawable/systemsetting_btn_selector" />
@@ -93,14 +94,16 @@
 		    android:layout_width="wrap_content"
 		    android:layout_height="wrap_content"
 	        android:layout_marginTop="27px"
-		    android:layout_centerHorizontal="true" />
+		    android:layout_centerHorizontal="true"
+	        android:src="@drawable/abs57_icon" />
 	        
 		<TextView
 		    android:layout_width="wrap_content"
 		    android:layout_height="wrap_content"
-	        android:layout_centerInParent="true"
+		    android:layout_marginTop="85px"
+	        android:layout_centerHorizontal="true"
 	        android:gravity="center"
-		    android:text="CORRECTION\nFACTOR1"
+		    android:text="535 FACTOR"
 	        android:typeface="sans"
 	        android:textSize="18px"
 	        android:textColor="#242424" />
@@ -114,7 +117,7 @@
         android:layout_marginTop="134px" >
    	    
    	    <Button
-	        android:id="@+id/correct2Btn"
+	        android:id="@+id/f660Btn"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:background="@drawable/systemsetting_btn_selector" />
@@ -123,14 +126,16 @@
 		    android:layout_width="wrap_content"
 		    android:layout_height="wrap_content"
 	        android:layout_marginTop="27px"
-		    android:layout_centerHorizontal="true" />
+		    android:layout_centerHorizontal="true"
+		    android:src="@drawable/abs67_icon" />
 	        
 		<TextView
 		    android:layout_width="wrap_content"
 		    android:layout_height="wrap_content"
-	        android:layout_centerInParent="true"
+		    android:layout_marginTop="85px"
+	        android:layout_centerHorizontal="true"
 	        android:gravity="center"
-		    android:text="CORRECTION\nFACTOR2"
+		    android:text="660 FACTOR"
 	        android:typeface="sans"
 	        android:textSize="18px"
 	        android:textColor="#242424" />
@@ -144,7 +149,7 @@
         android:layout_marginTop="134px" >
    	    
    	     <Button
-	        android:id="@+id/collelationbtn"
+	        android:id="@+id/collelationBtn"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:background="@drawable/systemsetting_btn_selector" />
@@ -176,36 +181,7 @@
         android:layout_marginTop="134px" >
    	    
    	    <Button
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:background="@drawable/systemsetting_btn_selector" />
-   	    
-		<ImageView 
-		    android:layout_width="wrap_content"
-		    android:layout_height="wrap_content"
-	        android:layout_marginTop="35px"
-		    android:layout_centerHorizontal="true" />
-	        
-		<TextView
-		    android:layout_width="wrap_content"
-		    android:layout_height="wrap_content"
-	        android:layout_marginTop="85px" 
-	        android:layout_centerHorizontal="true"
-	        android:gravity="center"
-	        android:typeface="sans"
-	        android:textSize="18px"
-	        android:textColor="#242424" />
-		    
-   	</RelativeLayout>
- 	
- 	<RelativeLayout 
-   	    android:layout_width="wrap_content"
-   	    android:layout_height="wrap_content"
-   	    android:layout_marginLeft="30px"
-        android:layout_marginTop="269px" >
-   	    
-   	    <Button
-	        android:id="@+id/adjustbtn"
+	        android:id="@+id/adjustBtn"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:background="@drawable/systemsetting_btn_selector" />
@@ -229,15 +205,15 @@
 	        android:textColor="#242424" />
 		    
    	</RelativeLayout>
-   	
+ 	
  	<RelativeLayout 
    	    android:layout_width="wrap_content"
    	    android:layout_height="wrap_content"
-   	    android:layout_marginLeft="182px"
+   	    android:layout_marginLeft="30px"
         android:layout_marginTop="269px" >
    	    
    	    <Button
-	        android:id="@+id/absorbancebtn"
+	        android:id="@+id/tHbBtn"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:background="@drawable/systemsetting_btn_selector" />
@@ -247,14 +223,15 @@
 		    android:layout_height="wrap_content"
 	        android:layout_marginTop="20px"
 		    android:layout_centerHorizontal="true"
-	        android:src="@drawable/sf_icon" />
+	        android:src="@drawable/thb_icon" />
 	        
 		<TextView
 		    android:layout_width="wrap_content"
 		    android:layout_height="wrap_content"
-	        android:layout_marginTop="70px" 
+	        android:layout_marginTop="85px" 
 	        android:layout_centerHorizontal="true"
 	        android:gravity="center"
+		    android:text="tHb FACTOR"
 	        android:typeface="sans"
 	        android:textSize="18px"
 	        android:textColor="#242424" />
@@ -264,11 +241,43 @@
  	<RelativeLayout 
    	    android:layout_width="wrap_content"
    	    android:layout_height="wrap_content"
+   	    android:layout_marginLeft="182px"
+        android:layout_marginTop="269px" >
+   	    
+   	     <Button
+	        android:id="@+id/tempBtn"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:background="@drawable/systemsetting_btn_selector" />
+   	    
+		<ImageView 
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+	        android:layout_marginTop="25px"
+		    android:layout_centerHorizontal="true"
+	        android:src="@drawable/temperature_icon" />
+	        
+		<TextView
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+	        android:layout_marginTop="85px" 
+	        android:layout_centerHorizontal="true"
+	        android:gravity="center"
+		    android:text="TEMPERATURE"
+	        android:typeface="sans"
+	        android:textSize="18px"
+	        android:textColor="#242424" />
+		    
+   	</RelativeLayout>
+ 	
+ 	<RelativeLayout 
+   	    android:layout_width="wrap_content"
+   	    android:layout_height="wrap_content"
    	    android:layout_marginLeft="335px"
         android:layout_marginTop="269px" >
    	    
    	    <Button
-	        android:id="@+id/calibrationbtn"
+	        android:id="@+id/calibrationBtn"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:background="@drawable/systemsetting_btn_selector" />
@@ -292,73 +301,37 @@
 	        android:textColor="#242424" />
 		    
    	</RelativeLayout>
-        
-    <Button
-        android:id="@+id/tempbtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-  	    android:layout_marginLeft="486px"
-        android:layout_marginTop="269px"
-        android:gravity="center"
-        android:text="TEMPERATURE"
-        android:typeface="sans"
-        android:textSize="18px"
-        android:textColor="#242424"
-        android:background="@drawable/systemsetting_btn_selector" />
     
-   	<Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-  	    android:layout_marginLeft="639px"
-        android:layout_marginTop="269px"
-        android:gravity="center"
-	    android:typeface="sans"
-        android:textSize="18px"
-        android:textColor="#242424"
-        android:background="@drawable/systemsetting_btn_selector" />
-    
-   	<TextView
-   	    android:id="@+id/fwVersionText"
-	    android:layout_width="300px"
-	    android:layout_height="30px"
-        android:layout_marginLeft="12px"
-	    android:layout_marginTop="410px"
-	    android:gravity="left"
-        android:typeface="sans"
-        android:textSize="18px"
-        android:textColor="#04A458" />
-   	
-   	<TextView
-   	    android:id="@+id/swVersionText"
-	    android:layout_width="300px"
-	    android:layout_height="30px"
-        android:layout_marginLeft="12px"
-	    android:layout_marginTop="440px"
-	    android:gravity="left"
-        android:typeface="sans"
-        android:textSize="18px"
-        android:textColor="#04A458" />
-   	
-   	<TextView
-   	    android:id="@+id/osVersionText"
-	    android:layout_width="300px"
-	    android:layout_height="30px"
-        android:layout_marginLeft="488px"
-	    android:layout_marginTop="410px"
-	    android:gravity="left"
-        android:typeface="sans"
-        android:textSize="18px"
-        android:textColor="#04A458" />
-   	
-   	<TextView
-   	    android:id="@+id/hwVersionText"
-	    android:layout_width="300px"
-	    android:layout_height="30px"
-        android:layout_marginLeft="488px"
-	    android:layout_marginTop="440px"
-	    android:gravity="left"
-        android:typeface="sans"
-        android:textSize="18px"
-        android:textColor="#04A458" />
+    <RelativeLayout 
+   	    android:layout_width="wrap_content"
+   	    android:layout_height="wrap_content"
+   	    android:layout_marginLeft="486px"
+        android:layout_marginTop="269px" >
+   	    
+   	    <Button
+	        android:id="@+id/aboutBtn"
+        	android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:background="@drawable/systemsetting_btn_selector" />
+   	    
+		<ImageView 
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+	        android:layout_marginTop="25px"
+		    android:layout_centerHorizontal="true"
+	        android:src="@drawable/about_icon" />
+	        
+		<TextView
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+	        android:layout_marginTop="85px" 
+	        android:layout_centerHorizontal="true"
+	        android:gravity="center"
+        	android:text="ABOUT A1Care"
+	        android:typeface="sans"
+	        android:textSize="18px"
+	        android:textColor="#242424" />
+		    
+   	</RelativeLayout>
    	
 </RelativeLayout>

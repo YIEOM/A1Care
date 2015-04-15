@@ -46,7 +46,7 @@ public class LampPresenter {
 	
 	public void changeActivity() {
 		
-		mActivityChange.whichIntent(TargetIntent.Maintenance);
+		mActivityChange.whichIntent(TargetIntent.Engineer);
 		mActivityChange.finish();
 	}
 }

@@ -12,6 +12,7 @@ public class FactorModel {
 							 CORRECTION_FACTOR2 = 4;
 	
 	private Activity activity;
+	private FileSystem mFileSystem;
 	
 	public FactorModel(Activity activity) {
 		
@@ -53,7 +54,7 @@ public class FactorModel {
 			break;
 		}
 		
-		FileSystem mFileSystem = new FileSystem(activity);
+		mFileSystem = new FileSystem(activity);
 		mFileSystem.setPreferences("User Define", Activity.MODE_PRIVATE);
 		mFileSystem.putFloatPref(key1, value1);
 		mFileSystem.putFloatPref(key2, value2);

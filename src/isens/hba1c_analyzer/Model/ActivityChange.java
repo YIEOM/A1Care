@@ -6,7 +6,7 @@ import android.content.Intent;
 import isens.hba1c_analyzer.BlankActivity;
 import isens.hba1c_analyzer.HomeActivity;
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
-import isens.hba1c_analyzer.MaintenanceActivity;
+import isens.hba1c_analyzer.EngineerActivity;
 import isens.hba1c_analyzer.R;
 import isens.hba1c_analyzer.SettingActivity;
 import isens.hba1c_analyzer.SystemSettingActivity;
@@ -31,8 +31,8 @@ public class ActivityChange {
 			nextIntent = new Intent(context, SystemSettingActivity.class);
 			break;
 						
-		case Maintenance	:
-			nextIntent = new Intent(context, MaintenanceActivity.class);
+		case Engineer	:
+			nextIntent = new Intent(context, EngineerActivity.class);
 			break;
 			
 		case Setting	:				

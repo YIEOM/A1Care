@@ -4,8 +4,12 @@ public interface AboutIView {
 
 	void setImageId();
 	void setImage();
+	void setTextId();
+	void setText(String swVersion, String fwVersion, String osVersion);
 	void setEditTextId();
-	void setEditText(String version);
+	void setEditText(String text);
 	void setButtonId();
 	void setButtonClick();
+	void setButtonState(int btnId, boolean state);
+	String getHWVersion();
 }

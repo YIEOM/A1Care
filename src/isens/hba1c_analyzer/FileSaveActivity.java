@@ -132,7 +132,11 @@ public class FileSaveActivity extends Activity {
 		historyData.append(itn.getStringExtra("St2Abs2by2") + "\t");
 		historyData.append(itn.getStringExtra("St2Abs3by0") + "\t");
 		historyData.append(itn.getStringExtra("St2Abs3by1") + "\t");
-		historyData.append(itn.getStringExtra("St2Abs3by2"));
+		historyData.append(itn.getStringExtra("St2Abs3by2") + "\t");
+		historyData.append(itn.getStringExtra("HWSN") + "\t");
+		historyData.append(itn.getStringExtra("SWVersion") + "\t");
+		historyData.append(itn.getStringExtra("FWVersion") + "\t");
+		historyData.append(itn.getStringExtra("OSVersion"));
 	}
 	
 	public void WhichIntent() { // Activity conversion

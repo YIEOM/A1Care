@@ -10,9 +10,9 @@ import isens.hba1c_analyzer.R;
 import isens.hba1c_analyzer.SystemSettingActivity;
 import isens.hba1c_analyzer.TimerDisplay;
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
+import isens.hba1c_analyzer.Presenter.AbsorbancePresenter;
 import isens.hba1c_analyzer.Presenter.AdjustmentPresenter;
 import isens.hba1c_analyzer.Presenter.ConvertPresenter;
-import isens.hba1c_analyzer.Presenter.Correction1Presenter;
 import isens.hba1c_analyzer.Presenter.CorrelationPresenter;
 import isens.hba1c_analyzer.Presenter.LanguagePresenter;
 import isens.hba1c_analyzer.R.anim;
@@ -38,9 +38,9 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class Correction1Activity extends Activity implements FactorIView{
+public class tHbActivity extends Activity implements FactorIView{
 	
-	private Correction1Presenter mCorrectionPresenter;
+	private AbsorbancePresenter mAbsorbancePresenter;
 	
 	private EditText fct1stEText, fct2ndEText;
 
@@ -56,8 +56,8 @@ public class Correction1Activity extends Activity implements FactorIView{
 		overridePendingTransition(R.anim.fade, R.anim.hold);
 		setContentView(R.layout.setting2);
 		
-		mCorrectionPresenter = new Correction1Presenter(this, this, this, R.id.setting2Layout);
-		mCorrectionPresenter.init();
+		mAbsorbancePresenter = new AbsorbancePresenter(this, this, this, R.id.setting2Layout);
+		mAbsorbancePresenter.init();
 		
 //		if(HomeActivity.ANALYZER_SW == HomeActivity.DEVEL) {
 //			
@@ -80,10 +80,10 @@ public class Correction1Activity extends Activity implements FactorIView{
 	
 	public void setImage() {
 		
-		titleImage.setBackgroundResource(0);
-		iconImage.setBackgroundResource(R.drawable.sf_f1);
-		fct1stImage.setBackgroundResource(R.drawable.af_slope);
-		fct2ndImage.setBackgroundResource(R.drawable.af_intercept);
+		titleImage.setBackgroundResource(R.drawable.thb_title);
+		iconImage.setBackgroundResource(R.drawable.thb_icon);
+		fct1stImage.setBackgroundResource(R.drawable.sf_f1);
+		fct2ndImage.setBackgroundResource(R.drawable.sf_f2);
 	}
 	
 	public void setEditTextId() {
@@ -126,7 +126,7 @@ public class Correction1Activity extends Activity implements FactorIView{
 				switch(v.getId()) {
 			
 				case R.id.backBtn	:
-					mCorrectionPresenter.changeActivity();
+					mAbsorbancePresenter.changeActivity();
 					break;
 					
 				default	:
@@ -150,7 +150,7 @@ public class Correction1Activity extends Activity implements FactorIView{
 			
 		} catch (NumberFormatException e) {
 			
-			value = 1.0f;
+			value = 0.0f;
 		}
 		
 		return value;

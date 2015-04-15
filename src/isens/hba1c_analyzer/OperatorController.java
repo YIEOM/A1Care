@@ -428,8 +428,18 @@ public class OperatorController {
 		
 		if(id.equals("ENGINEER")) {
 	
-			if(password.equals("ENGINEER")) {
+			if(HomeActivity.ANALYZER_SW != HomeActivity.DEVEL) {
+			
+				if(password.equals("ENGINEER")) {
 					
+					popupWindow.dismiss();
+					
+					mSettingActivity = new SettingActivity();
+					mSettingActivity.MaintenanceIntent(activity, context);
+				}
+				
+			} else {
+				
 				popupWindow.dismiss();
 				
 				mSettingActivity = new SettingActivity();

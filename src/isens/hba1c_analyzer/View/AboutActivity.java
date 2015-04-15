@@ -10,6 +10,7 @@ import isens.hba1c_analyzer.R;
 import isens.hba1c_analyzer.SystemSettingActivity;
 import isens.hba1c_analyzer.TimerDisplay;
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
+import isens.hba1c_analyzer.Presenter.AboutPresenter;
 import isens.hba1c_analyzer.Presenter.AdjustmentPresenter;
 import isens.hba1c_analyzer.Presenter.ConvertPresenter;
 import isens.hba1c_analyzer.Presenter.Correction1Presenter;
@@ -40,9 +41,15 @@ import android.widget.TextView;
 
 public class AboutActivity extends Activity implements AboutIView{
 	
-//	private AboutPresenter mAboutPresenter;
+	private AboutPresenter mAboutPresenter;
 	
-	private EditText hwVersionEText;
+	private ImageView iconImage;
+	
+	private TextView swVersionText,
+					 fwVersionText,
+					 osVersionText;
+	
+	private EditText hwSNEText;
 
 	private Button backBtn;
 	
@@ -50,25 +57,44 @@ public class AboutActivity extends Activity implements AboutIView{
 		
 		super.onCreate(savedInstanceState);
 		overridePendingTransition(R.anim.fade, R.anim.hold);
-		setContentView(R.layout.setting2);
+		setContentView(R.layout.about);
+		
+		mAboutPresenter = new AboutPresenter(this, this, this, R.id.aboutLayout);
+		mAboutPresenter.init();
 	}
 	
 	public void setImageId() {
 		
+		iconImage = (ImageView) findViewById(R.id.icon);
 	}
 	
 	public void setImage() {
 		
+		iconImage.setBackgroundResource(R.drawable.about_icon);
+	}
+	
+	public void setTextId() {
+		
+		swVersionText = (TextView) findViewById(R.id.swVersionText);
+		fwVersionText = (TextView) findViewById(R.id.fwVersionText);
+		osVersionText = (TextView) findViewById(R.id.osVersionText);
+	}
+	
+	public void setText(String swVersion, String fwVersion, String osVersion) {
+		
+		swVersionText.setText(swVersion);
+		fwVersionText.setText(fwVersion);
+		osVersionText.setText(osVersion);
 	}
 	
 	public void setEditTextId() {
 		
-		hwVersionEText = (EditText) findViewById(R.id.hwVersionEText);
+		hwSNEText = (EditText) findViewById(R.id.hwSNEText);
 	}
 	
-	public void setEditText(String version) {
+	public void setEditText(String text) {
 		
-		hwVersionEText.setText(version);
+		hwSNEText.setText(text);
 	}
 	
 	public void setButtonId() {
@@ -99,7 +125,7 @@ public class AboutActivity extends Activity implements AboutIView{
 				switch(v.getId()) {
 			
 				case R.id.backBtn	:
-//					mCorrectionPresenter.changeActivity();
+					mAboutPresenter.changeActivity();
 					break;
 					
 				default	:
@@ -115,7 +141,7 @@ public class AboutActivity extends Activity implements AboutIView{
 	
 	public String getHWVersion() {
 		
-		String version = hwVersionEText.getText().toString();
+		String version = hwSNEText.getText().toString();
 		
 		return version;
 	}

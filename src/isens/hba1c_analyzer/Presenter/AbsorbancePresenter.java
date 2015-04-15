@@ -88,7 +88,7 @@ public class AbsorbancePresenter {
 		
 		mFactorModel.setFactor((int) FactorModel.ABSORBANCE_FACTOR, "SF Fct1stVal", fct1st, "SF Fct2ndVal", fct2nd);
 		
-		mActivityChange.whichIntent(TargetIntent.Maintenance);
+		mActivityChange.whichIntent(TargetIntent.Engineer);
 		mActivityChange.finish();
 	}
 }

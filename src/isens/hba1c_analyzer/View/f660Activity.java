@@ -39,7 +39,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class Correction2Activity extends Activity implements FactorIView{
+public class f660Activity extends Activity implements FactorIView{
 	
 	private Correction2Presenter mCorrectionPresenter;
 	
@@ -81,8 +81,8 @@ public class Correction2Activity extends Activity implements FactorIView{
 	
 	public void setImage() {
 		
-		titleImage.setBackgroundResource(0);
-		iconImage.setBackgroundResource(R.drawable.sf_f2);
+		titleImage.setBackgroundResource(R.drawable.f660_title);
+		iconImage.setBackgroundResource(R.drawable.abs67_icon);
 		fct1stImage.setBackgroundResource(R.drawable.af_slope);
 		fct2ndImage.setBackgroundResource(R.drawable.af_intercept);
 	}

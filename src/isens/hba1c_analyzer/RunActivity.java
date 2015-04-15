@@ -1294,7 +1294,7 @@ public class RunActivity extends Activity {
 		mSerialPort = new SerialPort();
 		mSerialPort.BoardTx(str, target);
 		
-		Log.w("MotionInstruct", "instruction : " + str);
+//		Log.w("MotionInstruct", "instruction : " + str);
 	}
 
 	public void BoardMessage(String colRsp, AnalyzerState nextState, String errRsp, AnalyzerState errState, int rspTime) {
@@ -1346,7 +1346,7 @@ public class RunActivity extends Activity {
 		
 		do {
 		
-			rawValue = mSerialPort.BoardMessageOutput();			
+			rawValue = mSerialPort.BoardMessageOutput();
 			 
 			if(time++ > 50) break;
 				
@@ -1368,13 +1368,17 @@ public class RunActivity extends Activity {
 			checkError = R.string.e241;	
 		}
 		
-		return (DouValue - BlankValue[0]);	
+		Log.w("AbsorbanceMeasure", "value : " + (DouValue - BlankValue[0]));
+		
+//		return (DouValue - BlankValue[0]);
+
+		return (-77);
 	}
 	
 	public int tHbCalculate() {
 		
 		A = Absorb1stHandling()*RF1_Slope + RF1_Offset;
-//		Log.w("tHb Calucation", "thb A' : " + A);s
+		Log.w("tHb Calucation", "thb A' : " + A);
 		
 		/* TEST Mode */
 		if(HomeActivity.ANALYZER_SW != HomeActivity.NORMAL) return NORMAL_OPERATION;
@@ -1409,10 +1413,12 @@ public class RunActivity extends Activity {
 			B = 0.15;
 		}
 		
-//		Log.w("tHb Calucation", "thb B' : " + B);
+		Log.w("HbA1c Calucation", "thb B : " + B);
 		St = (A - Barcode.b1)/Barcode.a1;
 		tHbDbl = St;
 		Bt = (A - Barcode.b1)/Barcode.a1 + 1;
+		
+		Log.w("HbA1c Calucation", "St : " + St + "Bt : " + Bt);
 		
 		C1 = St * (Barcode.Asm + Barcode.Ass) + Barcode.Aim + Barcode.Ais;
 		C2 = B - C1;
@@ -1528,6 +1534,8 @@ public class RunActivity extends Activity {
 		abs[1] = Step1stAbsorb2[0] - Step1stAbsorb2[2];
 		abs[2] = Step1stAbsorb3[0] - Step1stAbsorb3[2];
 		
+		Log.w("Absorb1stHandling", "abs[0] : " + abs[0] + "abs[1] : " + abs[1] + "abs[2] : " + abs[2]);
+		
 		std = (abs[0] + abs[1] + abs[2]) / 3;
 		
 		for(int i = 0; i < 3; i++) {
@@ -1544,6 +1552,8 @@ public class RunActivity extends Activity {
 		sum = abs[0] + abs[1] + abs[2];
 		
 		avg = (sum - abs[idx]) / 2;
+		
+		Log.w("Absorb1stHandling", "Absorb : " + avg);
 		
 		return avg;
 	}
@@ -1574,6 +1584,8 @@ public class RunActivity extends Activity {
 		abs[1] = Step2ndAbsorb2[1] - Step2ndAbsorb2[2];
 		abs[2] = Step2ndAbsorb3[1] - Step2ndAbsorb3[2];
 		
+		Log.w("Absorb2ndHandling", "abs[0] : " + abs[0] + "abs[1] : " + abs[1] + "abs[2] : " + abs[2]);
+		
 		std = (abs[0] + abs[1] + abs[2]) / 3;
 				
 		for(int i = 0; i < 3; i++) {
@@ -1591,7 +1603,7 @@ public class RunActivity extends Activity {
 		
 		avg = (sum - abs[idx]) / 2;
 		
-//		Log.w("Absorb2ndHandling", "thb B : " + avg);
+		Log.w("Absorb2ndHandling", "Absorb : " + avg);
 		
 		return avg;
 	}

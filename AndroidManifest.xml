@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="isens.hba1c_analyzer"
     android:versionCode="1"
-    android:versionName="v1.3.01-R"
+    android:versionName="v1.3.02-R"
     android:sharedUserId="android.uid.system" >
     
     <uses-sdk
@@ -73,15 +73,16 @@
            	    <action android:name=""/>
            	</intent-filter>
     	</activity>
-    	<activity android:name="MaintenanceActivity"></activity>
+    	<activity android:name="EngineerActivity"></activity>
 		<activity android:name="LampCopyActivity"></activity>
 		<activity android:name="ShutDownActivity"></activity>
 		<activity android:name="isens.hba1c_analyzer.View.CorrelationActivity"></activity>
 		<activity android:name="isens.hba1c_analyzer.View.AdjustmentActivity"></activity>
-		<activity android:name="isens.hba1c_analyzer.View.Correction1Activity"></activity>
-		<activity android:name="isens.hba1c_analyzer.View.Correction2Activity"></activity>
-		<activity android:name="isens.hba1c_analyzer.View.AbsorbanceActivity"></activity>
+		<activity android:name="isens.hba1c_analyzer.View.f535Activity"></activity>
+		<activity android:name="isens.hba1c_analyzer.View.f660Activity"></activity>
+		<activity android:name="isens.hba1c_analyzer.View.tHbActivity"></activity>
     	<activity android:name="isens.hba1c_analyzer.View.FunctionalTestActivity"></activity>
+    	<activity android:name="isens.hba1c_analyzer.View.AboutActivity"></activity>
     	<activity android:name="ActionTempActivity"></activity>
 		<activity android:name="BlankTempActivity"></activity>
 		<activity android:name="ScanTempActivity"></activity>

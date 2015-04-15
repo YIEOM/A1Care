@@ -1,6 +1,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/setting2Layout"
+    android:id="@+id/aboutLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/background" >
@@ -9,7 +9,7 @@
         android:id="@+id/backBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="#00000000" />
+        android:background="@drawable/back_selector" />
     
     <ImageView
         android:layout_width="wrap_content"
@@ -22,7 +22,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="128px"
-        android:layout_marginTop="20px" />
+        android:layout_marginTop="20px"
+        android:src="@drawable/about_title" />
     
     <ImageView
         android:id="@+id/device"
@@ -44,13 +45,6 @@
         android:shadowRadius="1.2"
         android:layout_marginLeft="578px"
         android:layout_marginTop="15px" />
-   	
-   	<Button
-        android:id="@+id/escBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="728px"
-        android:background="#00000000" />
    	        
    	<RelativeLayout 
    	    android:layout_width="120px"
@@ -65,33 +59,107 @@
 	        android:layout_height="wrap_content" />
 	   	    
    	</RelativeLayout>
-   	
-   	<RelativeLayout 
-   	    android:layout_width="180px"
+   	    
+    <TextView
+        android:layout_width="180px"
         android:layout_height="50px"
         android:layout_marginLeft="160px"
-        android:layout_marginTop="228px"
-        android:gravity="center" >
-   	    
-	   	<ImageView
-	        android:id="@+id/hwText"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content" />
-	   	    
-   	</RelativeLayout>
-   	
+        android:layout_marginTop="120px"
+        android:gravity="center"
+	    android:text="HW S/N"
+	    android:textStyle="bold"
+        android:typeface="sans"
+        android:textSize="28px"
+        android:textColor="#565656" />
+    
     <EditText
-        android:id="@+id/hwVersionEText"
+        android:id="@+id/hwSNEText"
         android:layout_width="271px"
-        android:layout_height="62px"
+        android:layout_height="50px"
         android:layout_marginLeft="361px"
-        android:layout_marginTop="222px"
+        android:layout_marginTop="120px"
         android:paddingLeft="10px"
         android:ems="10"
-        android:textSize="40px"
+        android:textSize="28px"
         android:textColor="#565656"
         android:singleLine="true" 
         android:imeOptions="actionDone"
+        android:gravity="center_vertical"
         android:background="@drawable/factor_box" />
     
+    <TextView
+        android:layout_width="180px"
+        android:layout_height="50px"
+        android:layout_marginLeft="160px"
+        android:layout_marginTop="200px"
+        android:gravity="center"
+	    android:text="SW version"
+	    android:textStyle="bold"
+        android:typeface="sans"
+        android:textSize="28px"
+        android:textColor="#565656" />
+   	
+    <TextView
+        android:id="@+id/swVersionText"
+        android:layout_width="271px"
+        android:layout_height="50px"
+        android:layout_marginLeft="361px"
+        android:layout_marginTop="200px"
+        android:paddingLeft="10px"
+        android:ems="10"
+        android:textSize="28px"
+        android:textColor="#565656"
+        android:gravity="center_vertical"
+        android:background="@drawable/factor_box" />
+    
+    <TextView
+        android:layout_width="180px"
+        android:layout_height="50px"
+        android:layout_marginLeft="160px"
+        android:layout_marginTop="280px"
+        android:gravity="center"
+	    android:text="FW version"
+	    android:textStyle="bold"
+        android:typeface="sans"
+        android:textSize="28px"
+        android:textColor="#565656" />
+   	
+    <TextView
+        android:id="@+id/fwVersionText"
+        android:layout_width="271px"
+        android:layout_height="50px"
+        android:layout_marginLeft="361px"
+        android:layout_marginTop="280px"
+        android:paddingLeft="10px"
+        android:ems="10"
+        android:textSize="28px"
+        android:textColor="#565656"
+        android:gravity="center_vertical"
+        android:background="@drawable/factor_box" />
+    
+    <TextView
+        android:layout_width="180px"
+        android:layout_height="50px"
+        android:layout_marginLeft="160px"
+        android:layout_marginTop="360px"
+        android:gravity="center"
+	    android:text="OS version"
+	    android:textStyle="bold"
+        android:typeface="sans"
+        android:textSize="28px"
+        android:textColor="#565656" />
+   	
+    <TextView
+        android:id="@+id/osVersionText"
+        android:layout_width="271px"
+        android:layout_height="50px"
+        android:layout_marginLeft="361px"
+        android:layout_marginTop="360px"
+        android:paddingLeft="10px"
+        android:ems="10"
+        android:textSize="28px"
+        android:textColor="#565656"
+        android:gravity="center_vertical"
+        android:background="@drawable/factor_box" />
+
 </RelativeLayout>

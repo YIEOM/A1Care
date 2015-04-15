@@ -11,6 +11,7 @@ import isens.hba1c_analyzer.RunActivity.AnalyzerState;
 import isens.hba1c_analyzer.RunActivity.CartDump;
 import isens.hba1c_analyzer.RunActivity.CheckCoverError;
 import isens.hba1c_analyzer.Temperature.CellTmpRead;
+import isens.hba1c_analyzer.Model.AboutModel;
 import isens.hba1c_analyzer.Model.ConvertModel;
 import isens.hba1c_analyzer.View.ConvertActivity;
 import android.app.Activity;
@@ -46,7 +47,7 @@ public class SystemCheckActivity extends Activity {
 					  ERROR_535nm = 2,
 					  ERROR_660nm = 4,
 					  ERROR_750nm = 8;	
-	
+
 	public int numberChaberTmpCheck = 5*60; // 5 minute
 	final static byte NUMBER_AMBIENT_TMP_CHECK = 30/5; // 30 second
 	final static String SHAKING_CHECK_TIME = "0030";
@@ -58,6 +59,7 @@ public class SystemCheckActivity extends Activity {
 	public Temperature mTemperature;
 	public TimerDisplay mTimerDisplay;
 	public ErrorPopup mErrorPopup;
+	public AboutModel mAboutModel;
 	
 	public AudioManager audioManager;
 	
@@ -106,6 +108,8 @@ public class SystemCheckActivity extends Activity {
 		mGpioPort.TriggerHigh();
 		
 		ParameterInit();
+		GetVersion mGetVersion = new GetVersion(this);
+		mGetVersion.start();
 		BrightnessInit();
 		VolumeInit();
 		
@@ -658,6 +662,28 @@ public class SystemCheckActivity extends Activity {
 		
 		SharedPreferences temperaturePref = getSharedPreferences("Temperature", MODE_PRIVATE);
 		Temperature.InitTmp = temperaturePref.getFloat("Cell Block", 27.0f);
+		
+		SharedPreferences aboutPref = getSharedPreferences("About", MODE_PRIVATE);
+		AboutModel.HWSN = aboutPref.getString("HW S/N", "Nothing");
+	}
+	
+	public class GetVersion extends Thread {
+		
+		Activity activity;
+		String swVersion, fwVersion, osVersion;
+		
+		public GetVersion(Activity activity) {
+			
+			this.activity = activity;
+		}
+		
+		public void run() {
+			
+			mAboutModel = new AboutModel(activity);
+			AboutModel.SWVersion = mAboutModel.getSWVersion();
+			AboutModel.FWVersion = mAboutModel.getFWVersion();
+			AboutModel.OSVersion = mAboutModel.getOSVersion();
+		}
 	}
 	
 	public void checkMode() {

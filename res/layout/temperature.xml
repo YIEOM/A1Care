@@ -4,11 +4,24 @@
     android:layout_height="match_parent"
     android:background="@drawable/background" >
     
+     <Button
+        android:id="@+id/backBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/back_selector" />
+    
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:src="@drawable/title" />
+    
+	<ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="128px"
+        android:layout_marginTop="20px"
+        android:src="@drawable/temperature_title" />
     
     <ImageView
         android:id="@+id/device" 
@@ -31,12 +44,6 @@
         android:layout_marginLeft="578px"
         android:layout_marginTop="15px" />
    	
-   	<Button
-        android:id="@+id/escicon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="728px"
-        android:background="@drawable/esc_selector" />
    	
    	<TextView
         android:layout_width="270px"

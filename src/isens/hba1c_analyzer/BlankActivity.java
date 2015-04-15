@@ -357,6 +357,8 @@ public class BlankActivity extends Activity {
 			douValue = Double.parseDouble(rawValue);
 			
 			if((min > douValue) || (douValue > max)) photoCheck += errBits;
+
+			Log.w("AbsorbanceMeasure", "value : " + douValue);
 			
 		} catch(NumberFormatException e) {
 			

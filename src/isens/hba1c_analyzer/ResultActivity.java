@@ -1,6 +1,7 @@
 package isens.hba1c_analyzer;
 
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
+import isens.hba1c_analyzer.Model.AboutModel;
 import isens.hba1c_analyzer.Model.ConvertModel;
 import isens.hba1c_analyzer.View.ConvertActivity;
 
@@ -463,6 +464,10 @@ public class ResultActivity extends Activity {
 		nextIntent.putExtra("St2Abs3by0", absorbDfm.format(RunActivity.Step2ndAbsorb3[0]));
 		nextIntent.putExtra("St2Abs3by1", absorbDfm.format(RunActivity.Step2ndAbsorb3[1]));
 		nextIntent.putExtra("St2Abs3by2", absorbDfm.format(RunActivity.Step2ndAbsorb3[2]));
+		nextIntent.putExtra("HWSN", AboutModel.HWSN);
+		nextIntent.putExtra("SWVersion", AboutModel.SWVersion);
+		nextIntent.putExtra("FWVersion", AboutModel.FWVersion);
+		nextIntent.putExtra("OSVersion", AboutModel.OSVersion);
 		
 		switch(Itn) {
 		

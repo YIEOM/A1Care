@@ -35,7 +35,7 @@ public class CalibrationActivity extends Activity{
 	public ActionActivity mActionActivity;
 	public TimerDisplay mTimerDisplay;
 	
-	public Button escBtn,
+	public Button backBtn,
 				  blankBtn,
 				  quickBtn,
 				  fullBtn;
@@ -130,7 +130,7 @@ public class CalibrationActivity extends Activity{
 	
 	public void setButtonId() {
 		
-		escBtn = (Button)findViewById(R.id.escicon);
+		backBtn = (Button)findViewById(R.id.backBtn);
 		blankBtn = (Button)findViewById(R.id.blankbtn);
 		quickBtn = (Button)findViewById(R.id.quickbtn);
 		fullBtn = (Button)findViewById(R.id.fullbtn);
@@ -138,7 +138,7 @@ public class CalibrationActivity extends Activity{
 	
 	public void setButtonClick() {
 		
-		escBtn.setOnTouchListener(mTouchListener);
+		backBtn.setOnTouchListener(mTouchListener);
 		blankBtn.setOnTouchListener(mTouchListener);
 		quickBtn.setOnTouchListener(mTouchListener);
 		fullBtn.setOnTouchListener(mTouchListener);
@@ -164,8 +164,8 @@ public class CalibrationActivity extends Activity{
 
 					switch(v.getId()) {
 				
-					case R.id.escicon	:
-						WhichIntent(TargetIntent.Maintenance);
+					case R.id.backBtn	:
+						WhichIntent(TargetIntent.Engineer);
 						break;
 						
 					case R.id.blankbtn	:
@@ -1501,8 +1501,8 @@ public class CalibrationActivity extends Activity{
 			nextIntent = new Intent(getApplicationContext(), HomeActivity.class);
 			break;
 		
-		case Maintenance	:				
-			nextIntent = new Intent(getApplicationContext(), MaintenanceActivity.class);
+		case Engineer	:				
+			nextIntent = new Intent(getApplicationContext(), EngineerActivity.class);
 			break;
 		
 		default		:	

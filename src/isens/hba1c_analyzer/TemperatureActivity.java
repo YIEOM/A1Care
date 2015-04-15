@@ -32,7 +32,7 @@ public class TemperatureActivity extends Activity {
 	public Handler runHandler = new Handler();
 	public Timer runningTimer;
 	
-	public Button escBtn,
+	public Button backBtn,
 				  setBtn;	
 	
 	public TextView chamTmpText,
@@ -54,13 +54,13 @@ public class TemperatureActivity extends Activity {
 	
 	public void setButtonId() {
 	
-		escBtn = (Button)findViewById(R.id.escicon);
+		backBtn = (Button)findViewById(R.id.backBtn);
 		setBtn = (Button)findViewById(R.id.setbtn);
 	}
 	
 	public void setButtonClick() {
 		
-		escBtn.setOnTouchListener(mTouchListener);
+		backBtn.setOnTouchListener(mTouchListener);
 		setBtn.setOnTouchListener(mTouchListener);
 	}
 	
@@ -79,8 +79,8 @@ public class TemperatureActivity extends Activity {
 					
 					switch(v.getId()) {
 				
-					case R.id.escicon		:
-						WhichIntent(TargetIntent.Maintenance);
+					case R.id.backBtn		:
+						WhichIntent(TargetIntent.Engineer);
 						break;
 						
 					case R.id.setbtn		:
@@ -198,8 +198,8 @@ public class TemperatureActivity extends Activity {
 		
 		switch(Itn) {
 		
-		case Maintenance	:
-			nextIntent = new Intent(getApplicationContext(), MaintenanceActivity.class);
+		case Engineer	:
+			nextIntent = new Intent(getApplicationContext(), EngineerActivity.class);
 			break;
 			
 		default		:	

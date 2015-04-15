@@ -5,7 +5,7 @@ import java.util.TimerTask;
 
 import isens.hba1c_analyzer.ErrorPopup;
 import isens.hba1c_analyzer.HomeActivity;
-import isens.hba1c_analyzer.MaintenanceActivity;
+import isens.hba1c_analyzer.EngineerActivity;
 import isens.hba1c_analyzer.R;
 import isens.hba1c_analyzer.RunActivity;
 import isens.hba1c_analyzer.SerialPort;
@@ -56,7 +56,7 @@ public class LampCopyActivity extends Activity {
 	public ErrorPopup mErrorPopup;
 	public Graph mGraph;
 	
-	public Button escIcon,
+	public Button backBtn,
 				  runBtn,
 				  cancelBtn,
 				  darkBtn,
@@ -125,7 +125,7 @@ public class LampCopyActivity extends Activity {
 	
 	public void setButtonId() {
 		
-		escIcon = (Button)findViewById(R.id.escBtn);
+		backBtn = (Button)findViewById(R.id.backBtn);
 		runBtn = (Button)findViewById(R.id.runBtn);
 		cancelBtn = (Button)findViewById(R.id.cancelBtn);
 		darkBtn = (Button)findViewById(R.id.darkBtn);
@@ -136,7 +136,7 @@ public class LampCopyActivity extends Activity {
 	
 	public void setButtonClick() {
 		
-		escIcon.setOnTouchListener(mTouchListener);
+		backBtn.setOnTouchListener(mTouchListener);
 		runBtn.setOnTouchListener(mTouchListener);
 		cancelBtn.setOnTouchListener(mTouchListener);
 		darkBtn.setOnTouchListener(mTouchListener);
@@ -165,8 +165,8 @@ public class LampCopyActivity extends Activity {
 					
 					switch(v.getId()) {
 				
-					case R.id.escBtn	:
-						WhichIntent(TargetIntent.Maintenance);
+					case R.id.backBtn	:
+						WhichIntent(TargetIntent.Engineer);
 						break;
 						
 					case R.id.runBtn	:
@@ -283,7 +283,7 @@ public class LampCopyActivity extends Activity {
 		isNormal = true;
 		isMeasured = false;
 		
-		setButtonState(R.id.escBtn, false);
+		setButtonState(R.id.backBtn, false);
 		setButtonState(R.id.runBtn, false);
 		setButtonState(R.id.darkBtn, false);
 		setButtonState(R.id.f535nmBtn, false);
@@ -696,7 +696,7 @@ public class LampCopyActivity extends Activity {
 				runOnUiThread(new Runnable(){
 					public void run() {
 
-						setButtonState(R.id.escBtn, true);
+						setButtonState(R.id.backBtn, true);
 						setButtonState(R.id.runBtn, true);
 						setButtonState(R.id.darkBtn, true);
 						setButtonState(R.id.f535nmBtn, true);
@@ -809,8 +809,8 @@ public class LampCopyActivity extends Activity {
 			nextIntent = new Intent(getApplicationContext(), HomeActivity.class);
 			break;
 			
-		case Maintenance		:				
-			nextIntent = new Intent(getApplicationContext(), MaintenanceActivity.class);
+		case Engineer		:				
+			nextIntent = new Intent(getApplicationContext(), EngineerActivity.class);
 			break;
 			
 		default		:	

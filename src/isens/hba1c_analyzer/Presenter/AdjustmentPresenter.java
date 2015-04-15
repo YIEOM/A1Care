@@ -88,7 +88,7 @@ public class AdjustmentPresenter {
 		
 		mFactorModel.setFactor((int) FactorModel.ADJUSTMENT_FACTOR, "AF SlopeVal", fct1st, "AF OffsetVal", fct2nd);
 		
-		mActivityChange.whichIntent(TargetIntent.Maintenance);
+		mActivityChange.whichIntent(TargetIntent.Engineer);
 		mActivityChange.finish();
 	}
 }

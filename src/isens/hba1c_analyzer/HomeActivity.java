@@ -59,7 +59,7 @@ public class HomeActivity extends Activity {
 				  recordBtn,
 				  escIcon;
 	
-	public enum TargetIntent {Home, HbA1c, NA, Action, ActionQC, Run, RunQC, Blank, BlankQC, Record, Result, ResultQC, Remove, Image, Date, Setting, SystemSetting, DataSetting, OperatorSetting, FunctionalTest, Time, Display, HIS, HISSetting, Export, Maintenance, FileSave, ControlFileLoad, PatientFileLoad, NextFile, PreFile, Adjustment, Sound, Calibration, Language, Correlation, Temperature, Lamp, Convert, Absorbance, ShutDown, ScanTemp, Correction1, Correction2}
+	public enum TargetIntent {Home, HbA1c, NA, Action, ActionQC, Run, RunQC, Blank, BlankQC, Record, Result, ResultQC, Remove, Image, Date, Setting, SystemSetting, DataSetting, OperatorSetting, FunctionalTest, Time, Display, HIS, HISSetting, Export, Engineer, FileSave, ControlFileLoad, PatientFileLoad, NextFile, PreFile, Adjustment, Sound, Calibration, Language, Correlation, About, Temperature, Lamp, Convert, tHb, ShutDown, ScanTemp, f535, f660}
 	
 	public static boolean LoginFlag = true,
 						  CheckFlag;
@@ -241,7 +241,7 @@ public class HomeActivity extends Activity {
 		
 		if(ANALYZER_SW == DEMO) {
 			
-			demoVersion = "A1Care_v1.3.23-demo";
+			demoVersion = "A1Care_v1.3.26-D";
 			DisplayDemoVersion(demoVersion);	
 		
 		} else if(ANALYZER_SW == DEVEL) {
