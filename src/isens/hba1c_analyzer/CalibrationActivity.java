@@ -194,7 +194,7 @@ public class CalibrationActivity extends Activity{
 	
 	public void enabledAllBtn() {
 
-		setButtonState(R.id.escicon, true);
+		setButtonState(R.id.backBtn, true);
 		setButtonState(R.id.blankbtn, true);
 		setButtonState(R.id.quickbtn, true);
 		setButtonState(R.id.fullbtn, true);
@@ -202,7 +202,7 @@ public class CalibrationActivity extends Activity{
 	
 	public void unenabledAllBtn() {
 
-		setButtonState(R.id.escicon, false);
+		setButtonState(R.id.backBtn, false);
 		setButtonState(R.id.blankbtn, false);
 		setButtonState(R.id.quickbtn, false);
 		setButtonState(R.id.fullbtn, false);

@@ -14,8 +14,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:src="@drawable/title"
-        android:background="@drawable/back_selector" />
+        android:src="@drawable/title" />
     
     <ImageView
         android:layout_width="wrap_content"
