@@ -577,7 +577,9 @@ public class SerialPort {
 		
 		tempTail = (BoardMsgTail + 1) % UART_RX_MASK;
 		BoardMsgTail = tempTail;
-		
+
+		Log.w("BoardMessageOutput", "Message : " + BoardMsgBuffer[tempTail]);
+
 		return BoardMsgBuffer[tempTail];
 	}
 	

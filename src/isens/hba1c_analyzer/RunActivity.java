@@ -1358,7 +1358,7 @@ public class RunActivity extends Activity {
 		
 		try {
 			
-			DouValue = Double.parseDouble(rawValue);	
+			DouValue = Double.parseDouble(rawValue);
 		
 		} catch(NumberFormatException e) {
 			
@@ -1370,9 +1370,7 @@ public class RunActivity extends Activity {
 		
 		Log.w("AbsorbanceMeasure", "value : " + (DouValue - BlankValue[0]));
 		
-//		return (DouValue - BlankValue[0]);
-
-		return (-77);
+		return (DouValue - BlankValue[0]);
 	}
 	
 	public int tHbCalculate() {
