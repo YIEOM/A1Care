@@ -533,7 +533,7 @@ public class CalibrationActivity extends Activity{
 				
 				Cart1stFilter1 Cart1stFilter1Obj = new Cart1stFilter1();
 				Cart1stFilter1Obj.start();	
-			}
+			} else TimerDisplay.RXBoardFlag = false;
 		}
 	}
 
@@ -604,7 +604,7 @@ public class CalibrationActivity extends Activity{
 				
 				Cart1stFilter2 Cart1stFilter2Obj = new Cart1stFilter2();
 				Cart1stFilter2Obj.start();	
-			}
+			} else TimerDisplay.RXBoardFlag = false;
 		}
 	}
 
@@ -669,7 +669,7 @@ public class CalibrationActivity extends Activity{
 				
 				Cart1stFilter3 Cart1stFilter3Obj = new Cart1stFilter3();
 				Cart1stFilter3Obj.start();
-			}
+			} else TimerDisplay.RXBoardFlag = false;
 		}
 	}
 	
@@ -734,7 +734,7 @@ public class CalibrationActivity extends Activity{
 				
 				Cart2ndShaking Cart2ndShakingObj = new Cart2ndShaking();
 				Cart2ndShakingObj.start();	
-			}
+			} else TimerDisplay.RXBoardFlag = false;
 		}
 	}
 	
@@ -787,7 +787,7 @@ public class CalibrationActivity extends Activity{
 				
 				Cart2ndFilter1 Cart2ndFilter1Obj = new Cart2ndFilter1();
 				Cart2ndFilter1Obj.start();
-			}
+			} else TimerDisplay.RXBoardFlag = false;
 		}
 	}
 	
@@ -857,7 +857,7 @@ public class CalibrationActivity extends Activity{
 			
 				Cart2ndFilter2 Cart2ndFilter2Obj = new Cart2ndFilter2();
 				Cart2ndFilter2Obj.start();
-			}
+			} else TimerDisplay.RXBoardFlag = false;
 		}
 	}
 	
@@ -922,7 +922,7 @@ public class CalibrationActivity extends Activity{
 					
 				Cart2ndFilter3 Cart2ndFilter3Obj = new Cart2ndFilter3();
 				Cart2ndFilter3Obj.start();
-			}
+			} else TimerDisplay.RXBoardFlag = false;
 		}
 	}
 	
@@ -987,7 +987,7 @@ public class CalibrationActivity extends Activity{
 				
 				CartDump CartDumpObj = new CartDump();
 				CartDumpObj.start();
-			}
+			} else TimerDisplay.RXBoardFlag = false;
 		}
 	}
 	
@@ -1046,8 +1046,8 @@ public class CalibrationActivity extends Activity{
 				}).start();
 				
 				ThreadRun = false;
-				TimerDisplay.RXBoardFlag = true;
-			}
+				TimerDisplay.RXBoardFlag = false;
+			} else TimerDisplay.RXBoardFlag = false;
 		}
 	}
 	
