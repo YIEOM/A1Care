@@ -3,6 +3,7 @@ package isens.hba1c_analyzer.Model;
 import isens.hba1c_analyzer.SerialPort;
 import isens.hba1c_analyzer.TimerDisplay;
 
+import java.text.DecimalFormat;
 import java.util.Calendar;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -13,7 +14,7 @@ import android.os.SystemClock;
 
 public class DateModel {
 
-	public final static byte YEAR_UP	 = 1,
+	public final static byte YEAR_UP	= 1,
 			  		  		 YEAR_DOWN  = 2, 
 			  		  		 MONTH_UP   = 3, 
 			  		  		 MONTH_DOWN = 4,  
@@ -93,12 +94,16 @@ public class DateModel {
 	
 	public String getStrMonth() {
 		
-		return Integer.toString(getCurrMonth());
+		DecimalFormat dfm = new DecimalFormat("00");
+		
+		return dfm.format(getCurrMonth());
 	}
 
 	public String getStrDay() {
 		
-		return Integer.toString(getCurrDay());
+		DecimalFormat dfm = new DecimalFormat("00");
+		
+		return dfm.format(getCurrDay());
 	}
 	
 	public void setDate() {

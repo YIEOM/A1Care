@@ -7,9 +7,10 @@ import isens.hba1c_analyzer.HomeActivity.TargetIntent;
 import isens.hba1c_analyzer.RunActivity.AnalyzerState;
 import isens.hba1c_analyzer.RunActivity.CartDump;
 import isens.hba1c_analyzer.RunActivity.CheckCoverError;
+import isens.hba1c_analyzer.SystemCheckActivity.InsideTmpCheck;
 import isens.hba1c_analyzer.SystemCheckActivity.MotorCheck;
-import isens.hba1c_analyzer.SystemCheckActivity.TemperatureCheck;
 import isens.hba1c_analyzer.Model.ActivityChange;
+import isens.hba1c_analyzer.Model.Hardware;
 import isens.hba1c_analyzer.View.FunctionalTestActivity;
 import android.app.Activity;
 import android.content.Context;
@@ -36,20 +37,24 @@ public class BlankActivity extends Activity {
 	public ErrorPopup mErrorPopup;
 	public TimerDisplay mTimerDisplay;
 	public ActivityChange mActivityChange;
+	public Temperature mTemperature;
 	
 	public Handler runHandler = new Handler();
 	public Timer runningTimer;
+	
+	public Activity activity;
 	
 	public Button escIcon;
 	
 	public ImageView warning;
 
 	private RunActivity.AnalyzerState blankState;
+	
 	private byte photoCheck;
 	
 	private int checkError = RunActivity.NORMAL_OPERATION;
 
-	public boolean btnState = false;
+	public static double ChamberTmp;
 	
 	public byte runSec = 0;
 	
@@ -59,14 +64,14 @@ public class BlankActivity extends Activity {
 		overridePendingTransition(R.anim.fade, R.anim.hold);
 		setContentView(R.layout.blank);
 		
-		mErrorPopup = new ErrorPopup(this, this, R.id.blanklayout);
+		mErrorPopup = new ErrorPopup(this, this, R.id.blanklayout, null, 0);
 		
 		BlankInit();
 	}                     
 	
-	public void setButtonId() {
+	public void setButtonId(Activity activity) {
 		
-		escIcon = (Button)findViewById(R.id.escicon);
+		escIcon = (Button)activity.findViewById(R.id.escicon);
 	}
 	
 	public void setButtonClick() {
@@ -74,9 +79,9 @@ public class BlankActivity extends Activity {
 		escIcon.setOnTouchListener(mTouchListener);
 	}
 	
-	public void setButtonState(int btnId, boolean state) {
+	public void setButtonState(int btnId, boolean state, Activity activity) {
 		
-		findViewById(btnId).setEnabled(state);
+		activity.findViewById(btnId).setEnabled(state);
 	}
 	
 	Button.OnTouchListener mTouchListener = new View.OnTouchListener() {
@@ -87,21 +92,16 @@ public class BlankActivity extends Activity {
 			switch(event.getAction()) {
 			
 			case MotionEvent.ACTION_UP	:
-				
-				if(!btnState) {
-
-					btnState = true;
-					
-					switch(v.getId()) {
-				
-					case R.id.escicon		:
-						ESC();
-						btnState = false;
-						break;
-							
-					default	:
-						break;
-					}
+				unenabledAllBtn(activity);
+									
+				switch(v.getId()) {
+			
+				case R.id.escicon		:
+					ESC();
+					break;
+						
+				default	:
+					break;
 				}
 			
 				break;
@@ -111,22 +111,22 @@ public class BlankActivity extends Activity {
 		}
 	};
 	
-	public void enabledAllBtn() {
+	public void enabledAllBtn(Activity activtiy) {
 
-		setButtonState(R.id.escicon, true);
+		setButtonState(R.id.escicon, true, activtiy);
 	}
 	
-	public void unenabledAllBtn() {
+	public void unenabledAllBtn(Activity activtiy) {
 		
-		setButtonState(R.id.escicon, false);
-		
-		btnState = false;
+		setButtonState(R.id.escicon, false, activtiy);
 	}
 	
 	public void BlankInit() {
 		
-		setButtonId();
-		unenabledAllBtn();
+		activity = this;
+		
+		setButtonId(activity);
+		unenabledAllBtn(activity);
 		setButtonClick();
 		
 		RunActivity.IsStop = false;
@@ -137,13 +137,13 @@ public class BlankActivity extends Activity {
 		mTimerDisplay.ActivityParm(this, R.id.blanklayout);
 				
 		mSerialPort = new SerialPort();
+		mTemperature = new Temperature();
 		
 		blankState = RunActivity.AnalyzerState.InitPosition;
 		photoCheck = 0;
 		
 		RunTimerInit(this);
 		
-		TimerDisplay.RXBoardFlag = true;
 		SensorCheck SensorCheckObj = new SensorCheck(this, this, R.id.blanklayout);
 		SensorCheckObj.start();
 	}
@@ -185,14 +185,43 @@ public class BlankActivity extends Activity {
 					runOnUiThread(new Runnable(){
 						public void run() {
 
-							enabledAllBtn();
+							enabledAllBtn(activity);
 						}
 					});
 				}
 			}).start();
 			
-			BlankStep BlankStepObj = new BlankStep();
-			BlankStepObj.start();
+			ChamberTmpCheck mChamberTmpCheck = new ChamberTmpCheck();
+			mChamberTmpCheck.start();
+		}
+	}
+	
+	public class ChamberTmpCheck extends Thread {
+		
+		public void run() {
+			
+			int i;
+			double tmp = 0;
+			
+			for(i = 0; i < 4; i++) {
+				
+				tmp += mTemperature.CellTmpRead();
+				
+				SerialPort.Sleep(500);
+			}
+			
+			if(((Temperature.InitTmp - 1) < tmp/4) & (tmp/4 < (Temperature.InitTmp + 1))) {
+				
+				ChamberTmp = tmp/4;
+				
+				BlankStep mBlankStep = new BlankStep();
+				mBlankStep.start();
+				
+			} else {
+				
+				checkError = R.string.e222;
+				changeActivity();
+			}
 		}
 	}
 	
@@ -272,14 +301,14 @@ public class BlankActivity extends Activity {
 				case ShakingMotorError	:
 					checkError = R.string.e211;
 					blankState = AnalyzerState.NoWorking;
-					WhichIntent(TargetIntent.Home);
+					changeActivity();
 					break;
 					
 				case FilterMotorError	:
 					checkError = R.string.e212;
 					MotionInstruct(RunActivity.HOME_POSITION, SerialPort.CtrTarget.NormalSet);			
 					BoardMessage(RunActivity.HOME_POSITION, AnalyzerState.NoWorking, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 10);
-					WhichIntent(TargetIntent.Home);
+					changeActivity();
 					break;
 				
 				case PhotoSensorError	:
@@ -329,6 +358,9 @@ public class BlankActivity extends Activity {
 	
 	public void MotionInstruct(String str, SerialPort.CtrTarget target) { // Motion of system instruction
 		
+		while(TimerDisplay.RXBoardFlag) SerialPort.Sleep(10);
+		
+		TimerDisplay.RXBoardFlag = true;
 		mSerialPort.BoardTx(str, target);
 	}
 	
@@ -337,7 +369,9 @@ public class BlankActivity extends Activity {
 		int time = 0;
 		String rawValue;
 		double douValue = 0;
+		while(TimerDisplay.RXBoardFlag) SerialPort.Sleep(10);
 		
+		TimerDisplay.RXBoardFlag = true;
 		mSerialPort.BoardTx("VH", SerialPort.CtrTarget.NormalSet);
 		
 		do {
@@ -358,8 +392,6 @@ public class BlankActivity extends Activity {
 			
 			if((min > douValue) || (douValue > max)) photoCheck += errBits;
 
-			Log.w("AbsorbanceMeasure", "value : " + douValue);
-			
 		} catch(NumberFormatException e) {
 			
 			douValue = 0.0;
@@ -367,6 +399,8 @@ public class BlankActivity extends Activity {
 			blankState = AnalyzerState.NoResponse;
 			checkError = R.string.e241;
 		}
+		
+		TimerDisplay.RXBoardFlag = false;
 		
 		return (douValue - RunActivity.BlankValue[0]);
 	}
@@ -438,6 +472,8 @@ public class BlankActivity extends Activity {
 			
 			SerialPort.Sleep(100);
 		}
+		
+		TimerDisplay.RXBoardFlag = false;
 	}
 	
 	public void checkMode() {
@@ -502,7 +538,7 @@ public class BlankActivity extends Activity {
 				case ShakingMotorError	:
 					checkError = R.string.e211;
 					blankState = AnalyzerState.NoWorking;
-					WhichIntent(TargetIntent.Home);
+					changeActivity();
 					break;
 					
 				case FilterMotorError	:
@@ -519,7 +555,7 @@ public class BlankActivity extends Activity {
 					
 				case NoResponse :
 					blankState = AnalyzerState.NoWorking;
-					WhichIntent(TargetIntent.Home);
+					changeActivity();
 					break;
 					
 				case Stop		:
@@ -542,19 +578,7 @@ public class BlankActivity extends Activity {
 			
 				mErrorPopup.ErrorPopupClose();
 				
-				switch(HomeActivity.MEASURE_MODE) {
-				
-				case HomeActivity.A1C	:
-					WhichIntent(TargetIntent.Home);
-					break;
-					
-				case HomeActivity.A1C_QC	:
-					WhichIntent(TargetIntent.FunctionalTest);
-					break;
-					
-				default	:
-					break;
-				}
+				changeActivity();
 			
 			} else if(checkError == R.string.e322) {
 				
@@ -573,7 +597,7 @@ public class BlankActivity extends Activity {
 				Runnable updater = new Runnable() {
 					public void run() {
 						
-						WariningDisplay(activity);
+						WarningDisplay(activity);
 					}
 				};
 				
@@ -585,7 +609,7 @@ public class BlankActivity extends Activity {
 		runningTimer.schedule(OneSecondPeriod, 0, 1000); // Timer period : 100msec
 	}
 	
-	public void WariningDisplay(Activity activity) { // Display running time
+	public void WarningDisplay(Activity activity) { // Display running time
 		
 		warning = (ImageView) activity.findViewById(R.id.warning);
 		
@@ -603,9 +627,19 @@ public class BlankActivity extends Activity {
 		RunActivity.IsStop = true;
 	}
 	
-	public void WhichIntent(TargetIntent Itn) { // Activity conversion
+	private void changeActivity() {
 		
-		TimerDisplay.RXBoardFlag = false;
+		if(HomeActivity.MEASURE_MODE == HomeActivity.A1C) {
+			
+			WhichIntent(TargetIntent.Home);
+			
+		} else {
+			
+			WhichIntent(TargetIntent.FunctionalTest);
+		}
+	}
+	
+	public void WhichIntent(TargetIntent Itn) { // Activity conversion
 		
 		Intent nextIntent = null;
 		
@@ -615,13 +649,14 @@ public class BlankActivity extends Activity {
 			nextIntent = new Intent(getApplicationContext(), HomeActivity.class);
 			nextIntent.putExtra("System Check State", (int) checkError);
 			break;
+
+		case FunctionalTest	:				
+			nextIntent = new Intent(getApplicationContext(), FunctionalTestActivity.class);
+			nextIntent.putExtra("System Check State", (int) checkError);
+			break;
 			
 		case Action	:				
 			nextIntent = new Intent(getApplicationContext(), ActionActivity.class);
-			break;
-			
-		case FunctionalTest	:				
-			nextIntent = new Intent(getApplicationContext(), FunctionalTestActivity.class);
 			break;
 			
 		default			:	

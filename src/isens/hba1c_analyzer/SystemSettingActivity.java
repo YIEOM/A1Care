@@ -87,9 +87,9 @@ public class SystemSettingActivity extends Activity {
 		convertBtn.setOnTouchListener(mTouchListener);
 	}
 	
-	public void setButtonState(int btnId, boolean state, Activity activity) {
+	public void setButtonState(int btnId, boolean state) {
 		
-		activity.findViewById(btnId).setEnabled(state);
+		findViewById(btnId).setEnabled(state);
 	}
 	
 	Button.OnTouchListener mTouchListener = new View.OnTouchListener() {
@@ -100,48 +100,44 @@ public class SystemSettingActivity extends Activity {
 			switch(event.getAction()) {
 			
 			case MotionEvent.ACTION_UP	:
+				unenabledAllBtn(); //0624
+					
+				switch(v.getId()) {
+			
+				case R.id.homeicon		:
+					WhichIntent(TargetIntent.Home);
+					break;
+					
+				case R.id.backicon		:
+					WhichIntent(TargetIntent.Setting);
+					break;
 				
-				if(!btnState) {
-
-					btnState = true;
-					
-					switch(v.getId()) {
+				case R.id.displaybtn	:
+					WhichIntent(TargetIntent.Display);
+					break;
 				
-					case R.id.homeicon		:
-						WhichIntent(TargetIntent.Home);
-						break;
-						
-					case R.id.backicon		:
-						WhichIntent(TargetIntent.Setting);
-						break;
+				case R.id.datebtn	:
+					WhichIntent(TargetIntent.Date);
+					break;
 					
-					case R.id.displaybtn	:
-						WhichIntent(TargetIntent.Display);
-						break;
+				case R.id.timebtn		:
+					WhichIntent(TargetIntent.Time);
+					break;
 					
-					case R.id.datebtn	:
-						WhichIntent(TargetIntent.Date);
-						break;
-						
-					case R.id.timebtn		:
-						WhichIntent(TargetIntent.Time);
-						break;
-						
-					case R.id.soundbtn		:
-						WhichIntent(TargetIntent.Sound);
-						break;
+				case R.id.soundbtn		:
+					WhichIntent(TargetIntent.Sound);
+					break;
+				
+				case R.id.languagebtn	:
+					WhichIntent(TargetIntent.Language);
+					break;
+				
+				case R.id.convertbtn	:
+					WhichIntent(TargetIntent.Convert);
+					break;
 					
-					case R.id.languagebtn	:
-						WhichIntent(TargetIntent.Language);
-						break;
-					
-					case R.id.convertbtn	:
-						WhichIntent(TargetIntent.Convert);
-						break;
-						
-					default	:
-						break;
-					}
+				default	:
+					break;
 				}
 			
 				break;
@@ -150,6 +146,30 @@ public class SystemSettingActivity extends Activity {
 			return false;
 		}
 	};
+	
+	public void enabledAllBtn() {
+
+		setButtonState(R.id.homeicon, true);
+		setButtonState(R.id.backicon, true);
+		setButtonState(R.id.displaybtn, true);
+		setButtonState(R.id.datebtn, true);
+		setButtonState(R.id.timebtn, true);
+		setButtonState(R.id.soundbtn, true);
+		setButtonState(R.id.languagebtn, true);
+		setButtonState(R.id.convertbtn, true);
+	}
+	
+	public void unenabledAllBtn() {
+		
+		setButtonState(R.id.homeicon, false);
+		setButtonState(R.id.backicon, false);
+		setButtonState(R.id.displaybtn, false);
+		setButtonState(R.id.datebtn, false);
+		setButtonState(R.id.timebtn, false);
+		setButtonState(R.id.soundbtn, false);
+		setButtonState(R.id.languagebtn, false);
+		setButtonState(R.id.convertbtn, false);
+	}
 	
 	public void SystemSettingInit() {
 
@@ -160,12 +180,6 @@ public class SystemSettingActivity extends Activity {
 		mTimerDisplay.ActivityParm(this, R.id.systemsettinglayout);
 	}
 	
-	public void Reset() {
-		
-		mErrorPopup = new ErrorPopup(this, this, R.id.systemsettinglayout);
-		mErrorPopup.OXBtnDisplay(R.string.reset);
-	}
-
 	public void SettingParameterInit() {
 		
 		/* Adjustment factor parameter Initialization */

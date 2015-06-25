@@ -55,7 +55,7 @@ public class LanguagePresenter {
 		mTimerDisplay.ActivityParm(activity, layout);
 	}
 	
-	public void changeLanguageUp() {
+	public void upLanguage() {
 		
 		unenabledAllBtn();
 		
@@ -66,7 +66,7 @@ public class LanguagePresenter {
 		enabledAllBtn();
 	}
 
-	public void changeLanguageDown() {
+	public void downLanguage() {
 		
 		unenabledAllBtn();
 		

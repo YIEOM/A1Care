@@ -108,11 +108,11 @@ public class LanguageActivity extends Activity implements LanguageIView {
 					break;
 					
 				case R.id.leftBtn	:
-//					mLanguagePresenter.changeLanguageDown();
+//					mLanguagePresenter.downLanguage();
 					break;
 					
 				case R.id.rightBtn	:
-//					mLanguagePresenter.changeLanguageUp();
+//					mLanguagePresenter.upLanguage();
 					break;
 					
 				default	:

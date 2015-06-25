@@ -7,4 +7,5 @@ public interface FunctionalTestIView {
 	void setButtonId();
 	void setButtonClick();
 	void setButtonState(int btnId, boolean state);
+	int getIntentData();
 }

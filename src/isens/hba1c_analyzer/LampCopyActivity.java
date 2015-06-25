@@ -71,8 +71,6 @@ public class LampCopyActivity extends Activity {
 	
 	public static boolean isCancel;
 	
-	public boolean btnState = false;
-	
 	public double f535nmValue[] = new double[200];
 	
 	public int numofSample = 0;
@@ -159,32 +157,26 @@ public class LampCopyActivity extends Activity {
 			
 			case MotionEvent.ACTION_UP	:
 				
-				if(!btnState) {
-
-					btnState = true;
+				switch(v.getId()) {
+			
+				case R.id.backBtn	:
+					WhichIntent(TargetIntent.Engineer);
+					break;
 					
-					switch(v.getId()) {
+				case R.id.runBtn	:
+					unenabledAllBtn();
+					TestStart();
+					break;
 				
-					case R.id.backBtn	:
-						WhichIntent(TargetIntent.Engineer);
-						break;
-						
-					case R.id.runBtn	:
-						setButtonState(R.id.runBtn, false);
-						TestStart();
-						break;
+				case R.id.cancelBtn	:
+					setButtonState(R.id.cancelBtn, false);
+					cancelTest();
+					break;
 					
-					case R.id.cancelBtn	:
-						setButtonState(R.id.cancelBtn, false);
-						cancelTest();
-						break;
-						
-					default	:
-						break;
-					}
+				default	:
+					break;
 				}
-
-				btnState = false;
+				
 				break;
 				
 			case MotionEvent.ACTION_DOWN	:
@@ -218,6 +210,28 @@ public class LampCopyActivity extends Activity {
 		}
 	};
 	
+	public void enabledAllBtn() {
+
+		setButtonState(R.id.backBtn, true);
+		setButtonState(R.id.runBtn, true);
+		setButtonState(R.id.cancelBtn, true);
+		setButtonState(R.id.darkBtn, true);
+		setButtonState(R.id.f535nmBtn, true);
+		setButtonState(R.id.f660nmBtn, true);
+		setButtonState(R.id.f750nmBtn, true);
+	}
+	
+	public void unenabledAllBtn() {
+		
+		setButtonState(R.id.backBtn, false);
+		setButtonState(R.id.runBtn, false);
+		setButtonState(R.id.cancelBtn, false);
+		setButtonState(R.id.darkBtn, false);
+		setButtonState(R.id.f535nmBtn, false);
+		setButtonState(R.id.f660nmBtn, false);
+		setButtonState(R.id.f750nmBtn, false);
+	}
+	
 	public void LampInit() {
 		
 		setImageId();
@@ -229,6 +243,8 @@ public class LampCopyActivity extends Activity {
 		
 		mTimerDisplay = new TimerDisplay();
 		mTimerDisplay.ActivityParm(this, R.id.lampLayout);
+		
+		mSerialPort = new SerialPort();
 		
 		mSurfaceView = (SurfaceView) findViewById(R.id.graphBg);
 		
@@ -283,17 +299,8 @@ public class LampCopyActivity extends Activity {
 		isNormal = true;
 		isMeasured = false;
 		
-		setButtonState(R.id.backBtn, false);
-		setButtonState(R.id.runBtn, false);
-		setButtonState(R.id.darkBtn, false);
-		setButtonState(R.id.f535nmBtn, false);
-		setButtonState(R.id.f660nmBtn, false);
-		setButtonState(R.id.f750nmBtn, false);
-		
 		CancelTest mCancelTest = new CancelTest();
 		mCancelTest.start();
-		
-		TimerDisplay.RXBoardFlag = true;
 		
 		photoState = AnalyzerState.MeasurePosition;
 		checkError = RunActivity.NORMAL_OPERATION;
@@ -392,7 +399,7 @@ public class LampCopyActivity extends Activity {
 					runOnUiThread(new Runnable(){
 						public void run() {
 
-							cancelBtn.setEnabled(true);
+							setButtonState(R.id.cancelBtn, true);
 						}
 					});
 				}
@@ -400,12 +407,10 @@ public class LampCopyActivity extends Activity {
 			break;
 			
 		default	:
-			mErrorPopup = new ErrorPopup(activity, context, layout);
+			mErrorPopup = new ErrorPopup(activity, context, layout, null, 0);
 			mErrorPopup.ErrorBtnDisplay(checkError);
 			break;
 		}
-		
-		btnState = false;
 	}
 	
 	public class PhotoMeasure extends Thread {
@@ -441,7 +446,6 @@ public class LampCopyActivity extends Activity {
 					numofSample = ADCMaxMinAcquire(f535nmValue);
 					MeasureDisplay(isOn, CoordinateAcquire());
 					
-//					Log.w("Photo measure", "run");
 					isMeasured = true;
 				
 				} else {
@@ -458,7 +462,7 @@ public class LampCopyActivity extends Activity {
 				break;
 				
 			default	:
-				mErrorPopup = new ErrorPopup(activity, context, layoutid);
+				mErrorPopup = new ErrorPopup(activity, context, layoutid, null, 0);
 				mErrorPopup.ErrorBtnDisplay(checkError);
 				break;
 			}
@@ -535,11 +539,8 @@ public class LampCopyActivity extends Activity {
 						
 						range = (float) 250/(cdn[5]*12);
 						
-//						Log.w("DrawThread", "alpha : " + cdn[5]);
-						
 						for(int i = (f535nmValue.length-(numofSample-1)); i < (f535nmValue.length-1); i++) {
 							
-//							Log.w("DrawThread", "value : " + f535nmValue[i]);
 							canvas.drawLine(2*i, (float) (250-((f535nmValue[i]-cdn[4])*range)), 2*(i+1), (float) (250-((f535nmValue[i+1]-cdn[4])*range)), pnt);
 						}
 					}
@@ -596,13 +597,10 @@ public class LampCopyActivity extends Activity {
 		adcMax = max;
 		adcMin = min;
 		
-//		Log.w("ADCMaxMinAcquire", "Max : " + adcMax + " Min : " + adcMin);
 		return num;
 	}
 	
 	public int ADCDiffrence() {
-		
-//		Log.w("ADCDiffrence", "difference : " + (adcMax - adcMin));
 		
 		return (adcMax - adcMin)/8;
 	}
@@ -625,8 +623,7 @@ public class LampCopyActivity extends Activity {
 		yCdn[3] = adcMax - 7*diff;
 		yCdn[4] = adcMax - 10*diff;
 		yCdn[5] = diff;
-
-//		Log.w("CoordinateAcquire", "diff : " + diff + " yCdn[3] : " + yCdn[3]);
+		
 		return yCdn;
 	}
 
@@ -682,8 +679,6 @@ public class LampCopyActivity extends Activity {
 			}
 		}
 		
-		TimerDisplay.RXBoardFlag = false;
-	
 		SerialPort.Sleep(1000);
 		
 		ADCAcquire(0);
@@ -702,8 +697,6 @@ public class LampCopyActivity extends Activity {
 						setButtonState(R.id.f535nmBtn, true);
 						setButtonState(R.id.f660nmBtn, true);
 						setButtonState(R.id.f750nmBtn, true);
-						
-						btnState = false;
 					}
 				});
 			}
@@ -712,7 +705,10 @@ public class LampCopyActivity extends Activity {
 	
 	public void MotionInstruct(String str, SerialPort.CtrTarget target) { // Motion of system instruction
 		
-		mSerialPort = new SerialPort();
+		while(TimerDisplay.RXBoardFlag) SerialPort.Sleep(10);
+		
+		TimerDisplay.RXBoardFlag = true;
+		
 		mSerialPort.BoardTx(str, target);
 	}
 	
@@ -721,6 +717,10 @@ public class LampCopyActivity extends Activity {
 		int time = 0;
 		String rawValue;
 		double douValue = 0;
+		
+		while(TimerDisplay.RXBoardFlag) SerialPort.Sleep(10);
+		
+		TimerDisplay.RXBoardFlag = true;
 		
 		mSerialPort = new SerialPort();
 		mSerialPort.BoardTx("VH", SerialPort.CtrTarget.NormalSet);
@@ -740,7 +740,9 @@ public class LampCopyActivity extends Activity {
 		
 			SerialPort.Sleep(100);
 		}	
-	
+		
+		TimerDisplay.RXBoardFlag = false;
+		
 		if(photoState != AnalyzerState.NoResponse) {
 
 			douValue = Double.parseDouble(rawValue);
@@ -782,6 +784,8 @@ public class LampCopyActivity extends Activity {
 			
 			SerialPort.Sleep(100);
 		}
+		
+		TimerDisplay.RXBoardFlag = false;
 	}
 	
 	public class CancelTest extends Thread {

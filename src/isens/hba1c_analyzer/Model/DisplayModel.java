@@ -69,7 +69,6 @@ public class DisplayModel {
 		try {
 			
 			brightnessValue = android.provider.Settings.System.getInt(activity.getContentResolver(), android.provider.Settings.System.SCREEN_BRIGHTNESS);
-			Log.w("GetBrightness", "Brightness : " + brightnessValue);
 			
 		} catch(Exception e) {
 			
@@ -83,10 +82,8 @@ public class DisplayModel {
 	
 		try {
 			
-			Log.w("SetBrightness", "Brightness : " + brightnessValue);
-			
 			WindowManager.LayoutParams params = activity.getWindow().getAttributes();
-			params.screenBrightness = (float)brightnessValue/255;
+			params.screenBrightness = (float) brightnessValue/255;
 			activity.getWindow().setAttributes(params);
 			
 			android.provider.Settings.System.putInt(activity.getContentResolver(), android.provider.Settings.System.SCREEN_BRIGHTNESS, brightnessValue);

@@ -69,7 +69,7 @@
         android:background="@drawable/os_done_btn_selector" />
     
    	<Button
-        android:id="@+id/canclebtn"
+        android:id="@+id/cancelbtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="550px"

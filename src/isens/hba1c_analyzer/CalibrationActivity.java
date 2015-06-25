@@ -28,39 +28,29 @@ import isens.hba1c_analyzer.RunActivity.Cart2ndShaking;
 import isens.hba1c_analyzer.RunActivity.CartDump;
 import isens.hba1c_analyzer.RunActivity.ShakingAniThread;
 import isens.hba1c_analyzer.SerialPort.CtrTarget;
+import isens.hba1c_analyzer.TemperatureActivity.TmpDisplay;
 
 public class CalibrationActivity extends Activity{
 
 	public SerialPort mSerialPort;
 	public ActionActivity mActionActivity;
 	public TimerDisplay mTimerDisplay;
+	public Temperature mTemperature;
 	
 	public Button backBtn,
 				  blankBtn,
 				  quickBtn,
 				  fullBtn;
 	
-	public TextView deviceState,
-					oneOne,
-					oneTwo,
-					oneThree,
-					twoOne,
-					twoTwo,
-					twoThree,
-					threeOne,
-					threeTwo,
-					threeThree,
-					fourOne,
-					fourTwo,
-					fourThree,
-					fiveOne,
-					fiveTwo,
-					fiveThree,
-					sixOne,
-					sixTwo,
-					sixThree,
-					hba1cStr,
-					tHbStr;
+	public TextView deviceState, 
+					oneOne, oneTwo, oneThree,
+					twoOne, twoTwo, twoThree,
+					threeOne, threeTwo, threeThree,
+					fourOne, fourTwo, fourThree,
+					fiveOne, fiveTwo, fiveThree,
+					sixOne,	sixTwo,	sixThree,
+					hba1cStr,tHbStr,
+					chamberTmpText,	innerTmpText;
 	
 	public Handler handler = new Handler();
 	public TimerTask OneHundredmsPeriod;
@@ -69,7 +59,7 @@ public class CalibrationActivity extends Activity{
 	public static boolean TestFlag = false,
 						   ThreadRun = false;
 	
-	public enum TargetMode {Blank, Quick, Full, Scan}
+	public enum TargetMode {StandBy, Blank, Quick, Full, Scan}
 	public enum MeasTarget {Shk1stOne, Shk1stTwo, Shk1stThree, Shk2ndOne, Shk2ndTwo, Shk2ndThree}
 	
 	public TargetMode targetMode = null;
@@ -126,6 +116,9 @@ public class CalibrationActivity extends Activity{
 		
 		hba1cStr = (TextView) findViewById(R.id.HbA1cText);
 		tHbStr = (TextView) findViewById(R.id.tHbText);
+		
+		chamberTmpText = (TextView) findViewById(R.id.chamberTmpText);
+		innerTmpText = (TextView) findViewById(R.id.innerTmpText);		
 	}
 	
 	public void setButtonId() {
@@ -158,34 +151,31 @@ public class CalibrationActivity extends Activity{
 			
 			case MotionEvent.ACTION_UP	:
 				
-				if(!btnState) {
-
-					btnState = true;
-
-					switch(v.getId()) {
+				unenabledAllBtn();
 				
-					case R.id.backBtn	:
-						WhichIntent(TargetIntent.Engineer);
-						break;
-						
-					case R.id.blankbtn	:
-						BlankMode();
-						break;
+				switch(v.getId()) {
+			
+				case R.id.backBtn	:
+					WhichIntent(TargetIntent.Engineer);
+					break;
 					
-					case R.id.quickbtn	:
-						QuickMode();
-						break;
-					
-					case R.id.fullbtn	:
-						FullMode();
-						break;
-					
-					default	:
-						break;
-					}
-					
+				case R.id.blankbtn	:
+					BlankMode();
+					break;
+				
+				case R.id.quickbtn	:
+					QuickMode();
+					break;
+				
+				case R.id.fullbtn	:
+					FullMode();
+					break;
+				
+				default	:
 					break;
 				}
+				
+				break;
 			}
 			
 			return false;
@@ -206,8 +196,6 @@ public class CalibrationActivity extends Activity{
 		setButtonState(R.id.blankbtn, false);
 		setButtonState(R.id.quickbtn, false);
 		setButtonState(R.id.fullbtn, false);
-		
-		btnState = false;
 	}
 	
 	public void CalibrationInit() {
@@ -223,6 +211,9 @@ public class CalibrationActivity extends Activity{
 		CalValueDisplay();
 		
 		mSerialPort = new SerialPort();
+
+		targetMode = TargetMode.StandBy;
+		TimerInit();
 	}
 
 	public void TimerInit() {
@@ -235,12 +226,12 @@ public class CalibrationActivity extends Activity{
 				Runnable updater = new Runnable() {
 					public void run() {
 						
-						cnt++;
+						if((targetMode != TargetMode.Scan) && (targetMode != TargetMode.StandBy)) {
 						
-						if(targetMode != TargetMode.Scan) {
-						
-							if(cnt == 5)	DeviceStateDisplay1();
-							else if (cnt == 10) {
+							cnt++;
+							
+							if(cnt == 1)	DeviceStateDisplay1();
+							else if (cnt == 2) {
 								
 								cnt = 0; 
 								DeviceStateDisplay2();
@@ -248,16 +239,9 @@ public class CalibrationActivity extends Activity{
 							
 							ThreadCheck();
 						
-						} else {
-							
-							if(cnt == 50) {
-								
-								cnt = 0;
-								
-								mActionActivity = new ActionActivity();
-								mActionActivity.BarcodeScan();
-							}
 						}
+						
+						if(!TimerDisplay.RXBoardFlag) TmpDisplay();
 					}
 				};
 				
@@ -266,7 +250,7 @@ public class CalibrationActivity extends Activity{
 		};
 		
 		timer = new Timer();
-		timer.schedule(OneHundredmsPeriod, 0, 100); // Timer period : 100msec
+		timer.schedule(OneHundredmsPeriod, 0, 500); // Timer period : 500msec
 	}
 	
 	public void ThreadCheck() {
@@ -314,7 +298,7 @@ public class CalibrationActivity extends Activity{
 	
 	public void Stop() {
 		
-		timer.cancel();
+		targetMode = TargetMode.StandBy;
 		
 		SerialPort.Sleep(300);
 		
@@ -356,9 +340,6 @@ public class CalibrationActivity extends Activity{
 		checkError = RunActivity.NORMAL_OPERATION;
 		ThreadRun = true;
 		
-		TimerInit();
-		
-		TimerDisplay.RXBoardFlag = true;
 		BlankStep BlankStepObj = new BlankStep();
 		BlankStepObj.start();
 	}
@@ -439,7 +420,6 @@ public class CalibrationActivity extends Activity{
 			}
 			
 			ThreadRun = false;
-			TimerDisplay.RXBoardFlag = false;
 		}
 	}
 	
@@ -454,9 +434,6 @@ public class CalibrationActivity extends Activity{
 		
 		AbsorbanceDisplay();
 		
-		TimerInit();
-		
-		TimerDisplay.RXBoardFlag = true;
 		Cart1stShaking Cart1stShakingObj = new Cart1stShaking();
 		Cart1stShakingObj.start();
 	}
@@ -472,9 +449,6 @@ public class CalibrationActivity extends Activity{
 		
 		AbsorbanceDisplay();
 		
-		TimerInit();
-		
-		TimerDisplay.RXBoardFlag = true;
 		Cart1stShaking BlankCart1stShakingObj = new Cart1stShaking();
 		BlankCart1stShakingObj.start();
 	}
@@ -533,7 +507,7 @@ public class CalibrationActivity extends Activity{
 				
 				Cart1stFilter1 Cart1stFilter1Obj = new Cart1stFilter1();
 				Cart1stFilter1Obj.start();	
-			} else TimerDisplay.RXBoardFlag = false;
+			}
 		}
 	}
 
@@ -604,7 +578,7 @@ public class CalibrationActivity extends Activity{
 				
 				Cart1stFilter2 Cart1stFilter2Obj = new Cart1stFilter2();
 				Cart1stFilter2Obj.start();	
-			} else TimerDisplay.RXBoardFlag = false;
+			}
 		}
 	}
 
@@ -669,7 +643,7 @@ public class CalibrationActivity extends Activity{
 				
 				Cart1stFilter3 Cart1stFilter3Obj = new Cart1stFilter3();
 				Cart1stFilter3Obj.start();
-			} else TimerDisplay.RXBoardFlag = false;
+			} 
 		}
 	}
 	
@@ -734,7 +708,7 @@ public class CalibrationActivity extends Activity{
 				
 				Cart2ndShaking Cart2ndShakingObj = new Cart2ndShaking();
 				Cart2ndShakingObj.start();	
-			} else TimerDisplay.RXBoardFlag = false;
+			} 
 		}
 	}
 	
@@ -787,7 +761,7 @@ public class CalibrationActivity extends Activity{
 				
 				Cart2ndFilter1 Cart2ndFilter1Obj = new Cart2ndFilter1();
 				Cart2ndFilter1Obj.start();
-			} else TimerDisplay.RXBoardFlag = false;
+			}
 		}
 	}
 	
@@ -857,7 +831,7 @@ public class CalibrationActivity extends Activity{
 			
 				Cart2ndFilter2 Cart2ndFilter2Obj = new Cart2ndFilter2();
 				Cart2ndFilter2Obj.start();
-			} else TimerDisplay.RXBoardFlag = false;
+			} 
 		}
 	}
 	
@@ -922,7 +896,7 @@ public class CalibrationActivity extends Activity{
 					
 				Cart2ndFilter3 Cart2ndFilter3Obj = new Cart2ndFilter3();
 				Cart2ndFilter3Obj.start();
-			} else TimerDisplay.RXBoardFlag = false;
+			} 
 		}
 	}
 	
@@ -987,7 +961,7 @@ public class CalibrationActivity extends Activity{
 				
 				CartDump CartDumpObj = new CartDump();
 				CartDumpObj.start();
-			} else TimerDisplay.RXBoardFlag = false;
+			} 
 		}
 	}
 	
@@ -1046,13 +1020,15 @@ public class CalibrationActivity extends Activity{
 				}).start();
 				
 				ThreadRun = false;
-				TimerDisplay.RXBoardFlag = false;
-			} else TimerDisplay.RXBoardFlag = false;
+			} 
 		}
 	}
 	
 	public void MotionInstruct(String str, SerialPort.CtrTarget target) { // Motion of system instruction
 		
+		while(TimerDisplay.RXBoardFlag) SerialPort.Sleep(10);
+		
+		TimerDisplay.RXBoardFlag = true;
 		mSerialPort.BoardTx(str, target);
 	}
 	
@@ -1233,10 +1209,6 @@ public class CalibrationActivity extends Activity{
 		
 		CalValueDisplay();
 		
-//		mSerialPort = new SerialPort(R.id.caliblayout);
-//		mSerialPort.BarcodeSerialInit();
-//		mSerialPort.BarcodeRxStart();
-		
 		ActionActivity.BarcodeCheckFlag = false;
 		
 		RunActivity.HbA1cValue = 0.0;
@@ -1246,8 +1218,6 @@ public class CalibrationActivity extends Activity{
 		
 		mActionActivity = new ActionActivity();
 		mActionActivity.BarcodeScan();
-		
-		TimerInit();
 		
 		BarcodeScan BarcodeScan = new BarcodeScan();
 		BarcodeScan.start();
@@ -1259,7 +1229,7 @@ public class CalibrationActivity extends Activity{
 			
 			while(!ActionActivity.BarcodeCheckFlag);
 			
-			timer.cancel();
+			targetMode = TargetMode.StandBy;
 			
 			if(ActionActivity.IsCorrectBarcode) HbA1cCalculation();
 			
@@ -1280,12 +1250,45 @@ public class CalibrationActivity extends Activity{
 		}
 	}
 	
+	public void TmpDisplay() {
+		
+		TmpDisplay mTmpDisplay = new TmpDisplay();
+		mTmpDisplay.start();
+	}
+	
+	public class TmpDisplay extends Thread {
+		
+		public void run() {
+			
+			final DecimalFormat tmpdfm = new DecimalFormat("0.0");
+			final double chamTmp,
+						 ambTmp;
+			
+			mTemperature = new Temperature();
+			chamTmp = mTemperature.CellTmpRead();
+			ambTmp = mTemperature.AmbTmpRead(); 
+			
+			new Thread(new Runnable() {
+				public void run() {    
+					runOnUiThread(new Runnable() {
+						public void run(){
+
+							chamberTmpText.setText(tmpdfm.format(chamTmp));
+							innerTmpText.setText(tmpdfm.format(ambTmp));
+						}
+					});
+				}
+			}).start();
+		}
+	}
+	
 	public synchronized double AbsorbanceMeasure() { // Absorbance measurement
 		
-		int time = 0;
 		String rawValue;
 		double douValue = 0;
+		while(TimerDisplay.RXBoardFlag) SerialPort.Sleep(10);
 		
+		TimerDisplay.RXBoardFlag = true;
 		mSerialPort.BoardTx("VH", SerialPort.CtrTarget.NormalSet);
 		
 		rawValue = mSerialPort.BoardMessageOutput();			
@@ -1298,6 +1301,8 @@ public class CalibrationActivity extends Activity{
 		}	
 					
 		douValue = Double.parseDouble(rawValue);
+		
+		TimerDisplay.RXBoardFlag = false;
 		
 		return (douValue - RunActivity.BlankValue[0]);
 	}
@@ -1332,12 +1337,13 @@ public class CalibrationActivity extends Activity{
 			
 			SerialPort.Sleep(100);
 		}
+		
+		TimerDisplay.RXBoardFlag = false;
 	}
 	
 	public synchronized void HbA1cCalculation() {
 		
 		double A, B, St, Bt, C1, C2, SLA, SMA, SHA, BLA, BMA, BHA, SLV, SMV, SHV, BLV, BMV, BHV, SV, SA, BV, BA, a3, b3, a32, b32, a4, b4;
-		
 		
 		if(HomeActivity.ANALYZER_SW == HomeActivity.NORMAL) {
 			
@@ -1351,17 +1357,6 @@ public class CalibrationActivity extends Activity{
 		
 		}
 		
-		Barcode.a1 = 0.009793532;
-		Barcode.b1 = -0.028;
-		Barcode.a21 = 0.060055;
-		Barcode.b21 = -0.003032;
-		Barcode.a22 = 0.05014;
-		Barcode.b22 = -0.004829;
-		Barcode.a23 = 0.039032;
-		Barcode.b23 = -0.005064;
-		Barcode.L   = 5.1;
-		Barcode.M 	= 7.1;
-		Barcode.H   = 11.7;
 		Barcode.Asm = 0;
 		Barcode.Ass = 0;
 		Barcode.Aim = 0;
@@ -1405,9 +1400,6 @@ public class CalibrationActivity extends Activity{
 		
 		RunActivity.HbA1cValue = (C2 - (St * a4 + b4)) / a3 / St * 100; // %-HbA1c(%)
 		
-		Log.w("HbA1cCalculation", "C1 : " + C1);
-		Log.w("HbA1cCalculation", "HbA1cPctDbl : " + RunActivity.HbA1cValue);
-				
 		RunActivity.HbA1cValue = RunActivity.CF_Slope * (RunActivity.AF_Slope * RunActivity.HbA1cValue + RunActivity.AF_Offset) + RunActivity.CF_Offset;
 	}
 	
@@ -1429,8 +1421,7 @@ public class CalibrationActivity extends Activity{
 			   dev[] = new double[3],
 			   std, 
 			   sum, 
-			   avg, 
-			   res;
+			   avg;
 		int idx = 0;
 		
 		abs[0] = RunActivity.Step1stAbsorb1[0] - RunActivity.Step1stAbsorb1[2];
@@ -1492,6 +1483,8 @@ public class CalibrationActivity extends Activity{
 	}
 	
 	public void WhichIntent(TargetIntent Itn) { // Activity conversion
+		
+		timer.cancel();
 		
 		Intent nextIntent = null;
 		

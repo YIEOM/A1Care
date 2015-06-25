@@ -1,7 +1,9 @@
 package isens.hba1c_analyzer;
 
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
+import isens.hba1c_analyzer.Model.SoundModel;
 import isens.hba1c_analyzer.View.LampActivity;
+import isens.hba1c_analyzer.View.SoundActivity;
 import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
@@ -19,15 +21,18 @@ public class ErrorPopup {
 	public BlankActivity mBlankActivity;
 	public ActionActivity mActionActivity;
 	public RunActivity mRunActivity;
-	public OperatorController mOperatorController;
+	public ResultActivity mResultActivity;
+	public OperatorPopup mOperatorPopup;
 	public SystemSettingActivity mSystemSettingActivity;
 	public LampCopyActivity mLampCopyActivity;
+	public EngineerActivity mEngineerActivity;
+	public SoundModel mSoundModel;
 	
 	public Activity activity;
 	public Context context;
-	public int layoutid, error;
+	public int layoutId, error, mode;
 	
-	public View popupView;
+	public View popupView, hostPopView;
 	public PopupWindow popupWindow = null;
 	public RelativeLayout hostLayout;
 	
@@ -38,18 +43,18 @@ public class ErrorPopup {
 	public Button yesBtn, 
 	   			  noBtn;
 	
-	private boolean btnState = false;
-	
-	public ErrorPopup(Activity activity, Context context, int layoutid) {
+	public ErrorPopup(Activity activity, Context context, int layoutId, View popupView, int mode) {
 		
 		this.activity = activity;
 		this.context = context;
-		this.layoutid = layoutid;
+		this.layoutId = layoutId;
+		this.hostPopView = popupView;
+		this.mode = mode;
 	}
 	
 	public void setDisplayId() {
 		
-		hostLayout = (RelativeLayout) activity.findViewById(layoutid);
+		hostLayout = (RelativeLayout) activity.findViewById(layoutId);
 		popupView = View.inflate(context, R.layout.errorpopup, null);
 		popupWindow = new PopupWindow(popupView, 800 , 480, true);
 	
@@ -70,6 +75,20 @@ public class ErrorPopup {
 		popupView.findViewById(btnId).setEnabled(state);
 	}
 	
+	public void enabledAllBtn() {
+
+		setButtonState(R.id.errorbtn, true);
+		setButtonState(R.id.yesbtn, true);
+		setButtonState(R.id.nobtn, true);
+	}
+	
+	public void unenabledAllBtn() {
+		
+		setButtonState(R.id.errorbtn, false);
+		setButtonState(R.id.yesbtn, false);
+		setButtonState(R.id.nobtn, false);
+	}
+	
 	Button.OnTouchListener mErrorTouchListener = new View.OnTouchListener() {
 		
 		@Override
@@ -78,24 +97,19 @@ public class ErrorPopup {
 			switch(event.getAction()) {
 			
 			case MotionEvent.ACTION_UP	:
+				unenabledAllBtn();
 				
-				if(!btnState) {
-
-					btnState = true;			
-				
-					switch(v.getId()) {
-				
-					case R.id.errorbtn		:
-						ErrorBtnPopupClose();
-						btnState = false;
-						break;
-						
-					default	:
-						break;
-					}
-				
+				switch(v.getId()) {
+			
+				case R.id.errorbtn		:
+					ErrorBtnPopupClose();
+					break;
+					
+				default	:
 					break;
 				}
+			
+				break;
 			}
 			
 			return false;
@@ -119,26 +133,20 @@ public class ErrorPopup {
 			switch(event.getAction()) {
 			
 			case MotionEvent.ACTION_UP	:
-					
-				if(!btnState) {
-
-					btnState = true;			
+				unenabledAllBtn();
 				
-					switch(v.getId()) {
+				switch(v.getId()) {
 						
-					case R.id.yesbtn	:
-						OPopupClose();
-						btnState = false;
-						break;
-					
-					case R.id.nobtn		:
-						XPopupClose();
-						btnState = false;
-						break;
-					
-					default	:
-						break;
-					}
+				case R.id.yesbtn	:
+					OPopupClose();
+					break;
+				
+				case R.id.nobtn		:
+					XPopupClose();
+					break;
+				
+				default	:
+					break;
 				}
 			
 				break;
@@ -151,7 +159,7 @@ public class ErrorPopup {
 	public void ErrorBtnDisplay(final int error) {
 		
 		this.error = error;
-		
+
 		if(popupWindow == null) {
 					
 			setDisplayId();
@@ -165,6 +173,9 @@ public class ErrorPopup {
 					popupWindow.setAnimationStyle(0);
 				}
 			});
+			
+			mSoundModel = new SoundModel(activity, context);
+			mSoundModel.playSound( R.raw.beep);
 		
 		} else {
 			
@@ -188,35 +199,70 @@ public class ErrorPopup {
 	
 	public void ErrorBtnPopupClose() {
 		
-		switch(layoutid) {
+		switch(layoutId) {
 		
 		case R.id.homelayout	:
 			ErrorPopupClose();
 			
-			if(error != R.string.w005 && error != R.string.w011 && error != R.string.w018) {
+			if(error == R.string.e221) {
 				
 				mHomeActivity = new HomeActivity();
-				mHomeActivity.Login(activity, context, layoutid);	
+				mHomeActivity.WhichIntent(activity, context, TargetIntent.SystemCheck);
+				
+			} else if(error != R.string.w005 && error != R.string.w011 && error != R.string.w018) {
+				
+				mHomeActivity = new HomeActivity();
+				mHomeActivity.Login(activity, context, layoutId);
+			
+			} else {
+				
+				mOperatorPopup = new OperatorPopup(activity, context, layoutId);
+				mOperatorPopup.enabledAllLoginBtn(hostPopView);
 			}
+			
+			break;
+		
+		case R.id.functionalTestLayout	:
+			ErrorPopupClose();
 			break;
 			
 		case R.id.actionlayout	:
 			ErrorPopupClose();
 			mActionActivity = new ActionActivity();
-			mActionActivity.ActionInit(activity, context);
+			mActionActivity.startScan(activity, context, layoutId);
 			break;
 			
 		case R.id.lampLayout	:
 			ErrorPopupClose();
 			mLampCopyActivity = new LampCopyActivity();
 			mLampCopyActivity.cancelTest();
+			mLampCopyActivity.enabledAllBtn();
 			
 		case R.id.resultlayout	:
 			ErrorPopupClose();
+			mResultActivity = new ResultActivity();
+			mResultActivity.enabledAllBtn(activity);
 			break;
 			
 		case R.id.operatorlayout	:
 			ErrorPopupClose();
+			
+			mOperatorPopup = new OperatorPopup(activity, context, layoutId);
+			
+			switch(mode) {
+			
+			case OperatorSettingActivity.LOGIN	:
+				mOperatorPopup.enabledAllOperatorBtn(hostPopView);
+				break;
+				
+			case OperatorSettingActivity.ADD	:
+				mOperatorPopup.enabledAllAddBtn(hostPopView);
+				break;
+				
+			case OperatorSettingActivity.MODIFY	:
+				mOperatorPopup.enabledAllModBtn(hostPopView);
+				break;
+			}
 			break;
 			
 		default	:
@@ -242,6 +288,9 @@ public class ErrorPopup {
 				}
 			});
 		
+			mSoundModel = new SoundModel(activity, context);
+			mSoundModel.playSound(R.raw.beep);
+			
 		} else {
 			
 			hostLayout.post(new Runnable() {
@@ -250,7 +299,7 @@ public class ErrorPopup {
 					setErrorDisplay(error);
 				}
 			});
-		}
+		}		
 	}
 	
 	public void setErrorDisplay(int error) {
@@ -311,36 +360,42 @@ public class ErrorPopup {
 	
 	public void OPopupClose() {
 		
-		switch(layoutid) {
+		switch(layoutId) {
 		
 		case R.id.homelayout	:
 			ErrorPopupClose();			
 			mHomeActivity = new HomeActivity();
-			mHomeActivity.shutDown(activity, context, layoutid);
+			mHomeActivity.shutDown(activity, context, layoutId);
+			mHomeActivity.setButtonState(R.id.escicon, true, activity);	//0624		
 			break;
 		
 		case R.id.blanklayout	:
 			ErrorDisplay(R.string.wait);
 			mBlankActivity = new BlankActivity();
 			mBlankActivity.BlankStop();
+			mBlankActivity.enabledAllBtn(activity);
 			break;
 			
 		case R.id.actionlayout	:
 			ErrorPopupClose();			
 			mActionActivity = new ActionActivity();
 			mActionActivity.WhichIntent(activity, context, TargetIntent.Remove);
+			mActionActivity.enabledAllBtn(activity);
 			break;
 			
 		case R.id.runlayout		:
 			ErrorDisplay(R.string.wait);
 			mRunActivity = new RunActivity();
 			mRunActivity.RunStop();
+			mRunActivity.enabledAllBtn(activity);
 			break;
 			
-		case R.id.systemsettinglayout	:
-			ErrorPopupClose();			
-			mSystemSettingActivity = new SystemSettingActivity();
-			mSystemSettingActivity.SettingParameterInit();
+		case R.id.engineerlayout	:
+			ErrorPopupClose();
+			mEngineerActivity = new EngineerActivity();
+			mEngineerActivity.WhichIntent(activity, TargetIntent.Delete);
+			mEngineerActivity.enabledAllBtn(activity);
+			break;
 			
 		default	:
 			break;
@@ -351,10 +406,32 @@ public class ErrorPopup {
 		
 		ErrorPopupClose();
 		
-		switch(layoutid) {
+		switch(layoutId) {
 		
+		case R.id.homelayout	:
+			mHomeActivity = new HomeActivity();
+			mHomeActivity.enabledAllBtn(activity);	//0624		
+			break;
+			
+		case R.id.blanklayout	:
+			mBlankActivity = new BlankActivity();
+			mBlankActivity.enabledAllBtn(activity);	//0624
+			break;
+			
 		case R.id.actionlayout	:
 			ActionActivity.IsEnablePopup = false;
+			mBlankActivity = new BlankActivity();
+			mBlankActivity.enabledAllBtn(activity);	//0624
+			break;
+				
+		case R.id.runlayout		:
+			mRunActivity = new RunActivity();
+			mRunActivity.enabledAllBtn(activity);	//0624
+			break;
+			
+		case R.id.engineerlayout	:
+			mEngineerActivity = new EngineerActivity();
+			mEngineerActivity.enabledAllBtn(activity);
 			break;
 			
 		default	:

@@ -42,11 +42,11 @@
 	    android:id="@+id/hba1cPct"
 	    android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="500px"
         android:layout_marginTop="84px"
+        android:layout_centerHorizontal="true"
         android:typeface="sans"
-        android:textSize="85px"
         android:textColor="#1F3E6F"
+        android:textSize="85px"
         android:textStyle="bold" />
    	
    	<TextView
@@ -60,6 +60,64 @@
         android:textStyle="bold"
         android:layout_marginLeft="2px" />
 	 
+   	<RelativeLayout 
+	    android:layout_width="180px"
+	    android:layout_height="wrap_content"
+        android:layout_marginLeft="200px"
+        android:layout_marginTop="208px" >
+	    
+		<TextView
+	        android:id="@+id/primaryTitle"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_marginTop="0px"
+	        android:layout_centerHorizontal="true"
+	        android:typeface="sans"
+	        android:textSize="20px"
+	        android:textColor="#565656" />
+		
+		<TextView
+		    android:id="@+id/rangeTitle"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_marginTop="30px"
+	        android:layout_centerHorizontal="true"
+	        android:typeface="sans"
+	        android:textSize="20px"
+	        android:textColor="#565656" />
+		
+		<TextView
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_marginTop="60px"
+	        android:layout_centerHorizontal="true"
+	        android:text="Cartridge Lot"
+            android:typeface="sans"
+	        android:textSize="20px"
+	        android:textColor="#565656" />
+		
+		<TextView
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_marginTop="90px"
+	        android:layout_centerHorizontal="true"
+	        android:text="Test Date"
+            android:typeface="sans"
+	        android:textSize="20px"
+	        android:textColor="#565656" />
+		
+		<TextView
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_marginTop="120px"
+	        android:layout_centerHorizontal="true"
+            android:text="Patient ID"
+            android:typeface="sans"
+	        android:textSize="20px"
+	        android:textColor="#565656" />
+	    	    
+	</RelativeLayout>
+   	
 	<RelativeLayout 
 	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"
@@ -77,7 +135,7 @@
 	        android:layout_marginTop="0px" />
 		
 		<TextView
-		    android:id="@+id/r_range"
+		    android:id="@+id/range"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:layout_marginLeft="10px"
@@ -90,15 +148,15 @@
 		    android:id="@+id/unit"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/r_range"
-	        android:layout_alignBaseline="@id/r_range"
+            android:layout_toRightOf="@id/range"
+	        android:layout_alignBaseline="@id/range"
 	        android:typeface="sans"
 	        android:textSize="12px"
 	        android:textColor="#242424"
 	        android:layout_marginLeft="5px" />
 		
 		<TextView
-		    android:id="@+id/r_testdate1"
+		    android:id="@+id/testdate1"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:layout_marginLeft="10px"
@@ -108,11 +166,11 @@
 	        android:layout_marginTop="90px" />
 		
 		<TextView
-		    android:id="@+id/r_testdate2"
+		    android:id="@+id/testdate2"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/r_testdate1"
-	        android:layout_alignBaseline="@id/r_testdate1"
+            android:layout_toRightOf="@id/testdate1"
+	        android:layout_alignBaseline="@id/testdate1"
 	        android:typeface="sans"
 	        android:textSize="12px"
 	        android:textColor="#242424"

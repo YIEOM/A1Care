@@ -166,7 +166,7 @@ public class DataStorage extends Activity {
 				line = curline;
 			}
 			
-			fr.close();			
+			fr.close();
 			
 		} catch (FileNotFoundException e) {
 			
@@ -180,5 +180,11 @@ public class DataStorage extends Activity {
 		}
 		
 		return line;
+	}
+	
+	public synchronized void FileDelete(String filePath) {
+		
+		File file = new File(filePath);
+		file.delete();
 	}
 }

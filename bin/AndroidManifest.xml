@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="isens.hba1c_analyzer"
     android:versionCode="1"
-    android:versionName="v1.3.03-R"
+    android:versionName="v1.3.04-R"
     android:sharedUserId="android.uid.system" >
     
     <uses-sdk
@@ -58,6 +58,7 @@
     	<activity android:name="isens.hba1c_analyzer.View.TimeActivity"></activity>
     	<activity android:name="FileSaveActivity" android:process="com.android.phone"></activity>
     	<activity android:name="FileLoadActivity" android:process="com.android.phone"></activity>
+		<activity android:name="FileDeleteActivity" android:process="com.android.phone"></activity>
 		<activity android:name="HISSettingActivity"></activity>
 		<activity android:name="HISActivity"></activity>
 		<activity android:name="isens.hba1c_analyzer.View.DisplayActivity"></activity>
@@ -73,7 +74,11 @@
            	    <action android:name=""/>
            	</intent-filter>
     	</activity>
-    	<activity android:name="EngineerActivity"></activity>
+    	<activity android:name="EngineerActivity">
+    	    <intent-filter >
+           	    <action android:name=""/>
+           	</intent-filter>
+    	</activity>
 		<activity android:name="LampCopyActivity"></activity>
 		<activity android:name="ShutDownActivity"></activity>
 		<activity android:name="isens.hba1c_analyzer.View.CorrelationActivity"></activity>

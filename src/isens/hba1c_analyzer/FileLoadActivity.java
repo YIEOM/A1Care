@@ -27,7 +27,8 @@ public class FileLoadActivity extends Activity {
 				   filePatientID [] = new String[5],
 				   fileOperatorID[] = new String[5],
 				   filePrimary   [] = new String[5],
-				   fileHbA1c     [] = new String[5];
+				   fileHbA1c     [] = new String[5],
+				   fileType     [] = new String[5];
 			   
 	String filePath = "",
 		   loadData;
@@ -82,15 +83,16 @@ public class FileLoadActivity extends Activity {
 				
 				loadData = mDataStorage.DataLoad(filePath);
 				
-				pIdx = 23 + 2;
-				pLen = Integer.parseInt(loadData.substring(23, pIdx));
+				pIdx = 24 + 2;
+				pLen = Integer.parseInt(loadData.substring(24, pIdx));
 				oIdx = pIdx + pLen + 2;
 				oLen = Integer.parseInt(loadData.substring(pIdx + pLen, oIdx));
 				
 				fileDateTime  [i] = loadData.substring(0, 4) + loadData.substring(4, 6) + loadData.substring(6, 8) + loadData.substring(8, 10) + 
 								loadData.substring(10, 12) + loadData.substring(12, 14);
 				fileTestNum   [i] = loadData.substring(14, 18);
-				fileRefNum    [i] = loadData.substring(18, 23);
+				fileType	  [i] = loadData.substring(18, 19);
+				fileRefNum    [i] = loadData.substring(19, 24);
 				filePatientID [i] = loadData.substring(pIdx, pIdx + pLen);
 				fileOperatorID[i] = loadData.substring(oIdx, oIdx + oLen);
 				filePrimary   [i] = loadData.substring(oIdx + oLen, oIdx + oLen + 1);
@@ -126,6 +128,7 @@ public class FileLoadActivity extends Activity {
 		nextIntent.putExtra("OperatorID", fileOperatorID);
 		nextIntent.putExtra("Primary", filePrimary);
 		nextIntent.putExtra("HbA1c", fileHbA1c);
+		nextIntent.putExtra("Type", fileType);
 		startActivity(nextIntent);
 				
 		finish();

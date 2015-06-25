@@ -64,6 +64,11 @@ public class TemperatureActivity extends Activity {
 		setBtn.setOnTouchListener(mTouchListener);
 	}
 	
+	public void setButtonState(int btnId, boolean state) {
+		
+		findViewById(btnId).setEnabled(state);
+	}
+
 	Button.OnTouchListener mTouchListener = new View.OnTouchListener() {
 		
 		@Override
@@ -72,25 +77,21 @@ public class TemperatureActivity extends Activity {
 			switch(event.getAction()) {
 			
 			case MotionEvent.ACTION_UP	:
+				unenabledAllBtn();
 				
-				if(!btnState) {
-
-					btnState = true;
+				switch(v.getId()) {
+			
+				case R.id.backBtn		:
+					WhichIntent(TargetIntent.Engineer);
+					break;
 					
-					switch(v.getId()) {
+				case R.id.setbtn		:
+					setTmp();
+					enabledAllBtn();
+					break;
 				
-					case R.id.backBtn		:
-						WhichIntent(TargetIntent.Engineer);
-						break;
-						
-					case R.id.setbtn		:
-						TmpSave(Float.valueOf(tmpEText.getText().toString()).floatValue());
-						btnState = false;
-						break;
-					
-					default	:
-						break;
-					}
+				default	:
+					break;
 				}
 			
 				break;
@@ -99,6 +100,18 @@ public class TemperatureActivity extends Activity {
 			return false;
 		}
 	};
+	
+	public void enabledAllBtn() {
+
+		setButtonState(R.id.backBtn, true);
+		setButtonState(R.id.setbtn, true);
+	}
+	
+	public void unenabledAllBtn() {
+		
+		setButtonState(R.id.backBtn, false);
+		setButtonState(R.id.setbtn, false);
+	}
 	
 	public void TemperatureInit() {
 		
@@ -114,7 +127,22 @@ public class TemperatureActivity extends Activity {
 		
 		RunTimerInit();
 	}
-
+	
+	private void setTmp() {
+		
+		String tmp;
+		
+		try {
+		
+			tmp = tmpEText.getText().toString();
+			TmpSave(Float.valueOf(tmp).floatValue());
+			
+		} catch(NumberFormatException e) {
+			
+			TmpSave(Temperature.InitTmp);
+		}					
+	}	
+	
 	public void TmpSave(float tmp) {
 		
 		SharedPreferences temperaturePref = getSharedPreferences("Temperature", MODE_PRIVATE);

@@ -37,6 +37,7 @@
     <string name="e233">E233</string>
     <string name="e234">E234</string>
     <string name="e235">E235</string>
+    <string name="e236">E236</string>
     <string name="e222">E222</string>
     <string name="e221">E221</string>
     <string name="e241">E241</string>
@@ -49,6 +50,7 @@
     <string name="e112">E112</string>
     <string name="e121">E121</string>
     <string name="e122">E122</string>
+    <string name="e131">E131</string>
     <string name="stop">STOP</string>
     <string name="previous">Previous</string>
     <string name="detail">Detail View</string>

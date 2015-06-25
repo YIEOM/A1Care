@@ -39,8 +39,6 @@ public class DatabaseHander extends SQLiteOpenHelper {
 				     COLUMN4	 + " TEXT " +
 				     ");";
 		
-		Log.w("Create", "str : " + str);
-		
 		db.execSQL(str);
 	}
 
@@ -64,8 +62,6 @@ public class DatabaseHander extends SQLiteOpenHelper {
 			     	 "'false'" +
 			     	 ");";
 
-		Log.w("Add Operator", "str : " + str);
-		
 		SQLiteDatabase db = this.getWritableDatabase();
 		
 		db.execSQL(str);
@@ -94,8 +90,6 @@ public class DatabaseHander extends SQLiteOpenHelper {
 		String str = "UPDATE " + TABLE + 
 				     " SET "   + sField + " = '" + sValue + "'" +
 				     " WHERE " + cField + " = '" + cValue + "';";
-
-		Log.w("Update Field", "str : " + str);
 		
 		SQLiteDatabase db = this.getWritableDatabase();
 				
@@ -124,8 +118,6 @@ public class DatabaseHander extends SQLiteOpenHelper {
 		
 		password = value[2];
 		
-		Log.w("Get Password", "password : " + password);
-		
 		return password;
 	}
 	
@@ -138,8 +130,6 @@ public class DatabaseHander extends SQLiteOpenHelper {
 		
 		id = value[0];
 		
-		Log.w("Get Last log in", "id : " + id);
-		
 		return id;
 	}
 	
@@ -149,8 +139,6 @@ public class DatabaseHander extends SQLiteOpenHelper {
 		String savedID[] = GetRowWithField(COLUMN1, id);
 		
 		if(savedID[0] != null) isDuplicated = true;
-		
-		Log.w("Check ID Duplication", "isDuplicated : " + isDuplicated);
 		
 		return isDuplicated;
 	}
@@ -178,8 +166,6 @@ public class DatabaseHander extends SQLiteOpenHelper {
 		cursor.close();
 		db.close();
 		
-		Log.w("Get Row With Field", "str : " + str);
-		
 		return value; // value[0] = id, value[1] = password, value[2] = date, value[3] = flag of last log in 
 	}
 	
@@ -206,8 +192,6 @@ public class DatabaseHander extends SQLiteOpenHelper {
 		
 		cursor.close();
 		db.close();
-		
-		Log.w("Get Row With Number", "str : " + str);
 		
 		return value; // value[0] = id, value[1] = password, value[2] = date, value[3] = flag of last log in 
 	}

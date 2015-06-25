@@ -3,6 +3,7 @@ package isens.hba1c_analyzer;
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
 import isens.hba1c_analyzer.Model.AboutModel;
 import isens.hba1c_analyzer.Model.ConvertModel;
+import isens.hba1c_analyzer.Model.SoundModel;
 import isens.hba1c_analyzer.View.ConvertActivity;
 
 import java.text.DecimalFormat;
@@ -14,6 +15,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.media.AudioManager;
 import android.media.SoundPool;
@@ -49,17 +52,22 @@ public class ResultActivity extends Activity {
 	public TimerDisplay mTimerDisplay;
 	public DatabaseHander mDatabaseHander;
 	public RunActivity mRunActivity;
-		
+	public SoundModel mSoundModel;
+	
+	public Activity activity;
+	
 	public static EditText PatientIDText;
 	
-	private TextView HbA1cText,
-					 HbA1cUnitText,
-					 DateText,
-					 AMPMText,
-					 Ref,
-					 PrimaryText,
-					 RangeText,
-					 UnitText;
+	private TextView hbA1cText,
+					 hbA1cUnitText,
+					 dateText,
+					 amPmText,
+					 refText,
+					 primaryText,
+					 rangeText,
+					 unitText,
+					 primaryTitleText,
+					 rangeTitleText;
 	
 	private Button homeIcon,
 				   printBtn,
@@ -69,17 +77,20 @@ public class ResultActivity extends Activity {
 	private String getTime[] = new String[6];
 	
 	public static int ItnData;
+	
 	public int dataCnt;
+	
 	public double cellBlockEndTmp;
+	
 	public String hbA1cCurr,
 				  unitCurr,
 				  rangeCurr,
 				  primaryCurr;
+	
 	public byte primaryByte;
 	
-	public String operator;
-	
-	public boolean btnState = false;
+	public String operator,
+				  sampleType;
 	
 	public SoundPool mPool;
 
@@ -96,12 +107,32 @@ public class ResultActivity extends Activity {
 		ResultInit();
 	}
 	
-	public void setButtonId() {
+	private void setTextId() {
 		
-		homeIcon = (Button)findViewById(R.id.homeicon);
-		printBtn = (Button)findViewById(R.id.printbtn);
-		nextSampleBtn = (Button)findViewById(R.id.nextsamplebtn);
-		convertBtn = (Button)findViewById(R.id.convertbtn);
+		hbA1cText = (TextView) findViewById(R.id.hba1cPct);
+		hbA1cUnitText = (TextView) findViewById(R.id.hba1cUnit);
+		dateText = (TextView) findViewById(R.id.testdate1);
+		amPmText = (TextView) findViewById(R.id.testdate2);
+		refText = (TextView) findViewById(R.id.ref);
+		primaryText = (TextView) findViewById(R.id.primary);
+		rangeText = (TextView) findViewById(R.id.range);
+		unitText = (TextView) findViewById(R.id.unit);
+		primaryTitleText = (TextView) findViewById(R.id.primaryTitle);
+		rangeTitleText = (TextView) findViewById(R.id.rangeTitle);
+	}
+	
+	private void setText() {
+		
+		primaryTitleText.setText(sampleType + " Primary");
+		rangeTitleText.setText(sampleType + " Ref. Range");	
+	}
+	
+	public void setButtonId(Activity activity) {
+		
+		homeIcon = (Button)activity.findViewById(R.id.homeicon);
+		printBtn = (Button)activity.findViewById(R.id.printbtn);
+		nextSampleBtn = (Button)activity.findViewById(R.id.nextsamplebtn);
+		convertBtn = (Button)activity.findViewById(R.id.convertbtn);
 	}
 	
 	public void setButtonClick() {
@@ -125,33 +156,29 @@ public class ResultActivity extends Activity {
 			switch(event.getAction()) {
 			
 			case MotionEvent.ACTION_UP	:
+				unenabledAllBtn(activity); //0624
 				
-				if(!btnState) {
-
-					btnState = true;
+				switch(v.getId()) {
+			
+				case R.id.homeicon		:
+					WhichIntent(TargetIntent.Home);
+					break;
 					
-					switch(v.getId()) {
+				case R.id.printbtn		:
+					PrintResultData();
+					break;
 				
-					case R.id.homeicon		:
-						WhichIntent(TargetIntent.Home);
-						break;
-						
-					case R.id.printbtn		:
-						PrintResultData();
-						break;
+				case R.id.nextsamplebtn	:
+					WhichIntent(TargetIntent.Run);
+					break;
+				
+				case R.id.convertbtn	:
+					SerialPort.Sleep(200);
+					PrimaryConvert();
+					break;
 					
-					case R.id.nextsamplebtn	:
-						WhichIntent(TargetIntent.Run);
-						break;
-					
-					case R.id.convertbtn	:
-						SerialPort.Sleep(200);
-						PrimaryConvert();
-						break;
-						
-					default	:
-						break;
-					}
+				default	:
+					break;
 				}
 			
 				break;
@@ -161,25 +188,38 @@ public class ResultActivity extends Activity {
 		}
 	};
 	
+	public void enabledAllBtn(Activity activtiy) {
+
+		setButtonState(R.id.homeicon, true, activtiy);
+		setButtonState(R.id.printbtn, true, activtiy);
+		setButtonState(R.id.nextsamplebtn, true, activtiy);
+		setButtonState(R.id.convertbtn, true, activtiy);
+	}
+	
+	public void unenabledAllBtn(Activity activtiy) {
+		
+		setButtonState(R.id.homeicon, false, activtiy);
+		setButtonState(R.id.printbtn, false, activtiy);
+		setButtonState(R.id.nextsamplebtn, false, activtiy);
+		setButtonState(R.id.convertbtn, false, activtiy);
+	}
+	
 	public void ResultInit() {
 
-		setButtonId();
+		activity = this;
+		
+		getSampleType();
+		
+		setTextId();
+		setText();
+		setButtonId(activity);
 		setButtonClick();
 		
 		mTimerDisplay = new TimerDisplay();
 		mTimerDisplay.ActivityParm(this, R.id.resultlayout);
 		
 		GetCurrTime();
-		GetDataCnt();
-		
-		HbA1cText = (TextView) findViewById(R.id.hba1cPct);
-		HbA1cUnitText = (TextView) findViewById(R.id.hba1cUnit);
-		DateText = (TextView) findViewById(R.id.r_testdate1);
-		AMPMText = (TextView) findViewById(R.id.r_testdate2);
-		Ref = (TextView) findViewById(R.id.ref);
-		PrimaryText = (TextView) findViewById(R.id.primary);
-		RangeText = (TextView) findViewById(R.id.r_range);
-		UnitText = (TextView) findViewById(R.id.unit);
+		GetDataCnt();		
 		
 		Intent itn = getIntent();
 		ItnData = itn.getIntExtra("RunState", 0);
@@ -219,35 +259,31 @@ public class ResultActivity extends Activity {
 			UnitConvert(mRunActivity.ConvertHbA1c(ConvertModel.Primary), ConvertModel.Primary);
 			HbA1cDisplay();
 		
+			mSoundModel = new SoundModel(this, this);
+			mSoundModel.playSound(R.raw.result_bgm);
+			
 		} else if(ItnData == R.string.stop) { 
 			
-			HbA1cText.setText(ItnData);
+			hbA1cText.setText(sampleType + " = " + getString(ItnData));
+			
+			mSoundModel = new SoundModel(this, this);
+			mSoundModel.playSound(R.raw.result_bgm);
 			
 		} else {
 			
-			HbA1cText.setText(ItnData);
-			mErrorPopup = new ErrorPopup(this, this, R.id.resultlayout);
+			hbA1cText.setText(sampleType + " = " + getString(ItnData));
+			mErrorPopup = new ErrorPopup(this, this, R.id.resultlayout, null, 0);
 			mErrorPopup.ErrorBtnDisplay(ItnData);
 		}
 		
-		DateText.setText(TimerDisplay.rTime[0] + "." + TimerDisplay.rTime[1] + "." + TimerDisplay.rTime[2] + " " + TimerDisplay.rTime[4] + ":" + TimerDisplay.rTime[5]);
-		AMPMText.setText(TimerDisplay.rTime[3]);
-		Ref.setText(Barcode.RefNum);
+		dateText.setText(TimerDisplay.rTime[0] + "." + TimerDisplay.rTime[1] + "." + TimerDisplay.rTime[2] + "   " + TimerDisplay.rTime[4] + ":" + TimerDisplay.rTime[5]);
+		amPmText.setText(TimerDisplay.rTime[3]);
+		refText.setText(Barcode.RefNum);
 		
 		mDatabaseHander = new DatabaseHander(this);
 		operator = mDatabaseHander.GetLastLoginID();
 		
 		if(operator == null) operator = "Guest";
-		
-//		mPool = new SoundPool(1, AudioManager.STREAM_MUSIC, 0);
-//		mWin = mPool.load(this, R.raw.result_bgm, 1);
-//		
-//		mPool.setOnLoadCompleteListener(new OnLoadCompleteListener() {
-//		      public void onLoadComplete(SoundPool mPool, int sampleId, int status) {
-//
-//		  		mPool.play(mWin, 1, 1, 0, 0, 1); // playing sound
-//		      }
-//		});
 	}
 	
 	public void PatientIDDisplay(final StringBuffer str) {
@@ -270,14 +306,13 @@ public class ResultActivity extends Activity {
 		getTime[1] = TimerDisplay.rTime[1];
 		getTime[2] = TimerDisplay.rTime[2];
 		getTime[3] = TimerDisplay.rTime[3];		
-		if(TimerDisplay.rTime[4].length() != 2) getTime[4] = "0" + TimerDisplay.rTime[4];
-		else getTime[4] = TimerDisplay.rTime[4];
+		getTime[4] = TimerDisplay.rTime[4];
 		getTime[5] = TimerDisplay.rTime[5];			
 	}
 	
 	public void GetDataCnt() {
 		
-		if(Barcode.RefNum.substring(0, 1).equals("B")) dataCnt = RemoveActivity.ControlDataCnt;
+		if(Barcode.Type.equals("W") || Barcode.Type.equals("X") || Barcode.Type.equals("Y") || Barcode.Type.equals("Z")) dataCnt = RemoveActivity.ControlDataCnt;
 		else dataCnt = RemoveActivity.PatientDataCnt;
 	}
 	
@@ -303,17 +338,17 @@ public class ResultActivity extends Activity {
 			txData.append(getTime[4]);
 			txData.append(getTime[5]);
 			txData.append(dfm.format(tempDataCnt));
+			txData.append(Barcode.Type);
 			txData.append(Barcode.RefNum);
 			txData.append(pIDLenDfm.format(PatientIDText.getText().toString().length()));
 			txData.append(PatientIDText.getText().toString());
 			txData.append(pIDLenDfm.format(operator.length()));
 			txData.append(operator);
 			txData.append(Integer.toString((int) primaryByte)); // primary
-//			Log.w("PrintResultData", "primary : " + Integer.toString((int) primaryByte));
 			txData.append(hbA1cCurr);
 			
 			mSerialPort = new SerialPort();
-			mSerialPort.PrinterTxStart(SerialPort.PRINTRESULT, txData);
+			mSerialPort.PrinterTxStart(SerialPort.PRINT_RESULT, txData);
 			
 			SerialPort.Sleep(100);
 		
@@ -330,22 +365,22 @@ public class ResultActivity extends Activity {
 			txData.append("09");
 			txData.append("30");
 			txData.append("0003");
+			txData.append("D");
 			txData.append("DBANA");
 			txData.append("07");
 			txData.append("Patient");
 			txData.append("08");
 			txData.append("Operator");
 			txData.append("0"); // primary
-//			Log.w("PrintResultData", "primary : " + Integer.toString((int) primaryByte));
 			txData.append("8.3");
 			
 			mSerialPort = new SerialPort();
-			mSerialPort.PrinterTxStart(SerialPort.PRINTRESULT, txData);
+			mSerialPort.PrinterTxStart(SerialPort.PRINT_RESULT, txData);
 			
 			SerialPort.Sleep(100);
 		}
 
-		btnState = false;	
+		enabledAllBtn(activity); //0624	
 	}
 	
 	public void UnitConvert(double hbA1cValue, byte primary) {
@@ -356,31 +391,86 @@ public class ResultActivity extends Activity {
 		
 		if(primary == ConvertModel.NGSP) {
 			
-			unitCurr = "%";
-			rangeCurr = "4.0 - 6.0";
+		 	unitCurr = "%";
+			if(sampleType.equals("HbA1c")) rangeCurr = "4.0 - 6.0";
+			else rangeCurr = "-";
 			primaryCurr = "NGSP";
 			
-			HbA1cUnitText.setTextSize(85);
-			
+			hbA1cUnitText.setTextSize(85);	
+				
 		} else {
 			
 			unitCurr = "mmol/mol";
-			rangeCurr = "20 - 42";
+			if(sampleType.equals("HbA1c")) rangeCurr = "20 - 42";
+			else rangeCurr = "-";
 			primaryCurr = "IFCC";
 			
-			HbA1cUnitText.setTextSize(24);
+			hbA1cUnitText.setTextSize(24);
 		}
 	}
 	
 	public void HbA1cDisplay() {
 		
-		HbA1cText.setText(hbA1cCurr);
-		HbA1cUnitText.setText(unitCurr);
-		PrimaryText.setText(primaryCurr);
-		RangeText.setText(rangeCurr);
-		UnitText.setText(unitCurr);
+		int color;
 		
-		btnState = false;
+		if(HomeActivity.MEASURE_MODE == HomeActivity.A1C) color = Color.parseColor("#1F3E6F"); 
+		else {
+			
+			if(getQCResult()) color = Color.parseColor("#04A458");
+			else color = Color.parseColor("#E92A2E");
+		}
+		
+		hbA1cText.setTextColor(color);
+		hbA1cText.setText(sampleType + " = " + hbA1cCurr);
+		hbA1cUnitText.setTextColor(color);
+		hbA1cUnitText.setText(unitCurr);
+		primaryText.setText(primaryCurr);
+		rangeText.setText(rangeCurr);
+		unitText.setText(unitCurr);
+		
+		enabledAllBtn(activity);
+	}
+	
+	private void getSampleType() {
+		
+		if(Barcode.Type.equals("D") || Barcode.Type.equals("W") || Barcode.Type.equals("X")) sampleType = "HbA1c";
+		else sampleType = "ACR";
+	}
+	
+	private boolean getQCResult() {
+		
+		double max = Double.MIN_VALUE, min = Double.MAX_VALUE;
+		
+		if(sampleType.equals("HbA1c")) {
+			
+			if(Barcode.Type.equals("W")) {
+				
+				max = Barcode.NorMean + 0.7;
+				min = Barcode.NorMean - 0.7;
+				
+			} else {
+				
+				max = Barcode.AbnorMean + 1.3;
+				min = Barcode.AbnorMean - 1.3;
+			}
+			
+		} else {
+			
+			if(Barcode.Type.equals("Y")) {
+				
+				max = Barcode.NorMean + 0;
+				min = Barcode.NorMean - 0;
+				
+			} else {
+				
+				max = Barcode.AbnorMean + 0;
+				min = Barcode.AbnorMean - 0;
+			}
+		}
+		
+		if((min <= RunActivity.HbA1cValue) && (RunActivity.HbA1cValue <= max)) return true;
+		
+		return false;
 	}
 	
 	public void PrimaryConvert() {
@@ -404,7 +494,7 @@ public class ResultActivity extends Activity {
 		
 			HbA1cDisplay();
 		
-		} else btnState = false;
+		} else enabledAllBtn(activity); //0624
 	}
 	
 	public void WhichIntent(TargetIntent Itn) { // Activity conversion after intent data deliver
@@ -432,6 +522,7 @@ public class ResultActivity extends Activity {
 		nextIntent.putExtra("Hour", getTime[4]);
 		nextIntent.putExtra("Minute", getTime[5]);
 		nextIntent.putExtra("DataCnt", dataCnt);
+		nextIntent.putExtra("Type", Barcode.Type);
 		nextIntent.putExtra("RefNumber", Barcode.RefNum);
 		nextIntent.putExtra("PatientIDLen", pIDLenDfm.format(PatientIDText.getText().toString().length()));
 		nextIntent.putExtra("PatientID", PatientIDText.getText().toString());
@@ -440,8 +531,7 @@ public class ResultActivity extends Activity {
 		nextIntent.putExtra("Primary", Integer.toString((int) primaryByte)); // primary
 		nextIntent.putExtra("Hba1cPct", hbA1cCurr);
 		
-//		nextIntent.putExtra("RunMin", (int) RunActivity.runMin);
-//		nextIntent.putExtra("RunSec", (int) RunActivity.runSec);
+		nextIntent.putExtra("Chamber Tmp", photoDfm.format(BlankActivity.ChamberTmp));
 		nextIntent.putExtra("BlankVal0", photoDfm.format(RunActivity.BlankValue[0]));
 		nextIntent.putExtra("BlankVal1", photoDfm.format(RunActivity.BlankValue[1]));
 		nextIntent.putExtra("BlankVal2", photoDfm.format(RunActivity.BlankValue[2]));

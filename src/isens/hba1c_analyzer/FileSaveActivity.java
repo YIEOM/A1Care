@@ -56,22 +56,8 @@ public class FileSaveActivity extends Activity {
 		
 		if(itn.getIntExtra("RunState", 0) == (int) NORMAL_RESULT) {
 
-			if(dataType.equals("B")) {
-				
-				SaveData.DataSave(CONTROL_TEST, overallData);
-
-			} else if(dataType.equals("D")) {
-				
-				SaveData.DataSave(PATIENT_TEST, overallData); // if HbA1c test is normal, the Result data is saved
-			
-			} else if(dataType.equals("E")) {
-				
-				SaveData.DataSave(PATIENT_TEST, overallData); // if HbA1c test is normal, the Result data is saved
-			
-			} else if(dataType.equals("F")) {
-				
-				SaveData.DataSave(PATIENT_TEST, overallData); // if HbA1c test is normal, the Result data is saved
-			}
+			if(dataType.equals("W") || dataType.equals("X") || dataType.equals("Y") || dataType.equals("Z")) SaveData.DataSave(CONTROL_TEST, overallData);
+			else SaveData.DataSave(PATIENT_TEST, overallData); // if HbA1c test is normal, the Result data is saved
 		}
 		
 		SaveData.DataHistorySave(overallData, historyData); // the History data is saved
@@ -92,8 +78,8 @@ public class FileSaveActivity extends Activity {
 		TempDataCnt = DataCnt % 9999;
 		if(TempDataCnt == 0) TempDataCnt = 9999;
 		
-		dataType = itn.getStringExtra("RefNumber").substring(0, 1);
-	
+		dataType = itn.getStringExtra("Type");
+		
 		overallData.append(itn.getStringExtra("Year"));
 		overallData.append(itn.getStringExtra("Month"));
 		overallData.append(itn.getStringExtra("Day"));
@@ -101,6 +87,7 @@ public class FileSaveActivity extends Activity {
 		overallData.append(itn.getStringExtra("Hour"));
 		overallData.append(itn.getStringExtra("Minute"));
 		overallData.append(dfm.format(TempDataCnt));
+		overallData.append(itn.getStringExtra("Type"));
 		overallData.append(itn.getStringExtra("RefNumber"));
 		overallData.append(itn.getStringExtra("PatientIDLen"));
 		overallData.append(itn.getStringExtra("PatientID"));
@@ -109,8 +96,7 @@ public class FileSaveActivity extends Activity {
 		overallData.append(itn.getStringExtra("Primary"));
 		overallData.append(itn.getStringExtra("Hba1cPct"));
 		
-		historyData.append(itn.getIntExtra("RunMin", 0) + "\t");
-		historyData.append(itn.getIntExtra("RunSec", 0) + "\t");
+		historyData.append(itn.getStringExtra("Chamber Tmp") + "\t");
 		historyData.append(itn.getStringExtra("BlankVal0") + "\t");
 		historyData.append(itn.getStringExtra("BlankVal1") + "\t");
 		historyData.append(itn.getStringExtra("BlankVal2") + "\t");
@@ -151,6 +137,5 @@ public class FileSaveActivity extends Activity {
 	public void finish() {
 		
 		super.finish();
-//		overridePendingTransition(R.anim.fade, R.anim.hold);
 	}
 }

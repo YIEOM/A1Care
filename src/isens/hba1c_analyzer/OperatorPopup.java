@@ -1,16 +1,10 @@
 package isens.hba1c_analyzer;
 
-import isens.hba1c_analyzer.HomeActivity.TargetIntent;
-
-import java.util.ResourceBundle;
+import java.text.DecimalFormat;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
-import android.renderscript.Sampler.Value;
-import android.text.Layout;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -20,10 +14,9 @@ import android.widget.EditText;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.os.Bundle;
 import android.preference.PreferenceManager;
 
-public class OperatorController {
+public class OperatorPopup {
 	
 	public DatabaseHander mDatabaseHander;
 	public OperatorSettingActivity mOperatorSettingActivity;
@@ -71,7 +64,7 @@ public class OperatorController {
 	public String id;
 	public boolean btnState = false;
 	
-	public OperatorController(Activity activity, Context context, int layoutid) {
+	public OperatorPopup(Activity activity, Context context, int layoutid) {
 		
 		this.activity = activity;
 		this.context = context;
@@ -92,6 +85,11 @@ public class OperatorController {
 		checkBtn.setOnTouchListener(mLoginTouchListener);
 	}
 	
+	public void setButtonState(int btnId, boolean state, View popupView) {
+		
+		popupView.findViewById(btnId).setEnabled(state);
+	}
+	
 	Button.OnTouchListener mLoginTouchListener = new View.OnTouchListener() {
 		
 		@Override
@@ -100,37 +98,47 @@ public class OperatorController {
 			switch(event.getAction()) {
 			
 			case MotionEvent.ACTION_UP	:
-				
-				if(!btnState) {
-
-					btnState = true;
+				unenabledAllLoginBtn(popupView);
 					
-					switch(v.getId()) {
-				
-					case R.id.loginbtn	:
-						LoginCheck();
-						break;
-						
-					case R.id.guestbtn	:
-						LoginGuest();
-						break;
-					
-					case R.id.checkbtn	:
-						CheckBoxDisplay(checkBtn);
-						btnState = false;
-						break;
-					
-					default	:
-						break;
-					}
-				}
+				switch(v.getId()) {
 			
+				case R.id.loginbtn	:
+					LoginCheck();
+					break;
+					
+				case R.id.guestbtn	:
+					LoginGuest();
+					break;
+				
+				case R.id.checkbtn	:
+					CheckBoxDisplay(checkBtn);
+					enabledAllLoginBtn(popupView);
+					break;
+				
+				default	:
+					break;
+				}
+					
 				break;
 			}
 			
 			return false;
 		}
 	};
+	
+	public void enabledAllLoginBtn(View popupView) {
+
+		setButtonState(R.id.loginbtn, true, popupView);
+		setButtonState(R.id.guestbtn, true, popupView);
+		setButtonState(R.id.checkbtn, true, popupView);
+	}
+	
+	public void unenabledAllLoginBtn(View popupView) {
+		
+		setButtonState(R.id.loginbtn, false, popupView);
+		setButtonState(R.id.guestbtn, false, popupView);
+		setButtonState(R.id.checkbtn, false, popupView);
+	}
 	
 	public void LoginDisplay() {
 		
@@ -176,37 +184,47 @@ public class OperatorController {
 			switch(event.getAction()) {
 			
 			case MotionEvent.ACTION_UP	:
+				unenabledAllOperatorBtn(popupView);
 				
-				if(!btnState) {
-
-					btnState = true;
-					
-					switch(v.getId()) {
-				
-					case R.id.loginbtn	:
-						LoginCheck();
-						break;
-						
-					case R.id.cancelbtn	:
-						PopupClose();
-						break;
-						
-					case R.id.checkbtn	:
-						CheckBoxDisplay(checkBtn);
-						btnState = false;
-						break;
-					
-					default	:
-						break;
-					}
-				}
+				switch(v.getId()) {
 			
+				case R.id.loginbtn	:
+					LoginCheck();
+					break;
+					
+				case R.id.cancelbtn	:
+					PopupClose();
+					break;
+					
+				case R.id.checkbtn	:
+					CheckBoxDisplay(checkBtn);
+					enabledAllOperatorBtn(popupView);
+					break;
+				
+				default	:
+					break;
+				}
+				
 				break;
 			}
 			
 			return false;
 		}
 	};
+	
+	public void enabledAllOperatorBtn(View popupView) {
+
+		setButtonState(R.id.loginbtn, true, popupView);
+		setButtonState(R.id.cancelbtn, true, popupView);
+		setButtonState(R.id.checkbtn, true, popupView);
+	}
+	
+	public void unenabledAllOperatorBtn(View popupView) {
+		
+		setButtonState(R.id.loginbtn, false, popupView);
+		setButtonState(R.id.cancelbtn, false, popupView);
+		setButtonState(R.id.checkbtn, false, popupView);
+	}
 	
 	public void OperatorLoginDisplay(String id) {
 		
@@ -247,8 +265,6 @@ public class OperatorController {
 			if(mDatabaseHander.CheckIDDuplication(id)) {
 				password = mDatabaseHander.GetPassword(id);
 				
-				Log.w("Login Check", "password : " + password);
-				
 				if(passEText.getText().toString().equals(password)) {
 					
 					popupWindow.dismiss();
@@ -264,12 +280,14 @@ public class OperatorController {
 						
 						mHomeActivity = new HomeActivity();
 						mHomeActivity.OperatorDisplay(activity, context);
+						enabledAllLoginBtn(popupView);
 						break;
 						
 					case R.id.operatorlayout	:
 						mOperatorSettingActivity = new OperatorSettingActivity();
 						Count = OperatorCount();
 						mOperatorSettingActivity.OperatorDisplay(activity, ReadOperator(Count), Count, Count);
+						enabledAllOperatorBtn(popupView);
 						break;
 						
 					default	:
@@ -278,22 +296,20 @@ public class OperatorController {
 					
 				} else {
 							
-					mErrorPopup = new ErrorPopup(activity, context, layoutid);
+					mErrorPopup = new ErrorPopup(activity, context, layoutid, popupView, (int)OperatorSettingActivity.LOGIN);
 					mErrorPopup.ErrorBtnDisplay(R.string.w018);
 				}
 			} else {
 				
-				mErrorPopup = new ErrorPopup(activity, context, layoutid);
+				mErrorPopup = new ErrorPopup(activity, context, layoutid, popupView, (int)OperatorSettingActivity.LOGIN);
 				mErrorPopup.ErrorBtnDisplay(R.string.w005);
 			}
 			
 		} else {
 		
-			mErrorPopup = new ErrorPopup(activity, context, layoutid);
+			mErrorPopup = new ErrorPopup(activity, context, layoutid, popupView, (int)OperatorSettingActivity.LOGIN);
 			mErrorPopup.ErrorBtnDisplay(R.string.w011);
 		}
-	
-		btnState = false;
 	}
 	
 	public void LoginGuest() {
@@ -308,7 +324,7 @@ public class OperatorController {
 		
 		popupWindow.dismiss();
 		
-		btnState = false;
+		enabledAllLoginBtn(popupView);
 	}
 	
 	public void AutoWriteLogin() {
@@ -372,23 +388,22 @@ public class OperatorController {
 			
 			case MotionEvent.ACTION_UP	:
 				
-				if(!btnState) {
-
-					btnState = true;
+				unenabledAllEngineerBtn(popupView);
 					
-					switch(v.getId()) {
+				switch(v.getId()) {
+			
+				case R.id.loginbtn	:
+					EngineerLoginCheck();
+					break;
+					
+				case R.id.cancelbtn	:
+					EngineerPopupClose();
+					mSettingActivity = new SettingActivity();
+					mSettingActivity.enabledAllBtn(activity);
+					break;
 				
-					case R.id.loginbtn	:
-						EngineerLoginCheck();
-						break;
-						
-					case R.id.cancelbtn	:
-						EngineerPopupClose();
-						break;
-					
-					default	:
-						break;
-					}
+				default	:
+					break;
 				}
 			
 				break;
@@ -398,6 +413,18 @@ public class OperatorController {
 		}
 	};
 		
+	public void enabledAllEngineerBtn(View popupView) {
+
+		setButtonState(R.id.loginbtn, true, popupView);
+		setButtonState(R.id.cancelbtn, true, popupView);
+	}
+	
+	public void unenabledAllEngineerBtn(View popupView) {
+		
+		setButtonState(R.id.loginbtn, false, popupView);
+		setButtonState(R.id.cancelbtn, false, popupView);
+	}
+	
 	public void EngineerLoginDisplay() {
 		
 		hostLayout = (RelativeLayout)activity.findViewById(layoutid);
@@ -430,7 +457,7 @@ public class OperatorController {
 	
 			if(HomeActivity.ANALYZER_SW != HomeActivity.DEVEL) {
 			
-				if(password.equals("ENGINEER")) {
+				if(password.equals("entry")) {
 					
 					popupWindow.dismiss();
 					
@@ -446,14 +473,14 @@ public class OperatorController {
 				mSettingActivity.MaintenanceIntent(activity, context);
 			}
 		}
-		
-		btnState = false;
+
+		enabledAllEngineerBtn(popupView);
 	}
 
 	public void EngineerPopupClose() {
 		
 		mSettingActivity = new SettingActivity();
-		mSettingActivity.CheatModeStop(activity);
+		mSettingActivity.CheatModeStop(activity, true);
 		
 		popupWindow.dismiss();
 	}
@@ -478,25 +505,21 @@ public class OperatorController {
 			switch(event.getAction()) {
 			
 			case MotionEvent.ACTION_UP	:
-				
-				if(!btnState) {
-
-					btnState = true;
+				unenabledAllAddBtn(popupView);
 					
-					switch(v.getId()) {
-				
-					case R.id.donebtn	:
-						AddOperator();
-						break;
-						
-					case R.id.cancelbtn	:
-						PopupClose();
-						btnState = false;
-						break;
+				switch(v.getId()) {
+			
+				case R.id.donebtn	:
+					AddOperator();
+					break;
 					
-					default	:
-						break;
-					}
+				case R.id.cancelbtn	:
+					PopupClose();
+					enabledAllAddBtn(popupView);
+					break;
+				
+				default	:
+					break;
 				}
 			
 				break;
@@ -505,6 +528,18 @@ public class OperatorController {
 			return false;
 		}
 	};
+	
+	public void enabledAllAddBtn(View popupView) {
+
+		setButtonState(R.id.donebtn, true, popupView);
+		setButtonState(R.id.cancelbtn, true, popupView);
+	}
+	
+	public void unenabledAllAddBtn(View popupView) {
+		
+		setButtonState(R.id.donebtn, false, popupView);
+		setButtonState(R.id.cancelbtn, false, popupView);
+	}
 	
 	public void AddOperatorDisplay() {
 
@@ -555,44 +590,44 @@ public class OperatorController {
 							mOperatorSettingActivity = new OperatorSettingActivity();
 							Count = OperatorCount();
 							mOperatorSettingActivity.OperatorDisplay(activity, ReadOperator(Count), Count, Count);
+
+							enabledAllAddBtn(popupView);
 						
 						} else {
 							
-							mErrorPopup = new ErrorPopup(activity, context, layoutid);
+							mErrorPopup = new ErrorPopup(activity, context, layoutid, popupView, (int)OperatorSettingActivity.ADD);
 							mErrorPopup.ErrorBtnDisplay(R.string.w018);
 						}
 						
 					} else {
 						
-						mErrorPopup = new ErrorPopup(activity, context, layoutid);
+						mErrorPopup = new ErrorPopup(activity, context, layoutid, popupView, (int)OperatorSettingActivity.ADD);
 						mErrorPopup.ErrorBtnDisplay(R.string.w014);
 					}
 					
 				} else {
 					
-					mErrorPopup = new ErrorPopup(activity, context, layoutid);
+					mErrorPopup = new ErrorPopup(activity, context, layoutid, popupView, (int)OperatorSettingActivity.ADD);
 					mErrorPopup.ErrorBtnDisplay(R.string.w013);
 				}
 				
 			} else {
 				
-				mErrorPopup = new ErrorPopup(activity, context, layoutid);
+				mErrorPopup = new ErrorPopup(activity, context, layoutid, popupView, (int)OperatorSettingActivity.ADD);
 				mErrorPopup.ErrorBtnDisplay(R.string.w012);
 			}
 	
 		} else {
 			
-			mErrorPopup = new ErrorPopup(activity, context, layoutid);
+			mErrorPopup = new ErrorPopup(activity, context, layoutid, popupView, (int)OperatorSettingActivity.ADD);
 			mErrorPopup.ErrorBtnDisplay(R.string.w011);
 		}
-		
-		btnState = false;
 	}
 	
 	public void setModButtonId(View popupView) {
 		
 		modDoneBtn = (Button)popupView.findViewById(R.id.donebtn);
-		modCancelBtn = (Button)popupView.findViewById(R.id.canclebtn);		
+		modCancelBtn = (Button)popupView.findViewById(R.id.cancelbtn);		
 	}
 	
 	public void setModButtonClick() {
@@ -609,26 +644,21 @@ public class OperatorController {
 			switch(event.getAction()) {
 			
 			case MotionEvent.ACTION_UP	:
-				
-				if(!btnState) {
-
-					btnState = true;
+				unenabledAllModBtn(popupView);
 					
-					switch(v.getId()) {
-				
-					case R.id.donebtn	:
-						ModOperator();
-						btnState = false;
-						break;
-						
-					case R.id.cancelbtn	:
-						PopupClose();						
-						btnState = false;
-						break;
+				switch(v.getId()) {
+			
+				case R.id.donebtn	:
+					ModOperator();
+					break;
 					
-					default	:
-						break;
-					}
+				case R.id.cancelbtn	:
+					PopupClose();						
+					enabledAllModBtn(popupView);
+					break;
+				
+				default	:
+					break;
 				}
 			
 				break;
@@ -638,16 +668,28 @@ public class OperatorController {
 		}
 	};
 	
+	public void enabledAllModBtn(View popupView) {
+
+		setButtonState(R.id.donebtn, true, popupView);
+		setButtonState(R.id.cancelbtn, true, popupView);
+	}
+	
+	public void unenabledAllModBtn(View popupView) {
+		
+		setButtonState(R.id.donebtn, false, popupView);
+		setButtonState(R.id.cancelbtn, false, popupView);
+	}
+	
 	public void ModOperatorDisplay(String id) {
 		
-		hostLayout = (RelativeLayout)activity.findViewById(layoutid);
+		hostLayout = (RelativeLayout) activity.findViewById(layoutid);
 		popupView = View.inflate(context, R.layout.modoperatorpopup, null);
 		popupWindow = new PopupWindow(popupView, 800, 480, true);
 		
-		modOperatorText = (TextView)popupView.findViewById(R.id.id);
-		modPasswordEText = (EditText)popupView.findViewById(R.id.password);
-		modNPasswordEText = (EditText)popupView.findViewById(R.id.npassword);
-		modCPasswordEText = (EditText)popupView.findViewById(R.id.cpassword);
+		modOperatorText = (TextView) popupView.findViewById(R.id.id);
+		modPasswordEText = (EditText) popupView.findViewById(R.id.password);
+		modNPasswordEText = (EditText) popupView.findViewById(R.id.npassword);
+		modCPasswordEText = (EditText) popupView.findViewById(R.id.cpassword);
 		
 		modOperatorText.setText(id);
 		
@@ -694,33 +736,35 @@ public class OperatorController {
 						
 						} else {
 							
-							mErrorPopup = new ErrorPopup(activity, context, layoutid);
+							mErrorPopup = new ErrorPopup(activity, context, layoutid, popupView, (int)OperatorSettingActivity.MODIFY);
 							mErrorPopup.ErrorBtnDisplay(R.string.w018);
 						}
 						
 					} else {
 						
-						mErrorPopup = new ErrorPopup(activity, context, layoutid);
+						mErrorPopup = new ErrorPopup(activity, context, layoutid, popupView, (int)OperatorSettingActivity.MODIFY);
 						mErrorPopup.ErrorBtnDisplay(R.string.w014);
 					}
 					
 				} else {
 					
-					mErrorPopup = new ErrorPopup(activity, context, layoutid);
+					mErrorPopup = new ErrorPopup(activity, context, layoutid, popupView, (int)OperatorSettingActivity.MODIFY);
 					mErrorPopup.ErrorBtnDisplay(R.string.w017);
 				}
 				
 			} else {
 				
-				mErrorPopup = new ErrorPopup(activity, context, layoutid);
+				mErrorPopup = new ErrorPopup(activity, context, layoutid, popupView, (int)OperatorSettingActivity.MODIFY);
 				mErrorPopup.ErrorBtnDisplay(R.string.w016);
 			}
 	
 		} else {
 			
-			mErrorPopup = new ErrorPopup(activity, context, layoutid);
+			mErrorPopup = new ErrorPopup(activity, context, layoutid, popupView, (int)OperatorSettingActivity.MODIFY);
 			mErrorPopup.ErrorBtnDisplay(R.string.w013);
 		}
+
+		enabledAllModBtn(popupView);
 	}
 	
 	public void setDelButtonId(View popupView) {
@@ -743,26 +787,21 @@ public class OperatorController {
 			switch(event.getAction()) {
 			
 			case MotionEvent.ACTION_UP	:
-				
-				if(!btnState) {
-
-					btnState = true;
+				unenabledAllDelBtn(popupView);
 					
-					switch(v.getId()) {
-				
-					case R.id.yesbtn	:
-						DelOperator(id);
-						btnState = false;
-						break;
-						
-					case R.id.nobtn	:
-						PopupClose();
-						btnState = false;
-						break;
+				switch(v.getId()) {
+			
+				case R.id.yesbtn	:
+					DelOperator(id);
+					break;
 					
-					default	:
-						break;
-					}
+				case R.id.nobtn	:
+					PopupClose();
+					enabledAllDelBtn(popupView);
+					break;
+				
+				default	:
+					break;
 				}
 			
 				break;
@@ -771,6 +810,18 @@ public class OperatorController {
 			return false;
 		}
 	};
+	
+	public void enabledAllDelBtn(View popupView) {
+
+		setButtonState(R.id.yesbtn, true, popupView);
+		setButtonState(R.id.nobtn, true, popupView);
+	}
+	
+	public void unenabledAllDelBtn(View popupView) {
+		
+		setButtonState(R.id.yesbtn, false, popupView);
+		setButtonState(R.id.nobtn, false, popupView);
+	}
 	
 	public void DelOperatorDisplay(String id) {
 		
@@ -808,6 +859,8 @@ public class OperatorController {
 		mOperatorSettingActivity = new OperatorSettingActivity();
 		Count = OperatorCount();
 		mOperatorSettingActivity.OperatorDisplay(activity, ReadOperator(Count), Count, Count);
+	
+		enabledAllDelBtn(popupView);
 	}
 	
 	public void PopupClose() {
@@ -843,18 +896,16 @@ public class OperatorController {
 			dataCnt = last;
 		}
 		
-		Log.w("Operator display", "first : " + first + " last : " + last);
-		
 		for(int i = 0; i < dataCnt; i++) {
 			
 			rowData = mDatabaseHander.GetRowWithNumber(last - (i + 1));
 				
 			tempDate = rowData[1];
 			tempPassword = rowData[2];
-			
+				
 			tempHour = TimeHandling(tempDate.substring(8, 10));
 			
-			formDate = tempDate.substring(0, 4) + "." + tempDate.substring(4, 6) + "." + tempDate.substring(6, 8) + " " + tempHour[0] + " " + tempHour[1] + ":" + tempDate.substring(10, 12);
+			formDate = tempDate.substring(0, 4) + "." + tempDate.substring(4, 6) + "." + tempDate.substring(6, 8) + "   " + tempHour[1] + ":" + tempDate.substring(10, 12) + " " + tempHour[0];
 			formPassword = PasswordHandling(tempPassword);	
 			
 			Operator[0][i] = rowData[0];
@@ -873,13 +924,12 @@ public class OperatorController {
 		mDatabaseHander = new DatabaseHander(context);
 		count = mDatabaseHander.GetRowCount();
 		
-		Log.w("Get operator", "the number : " + count);
-		
 		return count;
 	}
 	
 	public String[] TimeHandling(String time) {
 		
+		DecimalFormat dfm = new DecimalFormat("00");
 		String pTime[] = new String[2];
 		int tempTime = Integer.parseInt(time);
 		
@@ -902,7 +952,7 @@ public class OperatorController {
 			pTime[0] = "AM";
 		}
 		
-		pTime[1] = Integer.toString(tempTime);
+		pTime[1] = dfm.format(tempTime);
 		
 		return pTime;
 	}

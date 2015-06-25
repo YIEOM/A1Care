@@ -21,8 +21,6 @@ public class GpioPort {
 	private static byte DoorInitState;
 	private static byte CartridgeInitState;
 	
-	public static boolean IsCheck = false;
-	
 	static	{
 		
 		System.loadLibrary("gpio_port");
@@ -64,13 +62,16 @@ public class GpioPort {
 		
 		String tmpData;
 		
-		while(IsCheck) SerialPort.Sleep(10);
-		IsCheck = true;
+		while(TimerDisplay.RXBoardFlag) SerialPort.Sleep(10);
+		
+		TimerDisplay.RXBoardFlag = true;
 		
 		mSerialPort = new SerialPort();
 		mSerialPort.BoardTx(DOOR_SENSOR, SerialPort.CtrTarget.NormalSet);
 		
 		tmpData = BoardMessage("D");
+		
+		TimerDisplay.RXBoardFlag = false;
 		
 		return (byte) Integer.parseInt(tmpData.substring(2));
 	}
@@ -86,8 +87,6 @@ public class GpioPort {
 		public void run() {
 			
 			if(DoorActState) {
-				
-//				Log.w("DoorSensorScan", "Door : " + DoorSensorState);
 				
 				switch(DoorSensorState) {		
 				
@@ -120,15 +119,16 @@ public class GpioPort {
 		
 		String tmpData;
 		
-		while(IsCheck) SerialPort.Sleep(10);
-		IsCheck = true;
+		while(TimerDisplay.RXBoardFlag) SerialPort.Sleep(10);
+		
+		TimerDisplay.RXBoardFlag = true;
 		
 		mSerialPort = new SerialPort();
 		mSerialPort.BoardTx(CARTRIDGE_SENSOR, SerialPort.CtrTarget.NormalSet);
 		
 		tmpData = BoardMessage("C");
 		
-//		Log.w("CartridgeCheck", "data : " + Integer.parseInt(tmpData.substring(2)));
+		TimerDisplay.RXBoardFlag = false;
 		
 		return (byte) Integer.parseInt(tmpData.substring(2));
 	}
@@ -144,8 +144,6 @@ public class GpioPort {
 		public void run() {
 			
 			if(CartridgeActState) {
-
-//				Log.w("CartridgeSensorScan", "Cartridge : " + CartridgeSensorState);
 				
 				switch(CartridgeSensorState) {
 				
@@ -158,7 +156,7 @@ public class GpioPort {
 					CartridgeSensorState = (CartridgeCheck() == CartridgeInitState) ? SensorScan.StableState : SensorScan.InitialState;
 					break;
 											
-				case StableState	:			
+				case StableState	:
 					if(CartridgeCheck() == CartridgeInitState) {
 						
 						ActionActivity.CartridgeCheckFlag = CartridgeInitState;
@@ -187,19 +185,9 @@ public class GpioPort {
 			
 			temp = mSerialPort.SensorMessageOutput();
 			
-//			Log.w("BoardMessage", "sensor : " + sensorMsg + " temp : " + temp);
+			if(time++ == 20) return "NR2";
 			
-			if(time++ == 20) {
-				
-				IsCheck = false;
-				return "NR2";
-			}
-			
-			if(temp.substring(1, 2).equals(sensorMsg)) {
-				
-				IsCheck = false;
-				return temp;
-			}
+			if(temp.substring(1, 2).equals(sensorMsg)) return temp;
 			
 			SerialPort.Sleep(10);
 		}

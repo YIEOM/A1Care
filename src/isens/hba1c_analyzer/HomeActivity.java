@@ -1,5 +1,6 @@
 package isens.hba1c_analyzer;
 
+import isens.hba1c_analyzer.Model.SoundModel;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.media.SoundPool.OnLoadCompleteListener;
@@ -26,7 +27,7 @@ import android.graphics.Typeface;
 
 /*
  * 
- * Object : Development SW
+ * Object : SW for A1Care project
  * 
  */
 
@@ -47,10 +48,17 @@ public class HomeActivity extends Activity {
 	public static byte MEASURE_MODE;
 	
 	public DatabaseHander mDatabaseHander;
-	public OperatorController mOperatorController;
+	public OperatorPopup mOperatorController;
 	public ErrorPopup mErrorPopup;
 	public TimerDisplay mTimerDisplay;
 	public ShutDownPopup mShutDownPopup;
+	public SoundModel mSoundModel;
+	
+	public Activity activity;
+	public Context context;
+	
+	public TextView idText,
+					demoVerText;
 	
 	public SoundPool mPool;
 	
@@ -59,21 +67,14 @@ public class HomeActivity extends Activity {
 				  recordBtn,
 				  escIcon;
 	
-	public enum TargetIntent {Home, HbA1c, NA, Action, ActionQC, Run, RunQC, Blank, BlankQC, Record, Result, ResultQC, Remove, Image, Date, Setting, SystemSetting, DataSetting, OperatorSetting, FunctionalTest, Time, Display, HIS, HISSetting, Export, Engineer, FileSave, ControlFileLoad, PatientFileLoad, NextFile, PreFile, Adjustment, Sound, Calibration, Language, Correlation, About, Temperature, Lamp, Convert, tHb, ShutDown, ScanTemp, f535, f660}
+	public enum TargetIntent {Home, HbA1c, NA, Action, ActionQC, Run, RunQC, Blank, BlankQC, Record, Result, ResultQC, Remove, Image, Date, Setting, SystemSetting, DataSetting, OperatorSetting, FunctionalTest, Time, Display, HIS, HISSetting, Export, Engineer, FileSave, ControlFileLoad, PatientFileLoad, NextFile, PreFile, Adjustment, Sound, Calibration, Language, Correlation, About, Delete, Temperature, Lamp, Convert, tHb, ShutDown, ScanTemp, f535, f660, SystemCheck}
 	
 	public static boolean LoginFlag = true,
 						  CheckFlag;
 	
 	public static byte NumofStable = 0;
 	
-	public Activity activity;
-	public Context context;
-	
-	public TextView idText,
-					demoVerText;
-	
-	public boolean btnState = false,
-				   isShutDown = false;
+	public boolean isShutDown = false;
 	
 	public int mWin;
 	
@@ -116,34 +117,29 @@ public class HomeActivity extends Activity {
 			switch(event.getAction()) {
 			
 			case MotionEvent.ACTION_UP	:
+				unenabledAllBtn(activity); //0624
 				
-				if(!btnState) {
-
-					btnState = true;
+				switch(v.getId()) {
+			
+				case R.id.escicon		:
+					ESC();
+					break;
 					
-					switch(v.getId()) {
+				case R.id.runbtn		:
+					MEASURE_MODE = A1C;
+					WhichIntent(activity, context, TargetIntent.Blank);
+					break;
 				
-					case R.id.escicon		:
-						ESC();
-						btnState = false;
-						break;
-						
-					case R.id.runbtn		:
-						MEASURE_MODE = A1C;
-						WhichIntent(activity, context, TargetIntent.Blank);
-						break;
+				case R.id.settingbtn	:
+					WhichIntent(activity, context, TargetIntent.Setting);
+					break;
+				
+				case R.id.recordbtn		:
+					WhichIntent(activity, context, TargetIntent.Record);
+					break;
 					
-					case R.id.settingbtn	:
-						WhichIntent(activity, context, TargetIntent.Setting);
-						break;
-					
-					case R.id.recordbtn		:
-						WhichIntent(activity, context, TargetIntent.Record);
-						break;
-						
-					default	:
-						break;
-					}
+				default	:
+					break;
 				}
 			
 				break;
@@ -153,7 +149,7 @@ public class HomeActivity extends Activity {
 		}
 	};
 	
-	public void enableAllBtn(Activity activtiy) {
+	public void enabledAllBtn(Activity activtiy) {
 
 		setButtonState(R.id.escicon, true, activtiy);
 		setButtonState(R.id.runbtn, true, activtiy);
@@ -171,54 +167,43 @@ public class HomeActivity extends Activity {
 	
 	public void HomeInit() {
 		
-		setButtonId(this);
-		unenabledAllBtn(this);
-		setButtonClick();
-				
 		activity = this;
 		context = this;
 		
+		setButtonId(activity);
+		unenabledAllBtn(activity);
+		setButtonClick();
+				
 		Intent itn = getIntent();
 		int state = itn.getIntExtra("System Check State", 0);
 		
-		if(state != 0) {
+		if(state != RunActivity.NORMAL_OPERATION) {
 			
-			mErrorPopup = new ErrorPopup(this, this, R.id.homelayout);
+			mErrorPopup = new ErrorPopup(this, this, R.id.homelayout, null, 0);
 			mErrorPopup.ErrorBtnDisplay(state);
 		
 		} else {
 			
-			Login(this, this, R.id.homelayout);	
+			Login(this, this, R.id.homelayout);
 		}
 		
 		mTimerDisplay = new TimerDisplay();
 		mTimerDisplay.ActivityParm(this, R.id.homelayout);
 		
-//		mPool = new SoundPool(1, AudioManager.STREAM_MUSIC, 0);
-//		mWin = mPool.load(this, R.raw.booting_bgm, 1);
-//		
-//		mPool.setOnLoadCompleteListener(new OnLoadCompleteListener() {
-//		      public void onLoadComplete(SoundPool mPool, int sampleId, int status) {
-//
-//		  		mPool.play(mWin, 1, 1, 0, 0, 1); // playing sound
-//		      }
-//		});
-
 		DisplayDemo();
 	}
 	
 	public void Login(Activity activity, Context context, int layoutid) {
 		
-//		Log.w("Login", "LoginFlag : " + LoginFlag);
-		
 		if(LoginFlag) {
 			
-			mOperatorController = new OperatorController(activity, context, layoutid);
+			mOperatorController = new OperatorPopup(activity, context, layoutid);
 			mOperatorController.LoginDisplay();
 			
+			mSoundModel = new SoundModel(activity, context);
+			mSoundModel.playSound(R.raw.booting_bgm);
+			
 		} else OperatorDisplay(activity, context);
-		
-		btnState = false;
 	}
 	
 	public void OperatorDisplay(Activity activity, Context context) {
@@ -232,7 +217,7 @@ public class HomeActivity extends Activity {
 		
 		idText.setText("Operator : " + id);
 		
-		enableAllBtn(activity);
+		enabledAllBtn(activity);
 	}
 	
 	public void DisplayDemo() {
@@ -241,7 +226,7 @@ public class HomeActivity extends Activity {
 		
 		if(ANALYZER_SW == DEMO) {
 			
-			demoVersion = "A1Care_v1.3.26-D";
+			demoVersion = "A1Care_v1.3.27-D";
 			DisplayDemoVersion(demoVersion);	
 		
 		} else if(ANALYZER_SW == DEVEL) {
@@ -259,7 +244,7 @@ public class HomeActivity extends Activity {
 	
 	public void ESC() {
 		
-		mErrorPopup = new ErrorPopup(this, this, R.id.homelayout);
+		mErrorPopup = new ErrorPopup(this, this, R.id.homelayout, null, 0);
 		mErrorPopup.OXBtnDisplay(R.string.shutdown);
 	}
 	
@@ -339,17 +324,22 @@ public class HomeActivity extends Activity {
 			nextIntent = new Intent(context, SettingActivity.class); // Change to SETTING Activity
 			break;
 				
+		case SystemCheck	:
+			nextIntent = new Intent(context, SystemCheckActivity.class);
+			nextIntent.putExtra("System Check State", R.string.e221);
+			break;
+			
 		default			:	
 			break;
 		}
 		
 		activity.startActivity(nextIntent);
-		activity.finish();
+		finish(Itn);
 	}
 	
-	public void finish() {
+	public void finish(TargetIntent Itn) {
 		
 		super.finish();
-		overridePendingTransition(R.anim.fade, R.anim.hold);
+		if(Itn != TargetIntent.SystemCheck) overridePendingTransition(R.anim.fade, R.anim.hold);
 	}
 }

@@ -14,10 +14,12 @@ import android.widget.TextView;
 
 public class RecordActivity extends Activity {
 
-	public TimerDisplay mTimerDisplay;
-	
 	final static byte CONTROL = 1,
 					  PATIENT = 2;
+	
+	public TimerDisplay mTimerDisplay;
+	
+	private Activity activity;
 	
 	private Button patientBtn,
 				   controlBtn,
@@ -36,11 +38,11 @@ public class RecordActivity extends Activity {
 		MemoryInit();
 	}	
 	
-	public void setButtonId() {
+	public void setButtonId(Activity activity) {
 		
-		patientBtn = (Button)findViewById(R.id.patientbtn);
-		controlBtn = (Button)findViewById(R.id.controlbtn);
-		backIcon = (Button)findViewById(R.id.backicon);
+		patientBtn = (Button)activity.findViewById(R.id.patientbtn);
+		controlBtn = (Button)activity.findViewById(R.id.controlbtn);
+		backIcon = (Button)activity.findViewById(R.id.backicon);
 	}
 	
 	public void setButtonClick() {
@@ -63,28 +65,24 @@ public class RecordActivity extends Activity {
 			switch(event.getAction()) {
 			
 			case MotionEvent.ACTION_UP	:
+				unenabledAllBtn(activity);
 				
-				if(!btnState) {
-
-					btnState = true;
+				switch(v.getId()) {
+				
+				case R.id.patientbtn	:
+					WhichIntent(TargetIntent.PatientFileLoad);
+					break;
 					
-					switch(v.getId()) {
+				case R.id.controlbtn	:
+					WhichIntent(TargetIntent.ControlFileLoad);
+					break;
 				
-					case R.id.patientbtn	:
-						WhichIntent(TargetIntent.PatientFileLoad);
-						break;
-						
-					case R.id.controlbtn	:
-						WhichIntent(TargetIntent.ControlFileLoad);
-						break;
-					
-					case R.id.backicon		:
-						WhichIntent(TargetIntent.Home);
-						break;
-				
-					default	:
-						break;
-					}
+				case R.id.backicon		:
+					WhichIntent(TargetIntent.Home);
+					break;
+			
+				default	:
+					break;
 				}
 			
 				break;
@@ -94,9 +92,25 @@ public class RecordActivity extends Activity {
 		}
 	};
 	
+	public void enabledAllBtn(Activity activity) {
+
+		setButtonState(R.id.patientbtn, true, activity);
+		setButtonState(R.id.controlbtn, true, activity);
+		setButtonState(R.id.backicon, true, activity);
+	}
+	
+	public void unenabledAllBtn(Activity activity) {
+		
+		setButtonState(R.id.patientbtn, false, activity);
+		setButtonState(R.id.controlbtn, false, activity);
+		setButtonState(R.id.backicon, false, activity);
+	}
+	
 	public void MemoryInit() {
 
-		setButtonId();
+		activity = this;
+		
+		setButtonId(activity);
 		setButtonClick();
 		
 		mTimerDisplay = new TimerDisplay();

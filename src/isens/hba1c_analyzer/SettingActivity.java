@@ -23,15 +23,15 @@ import android.widget.TextView;
 public class SettingActivity extends Activity {
 	
 	public TimerDisplay mTimerDisplay;
-	public OperatorController mOperatorController;
+	public OperatorPopup mOperatorController;
+	
+	public Activity activity;
 	
 	public Button systemBtn,
 				  dataBtn,
 				  operatorBtn,
 				  functionalBtn,
 				  backIcon;
-	
-	public boolean btnState = false;
 	
 	public Handler handler = new Handler();
 	public TimerTask OneHundredmsPeriod;
@@ -59,14 +59,14 @@ public class SettingActivity extends Activity {
 		SettingInit();
 	}
 	
-	public void setButtonId() {
+	public void setButtonId(Activity activity) {
 		
-		systemBtn = (Button)findViewById(R.id.systembtn);
-		operatorBtn = (Button)findViewById(R.id.operatorbtn);
-		functionalBtn = (Button)findViewById(R.id.functionalbtn);
-		backIcon = (Button)findViewById(R.id.backicon);
-		cheat1Btn = (Button)findViewById(R.id.cheat1btn);
-		cheat2Btn = (Button)findViewById(R.id.cheat2btn);
+		systemBtn = (Button)activity.findViewById(R.id.systembtn);
+		operatorBtn = (Button)activity.findViewById(R.id.operatorbtn);
+		functionalBtn = (Button)activity.findViewById(R.id.functionalbtn);
+		backIcon = (Button)activity.findViewById(R.id.backicon);
+		cheat1Btn = (Button)activity.findViewById(R.id.cheat1btn);
+		cheat2Btn = (Button)activity.findViewById(R.id.cheat2btn);
 	}
 	
 	public void setButtonClick() {
@@ -92,68 +92,57 @@ public class SettingActivity extends Activity {
 			switch(event.getAction()) {
 			
 			case MotionEvent.ACTION_UP	:
+				unenabledAllBtn(); //0624
 				
-				if(!btnState) {
-
-					btnState = true;
-					
-					switch(v.getId()) {
+				switch(v.getId()) {
 				
-					case R.id.systembtn		:
-						TakeOffBtn();
-						WhichIntent(TargetIntent.SystemSetting);
-						break;
-						
-					case R.id.operatorbtn	:
-						TakeOffBtn();
-						WhichIntent(TargetIntent.OperatorSetting);
-						break;
+				case R.id.systembtn		:
+					TakeOffBtn();
+					WhichIntent(TargetIntent.SystemSetting);
+					break;
 					
-					case R.id.functionalbtn	:
-						TakeOffBtn();
-						btnState = false;
-						break;
+				case R.id.operatorbtn	:
+					TakeOffBtn();
+					WhichIntent(TargetIntent.OperatorSetting);
+					break;
+				
+				case R.id.functionalbtn	:
+					TakeOffBtn();
+					WhichIntent(TargetIntent.FunctionalTest);
+					break;
+				
+				case R.id.backicon	:
+					WhichIntent(TargetIntent.Home);
+					break;
 					
-					case R.id.backicon	:
-						WhichIntent(TargetIntent.Home);
-						break;
-						
-					case R.id.cheat1btn	:
-						Cheat1stModeStart();
-						btnState = false;
-						break;
+				case R.id.cheat1btn	:
+					Cheat1stModeStart();
+					enabledAllBtn(activity); //0624
+					break;
+				
+				case R.id.cheat2btn	:
+					TakeOffBtn();
+					enabledAllBtn(activity); //0624
+					break;
 					
-					case R.id.cheat2btn	:
-						TakeOffBtn();
-						btnState = false;
-						break;
-						
-					default	:
-						break;
-					}
+				default	:
+					break;
 				}
 			
 				break;
 				
 			case MotionEvent.ACTION_DOWN	:
-				
-				if(!btnState) {
-
-					btnState = true;
-					
-					switch(v.getId()) {
-				
-					case R.id.cheat2btn	:
-						PressedBtn();
-						break;
-						
-					default	:
-						break;
-					}
-					
-					btnState = false;
-				}
+									
+				switch(v.getId()) {
 			
+				case R.id.cheat2btn	:
+					PressedBtn();
+					break;
+					
+				default	:
+					break;
+				}
+		
 				break;
 			}
 			
@@ -161,9 +150,31 @@ public class SettingActivity extends Activity {
 		}
 	};
 	
+	public void enabledAllBtn(Activity activity) {
+
+		setButtonState(R.id.systembtn, true, activity);
+		setButtonState(R.id.operatorbtn, true, activity);
+		setButtonState(R.id.functionalbtn, true, activity);
+		setButtonState(R.id.backicon, true, activity);
+		setButtonState(R.id.cheat1btn, true, activity);
+		setButtonState(R.id.cheat2btn, true, activity);
+	}
+	
+	public void unenabledAllBtn() {
+		
+		setButtonState(R.id.systembtn, false, activity);
+		setButtonState(R.id.operatorbtn, false, activity);
+		setButtonState(R.id.functionalbtn, false, activity);
+		setButtonState(R.id.backicon, false, activity);
+		setButtonState(R.id.cheat1btn, false, activity);
+		setButtonState(R.id.cheat2btn, false, activity);
+	}
+	
 	public void SettingInit() {
 		
-		setButtonId();
+		activity = this;
+		
+		setButtonId(activity);
 		setButtonClick();
 		
 		mTimerDisplay = new TimerDisplay();
@@ -182,7 +193,7 @@ public class SettingActivity extends Activity {
 	
 	public void TakeOffBtn() {
 		
-		CheatModeStop(this);
+		CheatModeStop(this, isCheat);
 	}
 	
 	public void TimerInit() {
@@ -212,8 +223,6 @@ public class SettingActivity extends Activity {
 		
 		if(!isC1Pressed) {
 			
-			Log.w("Cheat mode", "1st start");
-			
 			BtnColor(this, R.id.cheat1btn, "#3004A458");
 		
 			isC1Pressed = true;
@@ -232,22 +241,18 @@ public class SettingActivity extends Activity {
 		
 		if(hundredmsCnt > 30) {
 			
-			Log.w("Cheat mode", "2nd start");
-			
 			isCheat = true;
 			
 			timer.cancel();
 			
-			mOperatorController = new OperatorController(this, this, R.id.settinglayout);
+			mOperatorController = new OperatorPopup(this, this, R.id.settinglayout);
 			mOperatorController.EngineerLoginDisplay();
 		}
 	}
 	
-	public void CheatModeStop(Activity activity) {
+	public void CheatModeStop(Activity activity, boolean isCheat) {
 		
 		if(isC1Pressed) {
-			
-			Log.w("Cheat mode", "1st stop");
 			
 			BtnColor(activity, R.id.cheat1btn, "#00000000");
 		
@@ -257,8 +262,6 @@ public class SettingActivity extends Activity {
 		}
 		
 		if(isC2Pressed) {
-			
-			Log.w("Cheat mode", "2nd stop");
 			
 			BtnColor(activity, R.id.cheat2btn, "#00000000");
 			
@@ -270,7 +273,7 @@ public class SettingActivity extends Activity {
 		
 		if(cnt == 50) {
 			
-			CheatModeStop(this);
+			CheatModeStop(this, isCheat);
 		}
 	}
 	

@@ -32,23 +32,23 @@ public class SoundModel {
 			barGaugeImage = 0;
 			break;
 		
-		case 3	:
+		case 2	:
 			barGaugeImage = R.drawable.sound_bar_gauge_blue_1;
 			break;
 
-		case 6	:
+		case 4	:
 			barGaugeImage = R.drawable.sound_bar_gauge_blue_2;
 			break;
 			
-		case 9	:
+		case 6	:
 			barGaugeImage = R.drawable.sound_bar_gauge_blue_3;
 			break;
 			
-		case 12	:
+		case 8	:
 			barGaugeImage = R.drawable.sound_bar_gauge_blue_4;
 			break;
 		
-		case 15	:
+		case 10	:
 			barGaugeImage = R.drawable.sound_bar_gauge_blue_5;
 			break;
 			
@@ -62,14 +62,14 @@ public class SoundModel {
 	
 	public int downSoundVolume(int volume) {
 		
-		if(volume != 0) volume -= 3;
+		if(volume != 0) volume -= 2;
 		
 		return volume;
 	}
 	
 	public int upSoundVolume(int volume) {
 		
-		if(volume != 15) volume += 3;
+		if(volume != 10) volume += 2;
 				
 		return volume;
 	}
@@ -83,22 +83,25 @@ public class SoundModel {
 	
 		try {
 			
-			final int mWin;
-			
 			audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, volume, 0);
 			
-//			SoundPool mPool = new SoundPool(1, AudioManager.STREAM_MUSIC, 0);
-//			mWin = mPool.load(context, R.raw.beep, 1);
-//			
-//			mPool.setOnLoadCompleteListener(new OnLoadCompleteListener() {
-//			      public void onLoadComplete(SoundPool mPool, int sampleId, int status) {
-//
-//			  		mPool.play(mWin, 1, 1, 0, 0, 1); // playing sound
-//			      }
-//			});
+			playSound(R.raw.beep);
 			
 		} catch(Exception e) {
-			
+		
 		}
+	}
+	
+	public void playSound(int sound) {
+		
+		SoundPool mPool = new SoundPool(1, AudioManager.STREAM_MUSIC, 0);
+		final int mWin = mPool.load(context, sound, 1);
+		
+		mPool.setOnLoadCompleteListener(new OnLoadCompleteListener() {
+		      public void onLoadComplete(SoundPool mPool, int sampleId, int status) {
+
+		  		mPool.play(mWin, 1, 1, 0, 0, 1); // playing sound
+		      }
+		});
 	}
 }

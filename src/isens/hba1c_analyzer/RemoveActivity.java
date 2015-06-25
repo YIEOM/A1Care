@@ -3,7 +3,9 @@ package isens.hba1c_analyzer;
 import java.lang.annotation.Target;
 
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
+import isens.hba1c_analyzer.View.FunctionalTestActivity;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.AnimationDrawable;
@@ -16,6 +18,9 @@ public class RemoveActivity extends Activity {
 
 	public SerialPort mSerialPort;
 	public TimerDisplay mTimerDisplay;
+	
+	private Activity activity;
+	private Context context;
 	
 	public AnimationDrawable removeAni;
 	public ImageView removeImage;
@@ -36,12 +41,12 @@ public class RemoveActivity extends Activity {
 	
 	public void RemoveInit() {
 
-		Log.w("Remove", "run");
+		this.activity = this;
+		this.context = this;
 		
 		mTimerDisplay = new TimerDisplay();
 		mTimerDisplay.ActivityParm(this, R.id.removelayout);
 		
-		TimerDisplay.RXBoardFlag = true;
 		UserAction UserActionObj = new UserAction();
 		UserActionObj.start();
 	}
@@ -66,14 +71,12 @@ public class RemoveActivity extends Activity {
 			GpioPort.DoorActState = false;
 			GpioPort.CartridgeActState = false;
 			
-			TimerDisplay.RXBoardFlag = false;
-			
 			Intent itn = getIntent();
 			whichIntent = itn.getIntExtra("WhichIntent", 0);
 			
 			if(whichIntent != ResultActivity.COVER_ACTION_ESC) {
 					
-				if(Barcode.RefNum.substring(0, 1).equals("B")) ControlDataCnt = itn.getIntExtra("DataCnt", 0);	
+				if(Barcode.Type.equals("W") || Barcode.Type.equals("X") || Barcode.Type.equals("Y") || Barcode.Type.equals("Z")) ControlDataCnt = itn.getIntExtra("DataCnt", 0);
 				else PatientDataCnt = itn.getIntExtra("DataCnt", 0);
 					
 				DataCntSave();			
@@ -84,19 +87,19 @@ public class RemoveActivity extends Activity {
 			switch(whichIntent) {
 			
 			case ResultActivity.ACTION_ACTIVITY	:
-				WhichIntent(TargetIntent.Blank);
+				WhichIntent(activity, context, TargetIntent.Blank);
 				break;
 			
 			case ResultActivity.HOME_ACTIVITY		:	
-				WhichIntent(TargetIntent.Home);
+				changeActivity(activity, context);
 				break;
 				
 			case ResultActivity.COVER_ACTION_ESC	:
-				WhichIntent(TargetIntent.Home);
+				changeActivity(activity, context);
 				break;
 				
 			case ResultActivity.SCAN_ACTIVITY	:
-				WhichIntent(TargetIntent.ScanTemp);
+				WhichIntent(activity, context, TargetIntent.ScanTemp);
 				break;
 				
 			default	:
@@ -133,7 +136,22 @@ public class RemoveActivity extends Activity {
 		edit.commit();
 	}
 	
-	public void WhichIntent(TargetIntent Itn) { // Activity conversion
+	private void changeActivity(Activity activity, Context context) {
+		
+		if(HomeActivity.MEASURE_MODE == HomeActivity.A1C) {
+			
+			WhichIntent(activity, context, TargetIntent.Home);
+		
+		} else {
+			
+			WhichIntent(activity, context, TargetIntent.FunctionalTest);
+		}
+	}
+	
+	public void WhichIntent(Activity activity, Context context, TargetIntent Itn) { // Activity conversion
+		
+		Intent itn = getIntent();
+		int state = itn.getIntExtra("System Check State", 0);
 		
 		Intent nextIntent = null;
 		
@@ -141,8 +159,14 @@ public class RemoveActivity extends Activity {
 		
 		case Home		:				
 			nextIntent = new Intent(getApplicationContext(), HomeActivity.class);
+			nextIntent.putExtra("System Check State", state);
 			break;
-						
+			
+		case FunctionalTest		:				
+			nextIntent = new Intent(getApplicationContext(), FunctionalTestActivity.class);
+			nextIntent.putExtra("System Check State", state);
+			break;
+			
 		case Blank		:				
 			nextIntent = new Intent(getApplicationContext(), BlankActivity.class);
 			break;

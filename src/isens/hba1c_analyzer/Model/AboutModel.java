@@ -48,9 +48,11 @@ public class AboutModel {
 		mGetSWVersion.start();
 		
 		try {
+		
 			mGetSWVersion.join();
+		
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
+		
 			e.printStackTrace();
 		}
 		
@@ -78,8 +80,6 @@ public class AboutModel {
 				
 			} catch (NameNotFoundException e) {
 
-				// TODO Auto-generated catch block
-
 				e.printStackTrace();
 				
 				version = "Nothing";
@@ -98,9 +98,11 @@ public class AboutModel {
 		mGetFWVersion.start();
 		
 		try {
+			
 			mGetFWVersion.join();
+			
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 		
@@ -126,10 +128,8 @@ public class AboutModel {
 			do {	
 			
 				temp = mSerialPort.BoardMessageOutput();
-
-				Log.w("GetFwVersion", "temp : " + temp);
 				
-				if(cnt++ == 15) {
+				if(cnt++ == 20) {
 					
 					temp = "Nothing";
 					break;
@@ -156,9 +156,11 @@ public class AboutModel {
 		mGetOSVersion.start();
 		
 		try {
+			
 			mGetOSVersion.join();
+		
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 		
@@ -184,8 +186,6 @@ public class AboutModel {
 				
 					if(line.substring(0, 3).equals("ICS")) {
 					
-						Log.w("GetOSVersion", "temp : " + line);
-						
 						temp = line;
 					}
 				}

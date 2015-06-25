@@ -17,6 +17,7 @@ import isens.hba1c_analyzer.View.f660Activity;
 import isens.hba1c_analyzer.View.CorrelationActivity;
 import isens.hba1c_analyzer.View.LampActivity;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
@@ -35,7 +36,12 @@ public class EngineerActivity extends Activity {
 	
 	public TimerDisplay mTimerDisplay;
 	public SerialPort mSerialPort;
+	public DataStorage mDataStorage;
+	public ErrorPopup mErrorPopup;
 	
+	public Activity activity;
+	public Context context;
+
 	public Button escBtn,
 	  			  lampBtn,
 	  			  adjustBtn,
@@ -45,10 +51,11 @@ public class EngineerActivity extends Activity {
 	  			  f535Btn,
 	  			  f660Btn,
 	  			  collelationBtn,
-	  			  
-	  			  aboutBtn;
+	  			  aboutBtn,
+	  			  deleteBtn;
 	
 	public TextView swVersionText, fwVersionText, osVersionText;
+	
 	
 	public boolean btnState = false;
 	
@@ -68,18 +75,19 @@ public class EngineerActivity extends Activity {
 		osVersionText = (TextView)findViewById(R.id.osVersionText);		
 	}
 	
-	public void setButtonId() {
+	public void setButtonId(Activity activity) {
 		
-		escBtn = (Button)findViewById(R.id.escBtn);
-		adjustBtn = (Button)findViewById(R.id.adjustBtn);
-		calibrationBtn = (Button)findViewById(R.id.calibrationBtn);
-		tempBtn = (Button)findViewById(R.id.tempBtn);
-		lampBtn = (Button)findViewById(R.id.lampBtn);
-		tHbBtn = (Button)findViewById(R.id.tHbBtn);
-		f535Btn = (Button)findViewById(R.id.f535Btn);
-		f660Btn = (Button)findViewById(R.id.f660Btn);
-		collelationBtn = (Button)findViewById(R.id.collelationBtn);
-		aboutBtn = (Button)findViewById(R.id.aboutBtn);
+		escBtn = (Button)activity.findViewById(R.id.escBtn);
+		adjustBtn = (Button)activity.findViewById(R.id.adjustBtn);
+		calibrationBtn = (Button)activity.findViewById(R.id.calibrationBtn);
+		tempBtn = (Button)activity.findViewById(R.id.tempBtn);
+		lampBtn = (Button)activity.findViewById(R.id.lampBtn);
+		tHbBtn = (Button)activity.findViewById(R.id.tHbBtn);
+		f535Btn = (Button)activity.findViewById(R.id.f535Btn);
+		f660Btn = (Button)activity.findViewById(R.id.f660Btn);
+		collelationBtn = (Button)activity.findViewById(R.id.collelationBtn);
+		aboutBtn = (Button)activity.findViewById(R.id.aboutBtn);
+		deleteBtn = (Button)activity.findViewById(R.id.deleteBtn);
 	}
 	
 	public void setButtonClick() {
@@ -94,11 +102,12 @@ public class EngineerActivity extends Activity {
 		f660Btn.setOnTouchListener(mTouchListener);
 		collelationBtn.setOnTouchListener(mTouchListener);
 		aboutBtn.setOnTouchListener(mTouchListener);
+		deleteBtn.setOnTouchListener(mTouchListener);
 	}
 	
-	public void setButtonState(int btnId, boolean state) {
+	public void setButtonState(int btnId, boolean state, Activity activity) {
 		
-		findViewById(btnId).setEnabled(state);
+		activity.findViewById(btnId).setEnabled(state);
 	}
 	
 	Button.OnTouchListener mTouchListener = new View.OnTouchListener() {
@@ -110,55 +119,57 @@ public class EngineerActivity extends Activity {
 			
 			case MotionEvent.ACTION_UP	:
 				
-				if(!btnState) {
-
-					btnState = true;
-					
-					switch(v.getId()) {
+				unenabledAllBtn(activity);
 				
-					case R.id.escBtn	:
-						WhichIntent(TargetIntent.Home);
-						break;
-						
-					case R.id.adjustBtn	:
-						WhichIntent(TargetIntent.Adjustment);
-						break;
+				switch(v.getId()) {
+			
+				case R.id.escBtn	:
+					WhichIntent(activity, TargetIntent.Home);
+					break;
 					
-					case R.id.calibrationBtn	:
-						WhichIntent(TargetIntent.Calibration);
-						break;
+				case R.id.adjustBtn	:
+					WhichIntent(activity, TargetIntent.Adjustment);
+					break;
+				
+				case R.id.calibrationBtn	:
+					WhichIntent(activity, TargetIntent.Calibration);
+					break;
+				
+				case R.id.tempBtn	:
+					WhichIntent(activity, TargetIntent.Temperature);
+					break;
 					
-					case R.id.tempBtn	:
-						WhichIntent(TargetIntent.Temperature);
-						break;
-						
-					case R.id.lampBtn	:
-						WhichIntent(TargetIntent.Lamp);
-						break;
-						
-					case R.id.tHbBtn	:
-						WhichIntent(TargetIntent.tHb);
-						break;
+				case R.id.lampBtn	:
+					WhichIntent(activity, TargetIntent.Lamp);
+					break;
 					
-					case R.id.f535Btn	:
-						WhichIntent(TargetIntent.f535);
-						break;
-						
-					case R.id.f660Btn	:
-						WhichIntent(TargetIntent.f660);
-						break;
-						
-					case R.id.collelationBtn	:
-						WhichIntent(TargetIntent.Correlation);
-						break;
+				case R.id.tHbBtn	:
+					WhichIntent(activity, TargetIntent.tHb);
+					break;
+				
+				case R.id.f535Btn	:
+					WhichIntent(activity, TargetIntent.f535);
+					break;
 					
-					case R.id.aboutBtn	:
-						WhichIntent(TargetIntent.About);
-						break;
-						
-					default	:
-						break;
-					}
+				case R.id.f660Btn	:
+					WhichIntent(activity, TargetIntent.f660);
+					break;
+					
+				case R.id.collelationBtn	:
+					WhichIntent(activity, TargetIntent.Correlation);
+					break;
+				
+				case R.id.aboutBtn	:
+					WhichIntent(activity, TargetIntent.About);
+					break;
+					
+				case R.id.deleteBtn	:
+					mErrorPopup = new ErrorPopup(activity, context, R.id.engineerlayout, null, 0);
+					mErrorPopup.OXBtnDisplay(R.string.delete);
+					break;
+					
+				default	:
+					break;
 				}
 			
 				break;
@@ -168,73 +179,117 @@ public class EngineerActivity extends Activity {
 		}
 	};
 	
+	public void enabledAllBtn(Activity activtiy) {
+
+		setButtonState(R.id.escBtn, true, activtiy);
+		setButtonState(R.id.adjustBtn, true, activtiy);
+		setButtonState(R.id.calibrationBtn, true, activtiy);
+		setButtonState(R.id.tempBtn, true, activtiy);
+		setButtonState(R.id.lampBtn, true, activtiy);
+		setButtonState(R.id.tHbBtn, true, activtiy);
+		setButtonState(R.id.f535Btn, true, activtiy);
+		setButtonState(R.id.f660Btn, true, activtiy);
+		setButtonState(R.id.collelationBtn, true, activtiy);
+		setButtonState(R.id.aboutBtn, true, activtiy);
+		setButtonState(R.id.deleteBtn, true, activtiy);
+	}
+	
+	public void unenabledAllBtn(Activity activtiy) {
+		
+		setButtonState(R.id.escBtn, false, activtiy);
+		setButtonState(R.id.adjustBtn, false, activtiy);
+		setButtonState(R.id.calibrationBtn, false, activtiy);
+		setButtonState(R.id.tempBtn, false, activtiy);
+		setButtonState(R.id.lampBtn, false, activtiy);
+		setButtonState(R.id.tHbBtn, false, activtiy);
+		setButtonState(R.id.f535Btn, false, activtiy);
+		setButtonState(R.id.f660Btn, false, activtiy);
+		setButtonState(R.id.collelationBtn, false, activtiy);
+		setButtonState(R.id.aboutBtn, false, activtiy);
+		setButtonState(R.id.deleteBtn, false, activtiy);
+	}	
+	
 	public void MaintenanceInit() {
 		
+		activity = this;
+		context = this;
+		
 		setTextId();
-		setButtonId();
+		setButtonId(activity);
 		setButtonClick();
 		
 		mTimerDisplay = new TimerDisplay();
-		mTimerDisplay.ActivityParm(this, R.id.maintenancelayout);
+		mTimerDisplay.ActivityParm(this, R.id.engineerlayout);
 	}
 	
-	public void WhichIntent(TargetIntent Itn) { // Activity conversion
+	public void WhichIntent(Activity activity, TargetIntent Itn) { // Activity conversion
 		
 		Intent nextIntent = null;
 		
 		switch(Itn) {
 		
 		case Home			:				
-			nextIntent = new Intent(getApplicationContext(), HomeActivity.class);
+			nextIntent = new Intent(activity.getApplicationContext(), HomeActivity.class);
 			break;
 						
 		case Lamp		:				
-			nextIntent = new Intent(getApplicationContext(), LampCopyActivity.class);
+			nextIntent = new Intent(activity.getApplicationContext(), LampCopyActivity.class);
 			break;
 			
 		case Adjustment		:				
-			nextIntent = new Intent(getApplicationContext(), AdjustmentActivity.class);
+			nextIntent = new Intent(activity.getApplicationContext(), AdjustmentActivity.class);
 			break;
 
 		case Calibration	:				
-			nextIntent = new Intent(getApplicationContext(), CalibrationActivity.class);
+			nextIntent = new Intent(activity.getApplicationContext(), CalibrationActivity.class);
 			break;
 			
 		case Temperature	:				
-			nextIntent = new Intent(getApplicationContext(), TemperatureActivity.class);
+			nextIntent = new Intent(activity.getApplicationContext(), TemperatureActivity.class);
 			break;
 		
 		case tHb		:				
-			nextIntent = new Intent(getApplicationContext(), tHbActivity.class);
+			nextIntent = new Intent(activity.getApplicationContext(), tHbActivity.class);
 			break;
 					
 		case f535		:				
-			nextIntent = new Intent(getApplicationContext(), f535Activity.class);
+			nextIntent = new Intent(activity.getApplicationContext(), f535Activity.class);
 			break;
 		
 		case f660		:				
-			nextIntent = new Intent(getApplicationContext(), f660Activity.class);
+			nextIntent = new Intent(activity.getApplicationContext(), f660Activity.class);
 			break;
 		
 		case Correlation	:				
-			nextIntent = new Intent(getApplicationContext(), CorrelationActivity.class);
+			nextIntent = new Intent(activity.getApplicationContext(), CorrelationActivity.class);
 			break;
 		
 		case About	:				
-			nextIntent = new Intent(getApplicationContext(), AboutActivity.class);
+			nextIntent = new Intent(activity.getApplicationContext(), AboutActivity.class);
+			break;
+			
+		case Delete	:
+			int patientDataCnt = RemoveActivity.PatientDataCnt;
+			int controlDataCnt = RemoveActivity.ControlDataCnt;
+			RemoveActivity.PatientDataCnt = 1;
+			RemoveActivity.ControlDataCnt = 1;
+			
+			nextIntent = new Intent(activity.getApplicationContext(), FileDeleteActivity.class);
+			nextIntent.putExtra("PatientDataCnt", patientDataCnt);
+			nextIntent.putExtra("ControlDataCnt", controlDataCnt);
 			break;
 			
 		default		:	
 			break;			
 		}
 		
-		startActivity(nextIntent);
-		finish();
+		activity.startActivity(nextIntent);
+		finish(activity);
 	}
 	
-	public void finish() {
+	public void finish(Activity activity) {
 		
 		super.finish();
-		overridePendingTransition(R.anim.fade, R.anim.hold);
+		activity.overridePendingTransition(R.anim.fade, R.anim.hold);
 	}
 }

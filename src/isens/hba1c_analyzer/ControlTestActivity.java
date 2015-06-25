@@ -25,6 +25,8 @@ public class ControlTestActivity extends Activity {
 	public SerialPort mSerialPort;
 	public TimerDisplay mTimerDisplay;
 	
+	private Activity activity;
+	
 	public RelativeLayout cTestLayout;
 	public View detailPopupView;
 	public PopupWindow detailPopup;
@@ -103,16 +105,16 @@ public class ControlTestActivity extends Activity {
 		result = (TextView) detailPopupView.findViewById(R.id.result);
 	}
 	
-	public void setButtonId() {
+	public void setButtonId(Activity activity, View detailPopupView) {
 		
-		homeIcon = (Button)findViewById(R.id.homeicon);
-		backIcon = (Button)findViewById(R.id.backicon);
-		preViewBtn = (Button)findViewById(R.id.previousviewbtn);
-		detailViewBtn = (Button)findViewById(R.id.detailviewbtn);
-		nextViewBtn = (Button)findViewById(R.id.nextviewbtn);
+		homeIcon = (Button)activity.findViewById(R.id.homeicon);
+		backIcon = (Button)activity.findViewById(R.id.backicon);
+		preViewBtn = (Button)activity.findViewById(R.id.previousviewbtn);
+		detailViewBtn = (Button)activity.findViewById(R.id.detailviewbtn);
+		nextViewBtn = (Button)activity.findViewById(R.id.nextviewbtn);
 		printBtn = (Button)detailPopupView.findViewById(R.id.printbtn);
 		cancleBtn = (Button)detailPopupView.findViewById(R.id.canclebtn);
-		exportBtn = (Button)findViewById(R.id.exportbtn);
+		exportBtn = (Button)activity.findViewById(R.id.exportbtn);
 	}
 	
 	public void setButtonClick() {
@@ -127,11 +129,16 @@ public class ControlTestActivity extends Activity {
 		exportBtn.setOnTouchListener(mTouchListener);
 	}
 	
-	public void setButtonState(int btnId, boolean state) {
+	public void setButtonState(int btnId, boolean state, Activity activity) {
 		
-		findViewById(btnId).setEnabled(state);
+		activity.findViewById(btnId).setEnabled(state);
 	}
 	
+	public void setDetailButtonState(int btnId, boolean state, View detailPopupView) {
+		
+		detailPopupView.findViewById(btnId).setEnabled(state);
+	}
+
 	public void setImageButtonId() {
 		
 		checkBoxBtn1 = (ImageButton) findViewById(R.id.chdckbox1);
@@ -158,63 +165,88 @@ public class ControlTestActivity extends Activity {
 			switch(event.getAction()) {
 			
 			case MotionEvent.ACTION_UP	:
+				unenabledAllBtn(activity);
+					
+				switch(v.getId()) {
 				
-				if(!btnState) {
-
-					btnState = true;
-
-					switch(v.getId()) {
+				case R.id.homeicon	:
+					WhichIntent(TargetIntent.Home);
+					break;
 				
-					case R.id.homeicon	:
-						WhichIntent(TargetIntent.Home);
-						break;
+				case R.id.backicon	:
+					WhichIntent(TargetIntent.Record);
+					break;
+				
+				case R.id.previousviewbtn	:
+					WhichIntent(TargetIntent.PreFile);
+					break;
 					
-					case R.id.backicon	:
-						WhichIntent(TargetIntent.Record);
-						break;
+				case R.id.detailviewbtn	:
+					DisplayDetailView();
+					break;
 					
-					case R.id.previousviewbtn	:
-						WhichIntent(TargetIntent.PreFile);
-						btnState = false;
-						break;
-						
-					case R.id.detailviewbtn	:
-						DisplayDetailView();
-						cancleBtn.setEnabled(true);
-						break;
-						
-					case R.id.nextviewbtn	:
-						WhichIntent(TargetIntent.NextFile);
-						btnState = false;
-						break;
+				case R.id.nextviewbtn	:
+					WhichIntent(TargetIntent.NextFile);
+					break;
+				
+				case R.id.printbtn	:
+					unenabledAllDetailBtn(detailPopupView);
+					PrintRecordData();
+					break;
+				
+				case R.id.canclebtn	:
+					unenabledAllDetailBtn(detailPopupView);
+					detailPopup.dismiss();
+					enabledAllDetailBtn(detailPopupView);
+					enabledAllBtn(activity);
+					break;
 					
-					case R.id.printbtn	:
-						PrintRecordData();
-						break;
+				case R.id.exportbtn	:
+					enabledAllBtn(activity);
+					break;
 					
-					case R.id.canclebtn	:
-
-						cancleBtn.setEnabled(false);
-						detailPopup.dismiss();
-						detailViewBtn.setEnabled(true);
-						btnState = false;
-						break;
-						
-					case R.id.exportbtn	:
-						btnState = false;
-						break;
-						
-					default	:
-						break;
-					}
-					
+				default	:
 					break;
 				}
+				
+				break;
 			}
 			
 			return false;
 		}
 	};
+	
+	public void enabledAllBtn(Activity activity) {
+
+		setButtonState(R.id.homeicon, true, activity);
+		setButtonState(R.id.backicon, true, activity);
+		setButtonState(R.id.previousviewbtn, true, activity);
+		setButtonState(R.id.detailviewbtn, true, activity);
+		setButtonState(R.id.nextviewbtn, true, activity);
+		setButtonState(R.id.exportbtn, true, activity);
+	}
+	
+	public void unenabledAllBtn(Activity activity) {
+
+		setButtonState(R.id.homeicon, false, activity);
+		setButtonState(R.id.backicon, false, activity);
+		setButtonState(R.id.previousviewbtn, false, activity);
+		setButtonState(R.id.detailviewbtn, false, activity);
+		setButtonState(R.id.nextviewbtn, false, activity);
+		setButtonState(R.id.exportbtn, false, activity);
+	}
+	
+	public void enabledAllDetailBtn(View detailPopupView) {
+
+		setDetailButtonState(R.id.printbtn, true, detailPopupView);
+		setDetailButtonState(R.id.canclebtn, true, detailPopupView);
+	}
+	
+	public void unenabledAllDetailBtn(View detailPopupView) {
+
+		setDetailButtonState(R.id.printbtn, false, detailPopupView);
+		setDetailButtonState(R.id.canclebtn, false, detailPopupView);
+	}
 	
 	ImageButton.OnTouchListener mImageTouchListener = new View.OnTouchListener() {
 		
@@ -260,22 +292,12 @@ public class ControlTestActivity extends Activity {
 		}
 	};
 	
-	public void enabledAllBtn() {
-
-		setButtonState(R.id.homeicon, true);
-	}
-	
-	public void unenabledAllBtn() {
-
-		setButtonState(R.id.homeicon, false);
-		
-		btnState = false;
-	}
-	
 	public void ControlInit() {
 		
+		activity = this;
+		
 		setTextId();
-		setButtonId();
+		setButtonId(activity, detailPopupView);
 		setButtonClick();
 		setImageButtonId();
 		setImageButtonClick();
@@ -299,6 +321,7 @@ public class ControlTestActivity extends Activity {
 			pID      = itn.getStringArrayExtra("PatientID");
 			oID      = itn.getStringArrayExtra("OperatorID");
 			priStr   = itn.getStringArrayExtra("Primary");
+			typeStr  = itn.getStringArrayExtra("Type");
 		
 		} else {
 			
@@ -309,8 +332,8 @@ public class ControlTestActivity extends Activity {
 			pID     [0] = "Patient";
 			oID     [0] = "Operator";
 			priStr  [0] = "0";
+			typeStr	[0] = "W";
 		}
-//		Log.w("GetItnData", "Cartridge Lot : " + refNum[0] + " HbA1c : " + hbA1c[0]);
 	}
 		
 	public void ControlText() { // textview activation
@@ -350,6 +373,8 @@ public class ControlTestActivity extends Activity {
 	
 	public void ControlDisplay() { // displaying the patient data
 			
+		String type;
+		
 		GetItnData();
 		ControlText();
 		
@@ -357,13 +382,15 @@ public class ControlTestActivity extends Activity {
 		
     		if(testNum[i] != null) {
     		
+    			if(typeStr[i].equals("W") || typeStr[i].equals("X")) type = "Control HbA1c";
+				else type = "Control ACR";
+				
     			TestNumText [i].setText(testNum[i]);
-    			typeStr     [i] = "HbA1c";
-				TypeText    [i].setText(typeStr[i]);
+    			TypeText    [i].setText(type);
     			ResultText  [i].setText(hbA1c[i]);
 				if(priStr[i].equals("0")) UnitText[i].setText("%");
 				else UnitText[i].setText("mmol/mol");				
-            	DateTimeText[i].setText(dateTime[i].substring(0, 4) + "." + dateTime[i].substring(4, 6) + "." + dateTime[i].substring(6, 8) + " " + dateTime[i].substring(8, 10) + " " + dateTime[i].substring(10, 12) + ":" + dateTime[i].substring(12, 14));	
+            	DateTimeText[i].setText(dateTime[i].substring(0, 4) + "." + dateTime[i].substring(4, 6) + "." + dateTime[i].substring(6, 8) + "   " + dateTime[i].substring(10, 12) + ":" + dateTime[i].substring(12, 14) + " " + dateTime[i].substring(8, 10));	
     		}	
     	}
 	
@@ -405,15 +432,16 @@ public class ControlTestActivity extends Activity {
 	
 	public void DisplayDetailView() { // displaying the detail patient data
 
-		String pri,
-		   unit,
-		   ran;
+		String pri, unit, ran, type;
 	
 		if(checkFlag && testNum[boxNum - 1] != null) {
 				
+			if(typeStr[boxNum - 1].equals("W") || typeStr[boxNum - 1].equals("X")) type = "Control HbA1c";
+			else type = "Control ACR";
+			
 			patientID.setText(pID[boxNum - 1]);
-			testDate.setText(dateTime[boxNum - 1].substring(2, 4) + "." + dateTime[boxNum - 1].substring(4, 6) + "." + dateTime[boxNum - 1].substring(6, 8) + " " + dateTime[boxNum - 1].substring(8, 10) + " " + dateTime[boxNum - 1].substring(10, 12) + ":" + dateTime[boxNum - 1].substring(12, 14));
-			typeDetailText.setText(typeStr[boxNum - 1]);
+			testDate.setText(dateTime[boxNum - 1].substring(2, 4) + "." + dateTime[boxNum - 1].substring(4, 6) + "." + dateTime[boxNum - 1].substring(6, 8) + "   " + dateTime[boxNum - 1].substring(10, 12) + ":" + dateTime[boxNum - 1].substring(12, 14) + " " + dateTime[boxNum - 1].substring(8, 10));
+			typeDetailText.setText(type);
 			
 			if(priStr[boxNum - 1].equals("0")) {
 				
@@ -434,13 +462,12 @@ public class ControlTestActivity extends Activity {
 			testNo.setText(testNum[boxNum - 1]);
 			operatorID.setText(oID[boxNum - 1]);
 			result.setText(hbA1c[boxNum - 1] + unit);
-				
-			detailViewBtn.setEnabled(false);
+
 			detailPopup.showAtLocation(cTestLayout, Gravity.CENTER, 0, 0);
 			detailPopup.setAnimationStyle(0);
 		}
 		
-		btnState = false;
+		enabledAllBtn(activity);
 	}
 		            		
 	public void PrintRecordData() {
@@ -458,6 +485,8 @@ public class ControlTestActivity extends Activity {
 		txData.append(dateTime[boxNum - 1].substring(10, 12));
 		txData.append(dateTime[boxNum - 1].substring(12, 14));
 		txData.append(testNum[boxNum - 1]);
+		
+		txData.append(typeStr[boxNum - 1]);		
 		txData.append(refNum[boxNum - 1]);
 		txData.append(pIDLenDfm.format(pID[boxNum - 1].length()));
 		txData.append(pID[boxNum - 1]);
@@ -467,11 +496,11 @@ public class ControlTestActivity extends Activity {
 		txData.append(hbA1c[boxNum - 1]);
 		
 		mSerialPort = new SerialPort();
-		mSerialPort.PrinterTxStart(SerialPort.PRINTRECORD, txData);
+		mSerialPort.PrinterTxStart(SerialPort.PRINT_RECORD, txData);
 		
 		SerialPort.Sleep(100);
 		
-		btnState = false;
+		enabledAllDetailBtn(detailPopupView);
 	}
 	
 	public void WhichIntent(TargetIntent Itn) { // Activity conversion
@@ -499,7 +528,8 @@ public class ControlTestActivity extends Activity {
 				NextFileIntent.putExtra("Type", (int) FileLoadActivity.CONTROL);
 				startActivity(NextFileIntent);
 				finish();
-			} else nextViewBtn.setEnabled(true);
+				
+			} else enabledAllBtn(activity);
 			break;
 		
 		case PreFile	:
@@ -511,14 +541,13 @@ public class ControlTestActivity extends Activity {
 				PreFileIntent.putExtra("Type", (int) FileLoadActivity.CONTROL);
 				startActivity(PreFileIntent);
 				finish();
-			} else preViewBtn.setEnabled(true);
+				
+			} else enabledAllBtn(activity);
 			break;
 			
 		default		:	
 			break;			
 		}
-		
-		btnState = false;
 	}
 
 	public void finish() {

@@ -6,6 +6,8 @@ import java.util.TimerTask;
 
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
 import isens.hba1c_analyzer.Model.ActivityChange;
+import isens.hba1c_analyzer.Model.SoundModel;
+import isens.hba1c_analyzer.View.FunctionalTestActivity;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -41,6 +43,11 @@ public class ActionActivity extends Activity {
 	public ErrorPopup mErrorPopup;
 	public TimerDisplay mTimerDisplay;
 	public ActivityChange mActivityChange;
+	public SoundModel mSoundModel;
+	
+	private Activity activity;
+	private Context context;
+	private int layoutId;
 	
 	public Handler handler = new Handler();
 	public Timer timer;
@@ -52,8 +59,10 @@ public class ActionActivity extends Activity {
 	
 	public Button escBtn;
 	
-	public static boolean IsCorrectBarcode = false, 
-						  BarcodeCheckFlag = false;	
+	public static boolean IsCorrectBarcode = false,
+						  IsExpirationDate = false,
+			  			  BarcodeCheckFlag = false, 
+						  BarcodeQCCheckFlag = false;
 	public static boolean IsEnablePopup = false,
 						  ESCButtonFlag = false;
 	
@@ -65,8 +74,6 @@ public class ActionActivity extends Activity {
 	public int mWin;
 	
 	private int checkError = RunActivity.NORMAL_OPERATION;
-
-	public boolean btnState = false;
 	
 	public int waitCnt = 0;
 	
@@ -76,12 +83,12 @@ public class ActionActivity extends Activity {
 		overridePendingTransition(R.anim.fade, R.anim.hold);
 		setContentView(R.layout.action);
 		
-		ActionInit(this, this);
+		ActionInit();
 	}
 	
-	public void setButtonId() {
+	public void setButtonId(Activity activity) {
 		
-		escBtn = (Button)findViewById(R.id.escicon);
+		escBtn = (Button)activity.findViewById(R.id.escicon);
 	}
 	
 	public void setButtonClick() {
@@ -89,9 +96,9 @@ public class ActionActivity extends Activity {
 		escBtn.setOnTouchListener(mTouchListener);
 	}
 	
-	public void setButtonState(int btnId, boolean state) {
+	public void setButtonState(int btnId, boolean state, Activity activity) {
 		
-		findViewById(btnId).setEnabled(state);
+		activity.findViewById(btnId).setEnabled(state);
 	}
 	
 	Button.OnTouchListener mTouchListener = new View.OnTouchListener() {
@@ -102,21 +109,16 @@ public class ActionActivity extends Activity {
 			switch(event.getAction()) {
 			
 			case MotionEvent.ACTION_UP	:
+				unenabledAllBtn(activity); //0624
 				
-				if(!btnState) {
-
-					btnState = true;
+				switch(v.getId()) {
+			
+				case R.id.escicon		:
+					ESC();
+					break;
 					
-					switch(v.getId()) {
-				
-					case R.id.escicon		:
-						ESC();
-						btnState = false;
-						break;
-						
-					default	:
-						break;
-					}
+				default	:
+					break;
 				}
 			
 				break;
@@ -126,81 +128,102 @@ public class ActionActivity extends Activity {
 		}
 	};
 	
-	public void enabledAllBtn() {
+	public void enabledAllBtn(Activity activity) {
 
-		setButtonState(R.id.escicon, true);
+		setButtonState(R.id.escicon, true, activity);
 	}
 	
-	public void unenabledAllBtn() {
+	public void unenabledAllBtn(Activity activity) {
 		
-		setButtonState(R.id.escicon, false);
-		
-		btnState = false;
+		setButtonState(R.id.escicon, false, activity);
 	}
 	
-	public void ActionInit(Activity activity, Context context) {
-
-		setButtonId();
+	public void ActionInit() {
+		
+		activity = this;
+		context = this;
+		
+		setButtonId(activity);
 		setButtonClick();
 		
 		mTimerDisplay = new TimerDisplay();
-		mTimerDisplay.ActivityParm(activity, R.id.actionlayout);
+		mTimerDisplay.ActivityParm(this, R.id.actionlayout);
 		
-		actionLinear = (RelativeLayout)activity.findViewById(R.id.actionlayout);
+		BarcodeQCCheckFlag = false;
 		
-		switch(HomeActivity.MEASURE_MODE) {
-    	
-    	case HomeActivity.A1C :
-    		actionLinear.setBackgroundResource(R.drawable.ani_scan_bg);
-    		break;
-    		
-    	case HomeActivity.A1C_QC	:
-    		actionLinear.setBackgroundResource(R.drawable.ani_qc_scan_bg);
-    		break;
-    		
-		default	:
-			break;
-    	}
-    	
-		IsCorrectBarcode = false;	
-		BarcodeCheckFlag = false;
-		SerialPort.BarcodeReadStart = false;
+		startScan(this, this, R.id.actionlayout);
+    }
+	
+	public void startScan(Activity activity, Context context, int layoutId) {
 		
-		ESCButtonFlag = false;
-		btnState = false;
-		waitCnt = 0;
+		this.activity = activity;
+		this.context = context;
+		this.layoutId = layoutId;
 		
-    	BarcodeScan BarcodeScanObj = new BarcodeScan(activity, context, R.id.actionlayout);
-    	BarcodeScanObj.start();
+		if(HomeActivity.MEASURE_MODE == HomeActivity.A1C) {
+			
+			startBarcodeScan(activity);
+		
+		} else {
+			
+			if(!BarcodeQCCheckFlag)	startBarcodeQCScan(activity);
+			else startBarcodeScan(activity);
+		}
 	}
 	
-	public class BarcodeScan extends Thread {
+	private void initScan() {
 		
-		Activity activity;
-		Context context;
-		int layoutid;
+		BarcodeCheckFlag = false;
+		IsCorrectBarcode = false;
+		IsExpirationDate = false;
+		SerialPort.BarcodeReadStart = false;
+		ESCButtonFlag = false;
+		waitCnt = 0;
+	}
+	
+	private void startBarcodeScan(final Activity activity) {
 		
-		public BarcodeScan(Activity activity, Context context, int layoutid) {
-			
-			this.activity = activity;
-			this.context = context;
-			this.layoutid = layoutid;
-		}
+		new Thread(new Runnable() {
+		    public void run() {    
+		        runOnUiThread(new Runnable(){
+		            public void run() {
+		
+		            	actionLinear = (RelativeLayout) activity.findViewById(R.id.actionlayout);
+		        		actionLinear.setBackgroundResource(R.drawable.ani_scan_bg);
+		            }
+		        });
+		    }
+		}).start();
+		
+		BarcodeQCCheckFlag = true;
+		BarcodeScan mBarcodeScan = new BarcodeScan();
+		mBarcodeScan.start();
+	}
+	
+	private void startBarcodeQCScan(Activity activity) {
+		
+		actionLinear = (RelativeLayout) activity.findViewById(R.id.actionlayout);
+		actionLinear.setBackgroundResource(R.drawable.ani_qc_scan_bg);
+		BarcodeQCScan mBarcodeQCScan = new BarcodeQCScan();
+    	mBarcodeQCScan.start();
+	}
+	
+	public class BarcodeQCScan extends Thread {
 		
 		public void run () {
+			
+			initScan();
 			
 			/* Barcode scan action */
     		BarcodeAniStart(activity);
 			
-//			Log.w("BarcodeScan", "BarcodeCheckFlag : " + BarcodeCheckFlag);
 			SerialPort.BarcodeBufIndex = 0;
 			
 			Trigger();
 			
 			while(!BarcodeCheckFlag) {
 				
-				if(waitCnt++ == 5999) break; 
-				if(ESCButtonFlag) break; // exiting if esc button is pressed
+				if((waitCnt++ == 5999) || ESCButtonFlag) break; 
 				SerialPort.Sleep(100);
 			}
 
@@ -212,49 +235,92 @@ public class ActionActivity extends Activity {
 					
 					if(IsCorrectBarcode) {
 						
-						CartridgeInsert CartridgeInsertObj = new CartridgeInsert(activity, context);
-						CartridgeInsertObj.start();
+						startBarcodeScan(activity);
 						
-					} else { // to test
+					} else {
 					
-						mErrorPopup = new ErrorPopup(activity, context, layoutid); // to test
+						mErrorPopup = new ErrorPopup(activity, context, layoutId, null, 0);
 						mErrorPopup.ErrorBtnDisplay(R.string.e313);
-					} // to test	
+					}	
 				}
 				
 			} else {
 				
 				checkError = R.string.e311;
-				WhichIntent(activity, context, TargetIntent.Home);
+				changeActivity(activity, context);
+			}
+		}
+	}
+	
+	public class BarcodeScan extends Thread {
+		
+		public void run () {
+			
+			initScan();
+			
+			/* Barcode scan action */
+    		BarcodeAniStart(activity);
+			
+			SerialPort.BarcodeBufIndex = 0;
+			
+			if(HomeActivity.MEASURE_MODE != HomeActivity.A1C) SerialPort.Sleep(2000);
+			
+			Trigger();
+			
+			while(!BarcodeCheckFlag) {
+				
+				if((waitCnt++ == 5999) || ESCButtonFlag) break; 
+				SerialPort.Sleep(100);
+			}
+
+			timer.cancel();
+			
+			if(waitCnt != 6000) {
+			
+				if(!ESCButtonFlag) { 
+					
+					if(IsCorrectBarcode) {
+						
+						if(!IsExpirationDate) {
+							
+							mErrorPopup = new ErrorPopup(activity, context, layoutId, null, 0);
+							mErrorPopup.ErrorBtnDisplay(R.string.e131);						
+						
+						} else {
+							
+							CartridgeInsert CartridgeInsertObj = new CartridgeInsert();
+							CartridgeInsertObj.start();
+						}
+						
+					} else {
+					
+						mErrorPopup = new ErrorPopup(activity, context, layoutId, null, 0);
+						mErrorPopup.ErrorBtnDisplay(R.string.e313);
+					}	
+				}
+				
+			} else {
+				
+				checkError = R.string.e311;
+				changeActivity(activity, context);
 			}
 		}
 	}
 		
 	public class CartridgeInsert extends Thread {
 		
-		Activity activity;
-		Context context;
-		
-		public CartridgeInsert(Activity activity, Context context) {
-			
-			this.activity = activity;
-			this.context = context;
-		}
-		
 		public void run () {
 
 			/* Cartridge insertion action */
 			CartridgeAniStart(activity);
-			
-			TimerDisplay.RXBoardFlag = true;
 				
 			GpioPort.CartridgeActState = true;
 			waitCnt = 0;
 			
 			while(ActionActivity.CartridgeCheckFlag != 1 || IsEnablePopup) { // to test
 			
-				if(waitCnt++ == 5999) break; 
-				if(ESCButtonFlag) break;
+				if((waitCnt++ == 5999) || ESCButtonFlag) break;
+				startWarningSound(waitCnt);
 				SerialPort.Sleep(100);
 			}
 			
@@ -264,38 +330,24 @@ public class ActionActivity extends Activity {
 				
 					ActionActivity.DoorCheckFlag = 0;
 					
-//					mPool = new SoundPool(1, AudioManager.STREAM_MUSIC, 0);
-//					mWin = mPool.load(context, R.raw.jump, 1);
-//					
-//					mPool.setOnLoadCompleteListener(new OnLoadCompleteListener() {
-//					      public void onLoadComplete(SoundPool mPool, int sampleId, int status) {
-//		
-//					  		mPool.play(mWin, 1, 1, 0, 0, 1); // playing sound
-//					      }
-//					});
+					mSoundModel = new SoundModel(activity, context);
+					mSoundModel.playSound(R.raw.insert_bgm);
 					
-					CollectorCover CollectorCoverObj = new CollectorCover(activity, context);
+					SerialPort.Sleep(100);
+					
+					CollectorCover CollectorCoverObj = new CollectorCover();
 					CollectorCoverObj.start();
 				}
 				
 			} else {
 				
 				checkError = R.string.e312;
-				WhichIntent(activity, context, TargetIntent.Home);
+				changeActivity(activity, context);
 			}
 		}
 	}
 	
 	public class CollectorCover extends Thread {
-		
-		Activity activity;
-		Context context;
-		
-		public CollectorCover(Activity activity, Context context) {
-			
-			this.activity = activity;
-			this.context = context;
-		}
 		
 		public void run() {
 			
@@ -307,8 +359,7 @@ public class ActionActivity extends Activity {
 			
 			while((ActionActivity.DoorCheckFlag != 1) || (ActionActivity.CartridgeCheckFlag != 1) || IsEnablePopup) {
 				
-				if(waitCnt++ == 599) break; 
-				if(ESCButtonFlag) break;
+				if((waitCnt++ == 599) || ESCButtonFlag) break;
 				SerialPort.Sleep(100);
 			}
 			
@@ -324,7 +375,7 @@ public class ActionActivity extends Activity {
 			} else {
 				
 				checkError = R.string.e321;
-				WhichIntent(activity, context, TargetIntent.Home);
+				changeActivity(activity, context);
 			}
 		}
 	}
@@ -338,19 +389,8 @@ public class ActionActivity extends Activity {
 		        runOnUiThread(new Runnable(){
 		            public void run(){
 				
-		            	switch(HomeActivity.MEASURE_MODE) {
-		            	
-		            	case HomeActivity.A1C :
-		            		scanImage.setBackgroundResource(R.drawable.useract1);
-							break;
-		            		
-		            	case HomeActivity.A1C_QC	:
-		            		scanImage.setBackgroundResource(R.drawable.useract2);
-							break;
-		            		
-	            		default	:
-	            			break;
-		            	}
+		            	if(BarcodeQCCheckFlag) scanImage.setBackgroundResource(R.drawable.useract1);
+		            	else scanImage.setBackgroundResource(R.drawable.useract2);
 		            	
 		            	scanAni = (AnimationDrawable)scanImage.getBackground();
 		        		scanAni.start();
@@ -380,7 +420,6 @@ public class ActionActivity extends Activity {
 	
 	public void CoverAniStart(Activity activity) { // Cover close animation start
 
-//		actionLinear = (RelativeLayout)activity.findViewById(R.id.actionlayout);
 		scanImage = (ImageView)activity.findViewById(R.id.userAct4);
 		
 		new Thread(new Runnable() {
@@ -413,7 +452,7 @@ public class ActionActivity extends Activity {
 		    }
 		}).start();
 	}
-		
+	
 	public void Trigger() {
 		
 		BarcodeScan();
@@ -450,17 +489,72 @@ public class ActionActivity extends Activity {
 		mGpioPort.TriggerHigh();
 	}
 	
+	public void startWarningSound(int cnt) {
+		
+		if(HomeActivity.ANALYZER_SW == HomeActivity.NORMAL) {
+		
+			switch(cnt) {
+
+			case 5899 :
+			case 5909 :
+			case 5919 :
+			case 5929 :
+			case 5939 :
+			case 5949 :
+			case 5959 :
+			case 5969 :
+			case 5979 :
+			case 5989 :
+			case 5999 :
+				mSoundModel = new SoundModel(activity, context);
+				mSoundModel.playSound(R.raw.beep);
+				break;
+			}
+		
+		} else if(HomeActivity.ANALYZER_SW == HomeActivity.DEVEL) {
+		
+			switch(cnt) {
+			
+			case 199 :
+			case 209 :
+			case 219 :
+			case 229 :
+			case 239 :
+			case 249 :
+			case 259 :
+			case 269 :
+			case 279 :
+			case 289 :
+			case 299 :
+				mSoundModel = new SoundModel(activity, context);
+				mSoundModel.playSound(R.raw.beep);
+				break;
+			}
+		}
+	}
+	
 	public void ESC() {
 		
 		IsEnablePopup = true;
 		
-		mErrorPopup = new ErrorPopup(this, this, R.id.actionlayout); // to test
+		mErrorPopup = new ErrorPopup(activity, context, R.id.actionlayout, null, 0); // to test
 		mErrorPopup.OXBtnDisplay(R.string.esc);
 	}
+
+	private void changeActivity(Activity activity, Context context) {
 		
+		if(HomeActivity.MEASURE_MODE == HomeActivity.A1C) {
+			
+			WhichIntent(activity, context, TargetIntent.Home);
+		
+		} else {
+			
+			WhichIntent(activity, context, TargetIntent.FunctionalTest);
+		}
+	}
+	
 	public void WhichIntent(Activity activity, Context context, TargetIntent Itn) { // Activity conversion
 		
-		TimerDisplay.RXBoardFlag = false;
 		GpioPort.CartridgeActState = false;
 		GpioPort.DoorActState = false;
 		IsEnablePopup = false;
@@ -482,11 +576,19 @@ public class ActionActivity extends Activity {
 			nextIntent = new Intent(context, HomeActivity.class);
 			nextIntent.putExtra("System Check State", (int) checkError);
 			break;
+			
+		case FunctionalTest	:
+			ESCButtonFlag = true;
+			
+			nextIntent = new Intent(context, FunctionalTestActivity.class);
+			nextIntent.putExtra("System Check State", (int) checkError);
+			break;
 				
 		case Remove	:	
 			ESCButtonFlag = true;
 			
 			nextIntent = new Intent(context, RemoveActivity.class);
+			nextIntent.putExtra("System Check State", R.string.stop);
 			nextIntent.putExtra("WhichIntent", (int) ResultActivity.COVER_ACTION_ESC);
 			break;
 			

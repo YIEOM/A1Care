@@ -52,8 +52,8 @@ public class SerialPort {
 					  CR  = 0x0D,
 					  ESC = 0x1B,
 					  GS  = 0x1D,
-					  PRINTRESULT = 1,
-					  PRINTRECORD = 2;
+					  PRINT_RESULT = 1,
+					  PRINT_RECORD = 2;
 	
 	final static int UART_RX_MASK = 128;
 	final static byte AMB_MSG_RX_MASK = 4,
@@ -81,7 +81,10 @@ public class SerialPort {
 	
 	final static byte BARCODE_RX_BUFFER_SIZE = 32,
 					  BARCODE_BUFFER_CNT_SIZE = 16,
-					  BARCODE_BUFFER_INDEX_SIZE = 32;
+					  BARCODE_BUFFER_INDEX_SIZE = 32,
+					  A1C_MAX_BUFFER_INDEX = 18,
+					  A1C_QC_MAX_BUFFER_INDEX = 11,
+					  A1C_MIN_BUFFER_INDEX = 2;
 	
 	private static byte BarcodeRxBuffer[] = new byte[BARCODE_RX_BUFFER_SIZE],
 						BarcodeAppendBuffer[][] = new byte[BARCODE_BUFFER_CNT_SIZE][BARCODE_BUFFER_INDEX_SIZE],
@@ -92,7 +95,6 @@ public class SerialPort {
 						HHBarcodeAppendBuffer[][] = new byte[BARCODE_BUFFER_CNT_SIZE][BARCODE_BUFFER_INDEX_SIZE],
 						HHBarcodeBufCnt = 0,
 						HHBarcodeAppendCnt = 0;
-
 	
 	public static byte BarcodeBufIndex = 0;
 	public static byte HHBarcodeBufIndex = 0;
@@ -120,9 +122,9 @@ public class SerialPort {
 				BoardFileOutputStream = new FileOutputStream(BoardFd);				
 
 				if (BoardFileOutputStream != null) {
-					Log.w("BoardTxThread", "message : " + message);
+					
 					BoardFileOutputStream.write(STX);
-
+					
 					switch(target) {
 										
 					case MotorSet	: 	
@@ -182,8 +184,8 @@ public class SerialPort {
 				
 				if (pFileOutputStream != null) {
 					
-					pIdx = 23 + 2;
-					pLen = Integer.parseInt(txData.substring(23, pIdx));
+					pIdx = 24 + 2;
+					pLen = Integer.parseInt(txData.substring(24, pIdx));
 					oIdx = pIdx + pLen + 2;
 					oLen = Integer.parseInt(txData.substring(pIdx + pLen, oIdx));
 					
@@ -210,14 +212,13 @@ public class SerialPort {
 					pFileOutputStream.write(0x00); // 1 times of width and 1 times of height
 					pFileOutputStream.write("------------------------------------".getBytes());
 					
-					if(mode == PRINTRESULT) {
+					if(mode == PRINT_RESULT) {
 					
 						pFileOutputStream.write(LF);
 						pFileOutputStream.write(CR);
-//						pFileOutputStream.write("Result Data".getBytes());
-						pFileOutputStream.write("Record Data".getBytes());
+						pFileOutputStream.write("Result Data".getBytes());
 						
-					} else if(mode == PRINTRECORD) {
+					} else if(mode == PRINT_RECORD) {
 					
 						pFileOutputStream.write(LF);
 						pFileOutputStream.write(CR);
@@ -276,8 +277,10 @@ public class SerialPort {
 					/* HbA1c */
 					type = txData.substring(18, 19);
 					
-					if(type.equals("B")) type = "Control A1c";
-					else type = "HbA1c";
+					if(type.equals("W") || type.equals("X")) type = "Control HbA1c";
+					else if(type.equals("Y") || type.equals("Z")) type = "Control ACR";
+					else if(type.equals("E")) type = "ACR";
+					else  type = "HbA1c";					
 					
 					pFileOutputStream.write(CR);
 					pFileOutputStream.write(type.getBytes());
@@ -329,7 +332,7 @@ public class SerialPort {
 					/* Reference Range */
 					pFileOutputStream.write(LF);
 					pFileOutputStream.write(CR);
-					pFileOutputStream.write("Reference Range".getBytes());
+					pFileOutputStream.write("Ref. Range".getBytes());
 					
 					pFileOutputStream.write(ESC);
 					pFileOutputStream.write(0x24);
@@ -366,7 +369,7 @@ public class SerialPort {
 					
 					/* Lot number */
 					pFileOutputStream.write(CR);
-					pFileOutputStream.write(txData.substring(18, 23).getBytes());
+					pFileOutputStream.write(txData.substring(19, 24).getBytes());
 					
 					/* PID */
 					pFileOutputStream.write(LF);
@@ -429,7 +432,7 @@ public class SerialPort {
 
 						BoardInputBuffer = new byte[BOARD_INPUT_BUFFER];
 						size = BoardFileInputStream.read(BoardInputBuffer);
-//						Log.w("BoardRxThread", "BoardInputBuffer : " + new String(BoardInputBuffer) + " size : " + size);
+						
 						BoardDataReceive(size);
 					}
 					
@@ -456,7 +459,6 @@ public class SerialPort {
 			}
 			
 			if(size != 8) BoardRxBuffer[tmpHead][size] = 0;
-			
 			BoardInputHead = tmpHead;
 		}
 	}
@@ -469,7 +471,6 @@ public class SerialPort {
 			
 			tmpTail = (BoardInputTail + 1) % BOARD_INPUT_MASK;
 			BoardInputTail = tmpTail;
-//			Log.w("BoardInputData", "BoardRxBuffer : " + BoardRxBuffer[tmpTail]);
 				
 			return BoardRxBuffer[tmpTail];	
 		
@@ -490,8 +491,6 @@ public class SerialPort {
 			byte tmpData;
 			
 			tmpBuffer = BoardInputData();
-			
-//			Log.w("BoardRxData", "tmpBuffer : " + tmpBuffer);
 			
 			if(tmpBuffer != null) {
 				
@@ -529,23 +528,19 @@ public class SerialPort {
 
 		tempStr = tempStrData.substring(0, 1);
 		
-//		Log.w("BoardMessageForm", "tmpStrData : " + tmpStrData);
 		if(!tempStr.equals("S") && !tempStr.equals("E")){
 			
 			BoardMessageBuffer(tempStrData);
-//			Log.w("BoardMessageForm", "tmpStrData : " + tempStrData);
 			
 		} else if(tempStr.equals("S")) {
 			
 			SensorMessageBuffer(tempStrData);
-//			Log.w("BoardMessageForm", "tmpStrData : " + tempStrData);
+			
 		} else {
 			
 			if(tempStrData.substring(0, 2).equals("ED")) { 
 			
-			RunActivity.IsError = true;
-//			Log.w("BoardMessageForm", "tmpStrData : " + tempStrData);
-			
+				RunActivity.IsError = true;
 			}
 		}
 	}
@@ -560,7 +555,6 @@ public class SerialPort {
 			
 			BoardMsgBuffer[tempHead] = tempData;
 			BoardMsgHead = tempHead;
-//			Log.w("BoardMessageBuffer", "tmpStrData : " + tempData);
 					
 		} else {
 			
@@ -571,14 +565,10 @@ public class SerialPort {
 		
 		int tempTail;
 		
-//		Log.w("BoardMessageOutput", "BoardMsgHead : " + BoardMsgHead + " BoardMsgTail : " + BoardMsgTail);
-		
 		if(BoardMsgHead == BoardMsgTail) return Hardware.NO_RESPONSE;
 		
 		tempTail = (BoardMsgTail + 1) % UART_RX_MASK;
 		BoardMsgTail = tempTail;
-
-		Log.w("BoardMessageOutput", "Message : " + BoardMsgBuffer[tempTail]);
 
 		return BoardMsgBuffer[tempTail];
 	}
@@ -593,7 +583,6 @@ public class SerialPort {
 			
 			SensorMsgBuffer[tempHead] = tempData;
 			SensorMsgHead = tempHead;
-//			Log.w("SensorMessageBuffer", "tmpStrData : " + tempData);
 		}
 	}
 	
@@ -601,9 +590,7 @@ public class SerialPort {
 		
 		int tempTail;
 
-//		Log.w("SensorMessageOutput", "SensorMsgHead : " + SensorMsgHead + " SensorMsgTail : " + SensorMsgTail);
-		
-		if(SensorMsgHead == SensorMsgTail) return "NR";
+		if(SensorMsgHead == SensorMsgTail) return Hardware.NO_RESPONSE;
 			
 		tempTail = SensorMsgTail + 1;
 		if(tempTail == UART_RX_MASK) tempTail = 0;
@@ -626,8 +613,6 @@ public class SerialPort {
 						
 						BarcodeRxBuffer = new byte[BARCODE_RX_BUFFER_SIZE];
 						size = BarcodeFileInputStream.read(BarcodeRxBuffer);
-	
-//						Log.w("BarcodeRxThread", "BarcodeInputBuffer : " + new String(BarcodeRxBuffer));
 						
 						if(size > 0) {
 							
@@ -649,21 +634,24 @@ public class SerialPort {
 		
 	public synchronized void BarcodeDataReceive(int size) { // making a buffer of received data from a barcode sensor
 		
+		byte maxIndex;
+		
 		if(BarcodeReadStart == false) {
 		
 			BarcodeReadStart = true;
 			BarcodeBufIndex = 0;
 			BarcodeAppendBuffer[BarcodeBufCnt] = new byte[BARCODE_BUFFER_INDEX_SIZE];
 		}
-//		Log.w("BarcodeDataReceive", "index : " + BarcodeBufIndex);
 		
 		for(int i = 0; i < size; i++) {
 
 			BarcodeAppendBuffer[BarcodeBufCnt][BarcodeBufIndex++] = BarcodeRxBuffer[i]; // bufCnt : number of each buffer, bufIndex : bit index of one buffer
-//			Log.w("BarcodeDataReceive", "BarcodeRxBuffer : " + Character.toString((char) BarcodeRxBuffer[i]));
 		}	
 		
-		if(BarcodeBufIndex > 18 | BarcodeBufIndex < 2) {
+		if(ActionActivity.BarcodeQCCheckFlag) maxIndex = A1C_MAX_BUFFER_INDEX;
+		else maxIndex = A1C_QC_MAX_BUFFER_INDEX;
+		
+		if(BarcodeBufIndex > maxIndex | BarcodeBufIndex < A1C_MIN_BUFFER_INDEX) {
 			
 			ActionActivity.IsCorrectBarcode = false;
 			ActionActivity.BarcodeCheckFlag = true;
@@ -717,8 +705,6 @@ public class SerialPort {
 						HHBarcodeRxBuffer = new byte[BARCODE_RX_BUFFER_SIZE];
 						size = HHBarcodeFileInputStream.read(HHBarcodeRxBuffer);
 						
-//						Log.w("HHBarcodeRxThread", "HHBarcodeInputBuffer : " + new String(HHBarcodeRxBuffer));
-						
 						if(size > 0) {
 								
 							HHBarcodeDataReceive(size);
@@ -752,13 +738,11 @@ public class SerialPort {
 			HHBarcodeBufIndex = 0;
 			HHBarcodeAppendBuffer[BarcodeBufCnt] = new byte[BARCODE_BUFFER_INDEX_SIZE];
 		}
-//		Log.w("HHBarcodeDataReceive", "index : " + HHBarcodeBufIndex);
 		
 		for(int i = 0; i < size; i++) {
 
 			HHBarcodeAppendBuffer[HHBarcodeBufCnt][HHBarcodeBufIndex++] = HHBarcodeRxBuffer[i]; // bufCnt : number of each buffer, bufIndex : bit index of one buffer
-//			Log.w("HHBarcodeDataReceive", "HHBarcodeRxBuffer : " + Character.toString((char) HHBarcodeRxBuffer[i]));
-		}	
+		}
 		
 		if(HHBarcodeRxBuffer[size-1] == CR) { // Whether or not end bit
 

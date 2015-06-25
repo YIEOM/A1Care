@@ -108,6 +108,8 @@ public class TimeActivity extends Activity implements TimeIView{
 		hourMBtn.setOnLongClickListener(mLongClickListener);
 		minutePBtn.setOnLongClickListener(mLongClickListener);
 		minuteMBtn.setOnLongClickListener(mLongClickListener);
+		amPmPBtn.setOnLongClickListener(mLongClickListener);
+		amPmMBtn.setOnLongClickListener(mLongClickListener);
 	}
 	
 	public void setButtonState(int btnId, boolean state) {

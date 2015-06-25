@@ -114,7 +114,9 @@ public class TimeModel {
 	
 	public String getStrHour() {
 		
-		return Integer.toString(hour);
+		DecimalFormat dfm = new DecimalFormat("00");
+		
+		return dfm.format(hour);
 	}
 	
 	public String getStrMinute() {

@@ -2,6 +2,8 @@ package isens.hba1c_analyzer;
 
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
 import isens.hba1c_analyzer.Model.ConvertModel;
+import isens.hba1c_analyzer.Model.Hardware;
+
 import java.text.DecimalFormat;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -55,6 +57,8 @@ public class RunActivity extends Activity {
 	public TimerDisplay mTimerDisplay;
 	public SerialPort mSerialPort;
 	
+	public Activity activity;
+	
 	public DecimalFormat ShkDf = new DecimalFormat("0000");
 	
 	public Handler runHandler = new Handler();
@@ -105,8 +109,6 @@ public class RunActivity extends Activity {
 	public int checkError = NORMAL_OPERATION;
 	
 	public double A;
-	
-	public boolean btnState = false;
 
 	public byte runSec,
 				runMin;
@@ -118,14 +120,14 @@ public class RunActivity extends Activity {
 		setContentView(R.layout.run);
 		
 		mSerialPort = new SerialPort(); // to test
-		mErrorPopup = new ErrorPopup(this, this, R.id.runlayout);
+		mErrorPopup = new ErrorPopup(this, this, R.id.runlayout, null, 0);
 		
 		RunInit();
 	}
 	
-	public void setButtonId() {
+	public void setButtonId(Activity activity) {
 		
-		escIcon = (Button)findViewById(R.id.escicon);
+		escIcon = (Button)activity.findViewById(R.id.escicon);
 	}
 	
 	public void setButtonClick() {
@@ -146,21 +148,16 @@ public class RunActivity extends Activity {
 			switch(event.getAction()) {
 			
 			case MotionEvent.ACTION_UP	:
+				unenabledAllBtn(activity); //0624
 				
-				if(!btnState) {
-
-					btnState = true;
-					
-					switch(v.getId()) {
+				switch(v.getId()) {
 				
-					case R.id.escicon		:
-						ESC();
-						btnState = false;
-						break;
-										
-					default	:
-						break;
-					}
+				case R.id.escicon		:
+					ESC();
+					break;
+									
+				default	:
+					break;
 				}
 			
 				break;
@@ -169,6 +166,16 @@ public class RunActivity extends Activity {
 			return false;
 		}
 	};
+	
+	public void enabledAllBtn(Activity activtiy) {
+
+		setButtonState(R.id.escicon, true, activtiy);
+	}
+	
+	public void unenabledAllBtn(Activity activtiy) {
+		
+		setButtonState(R.id.escicon, false, activtiy);
+	}
 	
 	public class Cart1stShaking extends Thread { // First shaking motion
 
@@ -196,10 +203,9 @@ public class RunActivity extends Activity {
 					break;
 					
 				case Step1Shaking	:
-					/* TEST Mode */
 					if(HomeActivity.ANALYZER_SW == HomeActivity.DEVEL) {
 						
-						MotionInstruct(ShkDf.format(30), SerialPort.CtrTarget.MotorSet);
+						MotionInstruct(ShkDf.format(12), SerialPort.CtrTarget.MotorSet);
 						ShakingAniThread ShakingAniThreadObj = new ShakingAniThread(174, 5);
 						ShakingAniThreadObj.start();
 						
@@ -243,7 +249,6 @@ public class RunActivity extends Activity {
 					break;
 					
 				case NoResponse 	:
-					Log.w("Cart1stShaking", "NR : " + checkError);
 					runState = AnalyzerState.NoWorking;
 					endRun(false);
 					break;
@@ -271,7 +276,6 @@ public class RunActivity extends Activity {
 				break;
 				
 			case R.string.stop		:
-				Log.w("Cart1stShaking", "Stop : " + checkError);
 				CartDump CartDumpObj = new CartDump(checkError);
 				CartDumpObj.start();
 				break;
@@ -323,7 +327,7 @@ public class RunActivity extends Activity {
 				case Filter660nm	:
 					MotionInstruct(NEXT_FILTER, SerialPort.CtrTarget.NormalSet);
 					BarAnimation(297);
-					BoardMessage(NEXT_FILTER, AnalyzerState.Filter750nm, FILTER_ERROR, AnalyzerState.FilterMotorError, 5);
+					BoardMessage(NEXT_FILTER, AnalyzerState.Filter750nm, FILTER_ERROR, AnalyzerState.FilterMotorError, 10);
 					BarAnimation(300);					
 					Step1stValue1[1] = AbsorbanceMeasure(); // 660nm Absorbance
 					break;
@@ -641,7 +645,7 @@ public class RunActivity extends Activity {
 					/* TEST Mode */
 					if(HomeActivity.ANALYZER_SW == HomeActivity.DEVEL) {
 						
-						MotionInstruct(ShkDf.format(30), SerialPort.CtrTarget.MotorSet);
+						MotionInstruct(ShkDf.format(12), SerialPort.CtrTarget.MotorSet);
 						ShakingAniThread ShakingAniThreadObj = new ShakingAniThread(375, 5);
 						ShakingAniThreadObj.start();
 						
@@ -1025,7 +1029,8 @@ public class RunActivity extends Activity {
 			switch(checkError) {
 			
 			case NORMAL_OPERATION	:
-				checkError = HbA1cCalculate();
+				if(Barcode.Type.equals("D") || Barcode.Type.equals("W") || Barcode.Type.equals("X")) checkError = HbA1cCalculate();
+				else checkError = ACRCalculate();
 				
 			case R.string.stop		:
 				CartDump CartDumpObj = new CartDump(checkError);
@@ -1232,7 +1237,9 @@ public class RunActivity extends Activity {
 	
 	public void RunInit() {
 		
-		setButtonId();
+		activity = this;
+		
+		setButtonId(activity);
 		setButtonClick();
 		
 		MotorShakeFlag = false;
@@ -1244,10 +1251,11 @@ public class RunActivity extends Activity {
 		mTimerDisplay = new TimerDisplay();
 		mTimerDisplay.ActivityParm(this, R.id.runlayout);
 		
+		mSerialPort = new SerialPort();
+		
 		BarAnimation(162);
 		RunTimerInit(this);
 		
-		TimerDisplay.RXBoardFlag = true;
 		Cart1stShaking Cart1stShakingObj = new Cart1stShaking(); // to test
 		Cart1stShakingObj.start(); // to test
 	}
@@ -1258,7 +1266,7 @@ public class RunActivity extends Activity {
 		if(HomeActivity.ANALYZER_SW == HomeActivity.DEVEL) {
 			
 			runMin = 1;
-			runSec = 20;
+			runSec = 10;
 			
 		} else if(HomeActivity.ANALYZER_SW == HomeActivity.DEMO) {
 			
@@ -1291,10 +1299,12 @@ public class RunActivity extends Activity {
 	
 	public void MotionInstruct(String str, SerialPort.CtrTarget target) { // Motion of system instruction
 		
+		while(TimerDisplay.RXBoardFlag) SerialPort.Sleep(10);
+		
+		TimerDisplay.RXBoardFlag = true;
+		
 		mSerialPort = new SerialPort();
 		mSerialPort.BoardTx(str, target);
-		
-//		Log.w("MotionInstruct", "instruction : " + str);
 	}
 
 	public void BoardMessage(String colRsp, AnalyzerState nextState, String errRsp, AnalyzerState errState, int rspTime) {
@@ -1325,7 +1335,7 @@ public class RunActivity extends Activity {
 			}
 
 			if(time++ > rspTime) {
-				
+						
 				runState = AnalyzerState.NoResponse;
 				checkError = R.string.e241;
 				break;
@@ -1335,6 +1345,8 @@ public class RunActivity extends Activity {
 			
 			SerialPort.Sleep(100);
 		}
+		
+		TimerDisplay.RXBoardFlag = false;
 	}
 	
 	public synchronized double AbsorbanceMeasure() { // Absorbance measurement
@@ -1342,12 +1354,16 @@ public class RunActivity extends Activity {
 		int time = 0;
 		String rawValue;
 		
+		while(TimerDisplay.RXBoardFlag) SerialPort.Sleep(10);
+		
+		TimerDisplay.RXBoardFlag = true;
+		
 		mSerialPort.BoardTx("VH", SerialPort.CtrTarget.NormalSet);
 		
 		do {
 		
 			rawValue = mSerialPort.BoardMessageOutput();
-			 
+			
 			if(time++ > 50) break;
 				
 			if(IsError || IsStop) break;
@@ -1368,7 +1384,7 @@ public class RunActivity extends Activity {
 			checkError = R.string.e241;	
 		}
 		
-		Log.w("AbsorbanceMeasure", "value : " + (DouValue - BlankValue[0]));
+		TimerDisplay.RXBoardFlag = false;
 		
 		return (DouValue - BlankValue[0]);
 	}
@@ -1376,24 +1392,15 @@ public class RunActivity extends Activity {
 	public int tHbCalculate() {
 		
 		A = Absorb1stHandling()*RF1_Slope + RF1_Offset;
-		Log.w("tHb Calucation", "thb A' : " + A);
 		
 		/* TEST Mode */
 		if(HomeActivity.ANALYZER_SW != HomeActivity.NORMAL) return NORMAL_OPERATION;
 		else {
 		
-			
-		if(A < 0.168) {
-			
-			return R.string.e111;
-		
-		} else if(A > 0.7065) {
-			
-			return R.string.e112;
-		
-		} else
-		
-			return NORMAL_OPERATION;		
+			if((0.168 < A) && (A < 0.7065)) return NORMAL_OPERATION;
+			else if(A < 0.168) return R.string.e111;
+			else if(A > 0.7065) return R.string.e112;
+			else return R.string.e236;			
 		}
 	}
 	
@@ -1411,12 +1418,9 @@ public class RunActivity extends Activity {
 			B = 0.15;
 		}
 		
-		Log.w("HbA1c Calucation", "thb B : " + B);
 		St = (A - Barcode.b1)/Barcode.a1;
 		tHbDbl = St;
 		Bt = (A - Barcode.b1)/Barcode.a1 + 1;
-		
-		Log.w("HbA1c Calucation", "St : " + St + "Bt : " + Bt);
 		
 		C1 = St * (Barcode.Asm + Barcode.Ass) + Barcode.Aim + Barcode.Ais;
 		C2 = B - C1;
@@ -1451,33 +1455,27 @@ public class RunActivity extends Activity {
 		b4 = b3 - (a4 * St);
 		
 		HbA1cValue = (C2 - (St * a4 + b4)) / a3 / St * 100; // %-HbA1c(%)
-//		Log.w("tHb Calucation", "HbA1cPctDbl : " + HbA1cValue);
 		
 		HbA1cValue = (Barcode.Sm + Barcode.Ss) * HbA1cValue + (Barcode.Im + Barcode.Is);
 		
 		HbA1cValue = CF_Slope * (AF_Slope * HbA1cValue + AF_Offset) + CF_Offset;
 		
-//		Log.w("tHb Calucation", "C1 : " + C1);
-//		Log.w("tHb Calucation", "SV : " + SV + "\nSA : " + SA + "\na3 : " + a3 + "\nb3 : " + b3 + "\nBV : " + BV + "\nBA : " + BA + "\na32 : " + a32 + "\nb32 : " + b32);
-//		Log.w("tHb Calucation", "HbA1cPctDbl : " + HbA1cValue);
-		
 		/* TEST Mode */
 		if(HomeActivity.ANALYZER_SW != HomeActivity.NORMAL) return NORMAL_OPERATION;
 		else {
 		
-		
-		if(HbA1cValue < 4) {
-			
-			return R.string.e121;
-		
-		} else if(HbA1cValue > 15) {
-			
-			return R.string.e122;
-		
-		} else
-			
-			return NORMAL_OPERATION;
+			if((4 < HbA1cValue) && (HbA1cValue < 15)) return NORMAL_OPERATION;
+			else if(HbA1cValue < 4)	return R.string.e121;
+			else if(HbA1cValue > 15) return R.string.e122;
+			else return R.string.e236;
 		}
+	}
+	
+	public int ACRCalculate() { // Calculation for HbA1c percentage
+		
+		HbA1cValue = 0.0;
+		
+		return NORMAL_OPERATION;
 	}
 	
 	public double SlopeCalculate(double x_a, double y_a, double x1, double y1, double x2, double y2,double x3, double y3) {
@@ -1532,8 +1530,6 @@ public class RunActivity extends Activity {
 		abs[1] = Step1stAbsorb2[0] - Step1stAbsorb2[2];
 		abs[2] = Step1stAbsorb3[0] - Step1stAbsorb3[2];
 		
-		Log.w("Absorb1stHandling", "abs[0] : " + abs[0] + "abs[1] : " + abs[1] + "abs[2] : " + abs[2]);
-		
 		std = (abs[0] + abs[1] + abs[2]) / 3;
 		
 		for(int i = 0; i < 3; i++) {
@@ -1550,8 +1546,6 @@ public class RunActivity extends Activity {
 		sum = abs[0] + abs[1] + abs[2];
 		
 		avg = (sum - abs[idx]) / 2;
-		
-		Log.w("Absorb1stHandling", "Absorb : " + avg);
 		
 		return avg;
 	}
@@ -1582,8 +1576,6 @@ public class RunActivity extends Activity {
 		abs[1] = Step2ndAbsorb2[1] - Step2ndAbsorb2[2];
 		abs[2] = Step2ndAbsorb3[1] - Step2ndAbsorb3[2];
 		
-		Log.w("Absorb2ndHandling", "abs[0] : " + abs[0] + "abs[1] : " + abs[1] + "abs[2] : " + abs[2]);
-		
 		std = (abs[0] + abs[1] + abs[2]) / 3;
 				
 		for(int i = 0; i < 3; i++) {
@@ -1600,8 +1592,6 @@ public class RunActivity extends Activity {
 		sum = abs[0] + abs[1] + abs[2];
 		
 		avg = (sum - abs[idx]) / 2;
-		
-		Log.w("Absorb2ndHandling", "Absorb : " + avg);
 		
 		return avg;
 	}
@@ -1656,8 +1646,12 @@ public class RunActivity extends Activity {
 		
 		IsRun = false;
 		
-		if(MotorShakeFlag) MotionInstruct(MOTOR_STOP, SerialPort.CtrTarget.NormalSet);
-		else IsStop = true;
+		if(MotorShakeFlag) {
+			
+			TimerDisplay.RXBoardFlag = false;
+			MotionInstruct(MOTOR_STOP, SerialPort.CtrTarget.NormalSet);
+		
+		} else IsStop = true;
 	}
 	
 	public void checkMode() {
@@ -1706,8 +1700,6 @@ public class RunActivity extends Activity {
 	public class EndRun extends Thread {
 		
 		public void run() {
-			
-			TimerDisplay.RXBoardFlag = false;
 			
 			mErrorPopup.ErrorPopupClose();
 			

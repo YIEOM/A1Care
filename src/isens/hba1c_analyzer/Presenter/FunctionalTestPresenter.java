@@ -6,8 +6,10 @@ import java.util.TimerTask;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Handler;
 import android.widget.Button;
+import isens.hba1c_analyzer.ErrorPopup;
 import isens.hba1c_analyzer.HomeActivity;
 import isens.hba1c_analyzer.R;
 import isens.hba1c_analyzer.TimerDisplay;
@@ -27,6 +29,7 @@ public class FunctionalTestPresenter {
 	private FunctionalTestIView mFunctionalTestIView;
 	private TimerDisplay mTimerDisplay;
 	private ActivityChange mActivityChange;
+	private ErrorPopup mErrorPopup;
 	
 	private Activity activity;
 	private Context context;
@@ -45,12 +48,22 @@ public class FunctionalTestPresenter {
 	
 	public void init() {
 		
+		int state;
+		
 		mFunctionalTestIView.setImageId();
 		mFunctionalTestIView.setImage();
 		mFunctionalTestIView.setButtonId();
 		mFunctionalTestIView.setButtonClick();
 		
 		mTimerDisplay.ActivityParm(activity, layout);
+		
+		state = mFunctionalTestIView.getIntentData();
+		
+		if(state != 0) {
+			
+			mErrorPopup = new ErrorPopup(activity, context, R.id.functionalTestLayout, null, 0);
+			mErrorPopup.ErrorBtnDisplay(state);		
+		}
 	}
 	
 	public void enabledAllBtn() {
@@ -89,6 +102,6 @@ public class FunctionalTestPresenter {
 		
 		default	:
 			break;
-		}		
+		}
 	}
 }

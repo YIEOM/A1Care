@@ -17,20 +17,21 @@ public class Barcode {
 						a22ref = 0.035, 
 						b22ref = 0.04;
 	
-	private float refScale[] = {1f, 1f, 1f, 1f, 0.6f, 1.4f, 1f};
+	public static String RefNum, Type;
 	
-	public static String RefNum;
-	public static double a1, 
-						 b1,
-						 a21, 
-						 b21, 
-						 a22, 
-						 b22, 
-						 a23, 
-						 b23, 
-						 L,
-						 M,
-						 H;
+	public static double a1 = 0.009793532,
+						 b1 = -0.028,
+						 a21 = 0.060055,
+						 b21 = -0.003032,
+						 a22 = 0.05014,
+						 b22 = -0.004829,
+						 a23 = 0.039032,
+						 b23 = -0.005064,
+						 L   = 5.1,
+						 M 	= 7.1,
+						 H   = 11.7,
+						 NorMean = 0,
+						 AbnorMean = 0;
 	
 	public static double Sm, Im, Ss, Is, Asm, Aim, Ass, Ais;
 
@@ -40,108 +41,74 @@ public class Barcode {
 		
 		len = buffer.length();
 		
-		if(len == 18) { // Check length of barcode data
-
-			switch(HomeActivity.MEASURE_MODE) {
-    	
-			case HomeActivity.A1C :
-				BarcodeA1C(buffer);
-				break;
-				
-			case HomeActivity.A1C_QC	:
-				BarcodeA1CQC(buffer);
-				break;
-				
-			default	:
-				break;
-			}
+		if(HomeActivity.MEASURE_MODE == HomeActivity.A1C) {
+			
+			if(len == SerialPort.A1C_MAX_BUFFER_INDEX) BarcodeHbA1C(buffer);
+			else BarcodeStop(false);
+		
 		} else {
 			
-			BarcodeStop(false);
+			if(!ActionActivity.BarcodeQCCheckFlag) {
+			
+				if(len == SerialPort.A1C_QC_MAX_BUFFER_INDEX) BarcodeHbA1CQC(buffer);
+				else BarcodeStop(false);
+			
+			} else {
+				
+				if(len == SerialPort.A1C_MAX_BUFFER_INDEX) BarcodeHbA1C(buffer);
+				else BarcodeStop(false);
+			}
 		}
 	}
 	
-	private void BarcodeA1C(StringBuffer buffer) {
+	private void BarcodeHbA1C(StringBuffer buffer) {
 		
 		try {
 			
+			String type; 
+			
+			if(HomeActivity.MEASURE_MODE == HomeActivity.A1C) Type = buffer.substring(0, 1);
+			
 			RefNum = buffer.substring(0, 5);
+			type = RefNum.substring(0, 1);
 			
-			Sm = 0.0237 * (((int) buffer.charAt(6) - 42) - 1) + 0.1;
-			Im = 0.158 * (((int) buffer.charAt(7) - 42) - 1) - 6;
-			Ss = 0.0003 * (((int) buffer.charAt(8) - 42) - 1);
-			Is = 0.002 * (((int) buffer.charAt(9) - 42) - 1);
+			if(type.equals("D") && (Type.equals("D") || Type.equals("W") || Type.equals("X"))) {
 			
-			Asm = 0.000316 * (((int) buffer.charAt(10) - 42) - 1) - 0.01;
-			Aim = 0.00237 * (((int) buffer.charAt(11) - 42) - 1) - 0.1;
-			Ass = 0.000004 * (((int) buffer.charAt(12) - 42) - 1);
-			Ais = 0.00003 * (((int) buffer.charAt(13) - 42) - 1);
+				Sm = 0.0237 * (((int) buffer.charAt(6) - 42) - 1) + 0.1;
+				Im = 0.158 * (((int) buffer.charAt(7) - 42) - 1) - 6;
+				Ss = 0.0003 * (((int) buffer.charAt(8) - 42) - 1);
+				Is = 0.002 * (((int) buffer.charAt(9) - 42) - 1);
+				
+				Asm = 0.000316 * (((int) buffer.charAt(10) - 42) - 1) - 0.01;
+				Aim = 0.00237 * (((int) buffer.charAt(11) - 42) - 1) - 0.1;
+				Ass = 0.000004 * (((int) buffer.charAt(12) - 42) - 1);
+				Ais = 0.00003 * (((int) buffer.charAt(13) - 42) - 1);
+				
+				CheckSum(buffer);
 			
-			Log.w("BarcodeA1C", "sm : " + Sm + " im : " + Im + " ss : " + Ss + " is : " + Is);
-			Log.w("BarcodeA1C", "asm idx : " + ((int) buffer.charAt(10) - 42) + " aim idx : " + ((int) buffer.charAt(11) - 42) + " ass idx : " + ((int) buffer.charAt(12) - 42) + " ais idx : " + ((int) buffer.charAt(13) - 42));
-			
-			a1 = 0.009793532;
-			b1 = -0.028;
-			a21 = 0.060055;
-			b21 = -0.003032;
-			a22 = 0.05014;
-			b22 = -0.004829;
-			a23 = 0.039032;
-			b23 = -0.005064;
-			L   = 5.1;
-			M 	= 7.1;
-			H   = 11.7;
-		
-			CheckSum(buffer);
-			
-//			Log.w("Barcode", "scale : " + scale + " test : " + test + " year : " + year + " month : " + month + " day : " + day + " line : " + line + " locate : " + locate + " check : " + check);
-//			Log.w("Barcode", "a1ref : " + scale * a1ref + " b1ref : " + scale * b1ref + " a21ref : " + scale * a21ref + " b21ref : " + scale * b21ref + " a22ref : " + scale * a22ref + " b22ref : " + scale * b22ref);
-//			Log.w("Barcode", "a1 : " + a1 + " b1 : " + b1 + " a21 : " + a21 + " b21 : " + b21 + " a22 : " + a22 + " b22 : " + b22 + " L : " + L + " H : " + H);
-//			Log.w("Barcode", "asm : " + Asm + " aim : " + Aim + " ass : " + Ass + " ais : " + Ais);
-			
+			} else if(type.equals("E") && (Type.equals("E") || Type.equals("Y") || Type.equals("Z"))) CheckSum(buffer); 
+			else BarcodeStop(false);
+
 		} catch (NumberFormatException e) {
 			
 			e.printStackTrace();
 		}	
 	}
 	
-	private void BarcodeA1CQC(StringBuffer buffer) {
+	private void BarcodeHbA1CQC(StringBuffer buffer) {
 		
 		try {
 			
-			RefNum = buffer.substring(0, 5);
+			Type = buffer.substring(0, 1);
 			
-			Sm = 0.0237 * (((int) buffer.charAt(6) - 42) - 1) + 0.1;
-			Im = 0.158 * (((int) buffer.charAt(7) - 42) - 1) - 6;
-			Ss = 0.0003 * (((int) buffer.charAt(8) - 42) - 1);
-			Is = 0.002 * (((int) buffer.charAt(9) - 42) - 1);
-			
-			Asm = 0.000316 * (((int) buffer.charAt(10) - 42) - 1) - 0.01;
-			Aim = 0.00237 * (((int) buffer.charAt(11) - 42) - 1) - 0.1;
-			Ass = 0.000004 * (((int) buffer.charAt(12) - 42) - 1);
-			Ais = 0.00003 * (((int) buffer.charAt(13) - 42) - 1);
-			
-			Log.w("BarcodeA1CQC", "sm : " + Sm + " im : " + Im + " ss : " + Ss + " is : " + Is);
-			Log.w("BarcodeA1CQC", "asm idx : " + ((int) buffer.charAt(10) - 42) + " aim idx : " + ((int) buffer.charAt(11) - 42) + " ass idx : " + ((int) buffer.charAt(12) - 42) + " ais idx : " + ((int) buffer.charAt(13) - 42));
-			
-			a1 = 0.009793532;
-			b1 = -0.028;
-			a21 = 0.060055;
-			b21 = -0.003032;
-			a22 = 0.05014;
-			b22 = -0.004829;
-			a23 = 0.039032;
-			b23 = -0.005064;
-			L   = 5.1;
-			M 	= 7.1;
-			H   = 11.7;
-		
-			CheckSum(buffer);
-			
-//			Log.w("Barcode", "scale : " + scale + " test : " + test + " year : " + year + " month : " + month + " day : " + day + " line : " + line + " locate : " + locate + " check : " + check);
-//			Log.w("Barcode", "a1ref : " + scale * a1ref + " b1ref : " + scale * b1ref + " a21ref : " + scale * a21ref + " b21ref : " + scale * b21ref + " a22ref : " + scale * a22ref + " b22ref : " + scale * b22ref);
-//			Log.w("Barcode", "a1 : " + a1 + " b1 : " + b1 + " a21 : " + a21 + " b21 : " + b21 + " a22 : " + a22 + " b22 : " + b22 + " L : " + L + " H : " + H);
-//			Log.w("Barcode", "asm : " + Asm + " aim : " + Aim + " ass : " + Ass + " ais : " + Ais);
+			if(Type.equals("W") || Type.equals("X") || Type.equals("Y") || Type.equals("Z")) {
+				
+				NorMean = 0.1 * ((int) buffer.charAt(6) - 42) + 2.9;
+				AbnorMean = 0.1 * ((int) buffer.charAt(7) - 42) + 7.9;
+				
+				CheckSum(buffer);
+				
+			} else BarcodeStop(false);
 			
 		} catch (NumberFormatException e) {
 			
@@ -151,15 +118,15 @@ public class Barcode {
 	
 	private void CheckSum(StringBuffer buffer) {
 		
-		int test, year, month, day, line, locate, check, sum; 		
-	
-		float scale;
+		int test, year, month, day, line, locate, check, sum, index;
 		
 		try {
 		
+			if(ActionActivity.BarcodeQCCheckFlag) index = SerialPort.A1C_MAX_BUFFER_INDEX - 3;
+			else index = SerialPort.A1C_QC_MAX_BUFFER_INDEX - 3;
+			
 			/* Classification for each digit barcode */
 			test   = (int) buffer.charAt(0) - 64;
-			scale = refScale[test - 1];
 			year   = (int) buffer.charAt(1) - 64;
 			if(year > 26) year -= 6;
 			month  = (int) buffer.charAt(2) - 64;
@@ -167,13 +134,14 @@ public class Barcode {
 			if(day > 26) day -= 6;
 			line   = (int) buffer.charAt(4) - 64;
 			locate = (int) buffer.charAt(5) - 42;
-			check  = (int) buffer.charAt(15) - 48;
+			check  = (int) buffer.charAt(index) - 48;
 			
 			sum = (test + year + month + day + line + locate) % 10; // Checksum bit
 			
+			checkExpirationDate((year + 13), month, day);
+			
 			if( sum == check ) { // Whether or not the correct barcode code
-		
-		//			Log.w("Barcode", "Correct Data : " + buffer);
+				
 				BarcodeStop(true);
 					
 			} else {
@@ -187,19 +155,43 @@ public class Barcode {
 		}
 	}
 	
+	private void checkExpirationDate(int year, int month, int day) {
+		
+		int sYear, sMonth, sDay, diffYear, diffMonth, diffDay;
+		
+		ActionActivity.IsExpirationDate = false;
+		
+		sYear = Integer.parseInt(TimerDisplay.rTime[0]) % 100;
+		sMonth = Integer.parseInt(TimerDisplay.rTime[1]);
+		sDay = Integer.parseInt(TimerDisplay.rTime[2]);
+		
+		diffYear = sYear - year;	
+		diffMonth = sMonth - month;
+		diffDay = sDay - day;
+		
+		if(diffYear == 0) {
+			
+			if(diffMonth > 0) ActionActivity.IsExpirationDate = true;
+			else if(diffMonth == 0) {
+				
+				if(diffDay >= 0) ActionActivity.IsExpirationDate = true;
+			}
+			
+		} else if(diffYear == 1) {
+			
+			if(diffMonth < 0) ActionActivity.IsExpirationDate = true;
+			else if(diffMonth == 0) {
+				
+				if(diffDay < 0) ActionActivity.IsExpirationDate = true;
+			}
+		}		
+	}
+	
 	private void BarcodeStop(boolean state) { // Turn off barcode module
 		
-		Log.w("BarcodeStop", "state : " + state);
+		if(state) ActionActivity.IsCorrectBarcode = true;
+		else ActionActivity.IsCorrectBarcode = false;
 		
-		if(state) {
-			
-			ActionActivity.IsCorrectBarcode = true;
-			ActionActivity.BarcodeCheckFlag = true;
-			
-		} else {
-//			Log.w("BarcodeStop", "BarcodeCheck : " + ActionActivity.BarcodeCheckFlag);
-			ActionActivity.IsCorrectBarcode = false;
-			ActionActivity.BarcodeCheckFlag = true;
-		}
+		ActionActivity.BarcodeCheckFlag = true;
 	}
 }

@@ -24,7 +24,7 @@
         android:src="@drawable/temperature_title" />
     
     <ImageView
-        android:id="@+id/device" 
+        android:id="@+id/device"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="520px"
@@ -118,7 +118,7 @@
         android:layout_marginTop="100px"
         android:gravity="center"
         android:typeface="sans"
-        android:text="Ambient"
+        android:text="Inner"
         android:textSize="28px"
         android:textColor="#023894" />
 	

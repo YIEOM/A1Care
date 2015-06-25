@@ -1,0 +1,837 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="c8e23eea-def8-4dc1-9f44-d55769c8c64e" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/dictionaries/yieom.xml" />
+      <change type="DELETED" beforePath="D:\01. 연구 프로젝트\01. 당화혈색소\10. UI Project\A1Care_analyzer\bin\classes\isens\hba1c_analyzer\OperatorController$1.class" afterPath="" />
+      <change type="DELETED" beforePath="D:\01. 연구 프로젝트\01. 당화혈색소\10. UI Project\A1Care_analyzer\bin\classes\isens\hba1c_analyzer\OperatorController$10.class" afterPath="" />
+      <change type="DELETED" beforePath="D:\01. 연구 프로젝트\01. 당화혈색소\10. UI Project\A1Care_analyzer\bin\classes\isens\hba1c_analyzer\OperatorController$11.class" afterPath="" />
+      <change type="DELETED" beforePath="D:\01. 연구 프로젝트\01. 당화혈색소\10. UI Project\A1Care_analyzer\bin\classes\isens\hba1c_analyzer\OperatorController$12.class" afterPath="" />
+      <change type="DELETED" beforePath="D:\01. 연구 프로젝트\01. 당화혈색소\10. UI Project\A1Care_analyzer\bin\classes\isens\hba1c_analyzer\OperatorController$2.class" afterPath="" />
+      <change type="DELETED" beforePath="D:\01. 연구 프로젝트\01. 당화혈색소\10. UI Project\A1Care_analyzer\bin\classes\isens\hba1c_analyzer\OperatorController$3.class" afterPath="" />
+      <change type="DELETED" beforePath="D:\01. 연구 프로젝트\01. 당화혈색소\10. UI Project\A1Care_analyzer\bin\classes\isens\hba1c_analyzer\OperatorController$4.class" afterPath="" />
+      <change type="DELETED" beforePath="D:\01. 연구 프로젝트\01. 당화혈색소\10. UI Project\A1Care_analyzer\bin\classes\isens\hba1c_analyzer\OperatorController$5.class" afterPath="" />
+      <change type="DELETED" beforePath="D:\01. 연구 프로젝트\01. 당화혈색소\10. UI Project\A1Care_analyzer\bin\classes\isens\hba1c_analyzer\OperatorController$6.class" afterPath="" />
+      <change type="DELETED" beforePath="D:\01. 연구 프로젝트\01. 당화혈색소\10. UI Project\A1Care_analyzer\bin\classes\isens\hba1c_analyzer\OperatorController$7.class" afterPath="" />
+      <change type="DELETED" beforePath="D:\01. 연구 프로젝트\01. 당화혈색소\10. UI Project\A1Care_analyzer\bin\classes\isens\hba1c_analyzer\OperatorController$8.class" afterPath="" />
+      <change type="DELETED" beforePath="D:\01. 연구 프로젝트\01. 당화혈색소\10. UI Project\A1Care_analyzer\bin\classes\isens\hba1c_analyzer\OperatorController$9.class" afterPath="" />
+      <change type="DELETED" beforePath="D:\01. 연구 프로젝트\01. 당화혈색소\10. UI Project\A1Care_analyzer\bin\classes\isens\hba1c_analyzer\OperatorController.class" afterPath="" />
+      <change type="DELETED" beforePath="D:\01. 연구 프로젝트\01. 당화혈색소\10. UI Project\A1Care_analyzer\res\raw\jump.wav" afterPath="" />
+      <change type="DELETED" beforePath="D:\01. 연구 프로젝트\01. 당화혈색소\10. UI Project\A1Care_analyzer\src\isens\hba1c_analyzer\OperatorController.java" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/A1Care_analyzer.apk" afterPath="$PROJECT_DIR$/bin/A1Care_analyzer.apk" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/Model/AboutModel$GetFWVersion.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/Model/AboutModel$GetFWVersion.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/Model/AboutModel$GetOSVersion.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/Model/AboutModel$GetOSVersion.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/Model/AboutModel$GetSWVersion.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/Model/AboutModel$GetSWVersion.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/Model/AboutModel.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/Model/AboutModel.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/ActionActivity$1.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/ActionActivity$1.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/ActionActivity$2$1.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/ActionActivity$2$1.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/ActionActivity$2.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/ActionActivity$2.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/ActionActivity$3$1.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/ActionActivity$3$1.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/ActionActivity$3.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/ActionActivity$3.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/ActionActivity$4$1.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/ActionActivity$4$1.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/ActionActivity$4.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/ActionActivity$4.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/ActionActivity$5$1.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/ActionActivity$5$1.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/ActionActivity$5.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/ActionActivity$5.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/ActionActivity$6$1.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/ActionActivity$6$1.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/ActionActivity$6.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/ActionActivity$6.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/ActionActivity$BarcodeScan.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/ActionActivity$BarcodeScan.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/ActionActivity$CartridgeInsert.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/ActionActivity$CartridgeInsert.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/ActionActivity$CollectorCover.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/ActionActivity$CollectorCover.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/ActionActivity.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/ActionActivity.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/Model/ActivityChange.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/Model/ActivityChange.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/View/AdjustmentActivity.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/View/AdjustmentActivity.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/Barcode.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/Barcode.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/BlankActivity$1.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/BlankActivity$1.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/BlankActivity$2$1.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/BlankActivity$2$1.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/BlankActivity$2.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/BlankActivity$2.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/BlankActivity$BlankStep.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/BlankActivity$BlankStep.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/BlankActivity$CartDump.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/BlankActivity$CartDump.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/BlankActivity$CheckCoverError.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/BlankActivity$CheckCoverError.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/BlankActivity.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/BlankActivity.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/CalibrationActivity$1.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/CalibrationActivity$1.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/CalibrationActivity$2$1.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/CalibrationActivity$2$1.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/CalibrationActivity$2.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/CalibrationActivity$2.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/CalibrationActivity$BarcodeScan$1$1.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/CalibrationActivity$BarcodeScan$1$1.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/CalibrationActivity$BarcodeScan$1.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/CalibrationActivity$BarcodeScan$1.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/CalibrationActivity$BarcodeScan.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/CalibrationActivity$BarcodeScan.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/CalibrationActivity$BlankStep.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/CalibrationActivity$BlankStep.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/CalibrationActivity$Cart1stFilter1.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/CalibrationActivity$Cart1stFilter1.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/CalibrationActivity$Cart1stFilter2.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/CalibrationActivity$Cart1stFilter2.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/CalibrationActivity$Cart1stFilter3.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/CalibrationActivity$Cart1stFilter3.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/CalibrationActivity$Cart1stShaking.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/CalibrationActivity$Cart1stShaking.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/CalibrationActivity$Cart2ndFilter1.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/CalibrationActivity$Cart2ndFilter1.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/CalibrationActivity$Cart2ndFilter2.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/CalibrationActivity$Cart2ndFilter2.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/CalibrationActivity$Cart2ndFilter3.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/CalibrationActivity$Cart2ndFilter3.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/CalibrationActivity$Cart2ndShaking.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/CalibrationActivity$Cart2ndShaking.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/CalibrationActivity$CartDump$1$1.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/CalibrationActivity$CartDump$1$1.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/CalibrationActivity$CartDump$1.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/CalibrationActivity$CartDump$1.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/CalibrationActivity$CartDump.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/CalibrationActivity$CartDump.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/CalibrationActivity$MeasTarget.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/CalibrationActivity$MeasTarget.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/CalibrationActivity$TargetMode.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/CalibrationActivity$TargetMode.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/CalibrationActivity.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/CalibrationActivity.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/ControlTestActivity.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/ControlTestActivity.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/View/ConvertActivity$1.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/View/ConvertActivity$1.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/View/ConvertActivity.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/View/ConvertActivity.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/Model/ConvertModel.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/Model/ConvertModel.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/Presenter/ConvertPresenter.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/Presenter/ConvertPresenter.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/View/CorrelationActivity.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/View/CorrelationActivity.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/DataSettingActivity$1.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/DataSettingActivity$1.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/DataSettingActivity.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/DataSettingActivity.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/DataStorage.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/DataStorage.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/DatabaseHander.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/DatabaseHander.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/View/DisplayActivity$1.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/View/DisplayActivity$1.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/View/DisplayActivity.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/View/DisplayActivity.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/Model/DisplayModel.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/Model/DisplayModel.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/Presenter/DisplayPresenter.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/Presenter/DisplayPresenter.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/EngineerActivity$1.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/EngineerActivity$1.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/EngineerActivity.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/EngineerActivity.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/ErrorPopup$1.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/ErrorPopup$1.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/ErrorPopup$2.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/ErrorPopup$2.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/ErrorPopup$3.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/ErrorPopup$3.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/ErrorPopup$4.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/ErrorPopup$4.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/ErrorPopup$5.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/ErrorPopup$5.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/ErrorPopup$6.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/ErrorPopup$6.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/ErrorPopup$7.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/ErrorPopup$7.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/ErrorPopup$8.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/ErrorPopup$8.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/ErrorPopup.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/ErrorPopup.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/ExportActivity.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/ExportActivity.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/FileLoadActivity.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/FileLoadActivity.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/FileSaveActivity.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/FileSaveActivity.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/View/FunctionalTestActivity$1.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/View/FunctionalTestActivity$1.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/View/FunctionalTestActivity.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/View/FunctionalTestActivity.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/View/FunctionalTestIView.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/View/FunctionalTestIView.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/Presenter/FunctionalTestPresenter.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/Presenter/FunctionalTestPresenter.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/GpioPort$CartridgeSensorScan.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/GpioPort$CartridgeSensorScan.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/GpioPort$DoorSensorScan.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/GpioPort$DoorSensorScan.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/GpioPort.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/GpioPort.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/HISActivity.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/HISActivity.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/HISSettingActivity.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/HISSettingActivity.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/HomeActivity$1.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/HomeActivity$1.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/HomeActivity$AniShutDown.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/HomeActivity$AniShutDown.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/HomeActivity$TargetIntent.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/HomeActivity$TargetIntent.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/HomeActivity.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/HomeActivity.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/View/LampActivity$1.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/View/LampActivity$1.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/View/LampActivity.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/View/LampActivity.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/LampCopyActivity$1.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/LampCopyActivity$1.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/LampCopyActivity$3$1.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/LampCopyActivity$3$1.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/LampCopyActivity$3.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/LampCopyActivity$3.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/LampCopyActivity$4$1.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/LampCopyActivity$4$1.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/LampCopyActivity$4.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/LampCopyActivity$4.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/LampCopyActivity$CancelTest.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/LampCopyActivity$CancelTest.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/LampCopyActivity$DrawThread.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/LampCopyActivity$DrawThread.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/LampCopyActivity$Graph.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/LampCopyActivity$Graph.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/LampCopyActivity$PhotoMeasure.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/LampCopyActivity$PhotoMeasure.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/LampCopyActivity.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/LampCopyActivity.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/View/LanguageActivity$1.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/View/LanguageActivity$1.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/View/LanguageActivity.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/View/LanguageActivity.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/Model/LanguageModel.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/Model/LanguageModel.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/Presenter/LanguagePresenter.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/Presenter/LanguagePresenter.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/OperatorSettingActivity$1.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/OperatorSettingActivity$1.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/OperatorSettingActivity.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/OperatorSettingActivity.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/PatientTestActivity.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/PatientTestActivity.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/R$id.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/R$id.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/R$layout.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/R$layout.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/R$menu.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/R$menu.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/R$raw.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/R$raw.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/R$string.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/R$string.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/R$style.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/R$style.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/R$xml.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/R$xml.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/RecordActivity.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/RecordActivity.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/RemoveActivity$1$1.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/RemoveActivity$1$1.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/RemoveActivity$1.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/RemoveActivity$1.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/RemoveActivity$UserAction.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/RemoveActivity$UserAction.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/RemoveActivity.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/RemoveActivity.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/ResultActivity$1.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/ResultActivity$1.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/ResultActivity$2$1.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/ResultActivity$2$1.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/ResultActivity$2.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/ResultActivity$2.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/ResultActivity.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/ResultActivity.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/RunActivity$1.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/RunActivity$1.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/RunActivity$2$1.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/RunActivity$2$1.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/RunActivity$2.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/RunActivity$2.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/RunActivity$3$1.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/RunActivity$3$1.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/RunActivity$3.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/RunActivity$3.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/RunActivity$AnalyzerState.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/RunActivity$AnalyzerState.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/RunActivity$Cart1stFilter1.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/RunActivity$Cart1stFilter1.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/RunActivity$Cart1stFilter2.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/RunActivity$Cart1stFilter2.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/RunActivity$Cart1stFilter3.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/RunActivity$Cart1stFilter3.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/RunActivity$Cart1stShaking.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/RunActivity$Cart1stShaking.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/RunActivity$Cart2ndFilter1.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/RunActivity$Cart2ndFilter1.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/RunActivity$Cart2ndFilter2.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/RunActivity$Cart2ndFilter2.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/RunActivity$Cart2ndFilter3.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/RunActivity$Cart2ndFilter3.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/RunActivity$Cart2ndShaking.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/RunActivity$Cart2ndShaking.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/RunActivity$CartDump.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/RunActivity$CartDump.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/RunActivity$CheckCoverError.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/RunActivity$CheckCoverError.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/RunActivity$EndRun.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/RunActivity$EndRun.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/RunActivity$ShakingAniThread.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/RunActivity$ShakingAniThread.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/RunActivity.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/RunActivity.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/Model/RunModel.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/Model/RunModel.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/SerialPort$1.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/SerialPort$1.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/SerialPort$BarcodeRxThread.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/SerialPort$BarcodeRxThread.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/SerialPort$BoardRxData.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/SerialPort$BoardRxData.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/SerialPort$BoardRxThread.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/SerialPort$BoardRxThread.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/SerialPort$BoardTxThread.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/SerialPort$BoardTxThread.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/SerialPort$HHBarcodeRxThread.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/SerialPort$HHBarcodeRxThread.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/SerialPort$PrinterTxThread.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/SerialPort$PrinterTxThread.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/SerialPort.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/SerialPort.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/SettingActivity$1.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/SettingActivity$1.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/SettingActivity$3$1.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/SettingActivity$3$1.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/SettingActivity$3.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/SettingActivity$3.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/SettingActivity.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/SettingActivity.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/ShutDownPopup.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/ShutDownPopup.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/View/SoundActivity$1.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/View/SoundActivity$1.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/View/SoundActivity.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/View/SoundActivity.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/Model/SoundModel.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/Model/SoundModel.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/Presenter/SoundPresenter.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/Presenter/SoundPresenter.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/SystemCheckActivity$1.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/SystemCheckActivity$1.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/SystemCheckActivity$CheckCoverError.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/SystemCheckActivity$CheckCoverError.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/SystemCheckActivity$GetVersion.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/SystemCheckActivity$GetVersion.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/SystemCheckActivity$MotorCheck.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/SystemCheckActivity$MotorCheck.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/SystemCheckActivity$SensorCheck.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/SystemCheckActivity$SensorCheck.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/SystemCheckActivity$TemperatureCheck.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/SystemCheckActivity$TemperatureCheck.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/SystemCheckActivity$TmpState.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/SystemCheckActivity$TmpState.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/SystemCheckActivity.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/SystemCheckActivity.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/SystemSettingActivity$1.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/SystemSettingActivity$1.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/SystemSettingActivity.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/SystemSettingActivity.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/Temperature$AmbTmpRead.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/Temperature$AmbTmpRead.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/Temperature$CellTmpRead.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/Temperature$CellTmpRead.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/Temperature$TmpInit.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/Temperature$TmpInit.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/Temperature.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/Temperature.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/TemperatureActivity$1.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/TemperatureActivity$1.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/TemperatureActivity$2$1.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/TemperatureActivity$2$1.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/TemperatureActivity$2.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/TemperatureActivity$2.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/TemperatureActivity$TmpDisplay$1$1.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/TemperatureActivity$TmpDisplay$1$1.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/TemperatureActivity$TmpDisplay$1.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/TemperatureActivity$TmpDisplay$1.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/TemperatureActivity$TmpDisplay.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/TemperatureActivity$TmpDisplay.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/TemperatureActivity.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/TemperatureActivity.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/TimerDisplay$1$1.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/TimerDisplay$1$1.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/TimerDisplay$1.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/TimerDisplay$1.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/TimerDisplay.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/TimerDisplay.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/dexedLibs/android-support-v4-31b256a67978d089056955d7343d5f60.jar" afterPath="$PROJECT_DIR$/bin/dexedLibs/android-support-v4-31b256a67978d089056955d7343d5f60.jar" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/res/raw/beep.wav" afterPath="$PROJECT_DIR$/res/raw/beep.wav" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/res/raw/booting_bgm.wav" afterPath="$PROJECT_DIR$/res/raw/booting_bgm.wav" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes.dex" afterPath="$PROJECT_DIR$/bin/classes.dex" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/View/f535Activity.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/View/f535Activity.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/View/f660Activity.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/View/f660Activity.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/resources.ap_" afterPath="$PROJECT_DIR$/bin/resources.ap_" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/res/crunch/drawable-mdpi/result_bg.png" afterPath="$PROJECT_DIR$/bin/res/crunch/drawable-mdpi/result_bg.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/res/drawable-mdpi/result_bg.png" afterPath="$PROJECT_DIR$/res/drawable-mdpi/result_bg.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/res/raw/result_bgm.wav" afterPath="$PROJECT_DIR$/res/raw/result_bgm.wav" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/View/tHbActivity.class" afterPath="$PROJECT_DIR$/bin/classes/isens/hba1c_analyzer/View/tHbActivity.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/isens/hba1c_analyzer/Model/AboutModel.java" afterPath="$PROJECT_DIR$/src/isens/hba1c_analyzer/Model/AboutModel.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/isens/hba1c_analyzer/ActionActivity.java" afterPath="$PROJECT_DIR$/src/isens/hba1c_analyzer/ActionActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/AndroidManifest.xml" afterPath="$PROJECT_DIR$/AndroidManifest.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/AndroidManifest.xml" afterPath="$PROJECT_DIR$/bin/AndroidManifest.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/isens/hba1c_analyzer/Barcode.java" afterPath="$PROJECT_DIR$/src/isens/hba1c_analyzer/Barcode.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/isens/hba1c_analyzer/BlankActivity.java" afterPath="$PROJECT_DIR$/src/isens/hba1c_analyzer/BlankActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/isens/hba1c_analyzer/CalibrationActivity.java" afterPath="$PROJECT_DIR$/src/isens/hba1c_analyzer/CalibrationActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/isens/hba1c_analyzer/ControlTestActivity.java" afterPath="$PROJECT_DIR$/src/isens/hba1c_analyzer/ControlTestActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/isens/hba1c_analyzer/DataStorage.java" afterPath="$PROJECT_DIR$/src/isens/hba1c_analyzer/DataStorage.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/isens/hba1c_analyzer/DatabaseHander.java" afterPath="$PROJECT_DIR$/src/isens/hba1c_analyzer/DatabaseHander.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/isens/hba1c_analyzer/Model/DateModel.java" afterPath="$PROJECT_DIR$/src/isens/hba1c_analyzer/Model/DateModel.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/isens/hba1c_analyzer/Model/DisplayModel.java" afterPath="$PROJECT_DIR$/src/isens/hba1c_analyzer/Model/DisplayModel.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/isens/hba1c_analyzer/EngineerActivity.java" afterPath="$PROJECT_DIR$/src/isens/hba1c_analyzer/EngineerActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/isens/hba1c_analyzer/ErrorPopup.java" afterPath="$PROJECT_DIR$/src/isens/hba1c_analyzer/ErrorPopup.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/isens/hba1c_analyzer/FileLoadActivity.java" afterPath="$PROJECT_DIR$/src/isens/hba1c_analyzer/FileLoadActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/isens/hba1c_analyzer/FileSaveActivity.java" afterPath="$PROJECT_DIR$/src/isens/hba1c_analyzer/FileSaveActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/isens/hba1c_analyzer/View/FunctionalTestActivity.java" afterPath="$PROJECT_DIR$/src/isens/hba1c_analyzer/View/FunctionalTestActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/isens/hba1c_analyzer/View/FunctionalTestIView.java" afterPath="$PROJECT_DIR$/src/isens/hba1c_analyzer/View/FunctionalTestIView.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/isens/hba1c_analyzer/Presenter/FunctionalTestPresenter.java" afterPath="$PROJECT_DIR$/src/isens/hba1c_analyzer/Presenter/FunctionalTestPresenter.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/isens/hba1c_analyzer/GpioPort.java" afterPath="$PROJECT_DIR$/src/isens/hba1c_analyzer/GpioPort.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/isens/hba1c_analyzer/HomeActivity.java" afterPath="$PROJECT_DIR$/src/isens/hba1c_analyzer/HomeActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/isens/hba1c_analyzer/LampCopyActivity.java" afterPath="$PROJECT_DIR$/src/isens/hba1c_analyzer/LampCopyActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/isens/hba1c_analyzer/View/LanguageActivity.java" afterPath="$PROJECT_DIR$/src/isens/hba1c_analyzer/View/LanguageActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/isens/hba1c_analyzer/Presenter/LanguagePresenter.java" afterPath="$PROJECT_DIR$/src/isens/hba1c_analyzer/Presenter/LanguagePresenter.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/isens/hba1c_analyzer/OperatorSettingActivity.java" afterPath="$PROJECT_DIR$/src/isens/hba1c_analyzer/OperatorSettingActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/isens/hba1c_analyzer/PatientTestActivity.java" afterPath="$PROJECT_DIR$/src/isens/hba1c_analyzer/PatientTestActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gen/isens/hba1c_analyzer/R.java" afterPath="$PROJECT_DIR$/gen/isens/hba1c_analyzer/R.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/isens/hba1c_analyzer/RemoveActivity.java" afterPath="$PROJECT_DIR$/src/isens/hba1c_analyzer/RemoveActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/isens/hba1c_analyzer/ResultActivity.java" afterPath="$PROJECT_DIR$/src/isens/hba1c_analyzer/ResultActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/isens/hba1c_analyzer/RunActivity.java" afterPath="$PROJECT_DIR$/src/isens/hba1c_analyzer/RunActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/isens/hba1c_analyzer/SerialPort.java" afterPath="$PROJECT_DIR$/src/isens/hba1c_analyzer/SerialPort.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/isens/hba1c_analyzer/SettingActivity.java" afterPath="$PROJECT_DIR$/src/isens/hba1c_analyzer/SettingActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/isens/hba1c_analyzer/Model/SoundModel.java" afterPath="$PROJECT_DIR$/src/isens/hba1c_analyzer/Model/SoundModel.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/isens/hba1c_analyzer/SystemCheckActivity.java" afterPath="$PROJECT_DIR$/src/isens/hba1c_analyzer/SystemCheckActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/isens/hba1c_analyzer/Temperature.java" afterPath="$PROJECT_DIR$/src/isens/hba1c_analyzer/Temperature.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/isens/hba1c_analyzer/TemperatureActivity.java" afterPath="$PROJECT_DIR$/src/isens/hba1c_analyzer/TemperatureActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/isens/hba1c_analyzer/TimerDisplay.java" afterPath="$PROJECT_DIR$/src/isens/hba1c_analyzer/TimerDisplay.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/res/layout/egnloginpopup.xml" afterPath="$PROJECT_DIR$/res/layout/egnloginpopup.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/res/layout/engineer.xml" afterPath="$PROJECT_DIR$/res/layout/engineer.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/res/layout/modoperatorpopup.xml" afterPath="$PROJECT_DIR$/res/layout/modoperatorpopup.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/res/layout/result.xml" afterPath="$PROJECT_DIR$/res/layout/result.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/res/values-en/strings.xml" afterPath="$PROJECT_DIR$/res/values-en/strings.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/res/values-ko/strings.xml" afterPath="$PROJECT_DIR$/res/values-ko/strings.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/res/layout/temperature.xml" afterPath="$PROJECT_DIR$/res/layout/temperature.xml" />
+    </list>
+    <ignored path="A1Care_analyzer.iws" />
+    <ignored path=".idea/workspace.xml" />
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="TRACKING_ENABLED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ChangesViewManager" flattened_view="true" show_ignored="false" />
+  <component name="CreatePatchCommitExecutor">
+    <option name="PATCH_PATH" value="" />
+  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
+  <component name="FavoritesManager">
+    <favorites_list name="A1Care_analyzer" />
+  </component>
+  <component name="FileEditorManager">
+    <leaf>
+      <file leaf-file-name="HomeActivity.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/isens/hba1c_analyzer/HomeActivity.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.4945055">
+              <caret line="53" column="40" selection-start-line="53" selection-start-column="40" selection-end-line="53" selection-end-column="40" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GradleLocalSettings">
+    <option name="externalProjectsViewState">
+      <projects_view />
+    </option>
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="mavenHome" value="Bundled (Maven 3)" />
+      </MavenGeneralSettings>
+    </option>
+  </component>
+  <component name="NamedScopeManager">
+    <order />
+  </component>
+  <component name="ProjectFrameBounds">
+    <option name="x" value="-1928" />
+    <option name="y" value="-8" />
+    <option name="width" value="1936" />
+    <option name="height" value="1096" />
+  </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="false">
+    <OptionsSetting value="true" id="Add" />
+    <OptionsSetting value="true" id="Remove" />
+    <OptionsSetting value="true" id="Checkout" />
+    <OptionsSetting value="true" id="Update" />
+    <OptionsSetting value="true" id="Status" />
+    <OptionsSetting value="true" id="Edit" />
+    <ConfirmationsSetting value="0" id="Add" />
+    <ConfirmationsSetting value="0" id="Remove" />
+  </component>
+  <component name="ProjectView">
+    <navigator currentView="ProjectPane" proportions="" version="1">
+      <flattenPackages />
+      <showMembers />
+      <showModules />
+      <showLibraryContents />
+      <hideEmptyPackages />
+      <abbreviatePackageNames />
+      <autoscrollToSource />
+      <autoscrollFromSource />
+      <sortByType />
+    </navigator>
+    <panes>
+      <pane id="Scratches" />
+      <pane id="ProjectPane">
+        <subPane>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="A1Care_analyzer" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="A1Care_analyzer" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="A1Care_analyzer" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="A1Care_analyzer" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="A1Care_analyzer" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="isens" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="hba1c_analyzer" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
+      <pane id="Scope" />
+      <pane id="AndroidView">
+        <subPane />
+      </pane>
+      <pane id="PackagesPane">
+        <subPane />
+      </pane>
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="settings.editor.selected.configurable" value="vcs.Git" />
+    <property name="settings.editor.splitter.proportion" value="0.2" />
+    <property name="project.structure.last.edited" value="Project" />
+    <property name="project.structure.proportion" value="0.0" />
+    <property name="project.structure.side.proportion" value="0.2" />
+    <property name="FullScreen" value="false" />
+    <property name="recentsLimit" value="5" />
+  </component>
+  <component name="RunManager">
+    <configuration default="true" type="AndroidRunConfigurationType" factoryName="Android Application">
+      <module name="" />
+      <option name="ACTIVITY_CLASS" value="" />
+      <option name="MODE" value="default_activity" />
+      <option name="DEPLOY" value="true" />
+      <option name="ARTIFACT_NAME" value="" />
+      <option name="TARGET_SELECTION_MODE" value="EMULATOR" />
+      <option name="USE_LAST_SELECTED_DEVICE" value="false" />
+      <option name="PREFERRED_AVD" value="" />
+      <option name="USE_COMMAND_LINE" value="true" />
+      <option name="COMMAND_LINE" value="" />
+      <option name="WIPE_USER_DATA" value="false" />
+      <option name="DISABLE_BOOT_ANIMATION" value="false" />
+      <option name="NETWORK_SPEED" value="full" />
+      <option name="NETWORK_LATENCY" value="none" />
+      <option name="CLEAR_LOGCAT" value="false" />
+      <option name="SHOW_LOGCAT_AUTOMATICALLY" value="true" />
+      <option name="FILTER_LOGCAT_AUTOMATICALLY" value="true" />
+      <option name="SELECTED_MATRIX_CONFIGURATION_ID" value="0" />
+      <option name="SELECTED_CLOUD_PROJECT_ID" value="" />
+      <option name="IS_VALID_CLOUD_SELECTION" value="false" />
+      <option name="INVALID_CLOUD_SELECTION_ERROR" value="" />
+      <method />
+    </configuration>
+    <configuration default="true" type="AndroidTestRunConfigurationType" factoryName="Android Tests">
+      <module name="" />
+      <option name="TESTING_TYPE" value="0" />
+      <option name="INSTRUMENTATION_RUNNER_CLASS" value="" />
+      <option name="METHOD_NAME" value="" />
+      <option name="CLASS_NAME" value="" />
+      <option name="PACKAGE_NAME" value="" />
+      <option name="TARGET_SELECTION_MODE" value="EMULATOR" />
+      <option name="USE_LAST_SELECTED_DEVICE" value="false" />
+      <option name="PREFERRED_AVD" value="" />
+      <option name="USE_COMMAND_LINE" value="true" />
+      <option name="COMMAND_LINE" value="" />
+      <option name="WIPE_USER_DATA" value="false" />
+      <option name="DISABLE_BOOT_ANIMATION" value="false" />
+      <option name="NETWORK_SPEED" value="full" />
+      <option name="NETWORK_LATENCY" value="none" />
+      <option name="CLEAR_LOGCAT" value="false" />
+      <option name="SHOW_LOGCAT_AUTOMATICALLY" value="true" />
+      <option name="FILTER_LOGCAT_AUTOMATICALLY" value="true" />
+      <option name="SELECTED_MATRIX_CONFIGURATION_ID" value="0" />
+      <option name="SELECTED_CLOUD_PROJECT_ID" value="" />
+      <option name="IS_VALID_CLOUD_SELECTION" value="false" />
+      <option name="INVALID_CLOUD_SELECTION_ERROR" value="" />
+      <method />
+    </configuration>
+    <configuration default="true" type="Application" factoryName="Application">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="VM_PARAMETERS" />
+      <option name="PROGRAM_PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="ENABLE_SWING_INSPECTOR" value="false" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <module name="" />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="true" type="GradleRunConfiguration" factoryName="Gradle">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list />
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <method />
+    </configuration>
+    <configuration default="true" type="JUnit" factoryName="JUnit">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
+      <module name="" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PACKAGE_NAME" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="METHOD_NAME" />
+      <option name="TEST_OBJECT" value="class" />
+      <option name="VM_PARAMETERS" value="-ea" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="singleModule" />
+      </option>
+      <envs />
+      <patterns />
+      <method />
+    </configuration>
+    <configuration default="true" type="JarApplication" factoryName="JAR Application">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="true" type="Remote" factoryName="Remote">
+      <option name="USE_SOCKET_TRANSPORT" value="true" />
+      <option name="SERVER_MODE" value="false" />
+      <option name="SHMEM_ADDRESS" value="javadebug" />
+      <option name="HOST" value="localhost" />
+      <option name="PORT" value="5005" />
+      <method />
+    </configuration>
+    <configuration default="true" type="TestNG" factoryName="TestNG">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
+      <module name="" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="SUITE_NAME" />
+      <option name="PACKAGE_NAME" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="METHOD_NAME" />
+      <option name="GROUP_NAME" />
+      <option name="TEST_OBJECT" value="CLASS" />
+      <option name="VM_PARAMETERS" value="-ea" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="OUTPUT_DIRECTORY" />
+      <option name="ANNOTATION_TYPE" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="singleModule" />
+      </option>
+      <option name="USE_DEFAULT_REPORTERS" value="false" />
+      <option name="PROPERTIES_FILE" />
+      <envs />
+      <properties />
+      <listeners />
+      <method />
+    </configuration>
+    <configuration name="&lt;template&gt;" type="Applet" default="true" selected="false">
+      <option name="MAIN_CLASS_NAME" />
+      <option name="HTML_FILE_NAME" />
+      <option name="HTML_USED" value="false" />
+      <option name="WIDTH" value="400" />
+      <option name="HEIGHT" value="300" />
+      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
+      <option name="VM_PARAMETERS" />
+    </configuration>
+    <configuration name="&lt;template&gt;" type="#org.jetbrains.idea.devkit.run.PluginConfigurationType" default="true" selected="false">
+      <option name="VM_PARAMETERS" value="-Xmx512m -Xms256m -XX:MaxPermSize=250m -ea" />
+    </configuration>
+  </component>
+  <component name="ShelveChangesManager" show_recycled="false" />
+  <component name="SpellCheckerSettings" BundledDictionaries="3" BundledDictionary0="jetbrains.dic" BundledDictionary1="english.dic" BundledDictionary2="android.dic" Folders="0" Dictionaries="0" />
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="c8e23eea-def8-4dc1-9f44-d55769c8c64e" name="Default" comment="" />
+      <created>1434076089820</created>
+      <option name="number" value="Default" />
+      <updated>1434076089820</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="-1928" y="-8" width="1936" height="1096" extended-state="6" />
+    <editor active="false" />
+    <layout>
+      <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.17110874" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3290735" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Gradle Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="combo" />
+    </layout>
+    <layout-to-restore>
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3290735" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Gradle Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.17110874" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="combo" />
+    </layout-to-restore>
+  </component>
+  <component name="Vcs.Log.UiProperties">
+    <option name="RECENTLY_FILTERED_USER_GROUPS">
+      <collection />
+    </option>
+    <option name="RECENTLY_FILTERED_BRANCH_GROUPS">
+      <collection />
+    </option>
+  </component>
+  <component name="VcsContentAnnotationSettings">
+    <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager />
+    <watches-manager />
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/src/isens/hba1c_analyzer/HomeActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/isens/hba1c_analyzer/HomeActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/isens/hba1c_analyzer/HomeActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/isens/hba1c_analyzer/HomeActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/isens/hba1c_analyzer/HomeActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/isens/hba1c_analyzer/HomeActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/isens/hba1c_analyzer/HomeActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/isens/hba1c_analyzer/HomeActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/isens/hba1c_analyzer/HomeActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/isens/hba1c_analyzer/RunActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-14.40565">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/isens/hba1c_analyzer/Temperature.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/isens/hba1c_analyzer/SystemCheckActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/isens/hba1c_analyzer/ActionActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.49479166">
+          <caret line="53" column="4" selection-start-line="53" selection-start-column="4" selection-end-line="53" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/isens/hba1c_analyzer/HomeActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.4945055">
+          <caret line="53" column="40" selection-start-line="53" selection-start-column="40" selection-end-line="53" selection-end-column="40" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+  </component>
+  <component name="masterDetails">
+    <states>
+      <state key="ArtifactsStructureConfigurable.UI">
+        <settings>
+          <artifact-editor />
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="FacetStructureConfigurable.UI">
+        <settings>
+          <last-edited>No facets are configured</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="GlobalLibrariesConfigurable.UI">
+        <settings>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="JdkListConfigurable.UI">
+        <settings>
+          <last-edited>1.7</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="ModuleStructureConfigurable.UI">
+        <settings>
+          <last-edited>A1Care_analyzer</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+                <option value="0.6" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="ProjectLibrariesConfigurable.UI">
+        <settings>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="ScopeChooserConfigurable.UI">
+        <settings>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+    </states>
+  </component>
+</project>

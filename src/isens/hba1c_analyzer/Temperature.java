@@ -1,5 +1,6 @@
 package isens.hba1c_analyzer;
 
+import isens.hba1c_analyzer.Model.Hardware;
 import isens.hba1c_analyzer.SerialPort.CtrTarget;
 
 import java.text.DecimalFormat;
@@ -22,8 +23,8 @@ public class Temperature extends SerialPort {
 	
 	public static float InitTmp;
 
-	static final int MaxAmbTmp = 39,
-					 MinAmbTmp = 20;
+	static final int MaxAmbTmp = 36,
+					 MinAmbTmp = 18;
 	
 	public void TmpInit() {
 		
@@ -62,9 +63,11 @@ public class Temperature extends SerialPort {
 		mCellTmpRead.start();
 		
 		try {
+			
 			mCellTmpRead.join();
+		
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
+		
 			e.printStackTrace();
 		}
 		
@@ -90,9 +93,8 @@ public class Temperature extends SerialPort {
 			
 				temp = BoardMessageOutput();
 				Sleep(10);
-//				Log.w("CellTmpRead", temp);
 			
-			} while(temp.equals("NR"));
+			} while(temp.equals(Hardware.NO_RESPONSE));
 			
 			TimerDisplay.RXBoardFlag = false;
 			
@@ -102,12 +104,10 @@ public class Temperature extends SerialPort {
 					
 			} catch(NumberFormatException e) {
 				
-				tmpRaw = 0.0;
+				tmpRaw = 0;
 			}
 			
 			cellTmp = (tmpRaw / (double) 1670.17) - (double) 15.5;
-			
-	//		Log.w("CellTmpRead", "tmpDouble : " + tmpDouble);
 		}
 		
 		public double getCellTmp() {
@@ -122,9 +122,11 @@ public class Temperature extends SerialPort {
 		mAmbTmpRead.start();
 		
 		try {
+			
 			mAmbTmpRead.join();
+		
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
+		
 			e.printStackTrace();
 		}
 		
@@ -151,7 +153,6 @@ public class Temperature extends SerialPort {
 				
 				tmpData = SensorMessageOutput();
 				Sleep(10);
-//				Log.w("AmbTmpRead", tmpData);
 				
 			} while(!tmpData.substring(1, 2).equals("T"));
 			

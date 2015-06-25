@@ -4,6 +4,7 @@ import isens.hba1c_analyzer.R;
 import isens.hba1c_analyzer.Presenter.ConvertPresenter;
 import isens.hba1c_analyzer.Presenter.FunctionalTestPresenter;
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
@@ -91,4 +92,12 @@ public class FunctionalTestActivity extends Activity implements FunctionalTestIV
 			return false;
 		}
 	};
+	
+	public int getIntentData() {
+		
+		Intent itn = getIntent();
+		int state = itn.getIntExtra("System Check State", 0);
+		
+		return state;
+	}
 }

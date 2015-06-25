@@ -1,5 +1,5 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/maintenancelayout"
+    android:id="@+id/engineerlayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/background" >
@@ -328,6 +328,35 @@
 	        android:layout_centerHorizontal="true"
 	        android:gravity="center"
         	android:text="ABOUT A1Care"
+	        android:typeface="sans"
+	        android:textSize="18px"
+	        android:textColor="#242424" />
+		    
+   	</RelativeLayout>
+   	
+    <RelativeLayout 
+   	    android:layout_width="wrap_content"
+   	    android:layout_height="wrap_content"
+   	    android:layout_marginLeft="639px"
+        android:layout_marginTop="269px" >
+   	    
+   	    <Button
+	        android:id="@+id/deleteBtn"
+        	android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:background="@drawable/systemsetting_btn_selector" />
+   	    
+		<ImageView 
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+	        android:layout_marginTop="25px"
+		    android:layout_centerHorizontal="true" />
+	        
+		<TextView
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+	        android:layout_centerInParent="true"
+        	android:text="FILE DELETE"
 	        android:typeface="sans"
 	        android:textSize="18px"
 	        android:textColor="#242424" />

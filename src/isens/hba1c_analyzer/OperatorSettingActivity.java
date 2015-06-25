@@ -29,9 +29,12 @@ import android.widget.TextView;
 public class OperatorSettingActivity extends Activity {
 	
 	final static byte PRE_VIEW  = 0,
-					  NEXT_VIEW = 1;
+					  NEXT_VIEW = 1,
+					  LOGIN = 2,
+					  ADD = 3,
+					  MODIFY = 4;
 	
-	public OperatorController mOperatorController;
+	public OperatorPopup mOperatorPopup;
 	public DatabaseHander mDatabaseHander;
 	public TimerDisplay mTimerDisplay;
 	
@@ -62,8 +65,6 @@ public class OperatorSettingActivity extends Activity {
 	
 	private int boxNum = 0;
 	private static int pageNum = 1;
-
-	public boolean btnState = false;
 	
 	protected void onCreate(Bundle savedInstanceState) {
 		
@@ -98,6 +99,11 @@ public class OperatorSettingActivity extends Activity {
 		backIcon.setOnTouchListener(mTouchListener);
 	}
 	
+	public void setButtonState(int btnId, boolean state) {
+		
+		findViewById(btnId).setEnabled(state);
+	}
+	
 	public void setImageButtonId() {
 		
 		checkBoxBtn1 = (ImageButton) findViewById(R.id.chdckbox1);
@@ -124,62 +130,82 @@ public class OperatorSettingActivity extends Activity {
 			switch(event.getAction()) {
 			
 			case MotionEvent.ACTION_UP	:
-				
-				if(!btnState) {
+				unenabledAllBtn(); //0624
 
-					btnState = true;
-
-					switch(v.getId()) {
+				switch(v.getId()) {
+			
+				case R.id.homeicon	:
+					WhichIntent(TargetIntent.Home);
+					break;
 				
-					case R.id.homeicon	:
-						WhichIntent(TargetIntent.Home);
-						break;
+				case R.id.previousviewbtn	:
+					TurnPage(PRE_VIEW);
+					enabledAllBtn(); //0624
+					break;
+				
+				case R.id.loginbtn	:
+					Login();
+					enabledAllBtn(); //0624
+					break;
+				
+				case R.id.modifybtn	:
+					Modify();
+					enabledAllBtn(); //0624
+					break;
+				
+				case R.id.addbtn	:
+					Add();
+					enabledAllBtn(); //0624
+					break;
+				
+				case R.id.deletebtn	:
+					Delete();
+					enabledAllBtn(); //0624
+					break;
+				
+				case R.id.nextviewbtn	:
+					TurnPage(NEXT_VIEW);
+					enabledAllBtn(); //0624
+					break;
+				
+				case R.id.backicon	:
+					WhichIntent(TargetIntent.Setting);
+					break;
 					
-					case R.id.previousviewbtn	:
-						TurnPage(PRE_VIEW);
-						btnState = false;
-						break;
-					
-					case R.id.loginbtn	:
-						Login();
-						btnState = false;
-						break;
-					
-					case R.id.modifybtn	:
-						Modify();
-						btnState = false;
-						break;
-					
-					case R.id.addbtn	:
-						Add();
-						btnState = false;
-						break;
-					
-					case R.id.deletebtn	:
-						Delete();
-						btnState = false;
-						break;
-					
-					case R.id.nextviewbtn	:
-						TurnPage(NEXT_VIEW);
-						btnState = false;
-						break;
-					
-					case R.id.backicon	:
-						WhichIntent(TargetIntent.Setting);
-						break;
-						
-					default	:
-						break;
-					}
-					
+				default	:
 					break;
 				}
+					
+				break;
 			}
 			
 			return false;
 		}
 	};
+	
+	public void enabledAllBtn() {
+
+		setButtonState(R.id.homeicon, true);
+		setButtonState(R.id.previousviewbtn, true);
+		setButtonState(R.id.loginbtn, true);
+		setButtonState(R.id.modifybtn, true);
+		setButtonState(R.id.addbtn, true);
+		setButtonState(R.id.deletebtn, true);
+		setButtonState(R.id.nextviewbtn, true);
+		setButtonState(R.id.backicon, true);
+	}
+	
+	public void unenabledAllBtn() {
+		
+		setButtonState(R.id.homeicon, false);
+		setButtonState(R.id.previousviewbtn, false);
+		setButtonState(R.id.loginbtn, false);
+		setButtonState(R.id.modifybtn, false);
+		setButtonState(R.id.addbtn, false);
+		setButtonState(R.id.deletebtn, false);
+		setButtonState(R.id.nextviewbtn, false);
+		setButtonState(R.id.backicon, false);
+	}
 	
 	ImageButton.OnTouchListener mImageTouchListener = new View.OnTouchListener() {
 		
@@ -237,9 +263,9 @@ public class OperatorSettingActivity extends Activity {
 		mTimerDisplay = new TimerDisplay();
 		mTimerDisplay.ActivityParm(this, R.id.operatorlayout);
 		
-		mOperatorController = new OperatorController(this, getApplicationContext(), R.id.operatorlayout);
-		count = mOperatorController.OperatorCount();
-		OperatorDisplay(this, mOperatorController.ReadOperator(count), count, count);
+		mOperatorPopup = new OperatorPopup(this, getApplicationContext(), R.id.operatorlayout);
+		count = mOperatorPopup.OperatorCount();
+		OperatorDisplay(this, mOperatorPopup.ReadOperator(count), count, count);
 	}
 
 	public void Login() {
@@ -248,22 +274,22 @@ public class OperatorSettingActivity extends Activity {
 		
 		if(checkFlag) id = OperatorText[boxNum - 1].getText().toString();
 		
-		mOperatorController = new OperatorController(this, this, R.id.operatorlayout);
-		mOperatorController.OperatorLoginDisplay(id);
+		mOperatorPopup = new OperatorPopup(this, this, R.id.operatorlayout);
+		mOperatorPopup.OperatorLoginDisplay(id);
 	}
 	
 	public void Add() {
 		
-		mOperatorController = new OperatorController(this, this, R.id.operatorlayout);
-		mOperatorController.AddOperatorDisplay();
+		mOperatorPopup = new OperatorPopup(this, this, R.id.operatorlayout);
+		mOperatorPopup.AddOperatorDisplay();
 	}
 	
 	public void Modify() {
 		
 		if(checkFlag && !OperatorText[boxNum - 1].getText().toString().equals("")) {
 		
-			mOperatorController = new OperatorController(this, this, R.id.operatorlayout);
-			mOperatorController.ModOperatorDisplay(OperatorText[boxNum - 1].getText().toString());
+			mOperatorPopup = new OperatorPopup(this, this, R.id.operatorlayout);
+			mOperatorPopup.ModOperatorDisplay(OperatorText[boxNum - 1].getText().toString());
 		}
 	}
 	
@@ -271,8 +297,8 @@ public class OperatorSettingActivity extends Activity {
 		
 		if(checkFlag && !OperatorText[boxNum - 1].getText().toString().equals("")) {
 			
-			mOperatorController = new OperatorController(this, this, R.id.operatorlayout);
-			mOperatorController.DelOperatorDisplay(OperatorText[boxNum - 1].getText().toString());
+			mOperatorPopup = new OperatorPopup(this, this, R.id.operatorlayout);
+			mOperatorPopup.DelOperatorDisplay(OperatorText[boxNum - 1].getText().toString());
 		}
 	}
 	
@@ -361,7 +387,7 @@ public class OperatorSettingActivity extends Activity {
 			OperatorText[i].setText(Operator[0][i]);
 			DateTimeText[i].setText(Operator[1][i]);
 			PasswordText[i].setText(Operator[2][i]);
-			CommentText [i].setText(Operator[3][i]);
+			CommentText [i].setText("N/A");
 		}
 		
 		if(last == numofRow) pageNum = 1;
@@ -371,8 +397,6 @@ public class OperatorSettingActivity extends Activity {
 		String page = Integer.toString(pageNum) + " / " + Integer.toString(tPage);
 		
 		pageText.setText(page);
-		
-//		Log.w("Operator display", "last : " + last + " page : " + pageNum);
 	}
 	
 	public void TurnPage(int direction) {
@@ -381,10 +405,8 @@ public class OperatorSettingActivity extends Activity {
 			last,
 			tPage;
 		
-//		Log.w("Turn page", "page : " + pageNum);
-		
-		mOperatorController = new OperatorController(this, this, R.id.operatorlayout);
-		count = mOperatorController.OperatorCount();
+		mOperatorPopup = new OperatorPopup(this, this, R.id.operatorlayout);
+		count = mOperatorPopup.OperatorCount();
 		
 		switch(direction) {
 		
@@ -392,7 +414,7 @@ public class OperatorSettingActivity extends Activity {
 			if(pageNum > 1) {
 				pageNum--;
 				last = count-((pageNum-1)*5);
-				OperatorDisplay(this, mOperatorController.ReadOperator(last), last, count);
+				OperatorDisplay(this, mOperatorPopup.ReadOperator(last), last, count);
 			}
 			break;
 			
@@ -402,7 +424,7 @@ public class OperatorSettingActivity extends Activity {
 			if(tPage > pageNum) {
 				pageNum++;
 				last = count-((pageNum-1)*5);
-				OperatorDisplay(this, mOperatorController.ReadOperator(last), last, count);
+				OperatorDisplay(this, mOperatorPopup.ReadOperator(last), last, count);
 			}
 			break;
 			
