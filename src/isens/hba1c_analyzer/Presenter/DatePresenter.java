@@ -9,9 +9,11 @@ import android.content.Context;
 import android.os.Handler;
 import android.widget.Button;
 import isens.hba1c_analyzer.R;
+import isens.hba1c_analyzer.SerialPort;
 import isens.hba1c_analyzer.TimerDisplay;
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
 import isens.hba1c_analyzer.Model.ActivityChange;
+import isens.hba1c_analyzer.Model.CaptureScreen;
 import isens.hba1c_analyzer.Model.DateModel;
 import isens.hba1c_analyzer.View.DateIView;
 import isens.hba1c_analyzer.View.DisplayIView;
@@ -46,15 +48,19 @@ public class DatePresenter {
 	public void init() {
 		
 		mDateIView.setImageId();
-		mDateIView.setButtonId();
-		mDateIView.setTextId();
 		mDateIView.setImage();
-		mDateIView.setButtonClick();
-		mDateIView.setButtonLongClick();
+		mDateIView.setTextId();
+		mDateIView.setTitleText();
+		mDateIView.setButtonId();
 		
 		display();
 		
 		mTimerDisplay.ActivityParm(activity, layout);
+		
+		SerialPort.Sleep(500);
+		
+		mDateIView.setButtonClick();
+		mDateIView.setButtonLongClick();
 	}
 	
 	public void initTimer(final int mode) {
@@ -91,6 +97,8 @@ public class DatePresenter {
 		
 		display();
 		
+		SerialPort.Sleep(100);
+		
 		enabledAllBtn();
 	}
 	
@@ -108,6 +116,8 @@ public class DatePresenter {
 		mDateModel.changeDate((int) DateModel.YEAR_DOWN);
 		
 		display();
+		
+		SerialPort.Sleep(100);
 		
 		enabledAllBtn();
 	}
@@ -127,6 +137,8 @@ public class DatePresenter {
 		
 		display();
 		
+		SerialPort.Sleep(100);
+		
 		enabledAllBtn();
 	}
 	
@@ -144,6 +156,8 @@ public class DatePresenter {
 		mDateModel.changeDate((int) DateModel.MONTH_DOWN);
 		
 		display();
+		
+		SerialPort.Sleep(100);
 		
 		enabledAllBtn();
 	}
@@ -163,6 +177,8 @@ public class DatePresenter {
 		
 		display();
 		
+		SerialPort.Sleep(100);
+		
 		enabledAllBtn();
 	}
 	
@@ -180,6 +196,8 @@ public class DatePresenter {
 		mDateModel.changeDate((int) DateModel.DAY_DOWN);
 		
 		display();
+		
+		SerialPort.Sleep(100);
 		
 		enabledAllBtn();
 	}
@@ -223,14 +241,33 @@ public class DatePresenter {
 		mDateIView.setButtonState(R.id.val3rdmBtn, false);
 	}
 	
-	public void changeActivity() {
+	public void changeActivity(int btn) {
 		
-		TimerDisplay.FiftymsPeriod.cancel();
-		mDateModel.setDate();
-		mTimerDisplay.TimerInit();
-		mDateModel.savingDate();
+		switch(btn) {
 		
-		mActivityChange.whichIntent(TargetIntent.SystemSetting);
-		mActivityChange.finish();
+		case R.id.backBtn	:
+			TimerDisplay.FiftymsPeriod.cancel();
+			mDateModel.setDate();
+			mTimerDisplay.TimerInit();
+			mDateModel.savingDate();
+			
+			mActivityChange.whichIntent(TargetIntent.SystemSetting);
+			mActivityChange.finish();
+			break;
+		
+		case R.id.snapshotBtn	:
+			CaptureScreen mCaptureScreen = new CaptureScreen();
+			byte[] bitmapBytes = mCaptureScreen.captureScreen(activity);
+			
+			mActivityChange.whichIntent(TargetIntent.SnapShot);
+			mActivityChange.putBooleanIntent("snapshot", true);
+			mActivityChange.putStringsIntent("datetime", TimerDisplay.rTime);
+			mActivityChange.putBytesIntent("bitmap", bitmapBytes);
+			mActivityChange.finish();
+			break;
+			
+		default	:
+			break;
+		}
 	}
 }

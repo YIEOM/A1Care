@@ -1,10 +1,14 @@
 package isens.hba1c_analyzer.Model;
 
+import isens.hba1c_analyzer.DataStorage;
+import isens.hba1c_analyzer.FileSaveActivity;
 import android.app.Activity;
 import android.content.SharedPreferences;
 
 public class FileSystem {
 
+	private DataStorage mDataStorage;
+	
 	private Activity activity;
 	
 	private SharedPreferences mSharedPreferences;
@@ -44,5 +48,5 @@ public class FileSystem {
 	public void commitPref() {
 		
 		mEditor.commit();
-	}
+	}	
 }

@@ -8,8 +8,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:src="@drawable/ani_close_top_bg"
-        android:background="#00000000" />
+        android:src="@drawable/main_top_bg" />
 
     <ImageView
         android:id="@+id/device" 
@@ -19,19 +18,26 @@
         android:layout_marginTop="12px" />
     
    	<TextView
-        android:id="@+id/timeText" 
+        android:id="@+id/timeText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:typeface="sans"
         android:textSize="24px"
         android:textColor="#444444"
         android:shadowColor="#7F000000"
-        android:shadowDx="2"
-        android:shadowDy="2"
+        android:shadowDx="1"
+        android:shadowDy="1"
         android:shadowRadius="1.2"
         android:layout_marginLeft="578px"
         android:layout_marginTop="15px" />
     
+   	<Button
+        android:id="@+id/snapshotBtn"
+        android:layout_width="180px"
+        android:layout_height="60px"
+        android:layout_marginLeft="120px"
+        android:background="#00000000" />
+   	
     <ImageView 
         android:id="@+id/removeAct1"
         android:layout_width="wrap_content"
@@ -39,5 +45,11 @@
         android:layout_marginTop="111px"
         android:background="@drawable/removeact1"
         android:layout_gravity="center" />
+    
+    <ImageView
+        android:id="@+id/explainTextImage"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_marginTop="390px" />
   
 </RelativeLayout>

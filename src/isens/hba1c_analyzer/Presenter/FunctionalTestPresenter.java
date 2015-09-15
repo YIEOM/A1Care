@@ -10,11 +10,14 @@ import android.content.Intent;
 import android.os.Handler;
 import android.widget.Button;
 import isens.hba1c_analyzer.ErrorPopup;
+import isens.hba1c_analyzer.FileSaveActivity;
 import isens.hba1c_analyzer.HomeActivity;
 import isens.hba1c_analyzer.R;
+import isens.hba1c_analyzer.SerialPort;
 import isens.hba1c_analyzer.TimerDisplay;
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
 import isens.hba1c_analyzer.Model.ActivityChange;
+import isens.hba1c_analyzer.Model.CaptureScreen;
 import isens.hba1c_analyzer.Model.ConvertModel;
 import isens.hba1c_analyzer.Model.DateModel;
 import isens.hba1c_analyzer.Model.LanguageModel;
@@ -50,10 +53,9 @@ public class FunctionalTestPresenter {
 		
 		int state;
 		
-		mFunctionalTestIView.setImageId();
-		mFunctionalTestIView.setImage();
+		mFunctionalTestIView.setTextId();
+		mFunctionalTestIView.setText();
 		mFunctionalTestIView.setButtonId();
-		mFunctionalTestIView.setButtonClick();
 		
 		mTimerDisplay.ActivityParm(activity, layout);
 		
@@ -64,6 +66,10 @@ public class FunctionalTestPresenter {
 			mErrorPopup = new ErrorPopup(activity, context, R.id.functionalTestLayout, null, 0);
 			mErrorPopup.ErrorBtnDisplay(state);		
 		}
+		
+		SerialPort.Sleep(500);
+		
+		mFunctionalTestIView.setButtonClick();
 	}
 	
 	public void enabledAllBtn() {
@@ -100,6 +106,17 @@ public class FunctionalTestPresenter {
 			mActivityChange.finish();
 			break;
 		
+		case R.id.snapshotBtn	:
+			CaptureScreen mCaptureScreen = new CaptureScreen();
+			byte[] bitmapBytes = mCaptureScreen.captureScreen(activity);
+			
+			mActivityChange.whichIntent(TargetIntent.SnapShot);
+			mActivityChange.putBooleanIntent("snapshot", true);
+			mActivityChange.putStringsIntent("datetime", TimerDisplay.rTime);
+			mActivityChange.putBytesIntent("bitmap", bitmapBytes);
+			mActivityChange.finish();
+			break;
+			
 		default	:
 			break;
 		}

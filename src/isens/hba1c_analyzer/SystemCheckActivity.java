@@ -12,6 +12,7 @@ import isens.hba1c_analyzer.RunActivity.CartDump;
 import isens.hba1c_analyzer.RunActivity.CheckCoverError;
 import isens.hba1c_analyzer.Temperature.CellTmpRead;
 import isens.hba1c_analyzer.Model.AboutModel;
+import isens.hba1c_analyzer.Model.CaptureScreen;
 import isens.hba1c_analyzer.Model.ConvertModel;
 import isens.hba1c_analyzer.Model.Hardware;
 import isens.hba1c_analyzer.View.ConvertActivity;
@@ -26,8 +27,10 @@ import android.preference.PreferenceManager;
 import android.provider.Settings.SettingNotFoundException;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
@@ -76,16 +79,63 @@ public class SystemCheckActivity extends Activity {
 	private byte photoCheck;
 	public int checkError;
 	
+	private Button snapshotBtn;
+	
+	private Activity activity;
+	private Context context;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.systemcheck);
-				
+		
 		SystemCheckInit();
 	}
 	
+	public void setButtonId(Activity activity) {
+		
+		snapshotBtn = (Button)activity.findViewById(R.id.snapshotBtn);
+	}
+	
+	public void setButtonClick() {
+		
+		if(HomeActivity.ANALYZER_SW == HomeActivity.DEVEL) snapshotBtn.setOnTouchListener(mTouchListener);
+	}
+	
+	Button.OnTouchListener mTouchListener = new View.OnTouchListener() {
+		
+		@Override
+		public boolean onTouch(View v, MotionEvent event) {
+			
+			switch(event.getAction()) {
+			
+			case MotionEvent.ACTION_UP	:
+				
+				switch(v.getId()) {
+					
+				case R.id.snapshotBtn	:
+					WhichIntent(TargetIntent.SnapShot);
+					break;
+					
+				default	:
+					break;
+				}
+			
+				break;
+			}
+			
+			return false;
+		}
+	};
+	
 	public void SystemCheckInit() {
+		
+		activity = this;
+		context = this;
+		
+		setButtonId(activity);
+		setButtonClick();
 		
 		SystemAniStart();
 	
@@ -124,17 +174,16 @@ public class SystemCheckActivity extends Activity {
 			
 			/* TEST Mode */
 			if((HomeActivity.ANALYZER_SW == HomeActivity.DEVEL) || (HomeActivity.ANALYZER_SW == HomeActivity.DEMO)) {
-	
-				WhichIntent(TargetIntent.Home);
+
+				ChangeHome mChangeHome = new ChangeHome();
+				mChangeHome.start();
 			}
-			
 			else {
 			
 				mErrorPopup = new ErrorPopup(this, this, R.id.systemchecklayout, null, 0);
-					
+
 				SensorCheck SensorCheckObj = new SensorCheck();
-				SensorCheckObj.start();
-			
+				SensorCheckObj.start();			
 			}
 			
 		} else {
@@ -157,7 +206,7 @@ public class SystemCheckActivity extends Activity {
 			GpioPort.DoorActState = true;
 			GpioPort.CartridgeActState = true;
 			
-			SerialPort.Sleep(2000);
+			SerialPort.Sleep(5000);
 			
 			while((ActionActivity.DoorCheckFlag != 1) || (ActionActivity.CartridgeCheckFlag != 0)) {
 				
@@ -334,7 +383,7 @@ public class SystemCheckActivity extends Activity {
 			switch(checkError) {
 				
 			case R.string.e322		:
-				mErrorPopup.ErrorDisplay(R.string.w004);					
+				mErrorPopup.ErrorDisplay(R.string.w001);					
 				CheckCoverError mCheckCoverError = new CheckCoverError();
 				mCheckCoverError.start();
 				break;
@@ -392,7 +441,7 @@ public class SystemCheckActivity extends Activity {
 			
 			if(i != numberChaberTmpCheck) {
 				
-				SerialPort.Sleep(390000);
+				SerialPort.Sleep(387000);
 				
 				InsideTmpCheck mInsideTmpCheck = new InsideTmpCheck();
 				mInsideTmpCheck.start();
@@ -686,6 +735,16 @@ public class SystemCheckActivity extends Activity {
 		}
 	}
 	
+	public class ChangeHome extends Thread {
+		
+		public void run() {
+			
+			SerialPort.Sleep(5000);
+			
+			WhichIntent(TargetIntent.Home);
+		}
+	}	
+	
 	public void WhichIntent(TargetIntent Itn) { // Activity conversion
 		
 		Intent nextIntent = null;
@@ -697,6 +756,16 @@ public class SystemCheckActivity extends Activity {
 			nextIntent.putExtra("System Check State", checkError);
 			break;
 		
+		case SnapShot	:
+			CaptureScreen mCaptureScreen = new CaptureScreen();
+			byte[] bitmapBytes = mCaptureScreen.captureScreen(activity);
+			
+			nextIntent = new Intent(context, FileSaveActivity.class);
+			nextIntent.putExtra("snapshot", true);
+			nextIntent.putExtra("datetime", TimerDisplay.rTime);
+			nextIntent.putExtra("bitmap", bitmapBytes);
+			break;	
+			
 		default		:	
 			break;			
 		}

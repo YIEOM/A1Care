@@ -10,6 +10,7 @@ import android.os.Handler;
 import android.widget.Button;
 import isens.hba1c_analyzer.R;
 import isens.hba1c_analyzer.RunActivity;
+import isens.hba1c_analyzer.SerialPort;
 import isens.hba1c_analyzer.TimerDisplay;
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
 import isens.hba1c_analyzer.Model.ActivityChange;
@@ -52,11 +53,14 @@ public class AdjustmentPresenter {
 		mFactorIView.setImage();
 		mFactorIView.setButtonId();
 		mFactorIView.setEditTextId();
-		mFactorIView.setButtonClick();
 		
 		display();
 		
 		mTimerDisplay.ActivityParm(activity, layout);
+		
+		SerialPort.Sleep(500);
+		
+		mFactorIView.setButtonClick();
 	}
 	
 	public void display() {

@@ -19,6 +19,7 @@ import isens.hba1c_analyzer.R.id;
 import isens.hba1c_analyzer.R.layout;
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
@@ -36,17 +37,24 @@ public class TimeActivity extends Activity implements TimeIView{
 	
 	private TimePresenter mTimePresenter;
 	
-	private TextView amPmText, hourText, minuteText;
+	private TextView titleText, amPmText, hourText, minuteText;
 
-	private Button backBtn, amPmPBtn, amPmMBtn, hourPBtn, hourMBtn, minutePBtn, minuteMBtn;
+	private Button backBtn, 
+				   amPmPBtn, 
+				   amPmMBtn, 
+				   hourPBtn, 
+				   hourMBtn, 
+				   minutePBtn, 
+				   minuteMBtn,
+				   snapshotBtn;
 
-	private ImageView titleImage, iconImage;
+	private ImageView iconImage;
 	
 	protected void onCreate(Bundle savedInstanceState) {
 	
 		super.onCreate(savedInstanceState);
 		overridePendingTransition(R.anim.fade, R.anim.hold);
-		setContentView(R.layout.datetime);
+		setContentView(R.layout.setting5);
 		
 		mTimePresenter = new TimePresenter(this, this, this, R.id.dateTimeLayout);
 		mTimePresenter.init();
@@ -54,21 +62,26 @@ public class TimeActivity extends Activity implements TimeIView{
 	
 	public void setImageId() {
 		
-		titleImage = (ImageView) findViewById(R.id.title);
 		iconImage = (ImageView) findViewById(R.id.icon);
 	}
 	
 	public void setImage() {
 		
-		titleImage.setBackgroundResource(R.drawable.time_title);
 		iconImage.setBackgroundResource(R.drawable.time);
 	}
 	
 	public void setTextId() {
 		
+		titleText = (TextView) findViewById(R.id.titleText);
 		amPmText = (TextView) findViewById(R.id.val1stText);
 		hourText = (TextView) findViewById(R.id.val2ndText);
 		minuteText = (TextView) findViewById(R.id.val3rdText);
+	}
+	
+	public void setTitleText() {
+		
+		titleText.setPaintFlags(titleText.getPaintFlags()|Paint.FAKE_BOLD_TEXT_FLAG);
+		titleText.setText(R.string.timetitle);
 	}
 	
 	public void setText(String amPm, String hour, String minute) {
@@ -87,6 +100,7 @@ public class TimeActivity extends Activity implements TimeIView{
 		hourMBtn = (Button) findViewById(R.id.val2ndmBtn);
 		minutePBtn = (Button) findViewById(R.id.val3rdpBtn);
 		minuteMBtn = (Button) findViewById(R.id.val3rdmBtn);
+		snapshotBtn = (Button)findViewById(R.id.snapshotBtn);
 	}
 	
 	public void setButtonClick() {
@@ -98,6 +112,7 @@ public class TimeActivity extends Activity implements TimeIView{
 		hourMBtn.setOnTouchListener(mTouchListener);
 		minutePBtn.setOnTouchListener(mTouchListener);
 		minuteMBtn.setOnTouchListener(mTouchListener);
+		if(HomeActivity.ANALYZER_SW == HomeActivity.DEVEL) snapshotBtn.setOnTouchListener(mTouchListener);
 	}
 	
 	public void setButtonLongClick() {
@@ -128,9 +143,6 @@ public class TimeActivity extends Activity implements TimeIView{
 					
 					switch(v.getId()) {
 					
-					case R.id.backBtn		:
-						break;
-						
 					case R.id.val1stpBtn	:
 						mTimePresenter.changeAmPm();
 						break;
@@ -166,7 +178,11 @@ public class TimeActivity extends Activity implements TimeIView{
 					switch(v.getId()) {
 					
 					case R.id.backBtn		:
-						mTimePresenter.changeActivity();
+						mTimePresenter.changeActivity(v.getId());
+						break;
+						
+					case R.id.snapshotBtn		:
+						mTimePresenter.changeActivity(v.getId());
 						break;
 						
 					default	:

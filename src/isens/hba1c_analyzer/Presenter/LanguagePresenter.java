@@ -9,9 +9,11 @@ import android.content.Context;
 import android.os.Handler;
 import android.widget.Button;
 import isens.hba1c_analyzer.R;
+import isens.hba1c_analyzer.SerialPort;
 import isens.hba1c_analyzer.TimerDisplay;
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
 import isens.hba1c_analyzer.Model.ActivityChange;
+import isens.hba1c_analyzer.Model.CaptureScreen;
 import isens.hba1c_analyzer.Model.DateModel;
 import isens.hba1c_analyzer.Model.LanguageModel;
 import isens.hba1c_analyzer.View.DateIView;
@@ -45,34 +47,37 @@ public class LanguagePresenter {
 		
 		mLanguageIView.setImageId();
 		mLanguageIView.setImage();
-		mLanguageIView.setButtonId();
 		mLanguageIView.setTextId();
-		mLanguageIView.setButtonClick();
+		mLanguageIView.setButtonId();
 		
-		mLanguageModel.initLanguage();
+		mLanguageModel.getSettingLanguage();
 		display();
 		
 		mTimerDisplay.ActivityParm(activity, layout);
+		
+		SerialPort.Sleep(500);
+		
+		mLanguageIView.setButtonClick();
 	}
 	
 	public void upLanguage() {
 		
-		unenabledAllBtn();
-		
 		mLanguageModel.upLanguageIdx();
 		
 		display();
+		
+		SerialPort.Sleep(100);
 		
 		enabledAllBtn();
 	}
 
 	public void downLanguage() {
 		
-		unenabledAllBtn();
-		
 		mLanguageModel.downLanguageIdx();
 		
 		display();
+		
+		SerialPort.Sleep(100);
 		
 		enabledAllBtn();
 	}
@@ -99,11 +104,30 @@ public class LanguagePresenter {
 		mLanguageIView.setButtonState(R.id.rightBtn, false);
 	}
 	
-	public void changeActivity() {
+	public void changeActivity(int btn) {
+				
+		switch(btn) {
 		
-		mLanguageModel.setLocale();
+		case R.id.backBtn	:
+			mLanguageModel.setLocale();
+			
+			mActivityChange.whichIntent(TargetIntent.SystemSetting);
+			mActivityChange.finish();
+			break;
 		
-		mActivityChange.whichIntent(TargetIntent.SystemSetting);
-		mActivityChange.finish();
+		case R.id.snapshotBtn	:
+			CaptureScreen mCaptureScreen = new CaptureScreen();
+			byte[] bitmapBytes = mCaptureScreen.captureScreen(activity);
+			
+			mActivityChange.whichIntent(TargetIntent.SnapShot);
+			mActivityChange.putBooleanIntent("snapshot", true);
+			mActivityChange.putStringsIntent("datetime", TimerDisplay.rTime);
+			mActivityChange.putBytesIntent("bitmap", bitmapBytes);
+			mActivityChange.finish();
+			break;
+			
+		default	:
+			break;
+		}
 	}
 }

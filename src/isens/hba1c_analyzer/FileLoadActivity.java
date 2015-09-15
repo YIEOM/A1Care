@@ -28,7 +28,7 @@ public class FileLoadActivity extends Activity {
 				   fileOperatorID[] = new String[5],
 				   filePrimary   [] = new String[5],
 				   fileHbA1c     [] = new String[5],
-				   fileType     [] = new String[5];
+				   fileType      [] = new String[5];
 			   
 	String filePath = "",
 		   loadData;
@@ -106,6 +106,8 @@ public class FileLoadActivity extends Activity {
 	public void WhichIntent(int type) { // Activity conversion
 	
 		Intent nextIntent = null;
+		Intent itn = getIntent();
+		int state = itn.getIntExtra("System Check State", 0);
 		
 		switch(type) {
 		
@@ -128,7 +130,8 @@ public class FileLoadActivity extends Activity {
 		nextIntent.putExtra("OperatorID", fileOperatorID);
 		nextIntent.putExtra("Primary", filePrimary);
 		nextIntent.putExtra("HbA1c", fileHbA1c);
-		nextIntent.putExtra("Type", fileType);
+		nextIntent.putExtra("Type", fileType);		
+		nextIntent.putExtra("System Check State", state);
 		startActivity(nextIntent);
 				
 		finish();

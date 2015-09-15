@@ -39,7 +39,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class AboutActivity extends Activity implements AboutIView{
+public class AboutActivity extends Activity implements AboutIView {
 	
 	private AboutPresenter mAboutPresenter;
 	

@@ -1,12 +1,25 @@
 package isens.hba1c_analyzer;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.text.DecimalFormat;
 
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
+import isens.hba1c_analyzer.Model.AboutModel;
+import isens.hba1c_analyzer.Model.CaptureScreen;
+import isens.hba1c_analyzer.Model.CustomTextView;
+import isens.hba1c_analyzer.View.ExportActivity;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.os.Debug;
+import android.os.Environment;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -24,10 +37,12 @@ public class PatientTestActivity extends Activity {
 	
 	public SerialPort mSerialPort;
 	public TimerDisplay mTimerDisplay;
+	public ErrorPopup mErrorPopup;
 	
 	private Activity activity;
+	private Context context;
 	
-	public RelativeLayout pTestLayout;
+	public RelativeLayout record2Layout;
 	public View detailPopupView;
 	public PopupWindow detailPopup;
 	
@@ -36,6 +51,7 @@ public class PatientTestActivity extends Activity {
 					 ResultText  [] = new TextView[5],
 					 UnitText    [] = new TextView[5],
 					 DateTimeText[] = new TextView[5],
+					 titleText,
 					 patientID,
 					 testDate,
 					 typeDetailText,
@@ -47,6 +63,8 @@ public class PatientTestActivity extends Activity {
 					 result,
 					 pageText;
 	
+	public CustomTextView detailViewText;
+	
 	public Button homeIcon,
 				  backIcon,
 				  detailViewBtn,
@@ -54,7 +72,9 @@ public class PatientTestActivity extends Activity {
 				  preViewBtn,
 				  printBtn,
 				  cancleBtn,
-				  exportBtn;
+				  exportBtn,
+				  snapshotBtn,
+				  snapshotBtn2;
 	
 	public ImageButton checkBoxBtn1,
 					   checkBoxBtn2,
@@ -71,8 +91,7 @@ public class PatientTestActivity extends Activity {
 				  priStr  [] = new String[5],
 				  hbA1c   [] = new String[5];
 	
-	private boolean checkFlag = false,
-					btnState = false;
+	private boolean checkFlag = false;
 	
 	private ImageButton whichBox = null;
 	
@@ -82,18 +101,21 @@ public class PatientTestActivity extends Activity {
 		
 		super.onCreate(savedInstanceState);
 		overridePendingTransition(R.anim.fade, R.anim.hold);
-		setContentView(R.layout.patienttest);
+		setContentView(R.layout.record2);
 		
 		/* Popup window activation */
-		pTestLayout = (RelativeLayout)findViewById(R.id.ptestlayout);
+		record2Layout = (RelativeLayout)findViewById(R.id.record2Layout);
 		detailPopupView = View.inflate(this, R.layout.detailviewpopup, null);
-		detailPopup = new PopupWindow(detailPopupView, 526, 264, true);
+		detailPopup = new PopupWindow(detailPopupView, 800, 480, true);
 		
 		PatientInit();
 	}	
 	
 	public void setTextId() {
 	
+		titleText = (TextView) findViewById(R.id.titleText);
+		detailViewText = new CustomTextView(context);
+		detailViewText = (CustomTextView) detailPopupView.findViewById(R.id.detailViewText);
 		patientID = (TextView) detailPopupView.findViewById(R.id.patient);
 		testDate = (TextView) detailPopupView.findViewById(R.id.testdate);
 		typeDetailText = (TextView) detailPopupView.findViewById(R.id.type);
@@ -105,6 +127,12 @@ public class PatientTestActivity extends Activity {
 		result = (TextView) detailPopupView.findViewById(R.id.result);
 	}
 	
+	private void setText() {
+		
+		titleText.setPaintFlags(titleText.getPaintFlags()|Paint.FAKE_BOLD_TEXT_FLAG);
+		titleText.setText(R.string.patientdata);
+	}
+	
 	public void setButtonId(Activity activity, View detailPopupView) {
 		
 		homeIcon = (Button)activity.findViewById(R.id.homeicon);
@@ -113,8 +141,10 @@ public class PatientTestActivity extends Activity {
 		detailViewBtn = (Button)activity.findViewById(R.id.detailviewbtn);
 		nextViewBtn = (Button)activity.findViewById(R.id.nextviewbtn);
 		printBtn = (Button)detailPopupView.findViewById(R.id.printbtn);
-		cancleBtn = (Button)detailPopupView.findViewById(R.id.canclebtn);
+		cancleBtn = (Button)detailPopupView.findViewById(R.id.cancelbtn);
 		exportBtn = (Button)activity.findViewById(R.id.exportbtn);
+		snapshotBtn = (Button)activity.findViewById(R.id.snapshotBtn);
+		snapshotBtn2 = (Button)detailPopupView.findViewById(R.id.snapshotBtn2);
 	}
 	
 	public void setButtonClick() {
@@ -127,6 +157,12 @@ public class PatientTestActivity extends Activity {
 		printBtn.setOnTouchListener(mTouchListener);
 		cancleBtn.setOnTouchListener(mTouchListener);
 		exportBtn.setOnTouchListener(mTouchListener);
+		
+		if(HomeActivity.ANALYZER_SW == HomeActivity.DEVEL) {
+			
+			snapshotBtn.setOnTouchListener(mTouchListener);
+			snapshotBtn2.setOnTouchListener(mTouchListener);
+		}
 	}
 	
 	public void setButtonState(int btnId, boolean state, Activity activity) {
@@ -170,15 +206,15 @@ public class PatientTestActivity extends Activity {
 				switch(v.getId()) {
 				
 				case R.id.homeicon	:
-					WhichIntent(TargetIntent.Home);
+					WhichIntent(activity, context, TargetIntent.Home);
 					break;
 				
 				case R.id.backicon	:
-					WhichIntent(TargetIntent.Record);
+					WhichIntent(activity, context, TargetIntent.Record);
 					break;
 				
 				case R.id.previousviewbtn	:
-					WhichIntent(TargetIntent.PreFile);
+					WhichIntent(activity, context, TargetIntent.PreFile);
 					break;
 					
 				case R.id.detailviewbtn	:
@@ -186,7 +222,7 @@ public class PatientTestActivity extends Activity {
 					break;
 					
 				case R.id.nextviewbtn	:
-					WhichIntent(TargetIntent.NextFile);
+					WhichIntent(activity, context, TargetIntent.NextFile);
 					break;
 				
 				case R.id.printbtn	:
@@ -194,7 +230,7 @@ public class PatientTestActivity extends Activity {
 					PrintRecordData();
 					break;
 				
-				case R.id.canclebtn	:
+				case R.id.cancelbtn	:
 					unenabledAllDetailBtn(detailPopupView);
 					detailPopup.dismiss();
 					enabledAllDetailBtn(detailPopupView);
@@ -202,7 +238,18 @@ public class PatientTestActivity extends Activity {
 					break;
 					
 				case R.id.exportbtn	:
-					enabledAllBtn(activity);
+					WhichIntent(activity, context, TargetIntent.Export);
+					break;
+					
+				case R.id.snapshotBtn		:
+					WhichIntent(activity, context, TargetIntent.SnapShot);
+					break;
+					
+				case R.id.snapshotBtn2		:
+					CaptureScreen mCaptureScreen = new CaptureScreen();
+					byte[] bitmapBytes = mCaptureScreen.captureScreen(activity, detailPopupView);
+					
+					WhichIntentforSnapshot(activity, context, bitmapBytes);
 					break;
 					
 				default	:
@@ -239,13 +286,13 @@ public class PatientTestActivity extends Activity {
 	public void enabledAllDetailBtn(View detailPopupView) {
 
 		setDetailButtonState(R.id.printbtn, true, detailPopupView);
-		setDetailButtonState(R.id.canclebtn, true, detailPopupView);
+		setDetailButtonState(R.id.cancelbtn, true, detailPopupView);
 	}
 	
 	public void unenabledAllDetailBtn(View detailPopupView) {
 
 		setDetailButtonState(R.id.printbtn, false, detailPopupView);
-		setDetailButtonState(R.id.canclebtn, false, detailPopupView);
+		setDetailButtonState(R.id.cancelbtn, false, detailPopupView);
 	}
 		
 	ImageButton.OnTouchListener mImageTouchListener = new View.OnTouchListener() {
@@ -295,17 +342,31 @@ public class PatientTestActivity extends Activity {
 	public void PatientInit() {
 
 		activity = this;
+		context = this;
 		
 		setTextId();
+		setText();
 		setButtonId(activity, detailPopupView);
-		setButtonClick();
 		setImageButtonId();
-		setImageButtonClick();
+		
+		Intent itn = getIntent();
+		int state = itn.getIntExtra("System Check State", 0);
+		
+		if(state != RunActivity.NORMAL_OPERATION) {
+			
+			mErrorPopup = new ErrorPopup(this, this, R.id.record2Layout, null, 0);
+			mErrorPopup.ErrorBtnDisplay(state);
+		}
 		
 		mTimerDisplay = new TimerDisplay();
-		mTimerDisplay.ActivityParm(this, R.id.ptestlayout);
+		mTimerDisplay.ActivityParm(this, R.id.record2Layout);
 		
 		PatientDisplay();
+		
+		SerialPort.Sleep(500);
+		
+		setButtonClick();
+		setImageButtonClick();
 	}
 	
 	public void GetItnData() { // getting the intent data
@@ -432,15 +493,26 @@ public class PatientTestActivity extends Activity {
 	
 	public void DisplayDetailView() { // displaying the detail patient data
 
-		String pri, unit, ran, type;
+		String pri, unit, ran, type, tempPid, pid, tempTestDate;
 		
 		if(checkFlag && testNum[boxNum - 1] != null) {
+			
+			detailViewText.setPaintFlags(detailViewText.getPaintFlags()|Paint.FAKE_BOLD_TEXT_FLAG);
+			detailViewText.setTextScaleX(0.9f);
+			detailViewText.setLetterSpacing(3);
+			detailViewText.setText(R.string.detailview);
 			
 			if(typeStr[boxNum - 1].equals("E")) type = "ACR";
 			else type = "HbA1c";
 			
-			patientID.setText(pID[boxNum - 1]);
-			testDate.setText(dateTime[boxNum - 1].substring(2, 4) + "." + dateTime[boxNum - 1].substring(4, 6) + "." + dateTime[boxNum - 1].substring(6, 8) + "   " + dateTime[boxNum - 1].substring(10, 12) + ":" + dateTime[boxNum - 1].substring(12, 14) + " " + dateTime[boxNum - 1].substring(8, 10));
+			tempPid = pID[boxNum - 1];
+			if(tempPid.length() > 10) pid = tempPid.substring(0, 10) + " \n" + tempPid.substring(10);
+			else pid = tempPid;
+			
+			tempTestDate = dateTime[boxNum - 1];
+			
+			patientID.setText(pid);
+			testDate.setText(tempTestDate.substring(2, 4) + "." + tempTestDate.substring(4, 6) + "." + tempTestDate.substring(6, 8) + "   " + tempTestDate.substring(10, 12) + ":" + tempTestDate.substring(12, 14) + " " + tempTestDate.substring(8, 10));
 			typeDetailText.setText(type);
 			
 			if(priStr[boxNum - 1].equals("0")) {
@@ -463,7 +535,7 @@ public class PatientTestActivity extends Activity {
 			operatorID.setText(oID[boxNum - 1]);
 			result.setText(hbA1c[boxNum - 1] + unit);
 			
-			detailPopup.showAtLocation(pTestLayout, Gravity.CENTER, 0, 0);
+			detailPopup.showAtLocation(record2Layout, Gravity.CENTER, 0, 0);
 			detailPopup.setAnimationStyle(0);
 		}
 		
@@ -496,14 +568,14 @@ public class PatientTestActivity extends Activity {
 		txData.append(hbA1c[boxNum - 1]);
 		
 		mSerialPort = new SerialPort();
-		mSerialPort.PrinterTxStart(SerialPort.PRINT_RECORD, txData);
+		mSerialPort.PrinterTxStart(activity, context, SerialPort.PRINT_RECORD, txData);
 		
 		SerialPort.Sleep(100);
 		
 		enabledAllDetailBtn(detailPopupView);
 	}
 	
-	public void WhichIntent(TargetIntent Itn) { // Activity conversion
+	public void WhichIntent(Activity activity, Context context, TargetIntent Itn) { // Activity conversion
 		
 		switch(Itn) {
 		
@@ -526,6 +598,7 @@ public class PatientTestActivity extends Activity {
 				NextFileIntent.putExtra("DataCnt", RemoveActivity.PatientDataCnt);
 				NextFileIntent.putExtra("DataPage", ++RecordActivity.DataPage);
 				NextFileIntent.putExtra("Type", (int) FileLoadActivity.PATIENT);
+				NextFileIntent.putExtra("System Check State", RunActivity.NORMAL_OPERATION);
 				startActivity(NextFileIntent);
 				finish();
 				
@@ -539,15 +612,56 @@ public class PatientTestActivity extends Activity {
 				PreFileIntent.putExtra("DataCnt", RemoveActivity.PatientDataCnt);
 				PreFileIntent.putExtra("DataPage", --RecordActivity.DataPage);
 				PreFileIntent.putExtra("Type", (int) FileLoadActivity.PATIENT);
+				PreFileIntent.putExtra("System Check State", RunActivity.NORMAL_OPERATION);
 				startActivity(PreFileIntent);
 				finish();
 		
 			} else enabledAllBtn(activity);
 			break;
 			
+		case SnapShot	:
+			CaptureScreen mCaptureScreen = new CaptureScreen();
+			byte[] bitmapBytes = mCaptureScreen.captureScreen(activity);
+			
+			Intent nextIntent = new Intent(context, FileSaveActivity.class);
+			nextIntent.putExtra("snapshot", true);
+			nextIntent.putExtra("datetime", TimerDisplay.rTime);
+			nextIntent.putExtra("bitmap", bitmapBytes);
+			startActivity(nextIntent);
+			finish();
+			break;
+			
+		case Export	:
+			if(TimerDisplay.ExternalDeviceBarcode == TimerDisplay.FILE_USB_OPEN) {
+				
+				Intent exportIntent = new Intent(getApplicationContext(), ExportActivity.class);
+				exportIntent.putExtra("HWSN", AboutModel.HWSN);
+				exportIntent.putExtra("DataCnt", RemoveActivity.PatientDataCnt);
+				exportIntent.putExtra("DataPage", RecordActivity.DataPage);
+				exportIntent.putExtra("Type", (int) FileLoadActivity.PATIENT);
+				exportIntent.putExtra("System Check State", RunActivity.NORMAL_OPERATION);
+				startActivity(exportIntent);
+				finish();
+
+			} else enabledAllBtn(activity);
+			break;
+		
 		default		:	
 			break;			
 		}
+	}
+	
+	public void WhichIntentforSnapshot(Activity activity, Context context, byte[] bitmapBytes) {
+		
+		Intent nextIntent = null;
+		
+		nextIntent = new Intent(context, FileSaveActivity.class);
+		nextIntent.putExtra("snapshot", true);
+		nextIntent.putExtra("datetime", TimerDisplay.rTime);
+		nextIntent.putExtra("bitmap", bitmapBytes);
+		
+		activity.startActivity(nextIntent);
+		finish();
 	}
 	
 	public void finish() {

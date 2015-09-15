@@ -33,8 +33,8 @@
         android:textSize="24px"
         android:textColor="#444444"
         android:shadowColor="#7F000000"
-        android:shadowDx="2"
-        android:shadowDy="2"
+        android:shadowDx="1"
+        android:shadowDy="1"
         android:shadowRadius="1.2"
         android:layout_marginLeft="578px"
         android:layout_marginTop="15px" />
@@ -71,7 +71,7 @@
 		    android:layout_marginTop="70px"
 	        android:layout_centerHorizontal="true"
 	        android:gravity="center"
-		    android:text="LAMP\nINTENSITY"
+		    android:text="@string/lampintensity"
 	        android:typeface="sans"
 	        android:textSize="18px"
 	        android:textColor="#242424" />
@@ -103,7 +103,7 @@
 		    android:layout_marginTop="85px"
 	        android:layout_centerHorizontal="true"
 	        android:gravity="center"
-		    android:text="535 FACTOR"
+		    android:text="@string/factor535"
 	        android:typeface="sans"
 	        android:textSize="18px"
 	        android:textColor="#242424" />
@@ -135,7 +135,7 @@
 		    android:layout_marginTop="85px"
 	        android:layout_centerHorizontal="true"
 	        android:gravity="center"
-		    android:text="660 FACTOR"
+		    android:text="@string/factor660"
 	        android:typeface="sans"
 	        android:textSize="18px"
 	        android:textColor="#242424" />
@@ -167,7 +167,7 @@
 	        android:layout_marginTop="70px" 
 	        android:layout_centerHorizontal="true"
 	        android:gravity="center"
-		    android:text="CORRELATION\nFACTOR"
+		    android:text="@string/correlationfactor"
 	        android:typeface="sans"
 	        android:textSize="18px"
 	        android:textColor="#242424" />
@@ -199,7 +199,7 @@
 	        android:layout_marginTop="70px" 
 	        android:layout_centerHorizontal="true"
 	        android:gravity="center"
-		    android:text="ADJUSTMENT\nFACTOR"
+		    android:text="@string/adjustmentfactor"
 	        android:typeface="sans"
 	        android:textSize="18px"
 	        android:textColor="#242424" />
@@ -231,7 +231,7 @@
 	        android:layout_marginTop="85px" 
 	        android:layout_centerHorizontal="true"
 	        android:gravity="center"
-		    android:text="tHb FACTOR"
+		    android:text="@string/thbfactor"
 	        android:typeface="sans"
 	        android:textSize="18px"
 	        android:textColor="#242424" />
@@ -263,7 +263,7 @@
 	        android:layout_marginTop="85px" 
 	        android:layout_centerHorizontal="true"
 	        android:gravity="center"
-		    android:text="TEMPERATURE"
+		    android:text="@string/temperature"
 	        android:typeface="sans"
 	        android:textSize="18px"
 	        android:textColor="#242424" />
@@ -295,7 +295,7 @@
 	        android:layout_marginTop="85px" 
 	        android:layout_centerHorizontal="true"
 	        android:gravity="center"
-		    android:text="CALIBRATION"
+		    android:text="@string/calibration"
 	        android:typeface="sans"
 	        android:textSize="18px"
 	        android:textColor="#242424" />
@@ -327,7 +327,7 @@
 	        android:layout_marginTop="85px" 
 	        android:layout_centerHorizontal="true"
 	        android:gravity="center"
-        	android:text="ABOUT A1Care"
+        	android:text="@string/abouta1care"
 	        android:typeface="sans"
 	        android:textSize="18px"
 	        android:textColor="#242424" />
@@ -356,11 +356,11 @@
 		    android:layout_width="wrap_content"
 		    android:layout_height="wrap_content"
 	        android:layout_centerInParent="true"
-        	android:text="FILE DELETE"
+        	android:text="@string/filedelete"
 	        android:typeface="sans"
 	        android:textSize="18px"
 	        android:textColor="#242424" />
 		    
    	</RelativeLayout>
-   	
+    
 </RelativeLayout>

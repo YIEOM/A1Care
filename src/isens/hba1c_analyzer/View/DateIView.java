@@ -5,6 +5,7 @@ public interface DateIView {
 	void setImageId();
 	void setImage();
 	void setTextId();
+	void setTitleText();
 	void setText(String year, String month, String day);
 	void setButtonId();
 	void setButtonClick();

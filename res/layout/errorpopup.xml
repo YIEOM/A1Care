@@ -4,6 +4,13 @@
     android:layout_height="wrap_content"
     android:background="@drawable/popup_bg" >
     
+    <Button
+        android:id="@+id/snapshotBtn2"
+        android:layout_width="180px"
+        android:layout_height="60px"
+        android:layout_marginLeft="120px"
+        android:background="#00000000" />
+    
     <TextView
         android:id="@+id/errortext"
         android:layout_width="wrap_content"
@@ -19,20 +26,47 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="222px"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:text="@string/ok"
+        android:typeface="sans"
+        android:textSize="20px"
+        android:textColor="#565656"
+        android:shadowColor="#FFFFFF"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="1.2"
+        android:gravity="center" />
     
     <Button 
         android:id="@+id/yesbtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="227px"
-        android:layout_marginTop="222px" />
+        android:layout_marginTop="222px"
+        android:text="@string/yes"
+        android:typeface="sans"
+        android:textSize="20px"
+        android:textColor="#565656"
+        android:shadowColor="#FFFFFF"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="1.2"
+        android:gravity="center" />
 
    	<Button 
         android:id="@+id/nobtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="402px"
-        android:layout_marginTop="222px" />
+        android:layout_marginTop="222px"
+        android:text="@string/no"
+        android:typeface="sans"
+        android:textSize="20px"
+        android:textColor="#565656"
+        android:shadowColor="#FFFFFF"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="1.2"
+        android:gravity="center" />
     
 </RelativeLayout>

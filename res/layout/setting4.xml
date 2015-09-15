@@ -16,12 +16,26 @@
         android:layout_alignParentTop="true"
         android:src="@drawable/title" />
     
-    <ImageView
-        android:id="@+id/title"
+    <TextView
+        android:id="@+id/titleText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="128px"
-        android:layout_marginTop="20px" />
+        android:layout_marginLeft="126px"
+        android:layout_marginTop="14px"
+        android:typeface="sans"
+        android:textSize="26px"
+        android:textColor="#606060"
+        android:shadowColor="#FFFFFF"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="1.2" />
+    
+    <Button
+        android:id="@+id/snapshotBtn"
+        android:layout_width="180px"
+        android:layout_height="60px"
+        android:layout_marginLeft="120px"
+        android:background="#00000000" />
     
     <ImageView
         android:id="@+id/device" 
@@ -38,8 +52,8 @@
         android:textSize="24px"
         android:textColor="#444444"
         android:shadowColor="#7F000000"
-        android:shadowDx="2"
-        android:shadowDy="2"
+        android:shadowDx="1"
+        android:shadowDy="1"
         android:shadowRadius="1.2"
         android:layout_marginLeft="578px"
         android:layout_marginTop="15px" />

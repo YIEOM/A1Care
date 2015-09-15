@@ -1,11 +1,16 @@
 package isens.hba1c_analyzer;
 
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
+import isens.hba1c_analyzer.Model.ActivityChange;
+import isens.hba1c_analyzer.Model.CaptureScreen;
 import isens.hba1c_analyzer.Model.SoundModel;
+import isens.hba1c_analyzer.Presenter.FunctionalTestPresenter;
+import isens.hba1c_analyzer.View.FunctionalTestActivity;
 import isens.hba1c_analyzer.View.LampActivity;
 import isens.hba1c_analyzer.View.SoundActivity;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -27,6 +32,8 @@ public class ErrorPopup {
 	public LampCopyActivity mLampCopyActivity;
 	public EngineerActivity mEngineerActivity;
 	public SoundModel mSoundModel;
+	public OperatorSettingActivity mOperatorSettingActivity;
+	public ActivityChange mActivityChange;
 	
 	public Activity activity;
 	public Context context;
@@ -37,7 +44,8 @@ public class ErrorPopup {
 	public RelativeLayout hostLayout;
 	
 	public TextView errorText;
-	public Button errorBtn;
+	public Button errorBtn,
+	  			  snapshotBtn;
 	
 	public TextView oxText;
 	public Button yesBtn, 
@@ -62,12 +70,14 @@ public class ErrorPopup {
 		errorBtn = (Button) popupView.findViewById(R.id.errorbtn);
 		yesBtn = (Button) popupView.findViewById(R.id.yesbtn);
 		noBtn = (Button) popupView.findViewById(R.id.nobtn);
+		snapshotBtn = (Button) popupView.findViewById(R.id.snapshotBtn2);
 	}
 		
 	public void setErrorButtonClick() {
 		
 		errorBtn.setBackgroundResource(R.drawable.popup_button_selector);
 		errorBtn.setOnTouchListener(mErrorTouchListener);
+		snapshotBtn.setOnTouchListener(mErrorTouchListener);
 	}
 	
 	public void setButtonState(int btnId, boolean state) {
@@ -105,6 +115,10 @@ public class ErrorPopup {
 					ErrorBtnPopupClose();
 					break;
 					
+				case R.id.snapshotBtn2		:
+					closePopupSnapshot();
+					break;
+					
 				default	:
 					break;
 				}
@@ -119,10 +133,11 @@ public class ErrorPopup {
 		
 	public void setOXButtonClick() {
 		
-		yesBtn.setBackgroundResource(R.drawable.popup_yes_selector);
+		yesBtn.setBackgroundResource(R.drawable.popup_button_selector);
 		yesBtn.setOnTouchListener(mOXTouchListener);
-		noBtn.setBackgroundResource(R.drawable.popup_no_selector);
+		noBtn.setBackgroundResource(R.drawable.popup_button_selector);
 		noBtn.setOnTouchListener(mOXTouchListener);
+		snapshotBtn.setOnTouchListener(mErrorTouchListener);
 	}
 	
 	Button.OnTouchListener mOXTouchListener = new View.OnTouchListener() {
@@ -145,6 +160,10 @@ public class ErrorPopup {
 					XPopupClose();
 					break;
 				
+				case R.id.snapshotBtn2		:
+					closePopupSnapshot();
+					break;
+					
 				default	:
 					break;
 				}
@@ -175,7 +194,7 @@ public class ErrorPopup {
 			});
 			
 			mSoundModel = new SoundModel(activity, context);
-			mSoundModel.playSound( R.raw.beep);
+			mSoundModel.playSound(R.raw.beep);
 		
 		} else {
 			
@@ -252,17 +271,18 @@ public class ErrorPopup {
 			switch(mode) {
 			
 			case OperatorSettingActivity.LOGIN	:
-				mOperatorPopup.enabledAllOperatorBtn(hostPopView);
+				mOperatorPopup.enabledAllLoginBtn(hostPopView);
 				break;
 				
 			case OperatorSettingActivity.ADD	:
-				mOperatorPopup.enabledAllAddBtn(hostPopView);
-				break;
-				
 			case OperatorSettingActivity.MODIFY	:
-				mOperatorPopup.enabledAllModBtn(hostPopView);
+				mOperatorPopup.enabledAllAddModBtn(hostPopView);
 				break;
 			}
+			break;
+			
+		case R.id.record2Layout	:
+			ErrorPopupClose();
 			break;
 			
 		default	:
@@ -378,8 +398,8 @@ public class ErrorPopup {
 			
 		case R.id.actionlayout	:
 			ErrorPopupClose();			
+			ActionActivity.ESCButtonFlag = true;
 			mActionActivity = new ActionActivity();
-			mActionActivity.WhichIntent(activity, context, TargetIntent.Remove);
 			mActionActivity.enabledAllBtn(activity);
 			break;
 			
@@ -432,6 +452,68 @@ public class ErrorPopup {
 		case R.id.engineerlayout	:
 			mEngineerActivity = new EngineerActivity();
 			mEngineerActivity.enabledAllBtn(activity);
+			break;
+			
+		default	:
+			break;
+		}
+	}
+	
+	public void closePopupSnapshot() {
+		
+		CaptureScreen mCaptureScreen = new CaptureScreen();
+		byte[] bitmapBytes = mCaptureScreen.captureScreen(activity, popupView);
+		
+		ErrorPopupClose();
+		
+		switch(layoutId) {
+		
+		case R.id.homelayout	:
+			mHomeActivity = new HomeActivity();
+			mHomeActivity.WhichIntentforSnapshot(activity, context, bitmapBytes);
+			mHomeActivity.enabledAllBtn(activity);
+			break;
+			
+		case R.id.blanklayout	:
+			mBlankActivity = new BlankActivity();
+			mBlankActivity.BlankStop();
+			mBlankActivity.WhichIntentforSnapshot(activity, context, bitmapBytes);
+			mBlankActivity.enabledAllBtn(activity);
+			break;
+			
+		case R.id.actionlayout	:
+			ActionActivity.IsEnablePopup = false;
+			mActionActivity = new ActionActivity();
+			mActionActivity.WhichIntentforSnapshot(activity, context, bitmapBytes);
+			mActionActivity.enabledAllBtn(activity);
+			break;
+				
+		case R.id.runlayout		:
+			mRunActivity = new RunActivity();
+			mRunActivity.RunStop();
+			mRunActivity.WhichIntentforSnapshot(activity, context, bitmapBytes);
+			mRunActivity.enabledAllBtn(activity);
+			break;
+			
+		case R.id.resultlayout	:
+			mResultActivity = new ResultActivity();
+			mResultActivity.WhichIntentforSnapshot(activity, context, bitmapBytes);
+			mResultActivity.enabledAllBtn(activity);
+			break;
+			
+		case R.id.operatorlayout	:
+			mOperatorSettingActivity = new OperatorSettingActivity();
+			mOperatorSettingActivity.WhichIntentforSnapshot(activity, context, bitmapBytes);
+			mOperatorSettingActivity.enabledAllBtn(activity);
+			break;
+			
+		case R.id.functionalTestLayout	:
+			mActivityChange = new ActivityChange(activity, context);
+			mActivityChange.whichIntent(TargetIntent.SnapShot);
+			mActivityChange.putBooleanIntent("snapshot", true);
+			mActivityChange.putStringsIntent("datetime", TimerDisplay.rTime);
+			mActivityChange.putBytesIntent("bitmap", bitmapBytes);
+			mActivityChange.finish();
 			break;
 			
 		default	:

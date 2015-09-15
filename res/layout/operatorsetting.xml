@@ -16,12 +16,26 @@
         android:layout_alignParentTop="true"
         android:src="@drawable/title" />
     
-     <ImageView
+     <TextView 
+        android:id="@+id/titleText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="128px"
-        android:layout_marginTop="20px"
-        android:src="@drawable/os_title" />
+        android:layout_marginLeft="126px"
+        android:layout_marginTop="14px"
+        android:typeface="sans"
+        android:textSize="26px"
+        android:textColor="#606060"
+        android:shadowColor="#FFFFFF"
+        android:shadowDx="0"
+        android:shadowDy="0"
+        android:shadowRadius="1.2" />
+     
+     <Button
+        android:id="@+id/snapshotBtn"
+        android:layout_width="180px"
+        android:layout_height="60px"
+        android:layout_marginLeft="120px"
+        android:background="#00000000" />
             
     <ImageView
         android:id="@+id/device" 
@@ -38,8 +52,8 @@
         android:textSize="24px"
         android:textColor="#444444"
         android:shadowColor="#7F000000"
-        android:shadowDx="2"
-        android:shadowDy="2"
+        android:shadowDx="1"
+        android:shadowDy="1"
         android:shadowRadius="1.2"
         android:layout_marginLeft="578px"
         android:layout_marginTop="15px" />
@@ -118,7 +132,7 @@
 		            android:textColor="#565656"
 		            android:gravity="center" />
                 <TextView
-                    android:text="@string/registrationDate"
+                    android:text="@string/registrationdate"
                     android:typeface="sans" 
 		            android:textSize="18px"
                     android:layout_width="220px"
@@ -434,14 +448,30 @@
    	        
    	</RelativeLayout>
 	
-    <Button
-        android:id="@+id/modifybtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <RelativeLayout 
+   	    android:layout_width="wrap_content"
+   	    android:layout_height="wrap_content"
         android:layout_marginLeft="361px"
-       	android:layout_marginTop="403px"
-       	android:background="@drawable/os_modify_btn_selector" />
+        android:layout_marginTop="403px" >
+   	    
+   	    <Button
+	        android:id="@+id/modifybtn"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	       	android:background="@drawable/os_modify_btn_selector" />
 		
+	    <TextView
+		    android:id="@+id/modifyText"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_marginTop="14px"
+	        android:typeface="sans"
+	        android:textSize="22px"
+	        android:textColor="#565656"
+	        android:layout_centerHorizontal="true" />
+			
+   	</RelativeLayout>
+    
 	<RelativeLayout 
    	    android:layout_width="wrap_content"
    	    android:layout_height="wrap_content"

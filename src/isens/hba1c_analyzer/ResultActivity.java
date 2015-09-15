@@ -2,7 +2,9 @@ package isens.hba1c_analyzer;
 
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
 import isens.hba1c_analyzer.Model.AboutModel;
+import isens.hba1c_analyzer.Model.CaptureScreen;
 import isens.hba1c_analyzer.Model.ConvertModel;
+import isens.hba1c_analyzer.Model.LanguageModel;
 import isens.hba1c_analyzer.Model.SoundModel;
 import isens.hba1c_analyzer.View.ConvertActivity;
 
@@ -46,15 +48,16 @@ public class ResultActivity extends Activity {
 					  COVER_ACTION_ESC = 3,
 					  SCAN_ACTIVITY    = 4;
 	
-	public Temperature mTemperature;
-	public SerialPort mSerialPort;
-	public ErrorPopup mErrorPopup;
-	public TimerDisplay mTimerDisplay;
-	public DatabaseHander mDatabaseHander;
-	public RunActivity mRunActivity;
-	public SoundModel mSoundModel;
+	private SerialPort mSerialPort;
+	private ErrorPopup mErrorPopup;
+	private TimerDisplay mTimerDisplay;
+	private DatabaseHander mDatabaseHander;
+	private RunActivity mRunActivity;
+	private SoundModel mSoundModel;
+	private LanguageModel mLanguageModel;
 	
-	public Activity activity;
+	private Activity activity;
+	private Context context;
 	
 	public static EditText PatientIDText;
 	
@@ -65,36 +68,32 @@ public class ResultActivity extends Activity {
 					 refText,
 					 primaryText,
 					 rangeText,
-					 unitText,
-					 primaryTitleText,
-					 rangeTitleText;
+					 unitText;
 	
-	private Button homeIcon,
+	private Button homeBtn,
+				   homeBtn2,
 				   printBtn,
 				   nextSampleBtn,
-				   convertBtn;
+				   convertBtn,
+				   snapshotBtn;
 	
 	private String getTime[] = new String[6];
 	
 	public static int ItnData;
 	
-	public int dataCnt;
+	private int dataCnt;
 	
-	public double cellBlockEndTmp;
+	private String hbA1cCurr,
+				   unitCurr,
+				   rangeCurr,
+				   primaryCurr;
 	
-	public String hbA1cCurr,
-				  unitCurr,
-				  rangeCurr,
-				  primaryCurr;
+	private byte primaryByte;
 	
-	public byte primaryByte;
+	private String operator,
+				   sampleType;
 	
-	public String operator,
-				  sampleType;
-	
-	public SoundPool mPool;
-
-	public int mWin;
+	private int languageIdx;
 	
 	protected void onCreate(Bundle savedInstanceState) {
 		
@@ -117,30 +116,106 @@ public class ResultActivity extends Activity {
 		primaryText = (TextView) findViewById(R.id.primary);
 		rangeText = (TextView) findViewById(R.id.range);
 		unitText = (TextView) findViewById(R.id.unit);
-		primaryTitleText = (TextView) findViewById(R.id.primaryTitle);
-		rangeTitleText = (TextView) findViewById(R.id.rangeTitle);
 	}
 	
-	private void setText() {
+	private void setHbA1cTextSize() {
 		
-		primaryTitleText.setText(sampleType + " Primary");
-		rangeTitleText.setText(sampleType + " Ref. Range");	
+		switch(languageIdx) {
+		
+		case LanguageModel.KO	:
+			hbA1cText.setTextSize(85.0f);
+			break;
+			
+		case LanguageModel.EN	:
+			hbA1cText.setTextSize(85.0f);
+			break;
+			
+		case LanguageModel.ZH:
+			hbA1cText.setTextSize(65.0f);
+			break;
+			
+		case LanguageModel.JA	:
+			hbA1cText.setTextSize(85.0f);
+			break;
+			
+		default	:
+			hbA1cText.setTextSize(85.0f);
+			break;
+		}		
+	}
+	
+	private void setHbA1cUnitTextSize(byte primary) {
+		
+		if(primary == ConvertModel.NGSP) {
+		
+			switch(languageIdx) {
+			
+			case LanguageModel.KO	:
+				hbA1cUnitText.setTextSize(85.0f);
+				break;
+				
+			case LanguageModel.EN	:
+				hbA1cUnitText.setTextSize(85.0f);
+				break;
+				
+			case LanguageModel.ZH:
+				hbA1cUnitText.setTextSize(65.0f);
+				break;
+				
+			case LanguageModel.JA	:
+				hbA1cUnitText.setTextSize(85.0f);
+				break;
+				
+			default	:
+				hbA1cUnitText.setTextSize(85.0f);
+				break;
+			}		
+		
+		} else {
+			
+			switch(languageIdx) {
+			
+			case LanguageModel.KO	:
+				hbA1cUnitText.setTextSize(24.0f);
+				break;
+				
+			case LanguageModel.EN	:
+				hbA1cUnitText.setTextSize(24.0f);
+				break;
+				
+			case LanguageModel.ZH:
+				hbA1cUnitText.setTextSize(24.0f);
+				break;
+				
+			case LanguageModel.JA	:
+				hbA1cUnitText.setTextSize(24.0f);
+				break;
+				
+			default	:
+				hbA1cUnitText.setTextSize(24.0f);
+				break;
+			}
+		}
 	}
 	
 	public void setButtonId(Activity activity) {
 		
-		homeIcon = (Button)activity.findViewById(R.id.homeicon);
+		homeBtn = (Button)activity.findViewById(R.id.homeBtn);
+		homeBtn2 = (Button)activity.findViewById(R.id.homeBtn2);
 		printBtn = (Button)activity.findViewById(R.id.printbtn);
 		nextSampleBtn = (Button)activity.findViewById(R.id.nextsamplebtn);
 		convertBtn = (Button)activity.findViewById(R.id.convertbtn);
+		snapshotBtn = (Button)activity.findViewById(R.id.snapshotBtn);
 	}
 	
 	public void setButtonClick() {
 		
-		homeIcon.setOnTouchListener(mTouchListener);
+		homeBtn.setOnTouchListener(mTouchListener);
+		homeBtn2.setOnTouchListener(mTouchListener);
 		printBtn.setOnTouchListener(mTouchListener);
 		nextSampleBtn.setOnTouchListener(mTouchListener);
 		convertBtn.setOnTouchListener(mTouchListener);
+		if(HomeActivity.ANALYZER_SW == HomeActivity.DEVEL) snapshotBtn.setOnTouchListener(mTouchListener);
 	}
 	
 	public void setButtonState(int btnId, boolean state, Activity activity) {
@@ -160,8 +235,9 @@ public class ResultActivity extends Activity {
 				
 				switch(v.getId()) {
 			
-				case R.id.homeicon		:
-					WhichIntent(TargetIntent.Home);
+				case R.id.homeBtn		:
+				case R.id.homeBtn2		:
+					WhichIntent(activity, context, TargetIntent.Home);
 					break;
 					
 				case R.id.printbtn		:
@@ -169,12 +245,16 @@ public class ResultActivity extends Activity {
 					break;
 				
 				case R.id.nextsamplebtn	:
-					WhichIntent(TargetIntent.Run);
+					WhichIntent(activity, context, TargetIntent.Run);
 					break;
 				
 				case R.id.convertbtn	:
 					SerialPort.Sleep(200);
 					PrimaryConvert();
+					break;
+					
+				case R.id.snapshotBtn	:
+					WhichIntent(activity, context, TargetIntent.SnapShot);
 					break;
 					
 				default	:
@@ -190,7 +270,8 @@ public class ResultActivity extends Activity {
 	
 	public void enabledAllBtn(Activity activtiy) {
 
-		setButtonState(R.id.homeicon, true, activtiy);
+		setButtonState(R.id.homeBtn, true, activtiy);
+		setButtonState(R.id.homeBtn2, true, activtiy);
 		setButtonState(R.id.printbtn, true, activtiy);
 		setButtonState(R.id.nextsamplebtn, true, activtiy);
 		setButtonState(R.id.convertbtn, true, activtiy);
@@ -198,7 +279,8 @@ public class ResultActivity extends Activity {
 	
 	public void unenabledAllBtn(Activity activtiy) {
 		
-		setButtonState(R.id.homeicon, false, activtiy);
+		setButtonState(R.id.homeBtn, false, activtiy);
+		setButtonState(R.id.homeBtn2, false, activtiy);
 		setButtonState(R.id.printbtn, false, activtiy);
 		setButtonState(R.id.nextsamplebtn, false, activtiy);
 		setButtonState(R.id.convertbtn, false, activtiy);
@@ -207,11 +289,14 @@ public class ResultActivity extends Activity {
 	public void ResultInit() {
 
 		activity = this;
+		context = this;
 		
 		getSampleType();
 		
 		setTextId();
-		setText();
+		mLanguageModel = new LanguageModel(activity);
+		languageIdx = mLanguageModel.getSettingLanguage();
+		setHbA1cTextSize();
 		setButtonId(activity);
 		setButtonClick();
 		
@@ -348,7 +433,7 @@ public class ResultActivity extends Activity {
 			txData.append(hbA1cCurr);
 			
 			mSerialPort = new SerialPort();
-			mSerialPort.PrinterTxStart(SerialPort.PRINT_RESULT, txData);
+			mSerialPort.PrinterTxStart(activity, context, SerialPort.PRINT_RESULT, txData);
 			
 			SerialPort.Sleep(100);
 		
@@ -375,7 +460,7 @@ public class ResultActivity extends Activity {
 			txData.append("8.3");
 			
 			mSerialPort = new SerialPort();
-			mSerialPort.PrinterTxStart(SerialPort.PRINT_RESULT, txData);
+			mSerialPort.PrinterTxStart(activity, context, SerialPort.PRINT_RESULT, txData);
 			
 			SerialPort.Sleep(100);
 		}
@@ -392,21 +477,19 @@ public class ResultActivity extends Activity {
 		if(primary == ConvertModel.NGSP) {
 			
 		 	unitCurr = "%";
-			if(sampleType.equals("HbA1c")) rangeCurr = "4.0 - 6.0";
+			if(sampleType.equals(context.getResources().getString(R.string.hba1c))) rangeCurr = "4.0 - 6.0";
 			else rangeCurr = "-";
 			primaryCurr = "NGSP";
 			
-			hbA1cUnitText.setTextSize(85);	
-				
 		} else {
 			
 			unitCurr = "mmol/mol";
-			if(sampleType.equals("HbA1c")) rangeCurr = "20 - 42";
+			if(sampleType.equals(context.getResources().getString(R.string.hba1c))) rangeCurr = "20 - 42";
 			else rangeCurr = "-";
 			primaryCurr = "IFCC";
-			
-			hbA1cUnitText.setTextSize(24);
 		}
+		
+		setHbA1cUnitTextSize(primary);
 	}
 	
 	public void HbA1cDisplay() {
@@ -433,8 +516,8 @@ public class ResultActivity extends Activity {
 	
 	private void getSampleType() {
 		
-		if(Barcode.Type.equals("D") || Barcode.Type.equals("W") || Barcode.Type.equals("X")) sampleType = "HbA1c";
-		else sampleType = "ACR";
+		if(Barcode.Type.equals("D") || Barcode.Type.equals("W") || Barcode.Type.equals("X")) sampleType = context.getResources().getString(R.string.hba1c);
+		else sampleType = context.getResources().getString(R.string.acr);
 	}
 	
 	private boolean getQCResult() {
@@ -497,88 +580,110 @@ public class ResultActivity extends Activity {
 		} else enabledAllBtn(activity); //0624
 	}
 	
-	public void WhichIntent(TargetIntent Itn) { // Activity conversion after intent data deliver
+	public void WhichIntent(Activity activity, Context context, TargetIntent Itn) { // Activity conversion after intent data deliver
 		
-		Intent nextIntent = new Intent(getApplicationContext(), FileSaveActivity.class);
-		DecimalFormat photoDfm = new DecimalFormat("0.0"),
-					  absorbDfm = new DecimalFormat("0.0000"),
-					  pIDLenDfm = new DecimalFormat("00");
+		Intent nextIntent = null;
 		
-		String pID;
-		int pIDLen;
-		
-		if(ItnData == RunActivity.NORMAL_OPERATION) {
+		if(Itn != TargetIntent.SnapShot) {
 			
-			UnitConvert(mRunActivity.ConvertHbA1c(ConvertModel.Primary), ConvertModel.Primary);
-			primaryByte = ConvertModel.Primary;
+			nextIntent = new Intent(getApplicationContext(), FileSaveActivity.class);
+			DecimalFormat photoDfm = new DecimalFormat("0.0"),
+						  absorbDfm = new DecimalFormat("0.0000"),
+						  pIDLenDfm = new DecimalFormat("00");
+			
+			if(ItnData == RunActivity.NORMAL_OPERATION) {
+				
+				UnitConvert(mRunActivity.ConvertHbA1c(ConvertModel.Primary), ConvertModel.Primary);
+				primaryByte = ConvertModel.Primary;
+			
+			} else primaryByte = 2;
+			
+			nextIntent.putExtra("RunState", ItnData);
+			nextIntent.putExtra("Year", getTime[0]);
+			nextIntent.putExtra("Month", getTime[1]);
+			nextIntent.putExtra("Day", getTime[2]);
+			nextIntent.putExtra("AmPm", getTime[3]);
+			nextIntent.putExtra("Hour", getTime[4]);
+			nextIntent.putExtra("Minute", getTime[5]);
+			nextIntent.putExtra("DataCnt", dataCnt);
+			nextIntent.putExtra("Type", Barcode.Type);
+			nextIntent.putExtra("RefNumber", Barcode.RefNum);
+			nextIntent.putExtra("PatientIDLen", pIDLenDfm.format(PatientIDText.getText().toString().length()));
+			nextIntent.putExtra("PatientID", PatientIDText.getText().toString());
+			nextIntent.putExtra("OperatorLen", pIDLenDfm.format(operator.length()));
+			nextIntent.putExtra("Operator", operator);
+			nextIntent.putExtra("Primary", Integer.toString((int) primaryByte)); // primary
+			nextIntent.putExtra("Hba1cPct", hbA1cCurr);
+			
+			nextIntent.putExtra("Chamber Tmp", photoDfm.format(BlankActivity.ChamberTmp));
+			nextIntent.putExtra("BlankVal0", photoDfm.format(RunActivity.BlankValue[0]));
+			nextIntent.putExtra("BlankVal1", photoDfm.format(RunActivity.BlankValue[1]));
+			nextIntent.putExtra("BlankVal2", photoDfm.format(RunActivity.BlankValue[2]));
+			nextIntent.putExtra("BlankVal3", photoDfm.format(RunActivity.BlankValue[3]));
+			nextIntent.putExtra("St1Abs1by0", absorbDfm.format(RunActivity.Step1stAbsorb1[0]));
+			nextIntent.putExtra("St1Abs1by1", absorbDfm.format(RunActivity.Step1stAbsorb1[1]));
+			nextIntent.putExtra("St1Abs1by2", absorbDfm.format(RunActivity.Step1stAbsorb1[2]));
+			nextIntent.putExtra("St1Abs2by0", absorbDfm.format(RunActivity.Step1stAbsorb2[0]));
+			nextIntent.putExtra("St1Abs2by1", absorbDfm.format(RunActivity.Step1stAbsorb2[1]));
+			nextIntent.putExtra("St1Abs2by2", absorbDfm.format(RunActivity.Step1stAbsorb2[2]));
+			nextIntent.putExtra("St1Abs3by0", absorbDfm.format(RunActivity.Step1stAbsorb3[0]));
+			nextIntent.putExtra("St1Abs3by1", absorbDfm.format(RunActivity.Step1stAbsorb3[1]));
+			nextIntent.putExtra("St1Abs3by2", absorbDfm.format(RunActivity.Step1stAbsorb3[2]));
+			nextIntent.putExtra("St2Abs1by0", absorbDfm.format(RunActivity.Step2ndAbsorb1[0]));
+			nextIntent.putExtra("St2Abs1by1", absorbDfm.format(RunActivity.Step2ndAbsorb1[1]));
+			nextIntent.putExtra("St2Abs1by2", absorbDfm.format(RunActivity.Step2ndAbsorb1[2]));
+			nextIntent.putExtra("St2Abs2by0", absorbDfm.format(RunActivity.Step2ndAbsorb2[0]));
+			nextIntent.putExtra("St2Abs2by1", absorbDfm.format(RunActivity.Step2ndAbsorb2[1]));
+			nextIntent.putExtra("St2Abs2by2", absorbDfm.format(RunActivity.Step2ndAbsorb2[2]));
+			nextIntent.putExtra("St2Abs3by0", absorbDfm.format(RunActivity.Step2ndAbsorb3[0]));
+			nextIntent.putExtra("St2Abs3by1", absorbDfm.format(RunActivity.Step2ndAbsorb3[1]));
+			nextIntent.putExtra("St2Abs3by2", absorbDfm.format(RunActivity.Step2ndAbsorb3[2]));
+			nextIntent.putExtra("HWSN", AboutModel.HWSN);
+			nextIntent.putExtra("SWVersion", AboutModel.SWVersion);
+			nextIntent.putExtra("FWVersion", AboutModel.FWVersion);
+			nextIntent.putExtra("OSVersion", AboutModel.OSVersion);
+			
+			switch(Itn) {
+			
+			case Home		:							
+				nextIntent.putExtra("WhichIntent", (int) HOME_ACTIVITY);
+				break;
+	
+			case Run	:			
+				nextIntent.putExtra("WhichIntent", (int) ACTION_ACTIVITY);
+				break;
+		
+			default			:	
+				break;			
+			}	
+			
+			nextIntent.putExtra("snapshot", false);
+		
+		} else {
+			
+			CaptureScreen mCaptureScreen = new CaptureScreen();
+			byte[] bitmapBytes = mCaptureScreen.captureScreen(activity);
+			
+			nextIntent = new Intent(context, FileSaveActivity.class);
+			nextIntent.putExtra("snapshot", true);
+			nextIntent.putExtra("datetime", TimerDisplay.rTime);
+			nextIntent.putExtra("bitmap", bitmapBytes);
 		}
-		else primaryByte = 2;
-		
-		nextIntent.putExtra("RunState", ItnData);
-		nextIntent.putExtra("Year", getTime[0]);
-		nextIntent.putExtra("Month", getTime[1]);
-		nextIntent.putExtra("Day", getTime[2]);
-		nextIntent.putExtra("AmPm", getTime[3]);
-		nextIntent.putExtra("Hour", getTime[4]);
-		nextIntent.putExtra("Minute", getTime[5]);
-		nextIntent.putExtra("DataCnt", dataCnt);
-		nextIntent.putExtra("Type", Barcode.Type);
-		nextIntent.putExtra("RefNumber", Barcode.RefNum);
-		nextIntent.putExtra("PatientIDLen", pIDLenDfm.format(PatientIDText.getText().toString().length()));
-		nextIntent.putExtra("PatientID", PatientIDText.getText().toString());
-		nextIntent.putExtra("OperatorLen", pIDLenDfm.format(operator.length()));
-		nextIntent.putExtra("Operator", operator);
-		nextIntent.putExtra("Primary", Integer.toString((int) primaryByte)); // primary
-		nextIntent.putExtra("Hba1cPct", hbA1cCurr);
-		
-		nextIntent.putExtra("Chamber Tmp", photoDfm.format(BlankActivity.ChamberTmp));
-		nextIntent.putExtra("BlankVal0", photoDfm.format(RunActivity.BlankValue[0]));
-		nextIntent.putExtra("BlankVal1", photoDfm.format(RunActivity.BlankValue[1]));
-		nextIntent.putExtra("BlankVal2", photoDfm.format(RunActivity.BlankValue[2]));
-		nextIntent.putExtra("BlankVal3", photoDfm.format(RunActivity.BlankValue[3]));
-		nextIntent.putExtra("St1Abs1by0", absorbDfm.format(RunActivity.Step1stAbsorb1[0]));
-		nextIntent.putExtra("St1Abs1by1", absorbDfm.format(RunActivity.Step1stAbsorb1[1]));
-		nextIntent.putExtra("St1Abs1by2", absorbDfm.format(RunActivity.Step1stAbsorb1[2]));
-		nextIntent.putExtra("St1Abs2by0", absorbDfm.format(RunActivity.Step1stAbsorb2[0]));
-		nextIntent.putExtra("St1Abs2by1", absorbDfm.format(RunActivity.Step1stAbsorb2[1]));
-		nextIntent.putExtra("St1Abs2by2", absorbDfm.format(RunActivity.Step1stAbsorb2[2]));
-		nextIntent.putExtra("St1Abs3by0", absorbDfm.format(RunActivity.Step1stAbsorb3[0]));
-		nextIntent.putExtra("St1Abs3by1", absorbDfm.format(RunActivity.Step1stAbsorb3[1]));
-		nextIntent.putExtra("St1Abs3by2", absorbDfm.format(RunActivity.Step1stAbsorb3[2]));
-		nextIntent.putExtra("St2Abs1by0", absorbDfm.format(RunActivity.Step2ndAbsorb1[0]));
-		nextIntent.putExtra("St2Abs1by1", absorbDfm.format(RunActivity.Step2ndAbsorb1[1]));
-		nextIntent.putExtra("St2Abs1by2", absorbDfm.format(RunActivity.Step2ndAbsorb1[2]));
-		nextIntent.putExtra("St2Abs2by0", absorbDfm.format(RunActivity.Step2ndAbsorb2[0]));
-		nextIntent.putExtra("St2Abs2by1", absorbDfm.format(RunActivity.Step2ndAbsorb2[1]));
-		nextIntent.putExtra("St2Abs2by2", absorbDfm.format(RunActivity.Step2ndAbsorb2[2]));
-		nextIntent.putExtra("St2Abs3by0", absorbDfm.format(RunActivity.Step2ndAbsorb3[0]));
-		nextIntent.putExtra("St2Abs3by1", absorbDfm.format(RunActivity.Step2ndAbsorb3[1]));
-		nextIntent.putExtra("St2Abs3by2", absorbDfm.format(RunActivity.Step2ndAbsorb3[2]));
-		nextIntent.putExtra("HWSN", AboutModel.HWSN);
-		nextIntent.putExtra("SWVersion", AboutModel.SWVersion);
-		nextIntent.putExtra("FWVersion", AboutModel.FWVersion);
-		nextIntent.putExtra("OSVersion", AboutModel.OSVersion);
-		
-		switch(Itn) {
-		
-		case Home		:							
-			nextIntent.putExtra("WhichIntent", (int) HOME_ACTIVITY);
-			break;
-
-		case Run	:			
-			nextIntent.putExtra("WhichIntent", (int) ACTION_ACTIVITY);
-			break;
-
-		case ScanTemp	:
-			nextIntent.putExtra("WhichIntent", (int) SCAN_ACTIVITY);
-			break;
-
 			
-		default			:	
-			break;			
-		}	
-		
 		startActivity(nextIntent);
+		finish();
+	}
+	
+	public void WhichIntentforSnapshot(Activity activity, Context context, byte[] bitmapBytes) {
+		
+		Intent nextIntent = null;
+		
+		nextIntent = new Intent(context, FileSaveActivity.class);
+		nextIntent.putExtra("snapshot", true);
+		nextIntent.putExtra("datetime", TimerDisplay.rTime);
+		nextIntent.putExtra("bitmap", bitmapBytes);
+		
+		activity.startActivity(nextIntent);
 		finish();
 	}
 	

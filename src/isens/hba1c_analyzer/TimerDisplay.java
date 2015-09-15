@@ -1,5 +1,7 @@
 package isens.hba1c_analyzer;
 
+import isens.hba1c_analyzer.Model.ShellCommand;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -18,16 +20,18 @@ public class TimerDisplay {
 	
 	final static byte TIMER_PERIOD = 1000/20, // 1000/Hz
 					  PERIOD_1sec  = 1000/TIMER_PERIOD, // 1 second
-					  PERIOD_250ms = 250 /TIMER_PERIOD; // 250 milisecond
+					  PERIOD_250ms = 250/TIMER_PERIOD; // 250 milisecond
 	
 	final static byte FILE_CLOSE 	= 0,
 			  		  FILE_OPEN 	= 1,
-			  		  FILE_NOT_OPEN = 2;
+			  		  FILE_NOT_OPEN = 2,
+			  		  FILE_USB_OPEN = 3;
 	
 	public Timer timer;
 
 	public GpioPort mGpioPort;
 	public SerialPort mSerialPort;
+	private ShellCommand mShellCommand;
 
 	public Handler handler = new Handler();
 	public static TimerTask FiftymsPeriod;
@@ -43,6 +47,7 @@ public class TimerDisplay {
 	public static int layoutid;
 	
 	public static boolean RXBoardFlag = false;
+	private int isCmdCnt = 0;
 	
 	public void TimerInit() {
 		
@@ -79,6 +84,8 @@ public class TimerDisplay {
 							
 						} else if((cnt % PERIOD_250ms) == 0) {
 							
+							ExternalDeviceCheck();
+							
 							mGpioPort.CartridgeSensorScan();
 						}
 					}
@@ -96,47 +103,34 @@ public class TimerDisplay {
 		
 		try {
 			
-		    boolean isConnect = false;
+		    int lineNum = 0;		    
+			
+		    mShellCommand = new ShellCommand();
+		    mShellCommand.setCommand("/system/bin/busybox lsusb");
+		    BufferedReader br = mShellCommand.getMessage();
 		    
-			Process shell = Runtime.getRuntime().exec("/system/bin/busybox lsusb");
-
-			BufferedReader br = new BufferedReader(new InputStreamReader(shell.getInputStream()));
 			String line = "";
 			
 			while((line = br.readLine()) != null) {
 			
-				if(line.substring(23).equals("0483:5740")) {
-					
-					isConnect = true;
-					
-					if(ExternalDeviceBarcode != FILE_OPEN) {
-					
-						mSerialPort.HHBarcodeSerialInit();
-						mSerialPort.HHBarcodeRxStart();
-						
-						ExternalDeviceDisplay(); 
-					}
+				if(lineNum++ == 3) {
+				
+					if(getExternalBarcode(line)) openExternalBarcode();
+					else openExternalUSB();
 				}
 			}
 			
-			br.close(); 
-
-			if(isConnect == false) {
+			br.close();
 			
-				if(ExternalDeviceBarcode == FILE_OPEN) {
-					
-					SerialPort.Sleep(500);
-					
-					ExternalDeviceBarcode = FILE_CLOSE;
-					
-					ExternalDeviceDisplay();
-				}
+			if(lineNum == 3) {
+			
+				closeExternalDevice();
 			}
 			
 		} catch (IOException e) {
 	
-			throw new RuntimeException(e);
-		}
+			throw new RuntimeException(e);		
+		}		
 	}
 	
 	public void RealTimeSec() {
@@ -190,13 +184,79 @@ public class TimerDisplay {
 		}
 	}
 	
+	private boolean getExternalBarcode(String line) {
+		
+		boolean isConnect = false;
+		
+		if(line.substring(23).equals("0483:5740")) isConnect = true;
+		
+		return isConnect;
+	}
+	
+	private void openExternalBarcode() {
+		
+		if(ExternalDeviceBarcode != FILE_OPEN) {
+			
+			mSerialPort.HHBarcodeSerialInit();
+			mSerialPort.HHBarcodeRxStart();
+			
+			ExternalDeviceDisplay(); 
+		}
+	}
+	
+	private void openExternalUSB() {
+		
+		if((ExternalDeviceBarcode != FILE_USB_OPEN) && (isCmdCnt++ < 10)) {
+			
+			mShellCommand = new ShellCommand();
+	    
+			if(isCmdCnt == 1) mShellCommand.setCommand("ssu -c echo 1 > /sys/bus/usb/devices/2-1.1/bConfigurationValue");
+			
+			mShellCommand.setCommand("/system/bin/busybox ls /dev/block/sda1");
+			BufferedReader br = mShellCommand.getMessage();
+			String line = "";
+			
+			try {
+				
+				while((line = br.readLine()) != null) {
+		
+					if(line.equals("/dev/block/sda1")) {
+						
+						mShellCommand.setCommand("ssu -c mount -t vfat /dev/block/sda1 /mnt/usb");
+						ExternalDeviceBarcode = FILE_USB_OPEN;
+						
+						ExternalDeviceDisplay();
+					}
+				}
+				
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}	
+	}
+	
+	private void closeExternalDevice() {
+		
+		if(ExternalDeviceBarcode == FILE_OPEN || ExternalDeviceBarcode == FILE_USB_OPEN) {
+			
+			mShellCommand.setCommand("ssu -c umount /mnt/usb");
+			
+			ExternalDeviceBarcode = FILE_CLOSE;
+			
+			ExternalDeviceDisplay();
+		}
+
+		isCmdCnt = 0;
+	}
+	
 	public void ExternalDeviceDisplay() {
 		
 		if(layoutid != R.id.systemchecklayout) {
 			
 			deviceImage = (ImageView) activity.findViewById(R.id.device);
 			
-			if(ExternalDeviceBarcode == FILE_OPEN) deviceImage.setBackgroundResource(R.drawable.main_usb_c);
+			if(ExternalDeviceBarcode == FILE_OPEN || ExternalDeviceBarcode == FILE_USB_OPEN) deviceImage.setBackgroundResource(R.drawable.main_usb_c);
 			else deviceImage.setBackgroundResource(R.drawable.main_usb);
 		}
 	}

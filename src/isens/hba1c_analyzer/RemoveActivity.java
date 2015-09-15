@@ -3,6 +3,8 @@ package isens.hba1c_analyzer;
 import java.lang.annotation.Target;
 
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
+import isens.hba1c_analyzer.Model.CaptureScreen;
+import isens.hba1c_analyzer.Model.LanguageModel;
 import isens.hba1c_analyzer.View.FunctionalTestActivity;
 import android.app.Activity;
 import android.content.Context;
@@ -11,6 +13,9 @@ import android.content.SharedPreferences;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -18,15 +23,23 @@ public class RemoveActivity extends Activity {
 
 	public SerialPort mSerialPort;
 	public TimerDisplay mTimerDisplay;
+	private LanguageModel mLanguageModel;
 	
 	private Activity activity;
 	private Context context;
 	
 	public AnimationDrawable removeAni;
-	public ImageView removeImage;
+	private ImageView removeImage,
+					  explainTextImage;
+	
+	public Button snapshotBtn;
 	
 	public static int PatientDataCnt,
 					  ControlDataCnt;
+	
+	private boolean isSnapshot = false;
+
+	byte[] bitmapBytes;
 	
 	protected void onCreate(Bundle savedInstanceState) {
 		
@@ -39,10 +52,97 @@ public class RemoveActivity extends Activity {
 		RemoveInit();
 	}
 	
+	private void setImageId() {
+		
+		explainTextImage = (ImageView) findViewById(R.id.explainTextImage);
+	}
+	
+	private void setImage(int languageIdx) {
+		
+		switch(languageIdx) {
+		
+		case LanguageModel.KO	:
+			explainTextImage.setBackgroundResource(R.drawable.remove_text_ko);
+			break;
+			
+		case LanguageModel.EN	:
+			explainTextImage.setBackgroundResource(R.drawable.remove_text_en);
+			break;
+			
+		case LanguageModel.ZH:
+			explainTextImage.setBackgroundResource(R.drawable.remove_text_zh);
+			break;
+			
+		case LanguageModel.JA	:
+			explainTextImage.setBackgroundResource(R.drawable.remove_text_ja);
+			break;
+			
+		default	:
+			explainTextImage.setBackgroundResource(R.drawable.remove_text_en);
+			break;
+		}
+	}
+	
+	public void setButtonId(Activity activity) {
+		
+		snapshotBtn = (Button)activity.findViewById(R.id.snapshotBtn);
+	}
+	
+	public void setButtonClick() {
+		
+		if(HomeActivity.ANALYZER_SW == HomeActivity.DEVEL) snapshotBtn.setOnTouchListener(mTouchListener);
+	}
+	
+	public void setButtonState(int btnId, boolean state, Activity activity) {
+		
+		activity.findViewById(btnId).setEnabled(state);
+	}
+	
+	Button.OnTouchListener mTouchListener = new View.OnTouchListener() {
+		
+		@Override
+		public boolean onTouch(View v, MotionEvent event) {
+			
+			switch(event.getAction()) {
+			
+			case MotionEvent.ACTION_UP	:
+				
+				switch(v.getId()) {
+			
+				case R.id.snapshotBtn		:
+					CaptureScreen mCaptureScreen = new CaptureScreen();
+					bitmapBytes = mCaptureScreen.captureScreen(activity);
+					
+					GpioPort.DoorActState = false;
+					GpioPort.CartridgeActState = false;
+					
+					ActionActivity.CartridgeCheckFlag = 0;
+					ActionActivity.DoorCheckFlag = 1;
+							
+					isSnapshot = true;
+					break;
+					
+				default	:
+					break;
+				}
+			
+				break;
+			}
+			
+			return false;
+		}
+	};
+	
 	public void RemoveInit() {
 
 		this.activity = this;
 		this.context = this;
+		
+		setImageId();
+		mLanguageModel = new LanguageModel(activity);
+		setImage(mLanguageModel.getSettingLanguage());
+		setButtonId(activity);
+		setButtonClick();
 		
 		mTimerDisplay = new TimerDisplay();
 		mTimerDisplay.ActivityParm(this, R.id.removelayout);
@@ -96,10 +196,6 @@ public class RemoveActivity extends Activity {
 				
 			case ResultActivity.COVER_ACTION_ESC	:
 				changeActivity(activity, context);
-				break;
-				
-			case ResultActivity.SCAN_ACTIVITY	:
-				WhichIntent(activity, context, TargetIntent.ScanTemp);
 				break;
 				
 			default	:
@@ -158,8 +254,18 @@ public class RemoveActivity extends Activity {
 		switch(Itn) {
 		
 		case Home		:				
-			nextIntent = new Intent(getApplicationContext(), HomeActivity.class);
-			nextIntent.putExtra("System Check State", state);
+			if(!isSnapshot) {
+			
+				nextIntent = new Intent(getApplicationContext(), HomeActivity.class);
+				nextIntent.putExtra("System Check State", state);
+			
+			} else {
+				
+				nextIntent = new Intent(context, FileSaveActivity.class);
+				nextIntent.putExtra("snapshot", true);
+				nextIntent.putExtra("datetime", TimerDisplay.rTime);
+				nextIntent.putExtra("bitmap", bitmapBytes);
+			}
 			break;
 			
 		case FunctionalTest		:				

@@ -1,10 +1,13 @@
 package isens.hba1c_analyzer.View;
 
+import isens.hba1c_analyzer.HomeActivity;
 import isens.hba1c_analyzer.R;
+import isens.hba1c_analyzer.HomeActivity.TargetIntent;
 import isens.hba1c_analyzer.Presenter.ConvertPresenter;
 import isens.hba1c_analyzer.Presenter.FunctionalTestPresenter;
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
@@ -15,10 +18,14 @@ import android.widget.TextView;
 public class FunctionalTestActivity extends Activity implements FunctionalTestIView {
 
 	private FunctionalTestPresenter mFunctionalTestPresenter;
+
+	private TextView titleText,
+					 qcText;
 	
-	private ImageView titleImage;
-	
-	private Button backBtn, homeBtn, qcBtn;
+	private Button backBtn,
+				   homeBtn,
+				   qcBtn,
+				   snapshotBtn;
 
 	protected void onCreate(Bundle savedInstanceState) {
 		
@@ -30,14 +37,18 @@ public class FunctionalTestActivity extends Activity implements FunctionalTestIV
 		mFunctionalTestPresenter.init();
 	}
 	
-	public void setImageId() {
+	public void setTextId() {
 		
-		titleImage = (ImageView) findViewById(R.id.title);
+		titleText = (TextView) findViewById(R.id.titleText);
+		qcText = (TextView) findViewById(R.id.qcText);
 	}
 	
-	public void setImage() {
+	public void setText() {
 		
-		titleImage.setBackgroundResource(R.drawable.ft_title);
+		titleText.setPaintFlags(titleText.getPaintFlags()|Paint.FAKE_BOLD_TEXT_FLAG);
+		titleText.setText(R.string.functionaltesttitle);
+		qcText.setPaintFlags(qcText.getPaintFlags()|Paint.FAKE_BOLD_TEXT_FLAG);
+		qcText.setText(R.string.qc);
 	}
 	
 	public void setButtonId() {
@@ -45,6 +56,7 @@ public class FunctionalTestActivity extends Activity implements FunctionalTestIV
 		backBtn = (Button)findViewById(R.id.backBtn);
 		homeBtn = (Button)findViewById(R.id.homeBtn);
 		qcBtn = (Button)findViewById(R.id.qcBtn);
+		snapshotBtn = (Button)findViewById(R.id.snapshotBtn);
 	}
 	
 	public void setButtonClick() {
@@ -52,6 +64,7 @@ public class FunctionalTestActivity extends Activity implements FunctionalTestIV
 		backBtn.setOnTouchListener(mTouchListener);
 		homeBtn.setOnTouchListener(mTouchListener);
 		qcBtn.setOnTouchListener(mTouchListener);
+		if(HomeActivity.ANALYZER_SW == HomeActivity.DEVEL) snapshotBtn.setOnTouchListener(mTouchListener);
 	}
 	
 	public void setButtonState(int btnId, boolean state) {
@@ -79,6 +92,10 @@ public class FunctionalTestActivity extends Activity implements FunctionalTestIV
 					break;
 					
 				case R.id.qcBtn	:
+					mFunctionalTestPresenter.changeActivity(v.getId());
+					break;
+					
+				case R.id.snapshotBtn		:
 					mFunctionalTestPresenter.changeActivity(v.getId());
 					break;
 					

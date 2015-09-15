@@ -10,15 +10,23 @@ import isens.hba1c_analyzer.RunActivity.CheckCoverError;
 import isens.hba1c_analyzer.SystemCheckActivity.InsideTmpCheck;
 import isens.hba1c_analyzer.SystemCheckActivity.MotorCheck;
 import isens.hba1c_analyzer.Model.ActivityChange;
+import isens.hba1c_analyzer.Model.CaptureScreen;
+import isens.hba1c_analyzer.Model.CustomTextView;
 import isens.hba1c_analyzer.Model.Hardware;
+import isens.hba1c_analyzer.Model.LanguageModel;
 import isens.hba1c_analyzer.View.FunctionalTestActivity;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.drawable.AnimationDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.CalendarContract.Colors;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -38,25 +46,38 @@ public class BlankActivity extends Activity {
 	public TimerDisplay mTimerDisplay;
 	public ActivityChange mActivityChange;
 	public Temperature mTemperature;
+	private LanguageModel mLanguageModel;
 	
 	public Handler runHandler = new Handler();
 	public Timer runningTimer;
 	
 	public Activity activity;
+	public Context context;
 	
-	public Button escIcon;
+	public Button escIcon,
+	  			  snapshotBtn;
 	
-	public ImageView warning;
+	public ImageView warningTextImage,
+					 explainTextImage;
 
+	private int warningRsrcId1,
+				warningRsrcId2;
+	
 	private RunActivity.AnalyzerState blankState;
 	
 	private byte photoCheck;
 	
 	private int checkError = RunActivity.NORMAL_OPERATION;
 
+	private int languageIdx;
+	
 	public static double ChamberTmp;
 	
 	public byte runSec = 0;
+	
+	private boolean isSnapshot = false;
+	
+	private byte[] bitmapBytes;
 	
 	protected void onCreate(Bundle savedInstanceState) {
 		
@@ -69,14 +90,57 @@ public class BlankActivity extends Activity {
 		BlankInit();
 	}                     
 	
+	private void setImageId() {
+		
+		explainTextImage = (ImageView) findViewById(R.id.explainTextImage);
+	}
+	
+	private void setImage() {
+		
+		switch(languageIdx) {
+		
+		case LanguageModel.KO	:
+			explainTextImage.setBackgroundResource(R.drawable.blank_explain_text_ko);
+			warningRsrcId1 = R.drawable.blank_wait_text1_ko;
+			warningRsrcId2 = R.drawable.blank_wait_text2_ko;
+			break;
+			
+		case LanguageModel.EN	:
+			explainTextImage.setBackgroundResource(R.drawable.blank_explain_text_en);
+			warningRsrcId1 = R.drawable.blank_wait_text1_en;
+			warningRsrcId2 = R.drawable.blank_wait_text2_en;
+			break;
+			
+		case LanguageModel.ZH:
+			explainTextImage.setBackgroundResource(R.drawable.blank_explain_text_zh);
+			warningRsrcId1 = R.drawable.blank_wait_text1_zh;
+			warningRsrcId2 = R.drawable.blank_wait_text2_zh;
+			break;
+			
+		case LanguageModel.JA	:
+			explainTextImage.setBackgroundResource(R.drawable.blank_explain_text_ja);
+			warningRsrcId1 = R.drawable.blank_wait_text1_ja;
+			warningRsrcId2 = R.drawable.blank_wait_text2_ja;
+			break;
+			
+		default	:
+			explainTextImage.setBackgroundResource(R.drawable.blank_explain_text_en);
+			warningRsrcId1 = R.drawable.blank_wait_text1_en;
+			warningRsrcId2 = R.drawable.blank_wait_text2_en;
+			break;
+		}
+	}
+	
 	public void setButtonId(Activity activity) {
 		
 		escIcon = (Button)activity.findViewById(R.id.escicon);
+		snapshotBtn = (Button)activity.findViewById(R.id.snapshotBtn);
 	}
 	
 	public void setButtonClick() {
 		
 		escIcon.setOnTouchListener(mTouchListener);
+		if(HomeActivity.ANALYZER_SW == HomeActivity.DEVEL) snapshotBtn.setOnTouchListener(mTouchListener);
 	}
 	
 	public void setButtonState(int btnId, boolean state, Activity activity) {
@@ -100,6 +164,14 @@ public class BlankActivity extends Activity {
 					ESC();
 					break;
 						
+				case R.id.snapshotBtn		:
+					CaptureScreen mCaptureScreen = new CaptureScreen();
+					bitmapBytes = mCaptureScreen.captureScreen(activity);
+					
+					RunActivity.IsStop = true;
+					isSnapshot = true;
+					break;
+					
 				default	:
 					break;
 				}
@@ -124,7 +196,12 @@ public class BlankActivity extends Activity {
 	public void BlankInit() {
 		
 		activity = this;
+		context = this;
 		
+		setImageId();
+		mLanguageModel = new LanguageModel(activity);
+		languageIdx = mLanguageModel.getSettingLanguage();
+		setImage();
 		setButtonId(activity);
 		unenabledAllBtn(activity);
 		setButtonClick();
@@ -142,9 +219,9 @@ public class BlankActivity extends Activity {
 		blankState = RunActivity.AnalyzerState.InitPosition;
 		photoCheck = 0;
 		
-		RunTimerInit(this);
+		RunTimerInit(activity, context);
 		
-		SensorCheck SensorCheckObj = new SensorCheck(this, this, R.id.blanklayout);
+		SensorCheck SensorCheckObj = new SensorCheck(activity, context, R.id.blanklayout);
 		SensorCheckObj.start();
 	}
 	
@@ -295,7 +372,7 @@ public class BlankActivity extends Activity {
 					
 				case NormalOperation	:
 					SerialPort.Sleep(1000);
-					WhichIntent(TargetIntent.Action);
+					WhichIntent(activity, context, TargetIntent.Action);
 					break;
 				
 				case ShakingMotorError	:
@@ -325,7 +402,7 @@ public class BlankActivity extends Activity {
 				case NoResponse :
 					checkError = R.string.e241;
 					blankState = AnalyzerState.NoWorking;
-					WhichIntent(TargetIntent.Home);
+					WhichIntent(activity, context, TargetIntent.Home);
 					break;
 					
 				case Stop		:
@@ -345,7 +422,7 @@ public class BlankActivity extends Activity {
 
 			if(checkError == R.string.e322) {
 				
-				mErrorPopup.ErrorDisplay(R.string.w004);
+				mErrorPopup.ErrorDisplay(R.string.w001);
 				CheckCoverError mCheckCoverError = new CheckCoverError();
 				mCheckCoverError.start();
 			
@@ -545,7 +622,7 @@ public class BlankActivity extends Activity {
 					checkError = R.string.e212;
 					MotionInstruct(RunActivity.HOME_POSITION, SerialPort.CtrTarget.NormalSet);			
 					BoardMessage(RunActivity.HOME_POSITION, AnalyzerState.NoWorking, RunActivity.CARTRIDGE_ERROR, AnalyzerState.ShakingMotorError, 10);
-					WhichIntent(TargetIntent.Home);
+					WhichIntent(activity, context, TargetIntent.Home);
 					break;
 					
 				case LampError			:
@@ -582,14 +659,14 @@ public class BlankActivity extends Activity {
 			
 			} else if(checkError == R.string.e322) {
 				
-				mErrorPopup.ErrorDisplay(R.string.w004);
+				mErrorPopup.ErrorDisplay(R.string.w001);
 				CheckCoverError mCheckCoverError = new CheckCoverError();
 				mCheckCoverError.start();
 			}
 		}
 	}
 	
-	public void RunTimerInit(final Activity activity) {
+	public void RunTimerInit(final Activity activity, final Context context) {
 
 		TimerTask OneSecondPeriod = new TimerTask() {
 			
@@ -601,20 +678,26 @@ public class BlankActivity extends Activity {
 					}
 				};
 				
-				runHandler.post(updater);		
+				runHandler.post(updater);
 			}
 		};
 		
 		runningTimer = new Timer();
-		runningTimer.schedule(OneSecondPeriod, 0, 1000); // Timer period : 100msec
+		runningTimer.schedule(OneSecondPeriod, 0, 1000); // Timer period : 1000msec
 	}
 	
 	public void WarningDisplay(Activity activity) { // Display running time
 		
-		warning = (ImageView) activity.findViewById(R.id.warning);
+		warningTextImage = (ImageView) activity.findViewById(R.id.warningTextImage);
 		
-		if(runSec++ % 2 == 1) warning.setBackgroundResource(R.drawable.blank_snr_1);
-		else warning.setBackgroundResource(R.drawable.blank_snr_2);
+		if(runSec++ % 2 == 1) {
+			
+			warningTextImage.setBackgroundResource(warningRsrcId1);
+		
+		} else {
+			
+			warningTextImage.setBackgroundResource(warningRsrcId2);
+		}
 	}
 	
 	public void ESC() {
@@ -631,23 +714,35 @@ public class BlankActivity extends Activity {
 		
 		if(HomeActivity.MEASURE_MODE == HomeActivity.A1C) {
 			
-			WhichIntent(TargetIntent.Home);
+			WhichIntent(activity, context, TargetIntent.Home);
 			
 		} else {
 			
-			WhichIntent(TargetIntent.FunctionalTest);
+			WhichIntent(activity, context, TargetIntent.FunctionalTest);
 		}
 	}
 	
-	public void WhichIntent(TargetIntent Itn) { // Activity conversion
+	public void WhichIntent(Activity activity, Context context, TargetIntent Itn) { // Activity conversion
 		
 		Intent nextIntent = null;
+		
+		runningTimer.cancel();
 		
 		switch(Itn) {
 		
 		case Home	:				
-			nextIntent = new Intent(getApplicationContext(), HomeActivity.class);
-			nextIntent.putExtra("System Check State", (int) checkError);
+			if(!isSnapshot) {
+				
+				nextIntent = new Intent(getApplicationContext(), HomeActivity.class);
+				nextIntent.putExtra("System Check State", (int) checkError);
+			
+			} else {
+				
+				nextIntent = new Intent(context, FileSaveActivity.class);
+				nextIntent.putExtra("snapshot", true);
+				nextIntent.putExtra("datetime", TimerDisplay.rTime);
+				nextIntent.putExtra("bitmap", bitmapBytes);	
+			}
 			break;
 
 		case FunctionalTest	:				
@@ -664,12 +759,25 @@ public class BlankActivity extends Activity {
 		}		
 		
 		startActivity(nextIntent);
-		finish();
+		finish(activity);
 	}
 	
-	public void finish() {
+	public void WhichIntentforSnapshot(Activity activity, Context context, byte[] bitmapBytes) {
+		
+		Intent nextIntent = null;
+		
+		nextIntent = new Intent(context, FileSaveActivity.class);
+		nextIntent.putExtra("snapshot", true);
+		nextIntent.putExtra("datetime", TimerDisplay.rTime);
+		nextIntent.putExtra("bitmap", bitmapBytes);
+		
+		activity.startActivity(nextIntent);
+		finish(activity);
+	}
+	
+	public void finish(Activity activity) {
 		
 		super.finish();
-		overridePendingTransition(R.anim.fade, R.anim.hold);
+		activity.overridePendingTransition(R.anim.fade, R.anim.hold);
 	}
 }

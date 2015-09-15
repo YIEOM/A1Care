@@ -20,6 +20,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.graphics.Paint;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.Bundle;
@@ -37,11 +38,14 @@ public class ConvertActivity extends Activity implements ConvertIView{
 	
 	private ConvertPresenter mConvertPresenter;
 	
-	private TextView convertText;
+	private TextView titleText, convertText;
 
-	private ImageView titleImage, iconImage;
+	private ImageView iconImage;
 	
-	private Button backBtn, leftBtn, rightBtn;
+	private Button backBtn,
+				   leftBtn,
+				   rightBtn,
+				   snapshotBtn;
 
 	protected void onCreate(Bundle savedInstanceState) {
 		
@@ -55,24 +59,25 @@ public class ConvertActivity extends Activity implements ConvertIView{
 	
 	public void setImageId() {
 		
-		titleImage = (ImageView) findViewById(R.id.title);
 		iconImage = (ImageView) findViewById(R.id.icon);
 	}
 	
 	public void setImage() {
 		
-		titleImage.setBackgroundResource(R.drawable.convert_title);
 		iconImage.setBackgroundResource(R.drawable.convert_icon);
 	}
 	
 	public void setTextId() {
 		
+		titleText = (TextView) findViewById(R.id.titleText);
 		convertText = (TextView) findViewById(R.id.mainText);
 	}
 	
-	public void setText(int language) {
+	public void setText(int unit) {
 		
-		convertText.setText(language);
+		titleText.setPaintFlags(titleText.getPaintFlags()|Paint.FAKE_BOLD_TEXT_FLAG);
+		titleText.setText(R.string.unitselectiontitle);
+		convertText.setText(unit);
 	}
 	
 	public void setButtonId() {
@@ -80,6 +85,7 @@ public class ConvertActivity extends Activity implements ConvertIView{
 		backBtn = (Button)findViewById(R.id.backBtn);
 		leftBtn = (Button)findViewById(R.id.leftBtn);
 		rightBtn = (Button)findViewById(R.id.rightBtn);
+		snapshotBtn = (Button)findViewById(R.id.snapshotBtn);
 	}
 	
 	public void setButtonClick() {
@@ -87,6 +93,7 @@ public class ConvertActivity extends Activity implements ConvertIView{
 		backBtn.setOnTouchListener(mTouchListener);
 		leftBtn.setOnTouchListener(mTouchListener);
 		rightBtn.setOnTouchListener(mTouchListener);
+		if(HomeActivity.ANALYZER_SW == HomeActivity.DEVEL) snapshotBtn.setOnTouchListener(mTouchListener);
 	}
 	
 	public void setButtonState(int btnId, boolean state) {
@@ -103,10 +110,12 @@ public class ConvertActivity extends Activity implements ConvertIView{
 			
 			case MotionEvent.ACTION_UP	:
 				
+				mConvertPresenter.unenabledAllBtn();
+				
 				switch(v.getId()) {
 			
 				case R.id.backBtn	:
-					mConvertPresenter.changeActivity();
+					mConvertPresenter.changeActivity(v.getId());
 					break;
 					
 				case R.id.leftBtn	:
@@ -115,6 +124,10 @@ public class ConvertActivity extends Activity implements ConvertIView{
 					
 				case R.id.rightBtn	:
 					mConvertPresenter.changePrimaryUp();
+					break;
+					
+				case R.id.snapshotBtn		:
+					mConvertPresenter.changeActivity(v.getId());
 					break;
 					
 				default	:

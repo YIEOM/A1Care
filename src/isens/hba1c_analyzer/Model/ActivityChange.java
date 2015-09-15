@@ -3,11 +3,15 @@ package isens.hba1c_analyzer.Model;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import isens.hba1c_analyzer.BlankActivity;
+import isens.hba1c_analyzer.FileSaveActivity;
 import isens.hba1c_analyzer.HomeActivity;
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
 import isens.hba1c_analyzer.EngineerActivity;
+import isens.hba1c_analyzer.FileLoadActivity;
 import isens.hba1c_analyzer.R;
+import isens.hba1c_analyzer.RemoveActivity;
 import isens.hba1c_analyzer.SettingActivity;
 import isens.hba1c_analyzer.SystemSettingActivity;
 
@@ -47,17 +51,44 @@ public class ActivityChange {
 			nextIntent = new Intent(context, BlankActivity.class);
 			break;
 					
+		case SnapShot	:
+			nextIntent = new Intent(context, FileSaveActivity.class);
+			break;
+			
+		case ControlFileLoad	:
+			nextIntent = new Intent(context, FileLoadActivity.class);
+			break;
+			
+		case PatientFileLoad	:
+			nextIntent = new Intent(context, FileLoadActivity.class);
+			break;
+			
 		default		:	
 			break;			
 		}
 	}
 	
+	public void putBooleanIntent(String name, boolean data) {
+			
+		nextIntent.putExtra(name, data);
+	}
+		
+	public void putBytesIntent(String name, byte[] data) {
+		
+		nextIntent.putExtra(name, data);
+	}
+
 	public void putIntIntent(String name, int data) {
 		
 		nextIntent.putExtra(name, data);
 	}
 	
 	public void putStringIntent(String name, String data) {
+
+		nextIntent.putExtra(name, data);		
+	}
+	
+	public void putStringsIntent(String name, String[] data) {
 
 		nextIntent.putExtra(name, data);		
 	}

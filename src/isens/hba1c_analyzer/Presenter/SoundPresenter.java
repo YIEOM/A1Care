@@ -1,13 +1,16 @@
 package isens.hba1c_analyzer.Presenter;
 
 import isens.hba1c_analyzer.R;
+import isens.hba1c_analyzer.SerialPort;
 import isens.hba1c_analyzer.TimerDisplay;
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
 import isens.hba1c_analyzer.Model.ActivityChange;
+import isens.hba1c_analyzer.Model.CaptureScreen;
 import isens.hba1c_analyzer.Model.SoundModel;
 import isens.hba1c_analyzer.View.SoundIView;
 import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
 
 public class SoundPresenter {
 
@@ -35,23 +38,28 @@ public class SoundPresenter {
 	public void init() {
 		
 		mSoundIView.setImageId();
-		mSoundIView.setButtonId();
 		mSoundIView.setImage();
-		mSoundIView.setButtonClick();
+		mSoundIView.setTextId();
+		mSoundIView.setText();
+		mSoundIView.setButtonId();
 		
 		mTimerDisplay.ActivityParm(activity, layout);
 		displayBarGauge(mSound.getSoundVolume());
+		
+		SerialPort.Sleep(500);
+		
+		mSoundIView.setButtonClick();
 	}
 	
 	public void upSound() {
 		
 		int volume;
 		
-		unenabledAllBtn();
-		
 		volume = mSound.upSoundVolume(mSound.getSoundVolume());
 		displayBarGauge(volume);
 		mSound.setSoundVolume(volume);
+		
+		SerialPort.Sleep(100);
 		
 		enabledAllBtn();
 	}
@@ -60,12 +68,12 @@ public class SoundPresenter {
 		
 		int volume;
 		
-		unenabledAllBtn();
-		
 		volume = mSound.downSoundVolume(mSound.getSoundVolume());
 		displayBarGauge(volume);
 		mSound.setSoundVolume(volume);
 
+		SerialPort.Sleep(100);
+		
 		enabledAllBtn();
 	}
 	
@@ -88,9 +96,28 @@ public class SoundPresenter {
 		mSoundIView.setButtonState(R.id.plusBtn, false);
 	}
 	
-	public void changeActivity() {
+	public void changeActivity(int btn) {
+
+		switch(btn) {
 		
-		mActivityChange.whichIntent(TargetIntent.SystemSetting);
-		mActivityChange.finish();
+		case R.id.backBtn	:
+			mActivityChange.whichIntent(TargetIntent.SystemSetting);
+			mActivityChange.finish();
+			break;
+		
+		case R.id.snapshotBtn	:
+			CaptureScreen mCaptureScreen = new CaptureScreen();
+			byte[] bitmapBytes = mCaptureScreen.captureScreen(activity);
+			
+			mActivityChange.whichIntent(TargetIntent.SnapShot);
+			mActivityChange.putBooleanIntent("snapshot", true);
+			mActivityChange.putStringsIntent("datetime", TimerDisplay.rTime);
+			mActivityChange.putBytesIntent("bitmap", bitmapBytes);
+			mActivityChange.finish();
+			break;
+			
+		default	:
+			break;
+		}		
 	}
 }

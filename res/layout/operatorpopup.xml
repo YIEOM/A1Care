@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:isens="http://schemas.android.com/apk/res/isens.hba1c_analyzer"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/login_bg" >
+    
+    <Button
+        android:id="@+id/snapshotBtn2"
+        android:layout_width="180px"
+        android:layout_height="60px"
+        android:layout_marginLeft="120px"
+        android:background="#00000000" />
+    
+    <isens.hba1c_analyzer.Model.CustomTextView
+        android:id="@+id/popupText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="164px"
+        android:layout_marginTop="124px"
+        android:typeface="sans"
+        android:textSize="32px"
+        android:textColor="#525252"
+        android:shadowColor="#696969"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="1.2" />
+    
+    <TextView
+        android:id="@+id/idText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="220px"
+        android:layout_marginTop="120px"
+        android:typeface="sans"
+        android:textSize="36px"
+        android:textColor="#525252"
+        android:shadowColor="#696969"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="1.2" />
+    
+    <TextView
+        android:id="@+id/fct1stText"
+        android:layout_width="144px"
+        android:layout_height="50px"
+        android:layout_marginLeft="152px"
+        android:layout_marginTop="193px"
+        android:typeface="sans"
+        android:textSize="20px"
+        android:textColor="#606060"
+        android:gravity="center" />
+    
+    <EditText
+        android:id="@+id/fct1stEText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="296px"
+        android:layout_marginTop="190px"
+        android:paddingLeft="20px"
+        android:textSize="24sp"
+        android:textColor="#565656"
+        android:maxLength="8"
+        android:singleLine="true"
+        android:imeOptions="actionDone"
+        android:background="@drawable/os_id_pass" />
+    
+    <TextView
+        android:id="@+id/fct2ndText"
+        android:layout_width="144px"
+        android:layout_height="50px"
+        android:layout_marginLeft="152px"
+        android:layout_marginTop="245px"
+        android:typeface="sans"
+        android:textSize="20px"
+        android:textColor="#606060"
+        android:gravity="center" />
+    
+    <EditText
+        android:id="@+id/fct2ndEText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="296px"
+        android:layout_marginTop="242px"
+        android:paddingLeft="20px"
+        android:textSize="24sp"
+        android:textColor="#565656"
+        android:maxLength="4"
+        android:singleLine="true"
+        android:inputType="numberPassword"
+        android:imeOptions="actionDone"
+        android:background="@drawable/os_id_pass" />
+    
+    <TextView
+        android:id="@+id/fct3rdText"
+        android:layout_width="144px"
+        android:layout_height="50px"
+        android:layout_marginLeft="152px"
+        android:layout_marginTop="297px"
+        android:typeface="sans"
+        android:textSize="20px"
+        android:textColor="#606060"
+        android:gravity="center" />
+    
+    <EditText
+        android:id="@+id/fct3rdEText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="296px"
+        android:layout_marginTop="294px"
+        android:paddingLeft="20px"
+        android:textSize="24sp"
+        android:textColor="#565656"
+        android:maxLength="4"
+        android:singleLine="true"
+        android:inputType="numberPassword"
+        android:imeOptions="actionDone"
+        android:background="@drawable/os_id_pass" />
+    
+    <Button
+        android:id="@+id/donebtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="554px"
+        android:layout_marginTop="188px"
+        android:text="@string/done"
+        android:typeface="sans"
+        android:textSize="28px"
+        android:textColor="#FFFFFF"
+        android:shadowColor="#696969"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="1.2"
+        android:gravity="center"
+        android:background="@drawable/os_done_btn_selector" />
+    
+   	<Button
+        android:id="@+id/cancelbtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="551px"
+        android:layout_marginTop="296px"
+        android:text="@string/cancel"
+        android:typeface="sans"
+        android:textSize="18px"
+        android:textColor="#525252"
+        android:shadowColor="#FFFFFF"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="1.2"
+        android:paddingLeft="2px"
+        android:paddingTop="14px"
+        android:gravity="center_horizontal"
+        android:background="@drawable/guest_selector" />
+    	    
+</RelativeLayout>

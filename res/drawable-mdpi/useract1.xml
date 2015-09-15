@@ -2,25 +2,23 @@
 <animation-list xmlns:android="http://schemas.android.com/apk/res/android"
     android:oneshot="false" >
 	
-    <item android:drawable="@drawable/ani_scan_01" android:duration="200" />
-    <item android:drawable="@drawable/ani_scan_02" android:duration="20" />
-    <item android:drawable="@drawable/ani_scan_03" android:duration="20" />
-    <item android:drawable="@drawable/ani_scan_04" android:duration="40" />
-    <item android:drawable="@drawable/ani_scan_05" android:duration="40" />
-    <item android:drawable="@drawable/ani_scan_06" android:duration="60" />
-    <item android:drawable="@drawable/ani_scan_07" android:duration="60" />
-    <item android:drawable="@drawable/ani_scan_08" android:duration="80" />
-    <item android:drawable="@drawable/ani_scan_09" android:duration="80" />
-    <item android:drawable="@drawable/ani_scan_10" android:duration="90" />
-    <item android:drawable="@drawable/ani_scan_11" android:duration="90" />
-    <item android:drawable="@drawable/ani_scan_12" android:duration="100" />
-    <item android:drawable="@drawable/ani_scan_13" android:duration="100" />
-    <item android:drawable="@drawable/ani_scan_14" android:duration="110" />
-    <item android:drawable="@drawable/ani_scan_15" android:duration="110" />
-    <item android:drawable="@drawable/ani_scan_16" android:duration="120" />
-    <item android:drawable="@drawable/ani_scan_17" android:duration="120" />
-    <item android:drawable="@drawable/ani_scan_18" android:duration="130" />
-    <item android:drawable="@drawable/ani_scan_19" android:duration="140" />
-    <item android:drawable="@drawable/ani_scan_20" android:duration="500" />
+    <item android:drawable="@drawable/ani_scan_001" android:duration="100" />
+    <item android:drawable="@drawable/ani_scan_002" android:duration="100" />
+    <item android:drawable="@drawable/ani_scan_003" android:duration="100" />
+    <item android:drawable="@drawable/ani_scan_004" android:duration="100" />
+    <item android:drawable="@drawable/ani_scan_005" android:duration="100" />
+    <item android:drawable="@drawable/ani_scan_006" android:duration="100" />
+    <item android:drawable="@drawable/ani_scan_007" android:duration="100" />
+    <item android:drawable="@drawable/ani_scan_008" android:duration="100" />
+    <item android:drawable="@drawable/ani_scan_009" android:duration="100" />
+    <item android:drawable="@drawable/ani_scan_010" android:duration="100" />
+    <item android:drawable="@drawable/ani_scan_011" android:duration="100" />
+    <item android:drawable="@drawable/ani_scan_012" android:duration="100" />
+    <item android:drawable="@drawable/ani_scan_013" android:duration="100" />
+    <item android:drawable="@drawable/ani_scan_014" android:duration="100" />
+    <item android:drawable="@drawable/ani_scan_015" android:duration="100" />
+    <item android:drawable="@drawable/ani_scan_016" android:duration="100" />
+    <item android:drawable="@drawable/ani_scan_017" android:duration="100" />
+    <item android:drawable="@drawable/ani_scan_018" android:duration="1000" />
     
 </animation-list>

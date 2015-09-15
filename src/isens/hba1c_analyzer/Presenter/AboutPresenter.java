@@ -3,6 +3,7 @@ package isens.hba1c_analyzer.Presenter;
 import android.app.Activity;
 import android.content.Context;
 import isens.hba1c_analyzer.R;
+import isens.hba1c_analyzer.SerialPort;
 import isens.hba1c_analyzer.TimerDisplay;
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
 import isens.hba1c_analyzer.Model.AboutModel;
@@ -39,11 +40,14 @@ public class AboutPresenter {
 		mAboutIView.setButtonId();
 		mAboutIView.setTextId();
 		mAboutIView.setEditTextId();
-		mAboutIView.setButtonClick();
 		
 		display();
 		
 		mTimerDisplay.ActivityParm(activity, layout);
+
+		SerialPort.Sleep(500);
+	
+		mAboutIView.setButtonClick();
 	}
 	
 	public void display() {

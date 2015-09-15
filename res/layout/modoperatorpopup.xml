@@ -4,6 +4,13 @@
     android:layout_height="wrap_content"
     android:background="@drawable/os_id_bg_full" >
     
+    <Button
+        android:id="@+id/snapshotBtn2"
+        android:layout_width="180px"
+        android:layout_height="60px"
+        android:layout_marginLeft="120px"
+        android:background="#00000000" />
+    
     <TextView
         android:id="@+id/id"
         android:layout_width="wrap_content"
@@ -74,6 +81,6 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="550px"
         android:layout_marginTop="296px"
-        android:background="@drawable/dv_cancel_selector" />
+        android:background="@drawable/guest_selector" />
     	    
 </RelativeLayout>

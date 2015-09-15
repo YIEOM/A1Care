@@ -7,6 +7,7 @@ import java.text.DecimalFormat;
 import java.util.Calendar;
 
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
+import isens.hba1c_analyzer.Model.CaptureScreen;
 import isens.hba1c_analyzer.View.ConvertActivity;
 import isens.hba1c_analyzer.View.CorrelationActivity;
 import isens.hba1c_analyzer.View.DateActivity;
@@ -15,8 +16,10 @@ import isens.hba1c_analyzer.View.LanguageActivity;
 import isens.hba1c_analyzer.View.SoundActivity;
 import isens.hba1c_analyzer.View.TimeActivity;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
@@ -39,6 +42,17 @@ public class SystemSettingActivity extends Activity {
 	public TimerDisplay mTimerDisplay;
 	public ErrorPopup mErrorPopup;
 	
+	private Activity activity;
+	private Context context;
+	
+	private TextView titleText,
+					 displayText,
+					 dateText,
+					 timeSettingText,
+					 soundText,
+					 languageText,
+					 unitText;
+	
 	public Button homeIcon,
 	 			  backIcon,
 				  displayBtn,
@@ -48,10 +62,9 @@ public class SystemSettingActivity extends Activity {
 				  languageBtn,
 				  resultBtn,
 				  collelationBtn,
-				  convertBtn;
+				  convertBtn,
+				  snapshotBtn;
 
-	public TextView resetText;
-	
 	public boolean btnState = false;
 	
 	protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +74,35 @@ public class SystemSettingActivity extends Activity {
 		setContentView(R.layout.systemsetting);
 		
 		SystemSettingInit();
+	}
+	
+	private void setTextId() {
+		
+		titleText = (TextView) findViewById(R.id.titleText);
+		displayText = (TextView) findViewById(R.id.displayText);
+		dateText = (TextView) findViewById(R.id.dateText);
+		timeSettingText = (TextView) findViewById(R.id.timeSettingText);
+		soundText = (TextView) findViewById(R.id.soundText);
+		languageText = (TextView) findViewById(R.id.languageText);
+		unitText = (TextView) findViewById(R.id.unitText);
+	}
+	
+	private void setText() {
+		
+		titleText.setPaintFlags(titleText.getPaintFlags()|Paint.FAKE_BOLD_TEXT_FLAG);
+		titleText.setText(R.string.systemsettingtitle);
+		displayText.setPaintFlags(displayText.getPaintFlags()|Paint.FAKE_BOLD_TEXT_FLAG);
+		displayText.setText(R.string.displaytitle);
+		dateText.setPaintFlags(dateText.getPaintFlags()|Paint.FAKE_BOLD_TEXT_FLAG);
+		dateText.setText(R.string.datetitle);
+		timeSettingText.setPaintFlags(timeSettingText.getPaintFlags()|Paint.FAKE_BOLD_TEXT_FLAG);
+		timeSettingText.setText(R.string.timetitle);
+		soundText.setPaintFlags(soundText.getPaintFlags()|Paint.FAKE_BOLD_TEXT_FLAG);
+		soundText.setText(R.string.soundtitle);
+		languageText.setPaintFlags(languageText.getPaintFlags()|Paint.FAKE_BOLD_TEXT_FLAG);
+		languageText.setText(R.string.languagetitle);
+		unitText.setPaintFlags(unitText.getPaintFlags()|Paint.FAKE_BOLD_TEXT_FLAG);
+		unitText.setText(R.string.unitselection);
 	}
 	
 	public void setButtonId() {
@@ -73,6 +115,7 @@ public class SystemSettingActivity extends Activity {
 		soundBtn = (Button)findViewById(R.id.soundbtn);
 		languageBtn = (Button)findViewById(R.id.languagebtn);
 		convertBtn = (Button)findViewById(R.id.convertbtn);
+		snapshotBtn = (Button)findViewById(R.id.snapshotBtn);
 	}
 	
 	public void setButtonClick() {
@@ -85,6 +128,7 @@ public class SystemSettingActivity extends Activity {
 		soundBtn.setOnTouchListener(mTouchListener);
 		languageBtn.setOnTouchListener(mTouchListener);
 		convertBtn.setOnTouchListener(mTouchListener);
+		if(HomeActivity.ANALYZER_SW == HomeActivity.DEVEL) snapshotBtn.setOnTouchListener(mTouchListener);
 	}
 	
 	public void setButtonState(int btnId, boolean state) {
@@ -105,35 +149,39 @@ public class SystemSettingActivity extends Activity {
 				switch(v.getId()) {
 			
 				case R.id.homeicon		:
-					WhichIntent(TargetIntent.Home);
+					WhichIntent(activity, context, TargetIntent.Home);
 					break;
 					
 				case R.id.backicon		:
-					WhichIntent(TargetIntent.Setting);
+					WhichIntent(activity, context, TargetIntent.Setting);
 					break;
 				
 				case R.id.displaybtn	:
-					WhichIntent(TargetIntent.Display);
+					WhichIntent(activity, context, TargetIntent.Display);
 					break;
 				
 				case R.id.datebtn	:
-					WhichIntent(TargetIntent.Date);
+					WhichIntent(activity, context, TargetIntent.Date);
 					break;
 					
 				case R.id.timebtn		:
-					WhichIntent(TargetIntent.Time);
+					WhichIntent(activity, context, TargetIntent.Time);
 					break;
 					
 				case R.id.soundbtn		:
-					WhichIntent(TargetIntent.Sound);
+					WhichIntent(activity, context, TargetIntent.Sound);
 					break;
 				
 				case R.id.languagebtn	:
-					WhichIntent(TargetIntent.Language);
+					WhichIntent(activity, context, TargetIntent.Language);
 					break;
 				
 				case R.id.convertbtn	:
-					WhichIntent(TargetIntent.Convert);
+					WhichIntent(activity, context, TargetIntent.Convert);
+					break;
+					
+				case R.id.snapshotBtn		:
+					WhichIntent(activity, context, TargetIntent.SnapShot);
 					break;
 					
 				default	:
@@ -173,11 +221,19 @@ public class SystemSettingActivity extends Activity {
 	
 	public void SystemSettingInit() {
 
+		activity = this;
+		context = this;
+		
+		setTextId();
+		setText();
 		setButtonId();
-		setButtonClick();
 		
 		mTimerDisplay = new TimerDisplay();
 		mTimerDisplay.ActivityParm(this, R.id.systemsettinglayout);
+		
+		SerialPort.Sleep(500);
+		
+		setButtonClick();
 	}
 	
 	public void SettingParameterInit() {
@@ -198,7 +254,7 @@ public class SystemSettingActivity extends Activity {
 		RunActivity.CF_Offset = 0.0f;
 	}
 	
-	public void WhichIntent(TargetIntent Itn) { // Activity conversion
+	public void WhichIntent(Activity activity, Context context, TargetIntent Itn) { // Activity conversion
 		
 		Intent nextIntent = null;
 		
@@ -234,6 +290,18 @@ public class SystemSettingActivity extends Activity {
 
 		case Convert		:
 			nextIntent = new Intent(getApplicationContext(), ConvertActivity.class);
+			break;
+			
+		case SnapShot	:
+			CaptureScreen mCaptureScreen = new CaptureScreen();
+			byte[] bitmapBytes = mCaptureScreen.captureScreen(activity);
+			
+			nextIntent = new Intent(context, FileSaveActivity.class);
+			nextIntent.putExtra("snapshot", true);
+			nextIntent.putExtra("datetime", TimerDisplay.rTime);
+			nextIntent.putExtra("bitmap", bitmapBytes);
+			startActivity(nextIntent);
+			finish();
 			break;
 			
 		default		:	

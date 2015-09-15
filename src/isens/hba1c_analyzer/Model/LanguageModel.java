@@ -15,12 +15,14 @@ import isens.hba1c_analyzer.SystemSettingActivity;
 
 public class LanguageModel {
 
-	final static int KO = 0,
-			 		 EN = 1;
+	public final static int KO = 0,
+			 		 		EN = 1,
+			 		 		ZH = 2,
+			 		 		JA = 3;
 
 	Activity activity;
 			
-	private String[] languageTable = new String[] {"ko", "en"};
+	private String[] languageTable = new String[] {"ko", "en", "zh", "ja"};
 	
 	private int idx = 0;
 	
@@ -29,12 +31,12 @@ public class LanguageModel {
 		this.activity = activity;
 	}
 	
-	public void initLanguage() {
+	public int getSettingLanguage() {
 		
 		Locale systemLocale = activity.getResources().getConfiguration().locale;
 		String language = systemLocale.getLanguage();
 		
-		getLanguageIdx(language);
+		return getLanguageIdx(language);
 	}
 	
 	public int getLanguage() {
@@ -51,6 +53,14 @@ public class LanguageModel {
 			language = R.string.english;
 			break;
 			
+		case ZH:
+			language = R.string.chinese;
+			break;
+			
+		case JA	:
+			language = R.string.japanese;
+			break;
+			
 		default	:
 			getLanguageIdx("en");
 			language = R.string.english;
@@ -60,7 +70,7 @@ public class LanguageModel {
 		return language;
 	}
 	
-	public void getLanguageIdx(String language) {
+	public int getLanguageIdx(String language) {
 		
 		int i;
 		
@@ -70,6 +80,8 @@ public class LanguageModel {
 			
 			if(languageTable[i].equals(language)) break;
 		}
+		
+		return idx;
 	}
 	
 	public void upLanguageIdx() {

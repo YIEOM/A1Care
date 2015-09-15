@@ -2,112 +2,314 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:background="@drawable/dv_bg" >
+    android:background="@drawable/login_bg" >
    	
+    <Button
+        android:id="@+id/snapshotBtn2"
+        android:layout_width="180px"
+        android:layout_height="60px"
+        android:layout_marginLeft="120px"
+        android:background="#00000000" />
+    
+    <isens.hba1c_analyzer.Model.CustomTextView
+        android:id="@+id/detailViewText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="164px"
+        android:layout_marginTop="124px"
+        android:typeface="sans"
+        android:textSize="32px"
+        android:textColor="#525252"
+        android:shadowColor="#696969"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="1.2" />
+    
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="166px"
+        android:layout_marginTop="200px"
+        android:text="@string/testnum"
+        android:typeface="sans"
+        android:textSize="14px"
+        android:textColor="#565656"
+        android:shadowColor="#FFFFFF"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="1.2" />
+    
     <TextView
         android:id="@+id/testno"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="98px"
-        android:layout_marginTop="93px"
+        android:layout_marginLeft="242px"
+        android:layout_marginTop="200px"
         android:typeface="sans"
         android:textSize="14px"
-        android:textColor="#17479E" />
+        android:textColor="#17479E"
+        android:shadowColor="#FFFFFF"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="1.2" />
+    
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="166px"
+        android:layout_marginTop="230px"
+        android:text="@string/testdate"
+        android:typeface="sans"
+        android:textSize="14px"
+        android:textColor="#565656"
+        android:shadowColor="#FFFFFF"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="1.2" />
     
     <TextView
         android:id="@+id/testdate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="98px"
-        android:layout_marginTop="122px"
+        android:layout_marginLeft="242px"
+        android:layout_marginTop="230px"
         android:typeface="sans"
         android:textSize="14px"
-        android:textColor="#17479E" />
+        android:textColor="#17479E"
+        android:shadowColor="#FFFFFF"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="1.2" />
+    
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="166px"
+        android:layout_marginTop="260px"
+        android:text="@string/type"
+        android:typeface="sans"
+        android:textSize="14px"
+        android:textColor="#565656"
+        android:shadowColor="#FFFFFF"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="1.2" />
     
     <TextView
         android:id="@+id/type"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="98px"
-        android:layout_marginTop="150px"
+        android:layout_marginLeft="242px"
+        android:layout_marginTop="260px"
         android:typeface="sans"
         android:textSize="14px"
-        android:textColor="#17479E" />
+        android:textColor="#17479E"
+        android:shadowColor="#FFFFFF"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="1.2" />
+    
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="166px"
+        android:layout_marginTop="290px"
+        android:text="@string/primary"
+        android:typeface="sans"
+        android:textSize="14px"
+        android:textColor="#565656"
+        android:shadowColor="#FFFFFF"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="1.2" />
     
     <TextView
         android:id="@+id/primary"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="98px"
-        android:layout_marginTop="180px"
+        android:layout_marginLeft="242px"
+        android:layout_marginTop="290px"
         android:typeface="sans"
         android:textSize="14px"
-        android:textColor="#17479E" />
+        android:textColor="#17479E"
+        android:shadowColor="#FFFFFF"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="1.2" />
+    
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="166px"
+        android:layout_marginTop="320px"
+        android:text="@string/refrange"
+        android:typeface="sans"
+        android:textSize="14px"
+        android:textColor="#565656"
+        android:shadowColor="#FFFFFF"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="1.2" />
    	
     <TextView
         android:id="@+id/range"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="98px"
-        android:layout_marginTop="209px"
+        android:layout_marginLeft="242px"
+        android:layout_marginTop="320px"
         android:typeface="sans"
         android:textSize="14px"
-        android:textColor="#17479E" />
+        android:textColor="#17479E"
+        android:shadowColor="#FFFFFF"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="1.2" />
+    
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="377px"
+        android:layout_marginTop="230px"
+        android:text="@string/lot"
+        android:typeface="sans"
+        android:textSize="14px"
+        android:textColor="#565656"
+        android:shadowColor="#FFFFFF"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="1.2" />
     
     <TextView
         android:id="@+id/ref"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="320px"
-        android:layout_marginTop="122px"
+        android:layout_marginLeft="456px"
+        android:layout_marginTop="230px"
         android:typeface="sans"
         android:textSize="14px"
-        android:textColor="#17479E" />
+        android:textColor="#17479E"
+        android:shadowColor="#FFFFFF"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="1.2" />
+    
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="377px"
+        android:layout_marginTop="260px"
+        android:text="@string/patientid"
+        android:typeface="sans"
+        android:textSize="14px"
+        android:textColor="#565656"
+        android:shadowColor="#FFFFFF"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="1.2" />
     
     <TextView
         android:id="@+id/patient"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="320px"
-        android:layout_marginTop="150px"
+        android:layout_marginLeft="456px"
+        android:layout_marginTop="260px"
         android:typeface="sans"
         android:textSize="14px"
-        android:textColor="#17479E" />
+        android:textColor="#17479E"
+        android:shadowColor="#FFFFFF"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="1.2" />
+    
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="377px"
+        android:layout_marginTop="290px"
+        android:text="@string/operatorid"
+        android:typeface="sans"
+        android:textSize="14px"
+        android:textColor="#565656"
+        android:shadowColor="#FFFFFF"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="1.2" />
     
     <TextView
         android:id="@+id/operator"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="320px"
-        android:layout_marginTop="180px"
+        android:layout_marginLeft="456px"
+        android:layout_marginTop="290px"
         android:typeface="sans"
         android:textSize="14px"
-        android:textColor="#17479E" />
+        android:textColor="#17479E"
+        android:shadowColor="#FFFFFF"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="1.2" />
+    
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="377px"
+        android:layout_marginTop="320px"
+        android:text="@string/result"
+        android:typeface="sans"
+        android:textSize="14px"
+        android:textColor="#565656"
+        android:shadowColor="#FFFFFF"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="1.2" />
     
     <TextView
         android:id="@+id/result"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="320px"
-        android:layout_marginTop="209px"
+        android:layout_marginLeft="456px"
+        android:layout_marginTop="320px"
         android:typeface="sans"
         android:textSize="14px"
-        android:textColor="#17479E" />
+        android:textColor="#17479E"
+        android:shadowColor="#FFFFFF"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="1.2" />
     
     <Button
         android:id="@+id/printbtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="415px"
-        android:layout_marginTop="70px"
-        android:background="@drawable/dv_print_selector" />
+        android:layout_marginLeft="554px"
+        android:layout_marginTop="188px"
+        android:text="@string/print"
+        android:typeface="sans"
+        android:textSize="28px"
+        android:textColor="#FFFFFF"
+        android:shadowColor="#696969"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="1.2"
+        android:gravity="center"
+        android:background="@drawable/os_done_btn_selector" />
     
    	<Button
-        android:id="@+id/canclebtn"
+        android:id="@+id/cancelbtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="416px"
-        android:layout_marginTop="184px"
-        android:background="@drawable/dv_cancel_selector" />
+        android:layout_marginLeft="552px"
+        android:layout_marginTop="296px"
+        android:text="@string/cancel"
+        android:typeface="sans"
+        android:textSize="18px"
+        android:textColor="#525252"
+        android:shadowColor="#FFFFFF"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="1.2"
+        android:paddingTop="14px"
+        android:gravity="center_horizontal"
+        android:background="@drawable/guest_selector" />
     	    
 </RelativeLayout>

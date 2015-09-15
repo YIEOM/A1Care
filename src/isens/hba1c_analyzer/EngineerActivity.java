@@ -56,9 +56,6 @@ public class EngineerActivity extends Activity {
 	
 	public TextView swVersionText, fwVersionText, osVersionText;
 	
-	
-	public boolean btnState = false;
-	
 	protected void onCreate(Bundle savedInstanceState) {
 		
 		super.onCreate(savedInstanceState);

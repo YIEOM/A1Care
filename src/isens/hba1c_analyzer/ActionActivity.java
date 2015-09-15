@@ -6,6 +6,8 @@ import java.util.TimerTask;
 
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
 import isens.hba1c_analyzer.Model.ActivityChange;
+import isens.hba1c_analyzer.Model.CaptureScreen;
+import isens.hba1c_analyzer.Model.LanguageModel;
 import isens.hba1c_analyzer.Model.SoundModel;
 import isens.hba1c_analyzer.View.FunctionalTestActivity;
 import android.app.Activity;
@@ -44,6 +46,7 @@ public class ActionActivity extends Activity {
 	public TimerDisplay mTimerDisplay;
 	public ActivityChange mActivityChange;
 	public SoundModel mSoundModel;
+	private LanguageModel mLanguageModel;
 	
 	private Activity activity;
 	private Context context;
@@ -53,12 +56,21 @@ public class ActionActivity extends Activity {
 	public Timer timer;
 	
 	public AnimationDrawable scanAni;
-	public ImageView scanImage;
+	public ImageView actBgImage,
+					 userActImage,
+					 scanTextImage,
+					 actTextImage;
 		
 	public RelativeLayout actionLinear;
 	
-	public Button escBtn;
+	public Button escBtn,
+				  snapshotBtn;
 	
+	private int explainRsrcId1,
+				explainRsrcId2,
+				processRsrcId1,
+				processRsrcId2;
+
 	public static boolean IsCorrectBarcode = false,
 						  IsExpirationDate = false,
 			  			  BarcodeCheckFlag = false, 
@@ -66,8 +78,8 @@ public class ActionActivity extends Activity {
 	public static boolean IsEnablePopup = false,
 						  ESCButtonFlag = false;
 	
-	public static byte CartridgeCheckFlag, 
-					   DoorCheckFlag;
+	public static byte CartridgeCheckFlag = 1, 
+					   DoorCheckFlag = 0;
 	
 	public AudioManager audioManager;
 	public SoundPool mPool;
@@ -75,7 +87,13 @@ public class ActionActivity extends Activity {
 	
 	private int checkError = RunActivity.NORMAL_OPERATION;
 	
+	private int languageIdx;
+	
 	public int waitCnt = 0;
+	
+	private boolean isSnapshot = false;
+	
+	private byte[] bitmapBytes;
 	
 	protected void onCreate(Bundle savedInstanceState) {
 			
@@ -86,14 +104,57 @@ public class ActionActivity extends Activity {
 		ActionInit();
 	}
 	
+	private void setImage() {
+		
+		switch(languageIdx) {
+		
+		case LanguageModel.KO	:
+			explainRsrcId1 = R.drawable.scan_text_ko;
+			explainRsrcId2 = R.drawable.qc_scan_text_ko;
+			processRsrcId1 = R.drawable.cpo_text_ko;
+			processRsrcId2 = R.drawable.ppc_text_ko;
+			break;
+			
+		case LanguageModel.EN	:
+			explainRsrcId1 = R.drawable.scan_text_en;
+			explainRsrcId2 = R.drawable.qc_scan_text_en;
+			processRsrcId1 = R.drawable.cpo_text_en;
+			processRsrcId2 = R.drawable.ppc_text_en;
+			break;
+			
+		case LanguageModel.ZH:
+			explainRsrcId1 = R.drawable.scan_text_zh;
+			explainRsrcId2 = R.drawable.qc_scan_text_zh;
+			processRsrcId1 = R.drawable.cpo_text_zh;
+			processRsrcId2 = R.drawable.ppc_text_zh;
+			break;
+			
+		case LanguageModel.JA	:
+			explainRsrcId1 = R.drawable.scan_text_ja;
+			explainRsrcId2 = R.drawable.qc_scan_text_ja;
+			processRsrcId1 = R.drawable.cpo_text_ja;
+			processRsrcId2 = R.drawable.ppc_text_ja;
+			break;
+			
+		default	:
+			explainRsrcId1 = R.drawable.scan_text_en;
+			explainRsrcId2 = R.drawable.qc_scan_text_en;
+			processRsrcId1 = R.drawable.cpo_text_en;
+			processRsrcId2 = R.drawable.ppc_text_en;
+			break;
+		}
+	}
+	
 	public void setButtonId(Activity activity) {
 		
 		escBtn = (Button)activity.findViewById(R.id.escicon);
+		snapshotBtn = (Button)activity.findViewById(R.id.snapshotBtn);
 	}
 	
 	public void setButtonClick() {
 		
 		escBtn.setOnTouchListener(mTouchListener);
+		if(HomeActivity.ANALYZER_SW == HomeActivity.DEVEL) snapshotBtn.setOnTouchListener(mTouchListener);
 	}
 	
 	public void setButtonState(int btnId, boolean state, Activity activity) {
@@ -115,6 +176,14 @@ public class ActionActivity extends Activity {
 			
 				case R.id.escicon		:
 					ESC();
+					break;
+					
+				case R.id.snapshotBtn		:
+					CaptureScreen mCaptureScreen = new CaptureScreen();
+					bitmapBytes = mCaptureScreen.captureScreen(activity);
+					
+					ESCButtonFlag = true;
+					isSnapshot = true;
 					break;
 					
 				default	:
@@ -144,12 +213,15 @@ public class ActionActivity extends Activity {
 		context = this;
 		
 		setButtonId(activity);
+		unenabledAllBtn(activity);
 		setButtonClick();
 		
 		mTimerDisplay = new TimerDisplay();
 		mTimerDisplay.ActivityParm(this, R.id.actionlayout);
 		
 		BarcodeQCCheckFlag = false;
+		
+		enabledAllBtn(activity);
 		
 		startScan(this, this, R.id.actionlayout);
     }
@@ -159,6 +231,10 @@ public class ActionActivity extends Activity {
 		this.activity = activity;
 		this.context = context;
 		this.layoutId = layoutId;
+		
+		mLanguageModel = new LanguageModel(activity);
+		languageIdx = mLanguageModel.getSettingLanguage();
+		setImage();
 		
 		if(HomeActivity.MEASURE_MODE == HomeActivity.A1C) {
 			
@@ -190,6 +266,8 @@ public class ActionActivity extends Activity {
 		
 		            	actionLinear = (RelativeLayout) activity.findViewById(R.id.actionlayout);
 		        		actionLinear.setBackgroundResource(R.drawable.ani_scan_bg);
+		        		scanTextImage = (ImageView) activity.findViewById(R.id.scanTextImage);
+		        		scanTextImage.setBackgroundResource(explainRsrcId1);
 		            }
 		        });
 		    }
@@ -204,6 +282,8 @@ public class ActionActivity extends Activity {
 		
 		actionLinear = (RelativeLayout) activity.findViewById(R.id.actionlayout);
 		actionLinear.setBackgroundResource(R.drawable.ani_qc_scan_bg);
+		scanTextImage = (ImageView) activity.findViewById(R.id.scanTextImage);
+		scanTextImage.setBackgroundResource(explainRsrcId2);
 		BarcodeQCScan mBarcodeQCScan = new BarcodeQCScan();
     	mBarcodeQCScan.start();
 	}
@@ -241,7 +321,12 @@ public class ActionActivity extends Activity {
 					
 						mErrorPopup = new ErrorPopup(activity, context, layoutId, null, 0);
 						mErrorPopup.ErrorBtnDisplay(R.string.e313);
-					}	
+					}
+				
+				} else {
+					
+					checkError = R.string.stop;
+					changeActivity(activity, context);
 				}
 				
 			} else {
@@ -277,7 +362,7 @@ public class ActionActivity extends Activity {
 			
 			if(waitCnt != 6000) {
 			
-				if(!ESCButtonFlag) { 
+				if(!ESCButtonFlag) {
 					
 					if(IsCorrectBarcode) {
 						
@@ -288,15 +373,20 @@ public class ActionActivity extends Activity {
 						
 						} else {
 							
-							CartridgeInsert CartridgeInsertObj = new CartridgeInsert();
-							CartridgeInsertObj.start();
+							DoorOpen mDoorOpen = new DoorOpen();
+							mDoorOpen.start();
 						}
 						
 					} else {
 					
 						mErrorPopup = new ErrorPopup(activity, context, layoutId, null, 0);
 						mErrorPopup.ErrorBtnDisplay(R.string.e313);
-					}	
+					}
+					
+				} else {
+					
+					checkError = R.string.stop;
+					changeActivity(activity, context);
 				}
 				
 			} else {
@@ -306,8 +396,8 @@ public class ActionActivity extends Activity {
 			}
 		}
 	}
-		
-	public class CartridgeInsert extends Thread {
+	
+	public class DoorOpen extends Thread {
 		
 		public void run () {
 
@@ -315,10 +405,48 @@ public class ActionActivity extends Activity {
 			CartridgeAniStart(activity);
 				
 			GpioPort.CartridgeActState = true;
+			GpioPort.DoorActState = true;
+			
 			waitCnt = 0;
 			
-			while(ActionActivity.CartridgeCheckFlag != 1 || IsEnablePopup) { // to test
+			while(ActionActivity.DoorCheckFlag != 0 || IsEnablePopup) { // to test
+					
+				if((waitCnt++ == 5999) || ESCButtonFlag) break;
+				startWarningSound(waitCnt);
+				SerialPort.Sleep(100);
+			}
 			
+			if(waitCnt != 6000) {
+				
+				if(!ESCButtonFlag) {  // to test
+				
+					SerialPort.Sleep(100);
+					
+					CartridgeInsert mCartridgeInsert = new CartridgeInsert();
+					mCartridgeInsert.start();
+				
+				} else {
+					
+					checkError = R.string.stop;
+					changeActivity(activity, context);
+				}
+				
+			} else {
+				
+				checkError = R.string.e312;
+				changeActivity(activity, context);
+			}
+		}
+	}
+	
+	public class CartridgeInsert extends Thread {
+		
+		public void run () {
+
+			CoverAniStart(activity);
+			
+			while(ActionActivity.CartridgeCheckFlag != 1 || IsEnablePopup) { // to test
+					
 				if((waitCnt++ == 5999) || ESCButtonFlag) break;
 				startWarningSound(waitCnt);
 				SerialPort.Sleep(100);
@@ -337,6 +465,11 @@ public class ActionActivity extends Activity {
 					
 					CollectorCover CollectorCoverObj = new CollectorCover();
 					CollectorCoverObj.start();
+				
+				} else {
+					
+					checkError = R.string.stop;
+					changeActivity(activity, context);
 				}
 				
 			} else {
@@ -351,10 +484,6 @@ public class ActionActivity extends Activity {
 		
 		public void run() {
 			
-			/* Cover close action */
-			CoverAniStart(activity);
-			
-			GpioPort.DoorActState = true;
 			waitCnt = 0;
 			
 			while((ActionActivity.DoorCheckFlag != 1) || (ActionActivity.CartridgeCheckFlag != 1) || IsEnablePopup) {
@@ -363,14 +492,13 @@ public class ActionActivity extends Activity {
 				SerialPort.Sleep(100);
 			}
 			
-			CoverAniStop(activity);
-			
 			if(waitCnt != 600) {
 				
 				if(!ESCButtonFlag) {
 				
 					WhichIntent(activity, context, TargetIntent.Run);
-				}
+				
+				} else WhichIntent(activity, context, TargetIntent.Remove);
 				
 			} else {
 				
@@ -382,17 +510,17 @@ public class ActionActivity extends Activity {
 	
 	public void BarcodeAniStart(Activity activity) { // Barcode scan animation start
 		
-		scanImage = (ImageView)activity.findViewById(R.id.userAct1);
+		userActImage = (ImageView)activity.findViewById(R.id.userActImage);
 		
 		new Thread(new Runnable() {
 		    public void run() {    
 		        runOnUiThread(new Runnable(){
 		            public void run(){
 				
-		            	if(BarcodeQCCheckFlag) scanImage.setBackgroundResource(R.drawable.useract1);
-		            	else scanImage.setBackgroundResource(R.drawable.useract2);
+		            	if(BarcodeQCCheckFlag) userActImage.setBackgroundResource(R.drawable.useract1);
+		            	else userActImage.setBackgroundResource(R.drawable.useract2);
 		            	
-		            	scanAni = (AnimationDrawable)scanImage.getBackground();
+		            	scanAni = (AnimationDrawable)userActImage.getBackground();
 		        		scanAni.start();
 		            }
 		        });
@@ -400,18 +528,26 @@ public class ActionActivity extends Activity {
 		}).start();
 	}
 	
-	public void CartridgeAniStart(Activity activity) { // Cartridge insertion animation start
-		
-		actionLinear = (RelativeLayout)activity.findViewById(R.id.actionlayout);
+	public void CartridgeAniStart(final Activity activity) { // Cartridge insertion animation start
 		
 		new Thread(new Runnable() {
 		    public void run() {    
 		        runOnUiThread(new Runnable(){
 		            public void run(){
-		  
-						actionLinear.setBackgroundResource(R.drawable.ani_3steps_bg);
-		        		scanImage.setBackgroundResource(0);
-						scanAni.stop();
+		
+		            	scanTextImage.setBackgroundResource(0);
+		            	userActImage.setBackgroundResource(0);
+		            	scanAni.stop();
+		
+		            	actTextImage = (ImageView) activity.findViewById(R.id.actTextImage);
+		        		actionLinear = (RelativeLayout)activity.findViewById(R.id.actionlayout);
+		        		
+		        		actionLinear.setBackgroundResource(R.drawable.ani_cpo_bg);
+						actTextImage.setBackgroundResource(processRsrcId1);
+						userActImage.setBackgroundResource(R.drawable.useract3);
+						scanAni = (AnimationDrawable)userActImage.getBackground();
+						
+						scanAni.start();
 		            }
 		        });
 		    }
@@ -419,34 +555,17 @@ public class ActionActivity extends Activity {
     }
 	
 	public void CoverAniStart(Activity activity) { // Cover close animation start
-
-		scanImage = (ImageView)activity.findViewById(R.id.userAct4);
 		
 		new Thread(new Runnable() {
 		    public void run() {    
 		        runOnUiThread(new Runnable(){
 		            public void run(){
 		  
-						scanImage.setBackgroundResource(R.drawable.useract4);
-						scanAni = (AnimationDrawable)scanImage.getBackground();
-						
-						actionLinear.setBackgroundResource(R.drawable.ani_close_bg);
-						
-						scanAni.start();
-					}
-		        });
-		    }
-		}).start();
-	}
-	
-	public void CoverAniStop(Activity activity) {
-		
-		new Thread(new Runnable() {
-		    public void run() {    
-		        runOnUiThread(new Runnable(){
-		            public void run(){
-		  
-						scanAni.stop();
+		            	userActImage.setBackgroundResource(0);
+		            	scanAni.stop();
+		            	
+		            	actionLinear.setBackgroundResource(R.drawable.ani_ppc_bg);
+						actTextImage.setBackgroundResource(processRsrcId2);
 					}
 		        });
 		    }
@@ -505,7 +624,6 @@ public class ActionActivity extends Activity {
 			case 5969 :
 			case 5979 :
 			case 5989 :
-			case 5999 :
 				mSoundModel = new SoundModel(activity, context);
 				mSoundModel.playSound(R.raw.beep);
 				break;
@@ -525,7 +643,6 @@ public class ActionActivity extends Activity {
 			case 269 :
 			case 279 :
 			case 289 :
-			case 299 :
 				mSoundModel = new SoundModel(activity, context);
 				mSoundModel.playSound(R.raw.beep);
 				break;
@@ -570,23 +687,36 @@ public class ActionActivity extends Activity {
 			nextIntent = new Intent(context, RunActivity.class);
 			break;
 						
-		case Home	:	
-			ESCButtonFlag = true;
+		case Home	:
+			if(!isSnapshot) {
+				
+				nextIntent = new Intent(context, HomeActivity.class);
+				nextIntent.putExtra("System Check State", (int) checkError);
 			
-			nextIntent = new Intent(context, HomeActivity.class);
-			nextIntent.putExtra("System Check State", (int) checkError);
+			} else {
+				nextIntent = new Intent(context, FileSaveActivity.class);
+				nextIntent.putExtra("snapshot", true);
+				nextIntent.putExtra("datetime", TimerDisplay.rTime);
+				nextIntent.putExtra("bitmap", bitmapBytes);
+			}
 			break;
 			
 		case FunctionalTest	:
-			ESCButtonFlag = true;
-			
-			nextIntent = new Intent(context, FunctionalTestActivity.class);
-			nextIntent.putExtra("System Check State", (int) checkError);
+			if(!isSnapshot) {
+				
+				nextIntent = new Intent(context, FunctionalTestActivity.class);
+				nextIntent.putExtra("System Check State", (int) checkError);
+				
+			} else {
+				
+				nextIntent = new Intent(context, FileSaveActivity.class);
+				nextIntent.putExtra("snapshot", true);
+				nextIntent.putExtra("datetime", TimerDisplay.rTime);
+				nextIntent.putExtra("bitmap", bitmapBytes);
+			}			
 			break;
 				
-		case Remove	:	
-			ESCButtonFlag = true;
-			
+		case Remove	:				
 			nextIntent = new Intent(context, RemoveActivity.class);
 			nextIntent.putExtra("System Check State", R.string.stop);
 			nextIntent.putExtra("WhichIntent", (int) ResultActivity.COVER_ACTION_ESC);
@@ -595,6 +725,19 @@ public class ActionActivity extends Activity {
 		default		:	
 			break;			
 		}
+		
+		activity.startActivity(nextIntent);
+		finish(activity);
+	}
+	
+	public void WhichIntentforSnapshot(Activity activity, Context context, byte[] bitmapBytes) {
+		
+		Intent nextIntent = null;
+		
+		nextIntent = new Intent(context, FileSaveActivity.class);
+		nextIntent.putExtra("snapshot", true);
+		nextIntent.putExtra("datetime", TimerDisplay.rTime);
+		nextIntent.putExtra("bitmap", bitmapBytes);
 		
 		activity.startActivity(nextIntent);
 		finish(activity);

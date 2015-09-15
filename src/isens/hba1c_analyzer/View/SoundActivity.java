@@ -15,6 +15,7 @@ import isens.hba1c_analyzer.R.raw;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Paint;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.media.SoundPool.OnLoadCompleteListener;
@@ -32,9 +33,14 @@ public class SoundActivity extends Activity implements SoundIView {
 	
 	private SoundPresenter mSoundPresenter;
 	
-	private ImageView titleImage, iconImage, barGaugeImage;
+	private TextView titleText;
 	
-	private Button backBtn, minusBtn, plusBtn;
+	private ImageView iconImage, barGaugeImage;
+	
+	private Button backBtn, 
+				   minusBtn, 
+				   plusBtn,
+				   snapshotBtn;
 	
 	protected void onCreate(Bundle savedInstanceState) {
 		
@@ -48,15 +54,24 @@ public class SoundActivity extends Activity implements SoundIView {
 	
 	public void setImageId() {
 		
-		titleImage = (ImageView) findViewById(R.id.title);
 		iconImage = (ImageView) findViewById(R.id.icon);
 		barGaugeImage = (ImageView) findViewById(R.id.bargauge);
 	}
 	
 	public void setImage() {
 		
-		titleImage.setBackgroundResource(R.drawable.sound_title);
 		iconImage.setBackgroundResource(R.drawable.sound);
+	}
+	
+	public void setTextId() {
+		
+		titleText = (TextView) findViewById(R.id.titleText);
+	}
+	
+	public void setText() {
+		
+		titleText.setPaintFlags(titleText.getPaintFlags()|Paint.FAKE_BOLD_TEXT_FLAG);
+		titleText.setText(R.string.soundtitle);
 	}
 	
 	public void setButtonId() {
@@ -64,6 +79,7 @@ public class SoundActivity extends Activity implements SoundIView {
 		backBtn = (Button)findViewById(R.id.backBtn);
 		minusBtn = (Button)findViewById(R.id.minusBtn);
 		plusBtn = (Button)findViewById(R.id.plusBtn);
+		snapshotBtn = (Button)findViewById(R.id.snapshotBtn);
 	}
 	
 	public void setButtonClick() {
@@ -71,6 +87,7 @@ public class SoundActivity extends Activity implements SoundIView {
 		backBtn.setOnTouchListener(mTouchListener);
 		minusBtn.setOnTouchListener(mTouchListener);
 		plusBtn.setOnTouchListener(mTouchListener);
+		if(HomeActivity.ANALYZER_SW == HomeActivity.DEVEL) snapshotBtn.setOnTouchListener(mTouchListener);
 	}
 	
 	public void setButtonState(int btnId, boolean state) {
@@ -87,10 +104,12 @@ public class SoundActivity extends Activity implements SoundIView {
 			
 			case MotionEvent.ACTION_UP	:
 				
+				mSoundPresenter.unenabledAllBtn();
+				
 				switch(v.getId()) {
 			
 				case R.id.backBtn	:
-					mSoundPresenter.changeActivity();
+					mSoundPresenter.changeActivity(v.getId());
 					break;
 					
 				case R.id.minusBtn	:
@@ -99,6 +118,10 @@ public class SoundActivity extends Activity implements SoundIView {
 					
 				case R.id.plusBtn	:
 					mSoundPresenter.upSound();
+					break;
+					
+				case R.id.snapshotBtn		:
+					mSoundPresenter.changeActivity(v.getId());
 					break;
 					
 				default	:

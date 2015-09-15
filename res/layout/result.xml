@@ -25,41 +25,54 @@
         android:textSize="24px"
         android:textColor="#444444"
         android:shadowColor="#7F000000"
-        android:shadowDx="2"
-        android:shadowDy="2"
+        android:shadowDx="1"
+        android:shadowDy="1"
         android:shadowRadius="1.2"
         android:layout_marginLeft="578px"
         android:layout_marginTop="15px" />
 
    	<Button
-        android:id="@+id/homeicon"
+        android:id="@+id/snapshotBtn"
+        android:layout_width="180px"
+        android:layout_height="60px"
+        android:layout_marginLeft="120px"
+        android:background="#00000000" />
+   	
+   	<Button
+        android:id="@+id/homeBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="726px"
         android:background="@drawable/home_selector" />
  		   	       	    	
-   	<TextView 
-	    android:id="@+id/hba1cPct"
-	    android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="84px"
-        android:layout_centerHorizontal="true"
-        android:typeface="sans"
-        android:textColor="#1F3E6F"
-        android:textSize="85px"
-        android:textStyle="bold" />
-   	
-   	<TextView
-	    android:id="@+id/hba1cUnit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/hba1cPct"
-        android:layout_alignBaseline="@id/hba1cPct"
-        android:typeface="sans"
-        android:textColor="#1F3E6F"
-        android:textStyle="bold"
-        android:layout_marginLeft="2px" />
-	 
+   	<RelativeLayout
+   	    android:layout_width="800px"
+        android:layout_height="95px"
+   	    android:layout_marginTop="84px"
+	    android:layout_centerHorizontal="true"
+	    android:gravity="center">
+   	    
+	   	<TextView 
+		    android:id="@+id/hba1cPct"
+		    android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:typeface="sans"
+	        android:textColor="#1F3E6F"
+	        android:textStyle="bold" />
+	   	
+	   	<TextView
+		    android:id="@+id/hba1cUnit"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_toRightOf="@id/hba1cPct"
+	        android:layout_alignBaseline="@id/hba1cPct"
+	        android:typeface="sans"
+	        android:textColor="#1F3E6F"
+	        android:textStyle="bold"
+	        android:layout_marginLeft="2px" />
+	    
+   	</RelativeLayout>
+   	 
    	<RelativeLayout 
 	    android:layout_width="180px"
 	    android:layout_height="wrap_content"
@@ -67,54 +80,59 @@
         android:layout_marginTop="208px" >
 	    
 		<TextView
-	        android:id="@+id/primaryTitle"
 	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
+	        android:layout_height="30px"
 	        android:layout_marginTop="0px"
 	        android:layout_centerHorizontal="true"
-	        android:typeface="sans"
+	        android:text="@string/primary"
+            android:typeface="sans"
 	        android:textSize="20px"
-	        android:textColor="#565656" />
+	        android:textColor="#565656"
+	        android:gravity="center" />
 		
 		<TextView
-		    android:id="@+id/rangeTitle"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
+		    android:layout_width="wrap_content"
+	        android:layout_height="30px"
 	        android:layout_marginTop="30px"
 	        android:layout_centerHorizontal="true"
-	        android:typeface="sans"
+	        android:text="@string/refrange"
+            android:typeface="sans"
 	        android:textSize="20px"
-	        android:textColor="#565656" />
+	        android:textColor="#565656"
+	        android:gravity="center" />
 		
 		<TextView
 	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
+	        android:layout_height="30px"
 	        android:layout_marginTop="60px"
 	        android:layout_centerHorizontal="true"
-	        android:text="Cartridge Lot"
+	        android:text="@string/lot"
             android:typeface="sans"
 	        android:textSize="20px"
-	        android:textColor="#565656" />
+	        android:textColor="#565656"
+	        android:gravity="center" />
 		
 		<TextView
 	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
+	        android:layout_height="30px"
 	        android:layout_marginTop="90px"
 	        android:layout_centerHorizontal="true"
-	        android:text="Test Date"
+	        android:text="@string/testdate"
             android:typeface="sans"
 	        android:textSize="20px"
-	        android:textColor="#565656" />
+	        android:textColor="#565656"
+	        android:gravity="center" />
 		
 		<TextView
 	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
+	        android:layout_height="30px"
 	        android:layout_marginTop="120px"
 	        android:layout_centerHorizontal="true"
-            android:text="Patient ID"
+            android:text="@string/patientid"
             android:typeface="sans"
 	        android:textSize="20px"
-	        android:textColor="#565656" />
+	        android:textColor="#565656"
+	        android:gravity="center" />
 	    	    
 	</RelativeLayout>
    	
@@ -127,22 +145,24 @@
 		<TextView
 	        android:id="@+id/primary"
 	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
+	        android:layout_height="30px"
 	        android:layout_marginLeft="10px"
 	        android:typeface="sans"
 	        android:textSize="20px"
 	        android:textColor="#242424"
-	        android:layout_marginTop="0px" />
+	        android:layout_marginTop="0px"
+	        android:gravity="center" />
 		
 		<TextView
 		    android:id="@+id/range"
 	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
+	        android:layout_height="30px"
 	        android:layout_marginLeft="10px"
 	        android:typeface="sans"
 	        android:textSize="20px"
 	        android:textColor="#242424"
-	        android:layout_marginTop="30px" />
+	        android:layout_marginTop="30px"
+	        android:gravity="center" />
 		
 		<TextView
 		    android:id="@+id/unit"
@@ -158,12 +178,13 @@
 		<TextView
 		    android:id="@+id/testdate1"
 	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
+	        android:layout_height="30px"
 	        android:layout_marginLeft="10px"
             android:typeface="sans"
 	        android:textSize="20px"
 	        android:textColor="#242424"
-	        android:layout_marginTop="90px" />
+	        android:layout_marginTop="90px"
+	        android:gravity="center" />
 		
 		<TextView
 		    android:id="@+id/testdate2"
@@ -179,12 +200,13 @@
 		<TextView
 		    android:id="@+id/ref"
 	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
+	        android:layout_height="30px"
 	        android:layout_marginLeft="10px"
             android:typeface="sans"
 	        android:textSize="20px"
 	        android:textColor="#242424"
-	        android:layout_marginTop="60px" />
+	        android:layout_marginTop="60px"
+	        android:gravity="center" />
 		
 		<EditText
 	        android:id="@+id/patientidtext"
@@ -213,26 +235,38 @@
         android:background="@drawable/result_convert_selector" />
 	
     <Button
-        android:id="@+id/printbtn"
+        android:id="@+id/homeBtn2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Print"
+        android:text="@string/home"
         android:typeface="sans"
         android:textSize="20px"
         android:textColor="#ffffff"
-        android:layout_marginLeft="230px"
+        android:layout_marginLeft="128px"
         android:layout_marginTop="396px"
-        android:background="@drawable/btn_selector1" />   
+        android:background="@drawable/btn_selector1" />
 
     <Button
         android:id="@+id/nextsamplebtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Next Sample"
+        android:text="@string/nextsample"
         android:typeface="sans"
         android:textSize="20px"
         android:textColor="#ffffff"
-        android:layout_marginLeft="413px"
+        android:layout_marginLeft="313px"
+        android:layout_marginTop="396px"
+        android:background="@drawable/btn_selector1" />
+    
+    <Button
+        android:id="@+id/printbtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/print"
+        android:typeface="sans"
+        android:textSize="20px"
+        android:textColor="#ffffff"
+        android:layout_marginLeft="498px"
         android:layout_marginTop="396px"
         android:background="@drawable/btn_selector1" />
     	    

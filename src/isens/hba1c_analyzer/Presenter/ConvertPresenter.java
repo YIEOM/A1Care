@@ -8,10 +8,13 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Handler;
 import android.widget.Button;
+import isens.hba1c_analyzer.HomeActivity;
 import isens.hba1c_analyzer.R;
+import isens.hba1c_analyzer.SerialPort;
 import isens.hba1c_analyzer.TimerDisplay;
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
 import isens.hba1c_analyzer.Model.ActivityChange;
+import isens.hba1c_analyzer.Model.CaptureScreen;
 import isens.hba1c_analyzer.Model.ConvertModel;
 import isens.hba1c_analyzer.Model.DateModel;
 import isens.hba1c_analyzer.Model.LanguageModel;
@@ -47,19 +50,20 @@ public class ConvertPresenter {
 		
 		mConvertIView.setImageId();
 		mConvertIView.setImage();
-		mConvertIView.setButtonId();
 		mConvertIView.setTextId();
-		mConvertIView.setButtonClick();
+		mConvertIView.setButtonId();
 		
 		mConvertModel.initPrimary();
 		display();
 		
 		mTimerDisplay.ActivityParm(activity, layout);
+		
+		SerialPort.Sleep(500);
+		
+		mConvertIView.setButtonClick();
 	}
 	
 	public void changePrimaryUp() {
-		
-		unenabledAllBtn();
 		
 		mConvertModel.upPrimaryIdx();
 		
@@ -69,8 +73,6 @@ public class ConvertPresenter {
 	}
 
 	public void changePrimaryDown() {
-		
-		unenabledAllBtn();
 		
 		mConvertModel.downPrimaryIdx();
 		
@@ -101,11 +103,30 @@ public class ConvertPresenter {
 		mConvertIView.setButtonState(R.id.rightBtn, false);
 	}
 	
-	public void changeActivity() {
+	public void changeActivity(int btn) {
 		
-		mConvertModel.setPrimary();
+		switch(btn) {
 		
-		mActivityChange.whichIntent(TargetIntent.SystemSetting);
-		mActivityChange.finish();
+		case R.id.backBtn	:
+			mConvertModel.setPrimary();
+			
+			mActivityChange.whichIntent(TargetIntent.SystemSetting);
+			mActivityChange.finish();			
+			break;
+		
+		case R.id.snapshotBtn	:
+			CaptureScreen mCaptureScreen = new CaptureScreen();
+			byte[] bitmapBytes = mCaptureScreen.captureScreen(activity);
+			
+			mActivityChange.whichIntent(TargetIntent.SnapShot);
+			mActivityChange.putBooleanIntent("snapshot", true);
+			mActivityChange.putStringsIntent("datetime", TimerDisplay.rTime);
+			mActivityChange.putBytesIntent("bitmap", bitmapBytes);
+			mActivityChange.finish();
+			break;
+			
+		default	:
+			break;
+		}
 	}
 }

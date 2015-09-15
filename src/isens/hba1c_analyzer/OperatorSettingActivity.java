@@ -6,10 +6,13 @@ import java.util.HashMap;
 import java.util.List;
 
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
+import isens.hba1c_analyzer.Model.CaptureScreen;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ResolveInfo;
 import android.content.res.Resources;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.os.Debug;
 import android.util.Log;
@@ -38,6 +41,13 @@ public class OperatorSettingActivity extends Activity {
 	public DatabaseHander mDatabaseHander;
 	public TimerDisplay mTimerDisplay;
 	
+	public Activity activity;
+	private Context context;
+	
+	public TextView titleText,
+					pageText,
+					modifyText;
+	
 	private Button homeIcon,
 				   backIcon,
 				   addOperatorBtn,
@@ -45,7 +55,8 @@ public class OperatorSettingActivity extends Activity {
 				   delOperatorBtn,
 				   nextViewBtn,
 				   preViewBtn,
-				   loginBtn;
+				   loginBtn,
+				   snapshotBtn;
 	
 	private ImageButton checkBoxBtn1,
 						checkBoxBtn2,
@@ -60,9 +71,7 @@ public class OperatorSettingActivity extends Activity {
 	
 	private boolean checkFlag = false;
 	private ImageButton whichBox = null;
-	
-	public TextView pageText;
-	
+
 	private int boxNum = 0;
 	private static int pageNum = 1;
 	
@@ -73,7 +82,21 @@ public class OperatorSettingActivity extends Activity {
 		setContentView(R.layout.operatorsetting);
 		
 		OperatorInit();
-	}	
+	}
+	
+	private void setTextId() {
+		
+		titleText = (TextView) findViewById(R.id.titleText);
+		modifyText = (TextView) findViewById(R.id.modifyText);
+	}
+	
+	private void setText() {
+		
+		titleText.setPaintFlags(titleText.getPaintFlags()|Paint.FAKE_BOLD_TEXT_FLAG);
+		titleText.setText(R.string.operatorsettingtitle);
+		modifyText.setPaintFlags(modifyText.getPaintFlags()|Paint.FAKE_BOLD_TEXT_FLAG);
+		modifyText.setText(R.string.modify);
+	}
 	
 	public void setButtonId() {
 		
@@ -85,6 +108,7 @@ public class OperatorSettingActivity extends Activity {
 		delOperatorBtn = (Button)findViewById(R.id.deletebtn);
 		nextViewBtn = (Button)findViewById(R.id.nextviewbtn);
 		backIcon = (Button)findViewById(R.id.backicon);
+		snapshotBtn = (Button)activity.findViewById(R.id.snapshotBtn);
 	}
 	
 	public void setButtonClick() {
@@ -97,11 +121,12 @@ public class OperatorSettingActivity extends Activity {
 		delOperatorBtn.setOnTouchListener(mTouchListener);
 		nextViewBtn.setOnTouchListener(mTouchListener);
 		backIcon.setOnTouchListener(mTouchListener);
+		if(HomeActivity.ANALYZER_SW == HomeActivity.DEVEL) snapshotBtn.setOnTouchListener(mTouchListener);
 	}
 	
-	public void setButtonState(int btnId, boolean state) {
+	public void setButtonState(int btnId, boolean state, Activity activity) {
 		
-		findViewById(btnId).setEnabled(state);
+		activity.findViewById(btnId).setEnabled(state);
 	}
 	
 	public void setImageButtonId() {
@@ -130,46 +155,46 @@ public class OperatorSettingActivity extends Activity {
 			switch(event.getAction()) {
 			
 			case MotionEvent.ACTION_UP	:
-				unenabledAllBtn(); //0624
+				unenabledAllBtn(activity);
 
 				switch(v.getId()) {
 			
 				case R.id.homeicon	:
-					WhichIntent(TargetIntent.Home);
+					WhichIntent(activity, context, TargetIntent.Home);
 					break;
 				
 				case R.id.previousviewbtn	:
 					TurnPage(PRE_VIEW);
-					enabledAllBtn(); //0624
+					enabledAllBtn(activity);
 					break;
 				
 				case R.id.loginbtn	:
 					Login();
-					enabledAllBtn(); //0624
 					break;
 				
 				case R.id.modifybtn	:
 					Modify();
-					enabledAllBtn(); //0624
 					break;
 				
 				case R.id.addbtn	:
 					Add();
-					enabledAllBtn(); //0624
 					break;
 				
 				case R.id.deletebtn	:
 					Delete();
-					enabledAllBtn(); //0624
 					break;
 				
 				case R.id.nextviewbtn	:
 					TurnPage(NEXT_VIEW);
-					enabledAllBtn(); //0624
+					enabledAllBtn(activity); //0624
 					break;
 				
 				case R.id.backicon	:
-					WhichIntent(TargetIntent.Setting);
+					WhichIntent(activity, context, TargetIntent.Setting);
+					break;
+					
+				case R.id.snapshotBtn		:
+					WhichIntent(activity, context, TargetIntent.SnapShot);
 					break;
 					
 				default	:
@@ -183,28 +208,28 @@ public class OperatorSettingActivity extends Activity {
 		}
 	};
 	
-	public void enabledAllBtn() {
+	public void enabledAllBtn(Activity activity) {
 
-		setButtonState(R.id.homeicon, true);
-		setButtonState(R.id.previousviewbtn, true);
-		setButtonState(R.id.loginbtn, true);
-		setButtonState(R.id.modifybtn, true);
-		setButtonState(R.id.addbtn, true);
-		setButtonState(R.id.deletebtn, true);
-		setButtonState(R.id.nextviewbtn, true);
-		setButtonState(R.id.backicon, true);
+		setButtonState(R.id.homeicon, true, activity);
+		setButtonState(R.id.previousviewbtn, true, activity);
+		setButtonState(R.id.loginbtn, true, activity);
+		setButtonState(R.id.modifybtn, true, activity);
+		setButtonState(R.id.addbtn, true, activity);
+		setButtonState(R.id.deletebtn, true, activity);
+		setButtonState(R.id.nextviewbtn, true, activity);
+		setButtonState(R.id.backicon, true, activity);
 	}
 	
-	public void unenabledAllBtn() {
+	public void unenabledAllBtn(Activity activity) {
 		
-		setButtonState(R.id.homeicon, false);
-		setButtonState(R.id.previousviewbtn, false);
-		setButtonState(R.id.loginbtn, false);
-		setButtonState(R.id.modifybtn, false);
-		setButtonState(R.id.addbtn, false);
-		setButtonState(R.id.deletebtn, false);
-		setButtonState(R.id.nextviewbtn, false);
-		setButtonState(R.id.backicon, false);
+		setButtonState(R.id.homeicon, false, activity);
+		setButtonState(R.id.previousviewbtn, false, activity);
+		setButtonState(R.id.loginbtn, false, activity);
+		setButtonState(R.id.modifybtn, false, activity);
+		setButtonState(R.id.addbtn, false, activity);
+		setButtonState(R.id.deletebtn, false, activity);
+		setButtonState(R.id.nextviewbtn, false, activity);
+		setButtonState(R.id.backicon, false, activity);
 	}
 	
 	ImageButton.OnTouchListener mImageTouchListener = new View.OnTouchListener() {
@@ -255,10 +280,13 @@ public class OperatorSettingActivity extends Activity {
 		
 		int count;
 		
+		activity = this;
+		context = this;
+		
+		setTextId();
+		setText();
 		setButtonId();
-		setButtonClick();
 		setImageButtonId();
-		setImageButtonClick();		
 		
 		mTimerDisplay = new TimerDisplay();
 		mTimerDisplay.ActivityParm(this, R.id.operatorlayout);
@@ -266,6 +294,11 @@ public class OperatorSettingActivity extends Activity {
 		mOperatorPopup = new OperatorPopup(this, getApplicationContext(), R.id.operatorlayout);
 		count = mOperatorPopup.OperatorCount();
 		OperatorDisplay(this, mOperatorPopup.ReadOperator(count), count, count);
+		
+		SerialPort.Sleep(500);
+		
+		setButtonClick();
+		setImageButtonClick();		
 	}
 
 	public void Login() {
@@ -290,7 +323,8 @@ public class OperatorSettingActivity extends Activity {
 		
 			mOperatorPopup = new OperatorPopup(this, this, R.id.operatorlayout);
 			mOperatorPopup.ModOperatorDisplay(OperatorText[boxNum - 1].getText().toString());
-		}
+		
+		} else enabledAllBtn(activity);
 	}
 	
 	public void Delete() {
@@ -299,7 +333,8 @@ public class OperatorSettingActivity extends Activity {
 			
 			mOperatorPopup = new OperatorPopup(this, this, R.id.operatorlayout);
 			mOperatorPopup.DelOperatorDisplay(OperatorText[boxNum - 1].getText().toString());
-		}
+		
+		} else enabledAllBtn(activity);
 	}
 	
 	public void PressedCheckBox(ImageButton box) { // displaying the button pressed
@@ -433,7 +468,7 @@ public class OperatorSettingActivity extends Activity {
 		}
 	}
 	
-	public void WhichIntent(TargetIntent Itn) { // Activity conversion
+	public void WhichIntent(Activity activity, Context context, TargetIntent Itn) { // Activity conversion
 		
 		Intent nextIntent = null;
 		
@@ -447,17 +482,40 @@ public class OperatorSettingActivity extends Activity {
 			nextIntent = new Intent(getApplicationContext(), SettingActivity.class);
 			break;
 			
+		case SnapShot	:
+			CaptureScreen mCaptureScreen = new CaptureScreen();
+			byte[] bitmapBytes = mCaptureScreen.captureScreen(activity);
+			
+			nextIntent = new Intent(context, FileSaveActivity.class);
+			nextIntent.putExtra("snapshot", true);
+			nextIntent.putExtra("datetime", TimerDisplay.rTime);
+			nextIntent.putExtra("bitmap", bitmapBytes);
+			break;
+			
 		default		:	
 			break;			
 		}	
 		
 		startActivity(nextIntent);
-		finish();
+		finish(activity);
 	}
 	
-	public void finish() {
+	public void WhichIntentforSnapshot(Activity activity, Context context, byte[] bitmapBytes) {
+		
+		Intent nextIntent = null;
+		
+		nextIntent = new Intent(context, FileSaveActivity.class);
+		nextIntent.putExtra("snapshot", true);
+		nextIntent.putExtra("datetime", TimerDisplay.rTime);
+		nextIntent.putExtra("bitmap", bitmapBytes);
+		
+		activity.startActivity(nextIntent);
+		finish(activity);
+	}
+	
+	public void finish(Activity activity) {
 		
 		super.finish();
-		overridePendingTransition(R.anim.fade, R.anim.hold);
+		activity.overridePendingTransition(R.anim.fade, R.anim.hold);
 	}
 }

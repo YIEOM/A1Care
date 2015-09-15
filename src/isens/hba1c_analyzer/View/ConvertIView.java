@@ -8,7 +8,7 @@ public interface ConvertIView {
 	void setImageId();
 	void setImage();
 	void setTextId();
-	void setText(int language);
+	void setText(int unit);
 	void setButtonId();
 	void setButtonClick();
 	void setButtonState(int btnId, boolean state);

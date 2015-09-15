@@ -1,6 +1,7 @@
 package isens.hba1c_analyzer;
 
 import isens.hba1c_analyzer.Model.Hardware;
+import isens.hba1c_analyzer.Model.LanguageModel;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -11,14 +12,18 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.res.Resources;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
 public class SerialPort {
 	
-	public Barcode mBarcode;
-	public ResultActivity mResultActivity;
+	private Barcode mBarcode;
+	private ResultActivity mResultActivity;
+	private LanguageModel mLanguageModel;
 	
 	/* Board Serial set-up */
 	private static FileDescriptor BoardFd;
@@ -156,10 +161,15 @@ public class SerialPort {
 	
 	public class PrinterTxThread extends Thread { // Instruction for a printer
 		
+		private Context context;
+		private Activity activity;
+		
 		String type = "",
 			   primary = "",
 			   unit = "",
 			   range;
+		
+		String charSet = "";
 		
 		StringBuffer txData;
 		
@@ -170,13 +180,18 @@ public class SerialPort {
 			oIdx,
 			oLen;
 		
-		PrinterTxThread(byte mode, StringBuffer txData) {
+		PrinterTxThread(Activity activity, Context context, byte mode, StringBuffer txData) {
 			
+			this.activity = activity;
+			this.context = context;
 			this.mode = mode;
 			this.txData = txData;
 		}
 		
 		public void run() {
+			
+			mLanguageModel = new LanguageModel(activity);
+			charSet = getCharSet(mLanguageModel.getSettingLanguage());
 			
 			try {
 				
@@ -190,7 +205,7 @@ public class SerialPort {
 					oLen = Integer.parseInt(txData.substring(pIdx + pLen, oIdx));
 					
 					pFileOutputStream.write(STX);
-
+					
 					/* i-SENS */
 					pFileOutputStream.write(LF);
 					pFileOutputStream.write(CR);
@@ -216,24 +231,21 @@ public class SerialPort {
 					
 						pFileOutputStream.write(LF);
 						pFileOutputStream.write(CR);
-						pFileOutputStream.write("Result Data".getBytes());
+						pFileOutputStream.write(context.getResources().getString(R.string.resultdata).getBytes(charSet));
 						
 					} else if(mode == PRINT_RECORD) {
 					
 						pFileOutputStream.write(LF);
 						pFileOutputStream.write(CR);
-						pFileOutputStream.write("Record Data".getBytes());
+						pFileOutputStream.write(context.getResources().getString(R.string.recorddata).getBytes(charSet));
 					}
-						
+					
 					/* Test Date */
 					pFileOutputStream.write(LF);
 					pFileOutputStream.write(CR);
-					pFileOutputStream.write("Test Date".getBytes());
+					pFileOutputStream.write(context.getResources().getString(R.string.testdate).getBytes(charSet));
 					
-					pFileOutputStream.write(ESC);
-					pFileOutputStream.write(0x24);
-					pFileOutputStream.write(0xC8);
-					pFileOutputStream.write(0x00);
+					setGap();
 					
 					/* Year */
 					pFileOutputStream.write(CR);
@@ -267,12 +279,9 @@ public class SerialPort {
 					/* Type */
 					pFileOutputStream.write(LF);
 					pFileOutputStream.write(CR);
-					pFileOutputStream.write("Type".getBytes());
+					pFileOutputStream.write(context.getResources().getString(R.string.type).getBytes(charSet));
 					
-					pFileOutputStream.write(ESC);
-					pFileOutputStream.write(0x24);
-					pFileOutputStream.write(0xC8);
-					pFileOutputStream.write(0x00);
+					setGap();
 					
 					/* HbA1c */
 					type = txData.substring(18, 19);
@@ -288,12 +297,9 @@ public class SerialPort {
 					/* Primary */
 					pFileOutputStream.write(LF);
 					pFileOutputStream.write(CR);
-					pFileOutputStream.write("Primary".getBytes());
+					pFileOutputStream.write(context.getResources().getString(R.string.primary).getBytes(charSet));
 					
-					pFileOutputStream.write(ESC);
-					pFileOutputStream.write(0x24);
-					pFileOutputStream.write(0xC8);
-					pFileOutputStream.write(0x00);
+					setGap();
 					
 					primary = txData.substring(oIdx + oLen, oIdx + oLen + 1);
 					
@@ -317,12 +323,9 @@ public class SerialPort {
 					/* Result */
 					pFileOutputStream.write(LF);
 					pFileOutputStream.write(CR);
-					pFileOutputStream.write("Result".getBytes());
+					pFileOutputStream.write(context.getResources().getString(R.string.result).getBytes(charSet));
 					
-					pFileOutputStream.write(ESC);
-					pFileOutputStream.write(0x24);
-					pFileOutputStream.write(0xC8);
-					pFileOutputStream.write(0x00);
+					setGap();
 					
 					/* HbA1c */
 					pFileOutputStream.write(CR);
@@ -332,12 +335,9 @@ public class SerialPort {
 					/* Reference Range */
 					pFileOutputStream.write(LF);
 					pFileOutputStream.write(CR);
-					pFileOutputStream.write("Ref. Range".getBytes());
+					pFileOutputStream.write(context.getResources().getString(R.string.refrange).getBytes(charSet));
 					
-					pFileOutputStream.write(ESC);
-					pFileOutputStream.write(0x24);
-					pFileOutputStream.write(0xC8);
-					pFileOutputStream.write(0x00);
+					setGap();
 					
 					/* 4.0 - 6.0% */
 					pFileOutputStream.write(CR);
@@ -346,12 +346,9 @@ public class SerialPort {
 					/* Test No. */
 					pFileOutputStream.write(LF);
 					pFileOutputStream.write(CR);
-					pFileOutputStream.write("Test No.".getBytes());
+					pFileOutputStream.write(context.getResources().getString(R.string.testnum).getBytes(charSet));
 					
-					pFileOutputStream.write(ESC);
-					pFileOutputStream.write(0x24);
-					pFileOutputStream.write(0xC8);
-					pFileOutputStream.write(0x00);
+					setGap();
 					
 					/* Test number */
 					pFileOutputStream.write(CR);
@@ -360,12 +357,9 @@ public class SerialPort {
 					/* Cartridge Lot */
 					pFileOutputStream.write(LF);
 					pFileOutputStream.write(CR);
-					pFileOutputStream.write("Ref#".getBytes());
+					pFileOutputStream.write(context.getResources().getString(R.string.lot).getBytes(charSet));
 					
-					pFileOutputStream.write(ESC);
-					pFileOutputStream.write(0x24);
-					pFileOutputStream.write(0xC8);
-					pFileOutputStream.write(0x00);
+					setGap();
 					
 					/* Lot number */
 					pFileOutputStream.write(CR);
@@ -374,12 +368,9 @@ public class SerialPort {
 					/* PID */
 					pFileOutputStream.write(LF);
 					pFileOutputStream.write(CR);
-					pFileOutputStream.write("Patient ID".getBytes());
+					pFileOutputStream.write(context.getResources().getString(R.string.patientid).getBytes(charSet));
 					
-					pFileOutputStream.write(ESC);
-					pFileOutputStream.write(0x24);
-					pFileOutputStream.write(0xC8);
-					pFileOutputStream.write(0x00);
+					setGap();
 					
 					/* Patient ID */
 					pFileOutputStream.write(CR);
@@ -388,12 +379,9 @@ public class SerialPort {
 					/* OID */
 					pFileOutputStream.write(LF);
 					pFileOutputStream.write(CR);
-					pFileOutputStream.write("Operator ID".getBytes());
+					pFileOutputStream.write(context.getResources().getString(R.string.operatorid).getBytes(charSet));
 					
-					pFileOutputStream.write(ESC);
-					pFileOutputStream.write(0x24);
-					pFileOutputStream.write(0xC8);
-					pFileOutputStream.write(0x00);
+					setGap();
 					
 					/* Operator ID */
 					pFileOutputStream.write(CR);
@@ -407,6 +395,11 @@ public class SerialPort {
 					pFileOutputStream.write(ESC);
 					pFileOutputStream.write(0x64); // print and feed n lines
 					pFileOutputStream.write(0x0A); // lines of number
+					
+					pFileOutputStream.write(GS); // cut paper
+					pFileOutputStream.write(0x56);
+					pFileOutputStream.write(0x30);
+					
 					pFileOutputStream.write(ETX);
 				}					
 						
@@ -416,6 +409,51 @@ public class SerialPort {
 				return;
 			}
 		}
+		
+		private void setGap() {
+			
+			try {
+			
+				pFileOutputStream.write(ESC);
+				pFileOutputStream.write(0x24);
+				pFileOutputStream.write(0xC8);
+				pFileOutputStream.write(0x00);
+				
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	private String getCharSet(int idx) {
+		
+		String encoding = "";
+		
+		switch(idx) {
+		
+		case LanguageModel.KO	:
+			encoding = "EUC-KR";
+			break;
+			
+		case LanguageModel.EN	:
+			encoding = "US-ASCII";
+			break;
+			
+		case LanguageModel.ZH:
+			encoding = "GB2312";
+			break;
+			
+		case LanguageModel.JA	:
+			encoding = "Shift_JIS";
+			break;
+			
+		default	:
+			encoding = "US-ASCII";
+			break;
+		}	
+		
+		return encoding;
 	}
 
 	public class BoardRxThread extends Thread { // Receiving from a board
@@ -528,14 +566,13 @@ public class SerialPort {
 
 		tempStr = tempStrData.substring(0, 1);
 		
-		if(!tempStr.equals("S") && !tempStr.equals("E")){
+		if(!tempStr.equals("S") && !tempStr.equals("E")) {
 			
 			BoardMessageBuffer(tempStrData);
 			
 		} else if(tempStr.equals("S")) {
 			
 			SensorMessageBuffer(tempStrData);
-			
 		} else {
 			
 			if(tempStrData.substring(0, 2).equals("ED")) { 
@@ -681,7 +718,7 @@ public class SerialPort {
 		
 			mBarcode = new Barcode();
 			mBarcode.BarcodeCheck(barcodeReception);
-				
+			
 		} catch(ArrayIndexOutOfBoundsException e) {
 			
 			e.printStackTrace();
@@ -820,9 +857,9 @@ public class SerialPort {
 		else pFd = open("/dev/ttySAC2", 9600, 0); // PP
 	}
 	
-	public void PrinterTxStart(byte mode, StringBuffer txData) {
+	public void PrinterTxStart(Activity activity, Context context, byte mode, StringBuffer txData) {
 		
-		pPrinterTxThread = new PrinterTxThread(mode, txData);
+		pPrinterTxThread = new PrinterTxThread(activity, context, mode, txData);
 		pPrinterTxThread.start();
 	}
 	

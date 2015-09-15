@@ -1,8 +1,10 @@
 package isens.hba1c_analyzer.View;
 
+import isens.hba1c_analyzer.HomeActivity;
 import isens.hba1c_analyzer.R;
 import isens.hba1c_analyzer.Presenter.DatePresenter;
 import android.app.Activity;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
@@ -14,17 +16,24 @@ public class DateActivity extends Activity implements DateIView {
 
 	private DatePresenter mDatePresenter;
 	
-	private TextView yearText, monthText, dayText;
+	private TextView titleText, yearText, monthText, dayText;
 
-	private Button backBtn, yearPBtn, yearMBtn, monthPBtn, monthMBtn, dayPBtn, dayMBtn;
+	private Button backBtn,
+				   yearPBtn, 
+				   yearMBtn, 
+				   monthPBtn, 
+				   monthMBtn, 
+				   dayPBtn, 
+				   dayMBtn,
+				   snapshotBtn;
 
-	private ImageView titleImage, iconImage;
+	private ImageView iconImage;
 	
 	protected void onCreate(Bundle savedInstanceState) {
 	
 		super.onCreate(savedInstanceState);
 		overridePendingTransition(R.anim.fade, R.anim.hold);
-		setContentView(R.layout.datetime);
+		setContentView(R.layout.setting5);
 		
 		mDatePresenter = new DatePresenter(this, this, this, R.id.dateTimeLayout);
 		mDatePresenter.init();
@@ -32,21 +41,26 @@ public class DateActivity extends Activity implements DateIView {
 	
 	public void setImageId() {
 		
-		titleImage = (ImageView) findViewById(R.id.title);
 		iconImage = (ImageView) findViewById(R.id.icon);
 	}
 	
 	public void setImage() {
 		
-		titleImage.setBackgroundResource(R.drawable.date_title);
 		iconImage.setBackgroundResource(R.drawable.date);
 	}
 	
 	public void setTextId() {
 		
+		titleText = (TextView) findViewById(R.id.titleText);
 		yearText = (TextView) findViewById(R.id.val1stText);
 		monthText = (TextView) findViewById(R.id.val2ndText);
 		dayText = (TextView) findViewById(R.id.val3rdText);
+	}
+	
+	public void setTitleText() {
+		
+		titleText.setPaintFlags(titleText.getPaintFlags()|Paint.FAKE_BOLD_TEXT_FLAG);
+		titleText.setText(R.string.datetitle);
 	}
 	
 	public void setText(String year, String month, String day) {
@@ -65,6 +79,7 @@ public class DateActivity extends Activity implements DateIView {
 		monthMBtn = (Button) findViewById(R.id.val2ndmBtn);
 		dayPBtn = (Button) findViewById(R.id.val3rdpBtn);
 		dayMBtn = (Button) findViewById(R.id.val3rdmBtn);
+		snapshotBtn = (Button)findViewById(R.id.snapshotBtn);
 	}
 	
 	public void setButtonClick() {
@@ -76,6 +91,7 @@ public class DateActivity extends Activity implements DateIView {
 		monthMBtn.setOnTouchListener(mTouchListener);
 		dayPBtn.setOnTouchListener(mTouchListener);
 		dayMBtn.setOnTouchListener(mTouchListener);
+		if(HomeActivity.ANALYZER_SW == HomeActivity.DEVEL) snapshotBtn.setOnTouchListener(mTouchListener);
 	}
 	
 	public void setButtonLongClick() {
@@ -104,9 +120,6 @@ public class DateActivity extends Activity implements DateIView {
 					
 					switch(v.getId()) {
 					
-					case R.id.backBtn		:
-						break;
-						
 					case R.id.val1stpBtn	:
 						mDatePresenter.changeYearUp();
 						break;
@@ -142,9 +155,13 @@ public class DateActivity extends Activity implements DateIView {
 					switch(v.getId()) {
 					
 					case R.id.backBtn		:
-						mDatePresenter.changeActivity();
+						mDatePresenter.changeActivity(v.getId());
 						break;
 
+					case R.id.snapshotBtn		:
+						mDatePresenter.changeActivity(v.getId());
+						break;
+						
 					default	:
 						mDatePresenter.cancelTimer();
 						break;

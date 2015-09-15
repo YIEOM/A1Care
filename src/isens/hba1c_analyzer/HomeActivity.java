@@ -1,29 +1,19 @@
 package isens.hba1c_analyzer;
 
+import isens.hba1c_analyzer.Model.CaptureScreen;
+import isens.hba1c_analyzer.Model.CustomTextView;
 import isens.hba1c_analyzer.Model.SoundModel;
-import android.media.AudioManager;
 import android.media.SoundPool;
-import android.media.SoundPool.OnLoadCompleteListener;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.RotateAnimation;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.PopupWindow;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager.NameNotFoundException;
-import android.graphics.Typeface;
+import android.graphics.Paint;
 
 /*
  * 
@@ -33,10 +23,10 @@ import android.graphics.Typeface;
 
 public class HomeActivity extends Activity {
 	
-	final static byte NORMAL = 0,
-					  DEVEL = 1, // Development
-					  DEMO = 2, // Sales department
-					  ANALYZER_SW = NORMAL;
+	public static final byte NORMAL = 0,
+							 DEVEL = 1, // Development
+							 DEMO = 2,
+							 ANALYZER_SW = NORMAL;
 
 	final static byte PP = 1,
 			          ES = 2,
@@ -57,7 +47,10 @@ public class HomeActivity extends Activity {
 	public Activity activity;
 	public Context context;
 	
-	public TextView idText,
+	public TextView runText,
+					settingText,
+					recordText,
+					idText,
 					demoVerText;
 	
 	public SoundPool mPool;
@@ -65,9 +58,12 @@ public class HomeActivity extends Activity {
 	public Button runBtn,
 				  settingBtn,
 				  recordBtn,
-				  escIcon;
+				  escIcon,
+				  snapshotBtn;
 	
-	public enum TargetIntent {Home, HbA1c, NA, Action, ActionQC, Run, RunQC, Blank, BlankQC, Record, Result, ResultQC, Remove, Image, Date, Setting, SystemSetting, DataSetting, OperatorSetting, FunctionalTest, Time, Display, HIS, HISSetting, Export, Engineer, FileSave, ControlFileLoad, PatientFileLoad, NextFile, PreFile, Adjustment, Sound, Calibration, Language, Correlation, About, Delete, Temperature, Lamp, Convert, tHb, ShutDown, ScanTemp, f535, f660, SystemCheck}
+	public CustomTextView customTextView;
+	
+	public enum TargetIntent {Home, HbA1c, NA, Action, ActionQC, Run, RunQC, Blank, BlankQC, Record, Result, ResultQC, Remove, Image, Date, Setting, SystemSetting, DataSetting, OperatorSetting, FunctionalTest, Time, Display, HIS, HISSetting, Export, Engineer, FileSave, ControlFileLoad, PatientFileLoad, NextFile, PreFile, Adjustment, Sound, Calibration, Language, Correlation, About, Delete, Temperature, Lamp, Convert, tHb, ShutDown, ScanTemp, f535, f660, SystemCheck, SnapShot}
 	
 	public static boolean LoginFlag = true,
 						  CheckFlag;
@@ -88,12 +84,30 @@ public class HomeActivity extends Activity {
 		HomeInit();
 	}
 	
+	private void setTextId() {
+		
+		runText = (TextView) findViewById(R.id.runText);
+		settingText = (TextView) findViewById(R.id.settingText);
+		recordText = (TextView) findViewById(R.id.recordText);
+	}
+	
+	private void setText() {
+		
+		runText.setPaintFlags(runText.getPaintFlags()|Paint.FAKE_BOLD_TEXT_FLAG);
+		runText.setText(R.string.run);
+		settingText.setPaintFlags(settingText.getPaintFlags()|Paint.FAKE_BOLD_TEXT_FLAG);
+		settingText.setText(R.string.setting);
+		recordText.setPaintFlags(recordText.getPaintFlags()|Paint.FAKE_BOLD_TEXT_FLAG);
+		recordText.setText(R.string.record);
+	}
+	
 	public void setButtonId(Activity activity) {
 		
 		runBtn = (Button)activity.findViewById(R.id.runbtn);
 		settingBtn = (Button)activity.findViewById(R.id.settingbtn);
 		recordBtn = (Button)activity.findViewById(R.id.recordbtn);
 		escIcon = (Button)activity.findViewById(R.id.escicon);
+		snapshotBtn = (Button)activity.findViewById(R.id.snapshotBtn);
 	}
 	
 	public void setButtonClick() {
@@ -102,6 +116,7 @@ public class HomeActivity extends Activity {
 		settingBtn.setOnTouchListener(mTouchListener);
 		recordBtn.setOnTouchListener(mTouchListener);
 		escIcon.setOnTouchListener(mTouchListener);
+		if(ANALYZER_SW == DEVEL) snapshotBtn.setOnTouchListener(mTouchListener);
 	}
 	
 	public void setButtonState(int btnId, boolean state, Activity activity) {
@@ -117,7 +132,8 @@ public class HomeActivity extends Activity {
 			switch(event.getAction()) {
 			
 			case MotionEvent.ACTION_UP	:
-				unenabledAllBtn(activity); //0624
+				
+				unenabledAllBtn(activity);
 				
 				switch(v.getId()) {
 			
@@ -138,6 +154,10 @@ public class HomeActivity extends Activity {
 					WhichIntent(activity, context, TargetIntent.Record);
 					break;
 					
+				case R.id.snapshotBtn	:
+					WhichIntent(activity, context, TargetIntent.SnapShot);
+					break;
+					
 				default	:
 					break;
 				}
@@ -149,20 +169,20 @@ public class HomeActivity extends Activity {
 		}
 	};
 	
-	public void enabledAllBtn(Activity activtiy) {
+	public void enabledAllBtn(Activity activity) {
 
-		setButtonState(R.id.escicon, true, activtiy);
-		setButtonState(R.id.runbtn, true, activtiy);
-		setButtonState(R.id.settingbtn, true, activtiy);
-		setButtonState(R.id.recordbtn, true, activtiy);
+		setButtonState(R.id.escicon, true, activity);
+		setButtonState(R.id.runbtn, true, activity);
+		setButtonState(R.id.settingbtn, true, activity);
+		setButtonState(R.id.recordbtn, true, activity);
 	}
 	
-	public void unenabledAllBtn(Activity activtiy) {
+	public void unenabledAllBtn(Activity activity) {
 		
-		setButtonState(R.id.escicon, false, activtiy);
-		setButtonState(R.id.runbtn, false, activtiy);
-		setButtonState(R.id.settingbtn, false, activtiy);
-		setButtonState(R.id.recordbtn, false, activtiy);
+		setButtonState(R.id.escicon, false, activity);
+		setButtonState(R.id.runbtn, false, activity);
+		setButtonState(R.id.settingbtn, false, activity);
+		setButtonState(R.id.recordbtn, false, activity);
 	}
 	
 	public void HomeInit() {
@@ -170,27 +190,32 @@ public class HomeActivity extends Activity {
 		activity = this;
 		context = this;
 		
+		setTextId();
+		setText();
 		setButtonId(activity);
 		unenabledAllBtn(activity);
-		setButtonClick();
-				
+			
 		Intent itn = getIntent();
 		int state = itn.getIntExtra("System Check State", 0);
 		
 		if(state != RunActivity.NORMAL_OPERATION) {
 			
-			mErrorPopup = new ErrorPopup(this, this, R.id.homelayout, null, 0);
+			mErrorPopup = new ErrorPopup(activity, context, R.id.homelayout, null, 0);
 			mErrorPopup.ErrorBtnDisplay(state);
 		
 		} else {
 			
-			Login(this, this, R.id.homelayout);
+			Login(activity, context, R.id.homelayout);
 		}
 		
 		mTimerDisplay = new TimerDisplay();
 		mTimerDisplay.ActivityParm(this, R.id.homelayout);
 		
 		DisplayDemo();
+		
+		SerialPort.Sleep(500);
+		
+		setButtonClick();
 	}
 	
 	public void Login(Activity activity, Context context, int layoutid) {
@@ -215,7 +240,9 @@ public class HomeActivity extends Activity {
 		
 		idText = (TextView) activity.findViewById(R.id.idtext);
 		
-		idText.setText("Operator : " + id);
+		idText.setText(context.getResources().getString(R.string.operator) + " : " + id);
+		
+		SerialPort.Sleep(100);
 		
 		enabledAllBtn(activity);
 	}
@@ -329,17 +356,40 @@ public class HomeActivity extends Activity {
 			nextIntent.putExtra("System Check State", R.string.e221);
 			break;
 			
+		case SnapShot	:
+			CaptureScreen mCaptureScreen = new CaptureScreen();
+			byte[] bitmapBytes = mCaptureScreen.captureScreen(activity);
+			
+			nextIntent = new Intent(context, FileSaveActivity.class);
+			nextIntent.putExtra("snapshot", true);
+			nextIntent.putExtra("datetime", TimerDisplay.rTime);
+			nextIntent.putExtra("bitmap", bitmapBytes);
+			break;
+			
 		default			:	
 			break;
 		}
 		
 		activity.startActivity(nextIntent);
-		finish(Itn);
+		finish(activity, Itn);
 	}
 	
-	public void finish(TargetIntent Itn) {
+	public void WhichIntentforSnapshot(Activity activity, Context context, byte[] bitmapBytes) {
+		
+		Intent nextIntent = null;
+		
+		nextIntent = new Intent(context, FileSaveActivity.class);
+		nextIntent.putExtra("snapshot", true);
+		nextIntent.putExtra("datetime", TimerDisplay.rTime);
+		nextIntent.putExtra("bitmap", bitmapBytes);
+		
+		activity.startActivity(nextIntent);
+		finish(activity, TargetIntent.SnapShot);
+	}
+	
+	public void finish(Activity activity, TargetIntent Itn) {
 		
 		super.finish();
-		if(Itn != TargetIntent.SystemCheck) overridePendingTransition(R.anim.fade, R.anim.hold);
+		if(Itn != TargetIntent.SystemCheck) activity.overridePendingTransition(R.anim.fade, R.anim.hold);
 	}
 }
