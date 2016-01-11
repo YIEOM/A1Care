@@ -5,6 +5,7 @@ import android.util.Log;
 import isens.hba1c_analyzer.DataStorage;
 import isens.hba1c_analyzer.FileLoadActivity;
 import isens.hba1c_analyzer.FileSaveActivity;
+import isens.hba1c_analyzer.HomeActivity.TargetIntent;
 import isens.hba1c_analyzer.SerialPort;
 
 public class ExportModel {
@@ -88,12 +89,12 @@ public class ExportModel {
 		return handlingData;
 	}
 	
-	public boolean exportFile(String hwSN, int type, int testNum) {
+	public boolean exportFile(String hwSN, TargetIntent target, int testNum) {
 		
 		String path = "",
 			   data = "";
-			
-		path = mDataStorage.createUSBFile(hwSN, (byte) type);
+		
+		path = mDataStorage.createUSBFile(hwSN, target);
 		mDataStorage.writeUSBData(path, getItemName());
 		
 		if(testNum > 10000) testNum = 10000; 
@@ -102,18 +103,18 @@ public class ExportModel {
 		
 			for(int i = 1; i < testNum; i++) {
 				
-				data = getuSDCardData(i, type);
+				data = getuSDCardData(i, target);
 				mDataStorage.writeUSBData(path, getHandlingData(data));
 			}
 			
 			mDataStorage.closeUSBFile(path);
-			return checkFile(hwSN, type, testNum-1);
+			return checkFile(hwSN, target, testNum-1);
 		}
 		
 		return true;
 	}
 	
-	public boolean checkFile(String hwSN, int type, int testNum) {
+	public boolean checkFile(String hwSN, TargetIntent target, int testNum) {
 		
 		boolean isEquals = false;
 		String data = "";
@@ -122,7 +123,7 @@ public class ExportModel {
 		
 			DataStorage.Sleep(100);
 			
-			data = mDataStorage.checkUSBFile(hwSN, (byte) type);
+			data = mDataStorage.checkUSBFile(hwSN, target);
 			
 			if(data.length() > 3) {
 		
@@ -134,12 +135,12 @@ public class ExportModel {
 		return isEquals;
 	}
 	
-	public String getuSDCardData(int testNum, int type) {
+	public String getuSDCardData(int testNum, TargetIntent target) {
 		
 		String filePath = "",
 			   loadData = "";
-			
-		filePath = mDataStorage.FileCheck(FileSaveActivity.DataCnt - testNum, type);
+		
+		filePath = mDataStorage.FileCheck(FileSaveActivity.DataCnt - testNum, target);
 		
 		if(filePath != null) {
 			

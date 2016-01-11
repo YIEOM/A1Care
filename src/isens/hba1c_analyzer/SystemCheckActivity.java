@@ -5,16 +5,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import isens.hba1c_analyzer.CalibrationActivity.Cart1stShaking;
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
 import isens.hba1c_analyzer.RunActivity.AnalyzerState;
 import isens.hba1c_analyzer.RunActivity.CartDump;
 import isens.hba1c_analyzer.RunActivity.CheckCoverError;
-import isens.hba1c_analyzer.Temperature.CellTmpRead;
 import isens.hba1c_analyzer.Model.AboutModel;
 import isens.hba1c_analyzer.Model.CaptureScreen;
 import isens.hba1c_analyzer.Model.ConvertModel;
 import isens.hba1c_analyzer.Model.Hardware;
+import isens.hba1c_analyzer.Model.MainTimer;
 import isens.hba1c_analyzer.View.ConvertActivity;
 import android.app.Activity;
 import android.content.Context;
@@ -46,11 +45,14 @@ public class SystemCheckActivity extends Activity {
 						Min660  = 150000,
 						Max750  = 990000,
 						Min750  = 400000;
-
+	
+	static final int MaxAmbTmp = 36,
+			 		 MinAmbTmp = 18;
+	
 	final static byte ERROR_DARK  = 1,
 					  ERROR_535nm = 2,
 					  ERROR_660nm = 4,
-					  ERROR_750nm = 8;	
+					  ERROR_750nm = 8;
 
 	public int numberChaberTmpCheck = 5*60; // 5 minute
 	final static byte NUMBER_AMBIENT_TMP_CHECK = 120/10; // 120 seconds
@@ -60,10 +62,10 @@ public class SystemCheckActivity extends Activity {
 	
 	public GpioPort mGpioPort;
 	public SerialPort mSerialPort;
-	public Temperature mTemperature;
-	public TimerDisplay mTimerDisplay;
+	public MainTimer mMainTimer;
 	public ErrorPopup mErrorPopup;
 	public AboutModel mAboutModel;
+	private Hardware mHardware;
 	
 	public AudioManager audioManager;
 	
@@ -153,9 +155,8 @@ public class SystemCheckActivity extends Activity {
 			mSerialPort.BarcodeRxStart();
 		
 			/* Timer start */
-			mTimerDisplay = new TimerDisplay();
-			mTimerDisplay.ActivityParm(this, R.id.systemchecklayout);
-			mTimerDisplay.TimerInit();
+			mMainTimer = new MainTimer(this, R.id.systemchecklayout);
+			mMainTimer.initTimer();
 			
 			/* Barcode reader off */
 			mGpioPort = new GpioPort();
@@ -168,10 +169,9 @@ public class SystemCheckActivity extends Activity {
 			BrightnessInit();
 			VolumeInit();
 			
-			/* Temperature setting */
-			mTemperature = new Temperature(); // to test
-			mTemperature.TmpInit(); // to test
-			
+			SetChamTmp mSetChamTmp = new SetChamTmp();
+			mSetChamTmp.start();
+				
 			/* TEST Mode */
 			if((HomeActivity.ANALYZER_SW == HomeActivity.DEVEL) || (HomeActivity.ANALYZER_SW == HomeActivity.DEMO)) {
 
@@ -188,10 +188,20 @@ public class SystemCheckActivity extends Activity {
 			
 		} else {
 			
-			mTemperature = new Temperature();
+			mHardware = new Hardware();
 			
 			InsideTmpCheck mInsideTmpCheck = new InsideTmpCheck();
 			mInsideTmpCheck.start();
+		}
+	}
+	
+	public class SetChamTmp extends Thread {
+		
+		public void run() {
+			
+			/* Temperature setting */
+			mHardware = new Hardware(); // to test
+			mHardware.setChamTmp(); // to test
 		}
 	}
 	
@@ -324,7 +334,7 @@ public class SystemCheckActivity extends Activity {
 					break;
 					
 				case NormalOperation	:
-					TimerDisplay.RXBoardFlag = false;
+					MainTimer.RXBoardFlag = false;
 					
 					if(HomeActivity.ANALYZER_SW == HomeActivity.NORMAL) {
 					
@@ -404,31 +414,31 @@ public class SystemCheckActivity extends Activity {
 			
 			for(i = 0; i < numberChaberTmpCheck; i++) {
 				
-				tmp = mTemperature.CellTmpRead();
+				tmp = mHardware.getChamTmp();
 				
 				switch(tmpNumber) {
 				
 				case FirstTmp	:
-					if(((Temperature.InitTmp - 1) < tmp) & (tmp < (Temperature.InitTmp + 1))) tmpNumber = TmpState.SecondTmp;
+					if(((Hardware.InitTmp - 1) < tmp) & (tmp < (Hardware.InitTmp + 1))) tmpNumber = TmpState.SecondTmp;
 					break;
 					
 				case SecondTmp	:
-					if(((Temperature.InitTmp - 1) < tmp) & (tmp < (Temperature.InitTmp + 1))) tmpNumber = TmpState.ThirdTmp;
+					if(((Hardware.InitTmp - 1) < tmp) & (tmp < (Hardware.InitTmp + 1))) tmpNumber = TmpState.ThirdTmp;
 					else tmpNumber = TmpState.FirstTmp;
 					break;
 					
 				case ThirdTmp	:
-					if(((Temperature.InitTmp - 1) < tmp) & (tmp < (Temperature.InitTmp + 1))) tmpNumber = TmpState.ForthTmp;
+					if(((Hardware.InitTmp - 1) < tmp) & (tmp < (Hardware.InitTmp + 1))) tmpNumber = TmpState.ForthTmp;
 					else tmpNumber = TmpState.FirstTmp;
 					break;
 					
 				case ForthTmp	:
-					if(((Temperature.InitTmp - 1) < tmp) & (tmp < (Temperature.InitTmp + 1))) tmpNumber = TmpState.FifthTmp;
+					if(((Hardware.InitTmp - 1) < tmp) & (tmp < (Hardware.InitTmp + 1))) tmpNumber = TmpState.FifthTmp;
 					else tmpNumber = TmpState.FirstTmp;
 					break;
 					
 				case FifthTmp	:
-					if(((Temperature.InitTmp - 1) < tmp) & (tmp < (Temperature.InitTmp + 1))) numberChaberTmpCheck = 0;
+					if(((Hardware.InitTmp - 1) < tmp) & (tmp < (Hardware.InitTmp + 1))) numberChaberTmpCheck = 0;
 					else tmpNumber = TmpState.FirstTmp;
 					break;
 				
@@ -461,16 +471,16 @@ public class SystemCheckActivity extends Activity {
 			int i;
 			double tmp = 0;
 			
-			mTemperature.AmbTmpRead();
+			mHardware.getInnerTmp();
 			
 			for(i = 0; i < NUMBER_AMBIENT_TMP_CHECK; i++) {
 				
-				tmp += mTemperature.AmbTmpRead();
+				tmp += mHardware.getInnerTmp();
 				
 				SerialPort.Sleep(10000);
 			}
 			
-			if((Temperature.MinAmbTmp < tmp/NUMBER_AMBIENT_TMP_CHECK) && (tmp/NUMBER_AMBIENT_TMP_CHECK < Temperature.MaxAmbTmp)) {
+			if((MinAmbTmp < tmp/NUMBER_AMBIENT_TMP_CHECK) && (tmp/NUMBER_AMBIENT_TMP_CHECK < MaxAmbTmp)) {
 				
 				checkError = RunActivity.NORMAL_OPERATION;
 				WhichIntent(TargetIntent.Home);
@@ -517,7 +527,7 @@ public class SystemCheckActivity extends Activity {
 			SerialPort.Sleep(100);
 		}
 		
-		TimerDisplay.RXBoardFlag = false;
+		MainTimer.RXBoardFlag = false;
 	}
 	
 	public void PhotoCheck(AnalyzerState nextState, double max, double min, byte errBits, int rspTime) {
@@ -526,9 +536,9 @@ public class SystemCheckActivity extends Activity {
 		String rawValue;
 		double douValue = 0;
 		
-		while(TimerDisplay.RXBoardFlag) SerialPort.Sleep(10);
+		while(MainTimer.RXBoardFlag) SerialPort.Sleep(10);
 		
-		TimerDisplay.RXBoardFlag = true;
+		MainTimer.RXBoardFlag = true;
 		
 		mSerialPort.BoardTx("VH", SerialPort.CtrTarget.NormalSet);
 		
@@ -563,7 +573,7 @@ public class SystemCheckActivity extends Activity {
 			}
 		}
 		
-		TimerDisplay.RXBoardFlag = false;
+		MainTimer.RXBoardFlag = false;
 	}
 	
 	public void PhotoErrorCheck() {
@@ -602,9 +612,9 @@ public class SystemCheckActivity extends Activity {
 	
 	public void MotionInstruct(String str, SerialPort.CtrTarget target) { // Motion of system instruction
 		
-		while(TimerDisplay.RXBoardFlag) SerialPort.Sleep(10);
+		while(MainTimer.RXBoardFlag) SerialPort.Sleep(10);
 		
-		TimerDisplay.RXBoardFlag = true;
+		MainTimer.RXBoardFlag = true;
 		mSerialPort.BoardTx(str, target);
 	}
 	
@@ -682,7 +692,7 @@ public class SystemCheckActivity extends Activity {
 		HomeActivity.CheckFlag = loginPref.getBoolean("Check Box", false);
 		
 		SharedPreferences temperaturePref = getSharedPreferences("Temperature", MODE_PRIVATE);
-		Temperature.InitTmp = temperaturePref.getFloat("Cell Block", 30f);
+		Hardware.InitTmp = temperaturePref.getFloat("Cell Block", 30f);
 		
 		SharedPreferences aboutPref = getSharedPreferences("About", MODE_PRIVATE);
 		AboutModel.HWSN = aboutPref.getString("HW S/N", "Nothing");
@@ -701,8 +711,8 @@ public class SystemCheckActivity extends Activity {
 		public void run() {
 			
 			mAboutModel = new AboutModel(activity);
-			AboutModel.SWVersion = mAboutModel.getSWVersion();
 			AboutModel.FWVersion = mAboutModel.getFWVersion();
+			AboutModel.SWVersion = mAboutModel.getSWVersion();
 			AboutModel.OSVersion = mAboutModel.getOSVersion();
 		}
 	}
@@ -739,6 +749,8 @@ public class SystemCheckActivity extends Activity {
 		
 		public void run() {
 			
+			while(MainTimer.RXBoardFlag) SerialPort.Sleep(10);
+			
 			SerialPort.Sleep(5000);
 			
 			WhichIntent(TargetIntent.Home);
@@ -762,7 +774,7 @@ public class SystemCheckActivity extends Activity {
 			
 			nextIntent = new Intent(context, FileSaveActivity.class);
 			nextIntent.putExtra("snapshot", true);
-			nextIntent.putExtra("datetime", TimerDisplay.rTime);
+			nextIntent.putExtra("datetime", MainTimer.rTime);
 			nextIntent.putExtra("bitmap", bitmapBytes);
 			break;	
 			

@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="isens.hba1c_analyzer"
     android:versionCode="1"
-    android:versionName="v1.3.28-B"
+    android:versionName="v1.3.32-A"
     android:sharedUserId="android.uid.system" >
     
     <uses-sdk
@@ -52,7 +52,12 @@
             android:name="ResultActivity"
             android:configChanges="keyboard|keyboardHidden">
         </activity>
-    	<activity android:name="RecordActivity"></activity>
+    	<activity android:name="isens.hba1c_analyzer.View.RecordActivity"></activity>
+    	<activity android:name="isens.hba1c_analyzer.View.RecordDataActivity">
+    	    <intent-filter >
+           	    <action android:name=""/>
+           	</intent-filter>
+    	</activity>
     	<activity android:name="SettingActivity"></activity>
     	<activity android:name="SystemSettingActivity"></activity>
     	<activity android:name="PatientTestActivity">
@@ -88,11 +93,11 @@
            	    <action android:name=""/>
            	</intent-filter>
 		</activity>
-		<activity android:name="CalibrationActivity"></activity>
+		<activity android:name="isens.hba1c_analyzer.View.CalActivity"></activity>
 		<activity android:name="isens.hba1c_analyzer.View.LanguageActivity"></activity>
 		<activity android:name="isens.hba1c_analyzer.View.ConvertActivity"></activity>
 		<activity android:name="TempFileSaveActivity" android:process="com.android.phone"></activity>
-		<activity android:name="TemperatureActivity">
+		<activity android:name="isens.hba1c_analyzer.View.TemperatureActivity">
     	    <intent-filter >
            	    <action android:name=""/>
            	</intent-filter>
@@ -102,7 +107,7 @@
            	    <action android:name=""/>
            	</intent-filter>
     	</activity>
-		<activity android:name="LampCopyActivity"></activity>
+		<activity android:name="isens.hba1c_analyzer.View.LampActivity"></activity>
 		<activity android:name="ShutDownActivity"></activity>
 		<activity android:name="isens.hba1c_analyzer.View.CorrelationActivity"></activity>
 		<activity android:name="isens.hba1c_analyzer.View.AdjustmentActivity"></activity>

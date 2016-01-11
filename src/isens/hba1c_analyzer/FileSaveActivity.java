@@ -61,8 +61,8 @@ public class FileSaveActivity extends Activity {
 		
 			if(itn.getIntExtra("RunState", 0) == (int) NORMAL_RESULT) {
 		
-				if(dataType.equals("W") || dataType.equals("X") || dataType.equals("Y") || dataType.equals("Z")) SaveData.DataSave(CONTROL_TEST, overallData);
-				else SaveData.DataSave(PATIENT_TEST, overallData); // if HbA1c test is normal, the Result data is saved
+				if(dataType.equals("W") || dataType.equals("X") || dataType.equals("Y") || dataType.equals("Z")) SaveData.DataSave(overallData, TargetIntent.ControlFileLoad);
+				else SaveData.DataSave(overallData, TargetIntent.PatientFileLoad); // if HbA1c test is normal, the Result data is saved
 			}
 			
 			SaveData.DataHistorySave(overallData, historyData); // the History data is saved

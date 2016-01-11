@@ -9,6 +9,7 @@ import isens.hba1c_analyzer.Model.ActivityChange;
 import isens.hba1c_analyzer.Model.CaptureScreen;
 import isens.hba1c_analyzer.Model.LanguageModel;
 import isens.hba1c_analyzer.Model.SoundModel;
+import isens.hba1c_analyzer.Model.MainTimer;
 import isens.hba1c_analyzer.View.FunctionalTestActivity;
 import android.app.Activity;
 import android.content.Context;
@@ -43,7 +44,7 @@ public class ActionActivity extends Activity {
 	public GpioPort mGpioPort;
 	public SerialPort mSerialPort;
 	public ErrorPopup mErrorPopup;
-	public TimerDisplay mTimerDisplay;
+	public MainTimer mMainTimer;
 	public ActivityChange mActivityChange;
 	public SoundModel mSoundModel;
 	private LanguageModel mLanguageModel;
@@ -216,8 +217,7 @@ public class ActionActivity extends Activity {
 		unenabledAllBtn(activity);
 		setButtonClick();
 		
-		mTimerDisplay = new TimerDisplay();
-		mTimerDisplay.ActivityParm(this, R.id.actionlayout);
+		mMainTimer = new MainTimer(this, R.id.actionlayout);
 		
 		BarcodeQCCheckFlag = false;
 		
@@ -696,7 +696,7 @@ public class ActionActivity extends Activity {
 			} else {
 				nextIntent = new Intent(context, FileSaveActivity.class);
 				nextIntent.putExtra("snapshot", true);
-				nextIntent.putExtra("datetime", TimerDisplay.rTime);
+				nextIntent.putExtra("datetime", MainTimer.rTime);
 				nextIntent.putExtra("bitmap", bitmapBytes);
 			}
 			break;
@@ -711,7 +711,7 @@ public class ActionActivity extends Activity {
 				
 				nextIntent = new Intent(context, FileSaveActivity.class);
 				nextIntent.putExtra("snapshot", true);
-				nextIntent.putExtra("datetime", TimerDisplay.rTime);
+				nextIntent.putExtra("datetime", MainTimer.rTime);
 				nextIntent.putExtra("bitmap", bitmapBytes);
 			}			
 			break;
@@ -736,7 +736,7 @@ public class ActionActivity extends Activity {
 		
 		nextIntent = new Intent(context, FileSaveActivity.class);
 		nextIntent.putExtra("snapshot", true);
-		nextIntent.putExtra("datetime", TimerDisplay.rTime);
+		nextIntent.putExtra("datetime", MainTimer.rTime);
 		nextIntent.putExtra("bitmap", bitmapBytes);
 		
 		activity.startActivity(nextIntent);

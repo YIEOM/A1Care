@@ -4,18 +4,18 @@ import android.app.Activity;
 import android.content.Context;
 import isens.hba1c_analyzer.R;
 import isens.hba1c_analyzer.SerialPort;
-import isens.hba1c_analyzer.TimerDisplay;
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
 import isens.hba1c_analyzer.Model.ActivityChange;
 import isens.hba1c_analyzer.Model.CaptureScreen;
 import isens.hba1c_analyzer.Model.DisplayModel;
+import isens.hba1c_analyzer.Model.MainTimer;
 import isens.hba1c_analyzer.View.DisplayIView;
 
 public class DisplayPresenter {
 
 	private DisplayIView mDisplayIView;
 	private DisplayModel mDisplay;
-	private TimerDisplay mTimerDisplay;
+	private MainTimer mMainTimer;
 	private ActivityChange mActivityChange;
 	
 	private Activity activity;
@@ -26,7 +26,7 @@ public class DisplayPresenter {
 		
 		mDisplayIView = view;
 		mDisplay = new DisplayModel(activity);
-		mTimerDisplay = new TimerDisplay();
+		mMainTimer = new MainTimer(activity, layout);
 		mActivityChange = new ActivityChange(activity, context);
 		
 		this.activity = activity;
@@ -42,7 +42,6 @@ public class DisplayPresenter {
 		mDisplayIView.setText();
 		mDisplayIView.setButtonId();
 		
-		mTimerDisplay.ActivityParm(activity, layout);
 		displayBarGauge(mDisplay.getBrightnessValue());
 		
 		SerialPort.Sleep(500);
@@ -101,7 +100,6 @@ public class DisplayPresenter {
 		
 		case R.id.backBtn	:
 			mActivityChange.whichIntent(TargetIntent.SystemSetting);
-			mActivityChange.finish();
 			break;
 		
 		case R.id.snapshotBtn	:
@@ -110,13 +108,14 @@ public class DisplayPresenter {
 			
 			mActivityChange.whichIntent(TargetIntent.SnapShot);
 			mActivityChange.putBooleanIntent("snapshot", true);
-			mActivityChange.putStringsIntent("datetime", TimerDisplay.rTime);
+			mActivityChange.putStringsIntent("datetime", MainTimer.rTime);
 			mActivityChange.putBytesIntent("bitmap", bitmapBytes);
-			mActivityChange.finish();
 			break;
 			
 		default	:
 			break;
 		}
+		
+		mActivityChange.finish();
 	}
 }

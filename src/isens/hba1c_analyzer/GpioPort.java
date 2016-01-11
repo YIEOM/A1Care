@@ -1,5 +1,6 @@
 package isens.hba1c_analyzer;
 
+import isens.hba1c_analyzer.Model.MainTimer;
 import isens.hba1c_analyzer.SerialPort.CtrTarget;
 import android.util.Log;
 
@@ -62,16 +63,16 @@ public class GpioPort {
 		
 		String tmpData;
 		
-		while(TimerDisplay.RXBoardFlag) SerialPort.Sleep(10);
+		while(MainTimer.RXBoardFlag) SerialPort.Sleep(10);
 		
-		TimerDisplay.RXBoardFlag = true;
+		MainTimer.RXBoardFlag = true;
 		
 		mSerialPort = new SerialPort();
 		mSerialPort.BoardTx(DOOR_SENSOR, SerialPort.CtrTarget.NormalSet);
 		
 		tmpData = BoardMessage("D");
 		
-		TimerDisplay.RXBoardFlag = false;
+		MainTimer.RXBoardFlag = false;
 		
 		return (byte) Integer.parseInt(tmpData.substring(2));
 	}
@@ -119,16 +120,16 @@ public class GpioPort {
 		
 		String tmpData;
 		
-		while(TimerDisplay.RXBoardFlag) SerialPort.Sleep(10);
+		while(MainTimer.RXBoardFlag) SerialPort.Sleep(10);
 		
-		TimerDisplay.RXBoardFlag = true;
+		MainTimer.RXBoardFlag = true;
 		
 		mSerialPort = new SerialPort();
 		mSerialPort.BoardTx(CARTRIDGE_SENSOR, SerialPort.CtrTarget.NormalSet);
 		
 		tmpData = BoardMessage("C");
 		
-		TimerDisplay.RXBoardFlag = false;
+		MainTimer.RXBoardFlag = false;
 		
 		return (byte) Integer.parseInt(tmpData.substring(2));
 	}

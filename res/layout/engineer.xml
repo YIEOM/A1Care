@@ -213,7 +213,7 @@
         android:layout_marginTop="269px" >
    	    
    	    <Button
-	        android:id="@+id/tHbBtn"
+	        android:id="@+id/aCRCalBtn"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:background="@drawable/systemsetting_btn_selector" />
@@ -223,7 +223,7 @@
 		    android:layout_height="wrap_content"
 	        android:layout_marginTop="20px"
 		    android:layout_centerHorizontal="true"
-	        android:src="@drawable/thb_icon" />
+	        android:src="@drawable/cal_icon" />
 	        
 		<TextView
 		    android:layout_width="wrap_content"
@@ -231,7 +231,7 @@
 	        android:layout_marginTop="85px" 
 	        android:layout_centerHorizontal="true"
 	        android:gravity="center"
-		    android:text="@string/thbfactor"
+		    android:text="ACR CAL."
 	        android:typeface="sans"
 	        android:textSize="18px"
 	        android:textColor="#242424" />
@@ -277,7 +277,7 @@
         android:layout_marginTop="269px" >
    	    
    	    <Button
-	        android:id="@+id/calibrationBtn"
+	        android:id="@+id/a1CCalBtn"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:background="@drawable/systemsetting_btn_selector" />
@@ -295,7 +295,7 @@
 	        android:layout_marginTop="85px" 
 	        android:layout_centerHorizontal="true"
 	        android:gravity="center"
-		    android:text="@string/calibration"
+		    android:text="A1C CAL."
 	        android:typeface="sans"
 	        android:textSize="18px"
 	        android:textColor="#242424" />

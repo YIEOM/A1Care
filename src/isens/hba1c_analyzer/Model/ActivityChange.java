@@ -14,6 +14,8 @@ import isens.hba1c_analyzer.R;
 import isens.hba1c_analyzer.RemoveActivity;
 import isens.hba1c_analyzer.SettingActivity;
 import isens.hba1c_analyzer.SystemSettingActivity;
+import isens.hba1c_analyzer.View.ExportActivity;
+import isens.hba1c_analyzer.View.RecordActivity;
 
 public class ActivityChange {
 
@@ -51,16 +53,21 @@ public class ActivityChange {
 			nextIntent = new Intent(context, BlankActivity.class);
 			break;
 					
-		case SnapShot	:
+		case FileSave	:
 			nextIntent = new Intent(context, FileSaveActivity.class);
 			break;
 			
+		case PatientFileLoad	:
 		case ControlFileLoad	:
 			nextIntent = new Intent(context, FileLoadActivity.class);
 			break;
 			
-		case PatientFileLoad	:
-			nextIntent = new Intent(context, FileLoadActivity.class);
+		case Record	:
+			nextIntent = new Intent(context, RecordActivity.class);
+			break;
+			
+		case Export	:
+			nextIntent = new Intent(context, ExportActivity.class);
 			break;
 			
 		default		:	
@@ -93,6 +100,11 @@ public class ActivityChange {
 		nextIntent.putExtra(name, data);		
 	}
 	
+	public void putTrgIntent(String name, TargetIntent target) {
+
+		nextIntent.putExtra(name, target);		
+	}
+	
 	public void setIntent() {
 		
 		currIntent = activity.getIntent();
@@ -106,6 +118,16 @@ public class ActivityChange {
 	public String getStringIntent(String name) {
 		
 		return currIntent.getStringExtra(name);
+	}
+	
+	public String[] getStringArrayIntent(String name) {
+		
+		return currIntent.getStringArrayExtra(name);
+	}
+	
+	public TargetIntent getTrgIntent(String name) {
+		
+		return (TargetIntent) currIntent.getSerializableExtra(name);
 	}
 	
 	public void finish() {

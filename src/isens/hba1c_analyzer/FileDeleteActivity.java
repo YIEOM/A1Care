@@ -6,6 +6,7 @@ import java.util.Calendar;
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
@@ -28,30 +29,49 @@ public class FileDeleteActivity extends Activity {
 	
 	public void DataDelete() {
 		
-		int patientDataCnt,	controlDataCnt;
-		
-		String filePath = null;
+		int pDataCnt, cDataCnt;
 		
 		Intent itn = getIntent();
 		
-		patientDataCnt = itn.getIntExtra("PatientDataCnt", 1);
-		controlDataCnt = itn.getIntExtra("ControlDataCnt", 1);
+		pDataCnt = itn.getIntExtra("PatientDataCnt", 1);
+		cDataCnt = itn.getIntExtra("ControlDataCnt", 1);
 		
 		mDataStorage = new DataStorage();
 		
-		for(int i = 1; i < patientDataCnt; i++) {
+		DeleteData mDeleteData = new DeleteData(pDataCnt, cDataCnt);
+		mDeleteData.start();
+	}
+	
+	public class DeleteData extends Thread {
+		
+		int pDataCnt, cDataCnt;
+		
+		public DeleteData(int pDataCnt, int cDataCnt) {
 			
-			filePath = mDataStorage.FileCheck(i, FileLoadActivity.PATIENT);
-			if(filePath != null) mDataStorage.FileDelete(filePath);
+			this.pDataCnt = pDataCnt;
+			this.cDataCnt = cDataCnt;
 		}
 		
-		for(int i = 1; i < controlDataCnt; i++) {
+		public void run() {
 			
-			filePath = mDataStorage.FileCheck(i, FileLoadActivity.CONTROL);
-			if(filePath != null) mDataStorage.FileDelete(filePath);
+			String filePath = null;
+			
+			for(int i = 1; i < pDataCnt; i++) {
+				
+				filePath = mDataStorage.FileCheck(i, TargetIntent.PatientFileLoad);
+				if(filePath != null) mDataStorage.FileDelete(filePath);
+			}
+			
+			for(int i = 1; i < cDataCnt; i++) {
+				
+				filePath = mDataStorage.FileCheck(i, TargetIntent.ControlFileLoad);
+				if(filePath != null) mDataStorage.FileDelete(filePath);
+			}
+			
+			SerialPort.Sleep(5000);
+			
+			WhichIntent();
 		}
-		
-		WhichIntent();
 	}
 	
 	public void WhichIntent() {

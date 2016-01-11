@@ -4,6 +4,7 @@ import isens.hba1c_analyzer.HomeActivity.TargetIntent;
 import isens.hba1c_analyzer.Model.ActivityChange;
 import isens.hba1c_analyzer.Model.CaptureScreen;
 import isens.hba1c_analyzer.Model.CustomTextView;
+import isens.hba1c_analyzer.Model.MainTimer;
 
 import java.text.DecimalFormat;
 
@@ -142,7 +143,7 @@ public class OperatorPopup {
 		loginBtn.setOnTouchListener(mLoginTouchListener);
 		guestBtn.setOnTouchListener(mLoginTouchListener);
 		checkBtn.setOnTouchListener(mLoginTouchListener);
-		snapshotBtn2.setOnTouchListener(mLoginTouchListener);
+		if(HomeActivity.ANALYZER_SW == HomeActivity.DEVEL) snapshotBtn2.setOnTouchListener(mLoginTouchListener);
 	}
 	
 	public void setButtonState(int btnId, boolean state, View popupView) {
@@ -238,7 +239,7 @@ public class OperatorPopup {
 		loginBtn.setOnTouchListener(mOperatorTouchListener);
 		guestBtn.setOnTouchListener(mOperatorTouchListener);
 		checkBtn.setOnTouchListener(mOperatorTouchListener);
-		snapshotBtn2.setOnTouchListener(mOperatorTouchListener);
+		if(HomeActivity.ANALYZER_SW == HomeActivity.DEVEL) snapshotBtn2.setOnTouchListener(mOperatorTouchListener);
 	}
 
 	Button.OnTouchListener mOperatorTouchListener = new View.OnTouchListener() {
@@ -597,7 +598,7 @@ public class OperatorPopup {
 		
 		doneBtn.setOnTouchListener(mAddTouchListener);
 		cancelBtn.setOnTouchListener(mAddTouchListener);
-		snapshotBtn2.setOnTouchListener(mAddTouchListener);
+		if(HomeActivity.ANALYZER_SW == HomeActivity.DEVEL) snapshotBtn2.setOnTouchListener(mAddTouchListener);
 	}
 	
 	Button.OnTouchListener mAddTouchListener = new View.OnTouchListener() {
@@ -691,7 +692,7 @@ public class OperatorPopup {
 						
 						if(aPW.equals(cPW)) {
 							 
-							mDatabaseHander.AddOperator(id, TimerDisplay.rTime[0] + TimerDisplay.rTime[1] + TimerDisplay.rTime[2] + TimerDisplay.rTime[7] + TimerDisplay.rTime[5], aPW);
+							mDatabaseHander.AddOperator(id, MainTimer.rTime[0] + MainTimer.rTime[1] + MainTimer.rTime[2] + MainTimer.rTime[7] + MainTimer.rTime[5], aPW);
 							
 							PopupClose();
 							
@@ -737,7 +738,7 @@ public class OperatorPopup {
 		
 		doneBtn.setOnTouchListener(mModTouchListener);
 		cancelBtn.setOnTouchListener(mModTouchListener);
-		snapshotBtn2.setOnTouchListener(mModTouchListener);
+		if(HomeActivity.ANALYZER_SW == HomeActivity.DEVEL) snapshotBtn2.setOnTouchListener(mModTouchListener);
 	}
 	
 	Button.OnTouchListener mModTouchListener = new View.OnTouchListener() {
@@ -871,7 +872,7 @@ public class OperatorPopup {
 		
 		delOkBtn.setOnTouchListener(mDelTouchListener);
 		delCancelBtn.setOnTouchListener(mDelTouchListener);
-		snapshotBtn2.setOnTouchListener(mDelTouchListener);
+		if(HomeActivity.ANALYZER_SW == HomeActivity.DEVEL) snapshotBtn2.setOnTouchListener(mDelTouchListener);
 	}
 	
 	Button.OnTouchListener mDelTouchListener = new View.OnTouchListener() {

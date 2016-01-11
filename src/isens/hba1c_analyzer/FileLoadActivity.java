@@ -4,6 +4,7 @@ import java.text.DecimalFormat;
 import java.util.Calendar;
 
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
+import isens.hba1c_analyzer.View.RecordDataActivity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -18,9 +19,6 @@ public class FileLoadActivity extends Activity {
 
 	public DataStorage mDataStorage;
 
-	final static byte CONTROL = 1,
-					  PATIENT = 2;
-	
 	private String fileDateTime  [] = new String[5],
 			   	   fileTestNum   [] = new String[5],
 				   fileRefNum    [] = new String[5],
@@ -59,8 +57,8 @@ public class FileLoadActivity extends Activity {
 	
 	public void FileLoad() { // loading 10 recently saved data
 		
-		int dataPage,
-			type;
+		int dataPage;
+		TargetIntent target;
 		
 		int	pIdx,
 			pLen,
@@ -71,13 +69,13 @@ public class FileLoadActivity extends Activity {
 		
 		FileSaveActivity.DataCnt = itn.getIntExtra("DataCnt", 0);
 		dataPage = itn.getIntExtra("DataPage", 0);
-		type = itn.getIntExtra("Type", 0);
+		target = (TargetIntent) itn.getSerializableExtra("TargetIntent");
 		
 		mDataStorage = new DataStorage();
 		
 		for (int i = 0; i < 5 ; i++) {
 		
-			filePath = mDataStorage.FileCheck(dataPage*5 + i + 1, type);
+			filePath = mDataStorage.FileCheck(dataPage*5 + i + 1, target);
 			
 			if(filePath != null) { // If file exist
 				
@@ -100,29 +98,17 @@ public class FileLoadActivity extends Activity {
 			}
 		}
 		
-		WhichIntent(type);
+		WhichIntent(target);
 	}
 	
-	public void WhichIntent(int type) { // Activity conversion
+	public void WhichIntent(TargetIntent target) { // Activity conversion
 	
 		Intent nextIntent = null;
 		Intent itn = getIntent();
 		int state = itn.getIntExtra("System Check State", 0);
 		
-		switch(type) {
-		
-		case CONTROL	:
-			nextIntent = new Intent(getApplicationContext(), ControlTestActivity.class);
-			break;
-			
-		case PATIENT	:
-			nextIntent = new Intent(getApplicationContext(), PatientTestActivity.class);
-			break;
-			
-		default	:
-			break;
-		}
-		
+		nextIntent = new Intent(getApplicationContext(), RecordDataActivity.class);
+		nextIntent.putExtra("TargetIntent", target);
 		nextIntent.putExtra("DateTime", fileDateTime);
 		nextIntent.putExtra("TestNum", fileTestNum);
 		nextIntent.putExtra("RefNumber", fileRefNum);

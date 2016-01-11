@@ -4,17 +4,17 @@ import android.app.Activity;
 import android.content.Context;
 import isens.hba1c_analyzer.R;
 import isens.hba1c_analyzer.SerialPort;
-import isens.hba1c_analyzer.TimerDisplay;
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
 import isens.hba1c_analyzer.Model.AboutModel;
 import isens.hba1c_analyzer.Model.ActivityChange;
+import isens.hba1c_analyzer.Model.MainTimer;
 import isens.hba1c_analyzer.View.AboutIView;
 
 public class AboutPresenter {
 	
 	private AboutIView mAboutIView;
 	private AboutModel mAboutModel;
-	private TimerDisplay mTimerDisplay;
+	private MainTimer mTimerDisplay;
 	private ActivityChange mActivityChange;
 	
 	private Activity activity;
@@ -25,7 +25,7 @@ public class AboutPresenter {
 		
 		mAboutIView = view;
 		mAboutModel = new AboutModel(activity);
-		mTimerDisplay = new TimerDisplay();
+		mTimerDisplay = new MainTimer(activity, layout);
 		mActivityChange = new ActivityChange(activity, context);
 		
 		this.activity = activity;
@@ -42,8 +42,6 @@ public class AboutPresenter {
 		mAboutIView.setEditTextId();
 		
 		display();
-		
-		mTimerDisplay.ActivityParm(activity, layout);
 
 		SerialPort.Sleep(500);
 	

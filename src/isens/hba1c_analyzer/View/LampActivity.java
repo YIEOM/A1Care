@@ -1,5 +1,6 @@
 package isens.hba1c_analyzer.View;
 
+import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -9,8 +10,6 @@ import isens.hba1c_analyzer.EngineerActivity;
 import isens.hba1c_analyzer.R;
 import isens.hba1c_analyzer.RunActivity;
 import isens.hba1c_analyzer.SerialPort;
-import isens.hba1c_analyzer.TimerDisplay;
-import isens.hba1c_analyzer.CalibrationActivity.TargetMode;
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
 import isens.hba1c_analyzer.R.anim;
 import isens.hba1c_analyzer.R.drawable;
@@ -21,6 +20,8 @@ import isens.hba1c_analyzer.RunActivity.AnalyzerState;
 import isens.hba1c_analyzer.RunActivity.Cart1stFilter2;
 import isens.hba1c_analyzer.RunActivity.CartDump;
 import isens.hba1c_analyzer.SerialPort.CtrTarget;
+import isens.hba1c_analyzer.Model.LampModel;
+import isens.hba1c_analyzer.Model.MainTimer;
 import isens.hba1c_analyzer.Presenter.LampPresenter;
 import android.app.Activity;
 import android.content.Context;
@@ -44,15 +45,29 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class LampActivity extends Activity implements LampIView{
+public class LampActivity extends Activity implements LampIView {
 	
 	private LampPresenter mLampPresenter;
 	
-	public TextView adcText;
+	public TextView adcText,
+					adc1Text,
+					adc2Text,
+					adc3Text,
+					adc4Text,
+					adc5Text;
 
-	public ImageView stateFlag1, stateFlag2;
+	public ImageView stateFlag1,
+					 stateFlag2;
 	
-	public Button escBtn, runBtn, cancelBtn, darkBtn, f535nmBtn, f660nmBtn, f750nmBtn;
+	public Button backBtn,
+				  runBtn,
+				  cancelBtn,
+				  darkBtn,
+				  f535nmBtn,
+				  f660nmBtn,
+				  f750nmBtn;
+	
+	public SurfaceView mSurfaceView;
 
 	protected void onCreate(Bundle savedInstanceState) {
 		
@@ -60,7 +75,9 @@ public class LampActivity extends Activity implements LampIView{
 		overridePendingTransition(R.anim.fade, R.anim.hold);
 		setContentView(R.layout.lamp);
 		
-		mLampPresenter = new LampPresenter(this, this, this, R.id.lampLayout);
+		mSurfaceView = (SurfaceView) findViewById(R.id.graphBg);
+		
+		mLampPresenter = new LampPresenter(this, this, this, R.id.lampLayout, mSurfaceView);
 		mLampPresenter.init();
 	}
 	
@@ -79,16 +96,31 @@ public class LampActivity extends Activity implements LampIView{
 	public void setTextId() {
 		
 		adcText = (TextView) findViewById(R.id.adcText);
+		adc1Text = (TextView) findViewById(R.id.adc1Text);
+		adc2Text = (TextView) findViewById(R.id.adc2Text);
+		adc3Text = (TextView) findViewById(R.id.adc3Text);
+		adc4Text = (TextView) findViewById(R.id.adc4Text);
+		adc5Text = (TextView) findViewById(R.id.adc5Text);
 	}
 	
-	public void setText(String value) {
+	public void setText(ArrayList<String> txtList) {
 		
-		adcText.setText(value);
+		adcText.setText(txtList.get(0));
+		adc1Text.setText(txtList.get(1));
+		adc2Text.setText(txtList.get(2));
+		adc3Text.setText(txtList.get(3));
+		adc4Text.setText(txtList.get(4));
+		adc5Text.setText(txtList.get(5));
 	}
-	
+
+	public void setTextState(int txtId, boolean state) {
+		
+		findViewById(txtId).setEnabled(state);
+	}
+
 	public void setButtonId() {
 		
-		escBtn = (Button)findViewById(R.id.escBtn);
+		backBtn = (Button)findViewById(R.id.backBtn);
 		runBtn = (Button)findViewById(R.id.runBtn);
 		cancelBtn = (Button)findViewById(R.id.cancelBtn);
 		darkBtn = (Button)findViewById(R.id.darkBtn);
@@ -99,7 +131,7 @@ public class LampActivity extends Activity implements LampIView{
 	
 	public void setButtonClick() {
 		
-		escBtn.setOnTouchListener(mTouchListener);
+		backBtn.setOnTouchListener(mTouchListener);
 		runBtn.setOnTouchListener(mTouchListener);
 		cancelBtn.setOnTouchListener(mTouchListener);
 		darkBtn.setOnTouchListener(mTouchListener);
@@ -108,12 +140,12 @@ public class LampActivity extends Activity implements LampIView{
 		f750nmBtn.setOnTouchListener(mTouchListener);
 	}
 	
-	public void setButtonBg(int dark, int f535nm, int f660nm, int f750nm) {
+	public void setButtonBg(ArrayList<Integer> valList) {
 		
-		darkBtn.setBackgroundResource(dark);
-		f535nmBtn.setBackgroundResource(f535nm);
-		f660nmBtn.setBackgroundResource(f660nm);
-		f750nmBtn.setBackgroundResource(f750nm);
+		darkBtn.setBackgroundResource(valList.get(0));
+		f535nmBtn.setBackgroundResource(valList.get(1));
+		f660nmBtn.setBackgroundResource(valList.get(2));
+		f750nmBtn.setBackgroundResource(valList.get(3));
 	}
 	
 	public void setButtonState(int btnId, boolean state) {
@@ -129,35 +161,54 @@ public class LampActivity extends Activity implements LampIView{
 			switch(event.getAction()) {
 			
 			case MotionEvent.ACTION_UP	:
-				
+			
+				mLampPresenter.unenabledAllBtn();
+						
 				switch(v.getId()) {
 			
-				case R.id.escBtn	:
+				case R.id.backBtn	:
 					mLampPresenter.changeActivity();
 					break;
 					
 				case R.id.runBtn	:
+					mLampPresenter.startRun();
 					break;
 					
 				case R.id.cancelBtn	:
+					mLampPresenter.cancelRun();
 					break;
 					
+				default	:
+					mLampPresenter.enabledAllBtn();
+					break;
+				}
+			
+				break;
+			
+			case MotionEvent.ACTION_DOWN	:
+			
+				switch(v.getId()) {
+				
 				case R.id.darkBtn	:
+					mLampPresenter.displayFilterBtn(AnalyzerState.FilterDark);
 					break;
 					
 				case R.id.f535nmBtn	:
+					mLampPresenter.displayFilterBtn(AnalyzerState.Filter535nm);
 					break;
 					
 				case R.id.f660nmBtn	:
+					mLampPresenter.displayFilterBtn(AnalyzerState.Filter660nm);
 					break;
-					
+				
 				case R.id.f750nmBtn	:
+					mLampPresenter.displayFilterBtn(AnalyzerState.Filter750nm);
 					break;
 					
 				default	:
 					break;
 				}
-				
+			
 				break;
 			}
 			

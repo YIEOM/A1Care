@@ -3,6 +3,8 @@ package isens.hba1c_analyzer;
 import isens.hba1c_analyzer.Model.CaptureScreen;
 import isens.hba1c_analyzer.Model.CustomTextView;
 import isens.hba1c_analyzer.Model.SoundModel;
+import isens.hba1c_analyzer.Model.MainTimer;
+import isens.hba1c_analyzer.View.RecordActivity;
 import android.media.SoundPool;
 import android.os.Bundle;
 import android.util.Log;
@@ -40,7 +42,7 @@ public class HomeActivity extends Activity {
 	public DatabaseHander mDatabaseHander;
 	public OperatorPopup mOperatorController;
 	public ErrorPopup mErrorPopup;
-	public TimerDisplay mTimerDisplay;
+	public MainTimer mMainTimer;
 	public ShutDownPopup mShutDownPopup;
 	public SoundModel mSoundModel;
 	
@@ -63,7 +65,7 @@ public class HomeActivity extends Activity {
 	
 	public CustomTextView customTextView;
 	
-	public enum TargetIntent {Home, HbA1c, NA, Action, ActionQC, Run, RunQC, Blank, BlankQC, Record, Result, ResultQC, Remove, Image, Date, Setting, SystemSetting, DataSetting, OperatorSetting, FunctionalTest, Time, Display, HIS, HISSetting, Export, Engineer, FileSave, ControlFileLoad, PatientFileLoad, NextFile, PreFile, Adjustment, Sound, Calibration, Language, Correlation, About, Delete, Temperature, Lamp, Convert, tHb, ShutDown, ScanTemp, f535, f660, SystemCheck, SnapShot}
+	public enum TargetIntent {Home, HbA1c, NA, Action, ActionQC, Run, RunQC, Blank, BlankQC, Record, Result, ResultQC, Remove, Image, Date, Setting, SystemSetting, DataSetting, OperatorSetting, FunctionalTest, Time, Display, HIS, HISSetting, Export, Engineer, FileSave, ControlFileLoad, PatientFileLoad, NextFile, PreFile, Adjustment, Sound, A1CCal, Language, Correlation, About, Delete, Temperature, Lamp, Convert, ACRCal, ShutDown, ScanTemp, f535, f660, SystemCheck, SnapShot}
 	
 	public static boolean LoginFlag = true,
 						  CheckFlag;
@@ -208,8 +210,7 @@ public class HomeActivity extends Activity {
 			Login(activity, context, R.id.homelayout);
 		}
 		
-		mTimerDisplay = new TimerDisplay();
-		mTimerDisplay.ActivityParm(this, R.id.homelayout);
+		mMainTimer = new MainTimer(this, R.id.homelayout);
 		
 		DisplayDemo();
 		
@@ -253,7 +254,7 @@ public class HomeActivity extends Activity {
 		
 		if(ANALYZER_SW == DEMO) {
 			
-			demoVersion = "A1Care_v1.3.27-D";
+			demoVersion = "A1Care_v1.3.05-D";
 			DisplayDemoVersion(demoVersion);	
 		
 		} else if(ANALYZER_SW == DEVEL) {
@@ -280,9 +281,9 @@ public class HomeActivity extends Activity {
 		AniShutDown mAniShutDown = new AniShutDown(activity, context, layoutid);
 		mAniShutDown.start();
 		
-		TimerDisplay.ExternalDeviceBarcode = TimerDisplay.FILE_CLOSE;
+		MainTimer.ExtDeviceBarcode = MainTimer.FILE_CLOSE;
 		
-		TimerDisplay.FiftymsPeriod.cancel();
+		MainTimer.FiftymsPeriod.cancel();
 		
 		isShutDown = true;
 	}
@@ -362,7 +363,7 @@ public class HomeActivity extends Activity {
 			
 			nextIntent = new Intent(context, FileSaveActivity.class);
 			nextIntent.putExtra("snapshot", true);
-			nextIntent.putExtra("datetime", TimerDisplay.rTime);
+			nextIntent.putExtra("datetime", MainTimer.rTime);
 			nextIntent.putExtra("bitmap", bitmapBytes);
 			break;
 			
@@ -380,7 +381,7 @@ public class HomeActivity extends Activity {
 		
 		nextIntent = new Intent(context, FileSaveActivity.class);
 		nextIntent.putExtra("snapshot", true);
-		nextIntent.putExtra("datetime", TimerDisplay.rTime);
+		nextIntent.putExtra("datetime", MainTimer.rTime);
 		nextIntent.putExtra("bitmap", bitmapBytes);
 		
 		activity.startActivity(nextIntent);

@@ -8,6 +8,7 @@ import java.util.Calendar;
 
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
 import isens.hba1c_analyzer.Model.CaptureScreen;
+import isens.hba1c_analyzer.Model.MainTimer;
 import isens.hba1c_analyzer.View.ConvertActivity;
 import isens.hba1c_analyzer.View.CorrelationActivity;
 import isens.hba1c_analyzer.View.DateActivity;
@@ -39,7 +40,7 @@ public class SystemSettingActivity extends Activity {
 	
 	final static byte NONE = 0;					  
 	
-	public TimerDisplay mTimerDisplay;
+	public MainTimer mTimerDisplay;
 	public ErrorPopup mErrorPopup;
 	
 	private Activity activity;
@@ -228,8 +229,7 @@ public class SystemSettingActivity extends Activity {
 		setText();
 		setButtonId();
 		
-		mTimerDisplay = new TimerDisplay();
-		mTimerDisplay.ActivityParm(this, R.id.systemsettinglayout);
+		mTimerDisplay = new MainTimer(this, R.id.systemsettinglayout);
 		
 		SerialPort.Sleep(500);
 		
@@ -298,7 +298,7 @@ public class SystemSettingActivity extends Activity {
 			
 			nextIntent = new Intent(context, FileSaveActivity.class);
 			nextIntent.putExtra("snapshot", true);
-			nextIntent.putExtra("datetime", TimerDisplay.rTime);
+			nextIntent.putExtra("datetime", MainTimer.rTime);
 			nextIntent.putExtra("bitmap", bitmapBytes);
 			startActivity(nextIntent);
 			finish();

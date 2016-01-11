@@ -11,13 +11,13 @@ import android.widget.Button;
 import isens.hba1c_analyzer.R;
 import isens.hba1c_analyzer.RunActivity;
 import isens.hba1c_analyzer.SerialPort;
-import isens.hba1c_analyzer.TimerDisplay;
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
 import isens.hba1c_analyzer.Model.ActivityChange;
 import isens.hba1c_analyzer.Model.ConvertModel;
 import isens.hba1c_analyzer.Model.FactorModel;
 import isens.hba1c_analyzer.Model.DateModel;
 import isens.hba1c_analyzer.Model.LanguageModel;
+import isens.hba1c_analyzer.Model.MainTimer;
 import isens.hba1c_analyzer.View.ConvertIView;
 import isens.hba1c_analyzer.View.FactorIView;
 import isens.hba1c_analyzer.View.DateIView;
@@ -28,7 +28,7 @@ public class AbsorbancePresenter {
 	
 	private FactorIView mFactorIView;
 	private FactorModel mFactorModel;
-	private TimerDisplay mTimerDisplay;
+	private MainTimer mMainTimer;
 	private ActivityChange mActivityChange;
 	
 	private Activity activity;
@@ -39,7 +39,7 @@ public class AbsorbancePresenter {
 		
 		mFactorIView = view;
 		mFactorModel = new FactorModel(activity);
-		mTimerDisplay = new TimerDisplay();
+		mMainTimer = new MainTimer(activity, layout);
 		mActivityChange = new ActivityChange(activity, context);
 		
 		this.activity = activity;
@@ -56,8 +56,6 @@ public class AbsorbancePresenter {
 		mFactorIView.setButtonClick();
 		
 		display();
-		
-		mTimerDisplay.ActivityParm(activity, layout);
 		
 		SerialPort.Sleep(500);
 		

@@ -2,11 +2,11 @@ package isens.hba1c_analyzer.Presenter;
 
 import isens.hba1c_analyzer.R;
 import isens.hba1c_analyzer.SerialPort;
-import isens.hba1c_analyzer.TimerDisplay;
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
 import isens.hba1c_analyzer.Model.ActivityChange;
 import isens.hba1c_analyzer.Model.CaptureScreen;
 import isens.hba1c_analyzer.Model.SoundModel;
+import isens.hba1c_analyzer.Model.MainTimer;
 import isens.hba1c_analyzer.View.SoundIView;
 import android.app.Activity;
 import android.content.Context;
@@ -16,7 +16,7 @@ public class SoundPresenter {
 
 	private SoundIView mSoundIView;
 	private SoundModel mSound;
-	private TimerDisplay mTimerDisplay;
+	private MainTimer mMainTimer;
 	private ActivityChange mActivityChange;
 	
 	private Activity activity;
@@ -27,7 +27,7 @@ public class SoundPresenter {
 		
 		mSoundIView = view;
 		mSound = new SoundModel(activity, context);
-		mTimerDisplay = new TimerDisplay();
+		mMainTimer = new MainTimer(activity, layout);
 		mActivityChange = new ActivityChange(activity, context);
 		
 		this.activity = activity;
@@ -42,8 +42,6 @@ public class SoundPresenter {
 		mSoundIView.setTextId();
 		mSoundIView.setText();
 		mSoundIView.setButtonId();
-		
-		mTimerDisplay.ActivityParm(activity, layout);
 		displayBarGauge(mSound.getSoundVolume());
 		
 		SerialPort.Sleep(500);
@@ -102,7 +100,6 @@ public class SoundPresenter {
 		
 		case R.id.backBtn	:
 			mActivityChange.whichIntent(TargetIntent.SystemSetting);
-			mActivityChange.finish();
 			break;
 		
 		case R.id.snapshotBtn	:
@@ -111,13 +108,14 @@ public class SoundPresenter {
 			
 			mActivityChange.whichIntent(TargetIntent.SnapShot);
 			mActivityChange.putBooleanIntent("snapshot", true);
-			mActivityChange.putStringsIntent("datetime", TimerDisplay.rTime);
+			mActivityChange.putStringsIntent("datetime", MainTimer.rTime);
 			mActivityChange.putBytesIntent("bitmap", bitmapBytes);
-			mActivityChange.finish();
 			break;
 			
 		default	:
 			break;
-		}		
+		}	
+
+		mActivityChange.finish();
 	}
 }

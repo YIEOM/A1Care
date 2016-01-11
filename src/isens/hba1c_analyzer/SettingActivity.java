@@ -3,9 +3,9 @@ package isens.hba1c_analyzer;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import isens.hba1c_analyzer.CalibrationActivity.TargetMode;
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
 import isens.hba1c_analyzer.Model.CaptureScreen;
+import isens.hba1c_analyzer.Model.MainTimer;
 import isens.hba1c_analyzer.View.FunctionalTestActivity;
 import android.app.Activity;
 import android.content.Context;
@@ -24,7 +24,7 @@ import android.widget.TextView;
 
 public class SettingActivity extends Activity {
 	
-	public TimerDisplay mTimerDisplay;
+	public MainTimer mMainTimer;
 	public OperatorPopup mOperatorController;
 	
 	public Activity activity;
@@ -214,8 +214,7 @@ public class SettingActivity extends Activity {
 		setText();
 		setButtonId(activity);
 		
-		mTimerDisplay = new TimerDisplay();
-		mTimerDisplay.ActivityParm(this, R.id.settinglayout);
+		mMainTimer = new MainTimer(this, R.id.settinglayout);
 		
 		SerialPort.Sleep(500);
 		
@@ -364,7 +363,7 @@ public class SettingActivity extends Activity {
 			
 			nextIntent = new Intent(context, FileSaveActivity.class);
 			nextIntent.putExtra("snapshot", true);
-			nextIntent.putExtra("datetime", TimerDisplay.rTime);
+			nextIntent.putExtra("datetime", MainTimer.rTime);
 			nextIntent.putExtra("bitmap", bitmapBytes);
 			break;
 			

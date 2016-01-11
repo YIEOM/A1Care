@@ -4,6 +4,7 @@ import isens.hba1c_analyzer.HomeActivity.TargetIntent;
 import isens.hba1c_analyzer.Model.ActivityChange;
 import isens.hba1c_analyzer.Model.CaptureScreen;
 import isens.hba1c_analyzer.Model.SoundModel;
+import isens.hba1c_analyzer.Model.MainTimer;
 import isens.hba1c_analyzer.Presenter.FunctionalTestPresenter;
 import isens.hba1c_analyzer.View.FunctionalTestActivity;
 import isens.hba1c_analyzer.View.LampActivity;
@@ -29,7 +30,6 @@ public class ErrorPopup {
 	public ResultActivity mResultActivity;
 	public OperatorPopup mOperatorPopup;
 	public SystemSettingActivity mSystemSettingActivity;
-	public LampCopyActivity mLampCopyActivity;
 	public EngineerActivity mEngineerActivity;
 	public SoundModel mSoundModel;
 	public OperatorSettingActivity mOperatorSettingActivity;
@@ -77,7 +77,7 @@ public class ErrorPopup {
 		
 		errorBtn.setBackgroundResource(R.drawable.popup_button_selector);
 		errorBtn.setOnTouchListener(mErrorTouchListener);
-		snapshotBtn.setOnTouchListener(mErrorTouchListener);
+		if(HomeActivity.ANALYZER_SW == HomeActivity.DEVEL) snapshotBtn.setOnTouchListener(mErrorTouchListener);
 	}
 	
 	public void setButtonState(int btnId, boolean state) {
@@ -137,7 +137,7 @@ public class ErrorPopup {
 		yesBtn.setOnTouchListener(mOXTouchListener);
 		noBtn.setBackgroundResource(R.drawable.popup_button_selector);
 		noBtn.setOnTouchListener(mOXTouchListener);
-		snapshotBtn.setOnTouchListener(mErrorTouchListener);
+		if(HomeActivity.ANALYZER_SW == HomeActivity.DEVEL) snapshotBtn.setOnTouchListener(mErrorTouchListener);
 	}
 	
 	Button.OnTouchListener mOXTouchListener = new View.OnTouchListener() {
@@ -253,9 +253,7 @@ public class ErrorPopup {
 			
 		case R.id.lampLayout	:
 			ErrorPopupClose();
-			mLampCopyActivity = new LampCopyActivity();
-			mLampCopyActivity.cancelTest();
-			mLampCopyActivity.enabledAllBtn();
+			break;
 			
 		case R.id.resultlayout	:
 			ErrorPopupClose();
@@ -511,7 +509,7 @@ public class ErrorPopup {
 			mActivityChange = new ActivityChange(activity, context);
 			mActivityChange.whichIntent(TargetIntent.SnapShot);
 			mActivityChange.putBooleanIntent("snapshot", true);
-			mActivityChange.putStringsIntent("datetime", TimerDisplay.rTime);
+			mActivityChange.putStringsIntent("datetime", MainTimer.rTime);
 			mActivityChange.putBytesIntent("bitmap", bitmapBytes);
 			mActivityChange.finish();
 			break;

@@ -1,5 +1,5 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/caliblayout"
+    android:id="@+id/calibLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/background" >
@@ -16,15 +16,22 @@
         android:layout_alignParentTop="true"
         android:src="@drawable/title" />
     
-    <ImageView
+    <TextView
+        android:id="@+id/titleText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="128px"
-        android:layout_marginTop="20px"
-        android:src="@drawable/cal_title" />
+        android:layout_marginLeft="126px"
+        android:layout_marginTop="14px"
+        android:typeface="sans"
+        android:textSize="26px"
+        android:textColor="#606060"
+        android:shadowColor="#FFFFFF"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="1.2" />
     
     <TextView
-        android:id="@+id/devicestate"
+        android:id="@+id/dSText"
         android:layout_width="150px"
         android:layout_height="50px"
         android:layout_marginLeft="330px"
@@ -58,7 +65,7 @@
         android:layout_marginTop="15px" />
    	
    	<Button
-        android:id="@+id/blankbtn"
+        android:id="@+id/blankBtn"
         android:layout_width="129px"
         android:layout_height="57px"
         android:layout_marginLeft="13px"
@@ -83,7 +90,7 @@
         android:textColor="#565656" />
 	
 	<TextView
-        android:id="@+id/chamberTmpText" 
+        android:id="@+id/cmbTmpText" 
         android:layout_width="105px"
         android:layout_height="40px"
         android:layout_marginLeft="25px"
@@ -106,7 +113,7 @@
         android:textColor="#565656" />
 	
    	<TextView
-        android:id="@+id/innerTmpText" 
+        android:id="@+id/inTmpText" 
         android:layout_width="105px"
         android:layout_height="40px"
         android:layout_marginLeft="25px"
@@ -118,7 +125,7 @@
         android:background="#000000" />
    	
    	<Button
-        android:id="@+id/quickbtn"
+        android:id="@+id/quickBtn"
         android:layout_width="129px"
         android:layout_height="113px"
         android:layout_marginLeft="13px"
@@ -172,7 +179,7 @@
         android:text="750nm" />
    	
    	<TextView
-        android:id="@+id/oneone" 
+        android:id="@+id/r1c1Text"
         android:layout_width="152px"
         android:layout_height="43px"
         android:layout_marginLeft="157px"
@@ -183,7 +190,7 @@
         android:textColor="#000000" />
    	
    	<TextView
-        android:id="@+id/onetwo" 
+        android:id="@+id/r1c2Text"
         android:layout_width="152px"
         android:layout_height="43px"
         android:layout_marginLeft="324px"
@@ -194,7 +201,7 @@
         android:textColor="#000000" />
    	
    	<TextView
-        android:id="@+id/onethree" 
+        android:id="@+id/r1c3Text" 
         android:layout_width="152px"
         android:layout_height="43px"
         android:layout_marginLeft="491px"
@@ -205,7 +212,7 @@
         android:textColor="#000000" />
     	
    	<TextView
-        android:id="@+id/twoone" 
+        android:id="@+id/r2c1Text" 
         android:layout_width="152px"
         android:layout_height="43px"
         android:layout_marginLeft="157px"
@@ -216,7 +223,7 @@
         android:textColor="#000000" />
    	   	
    	<TextView
-        android:id="@+id/twotwo" 
+        android:id="@+id/r2c2Text" 
         android:layout_width="152px"
         android:layout_height="43px"
         android:layout_marginLeft="324px"
@@ -227,7 +234,7 @@
         android:textColor="#000000" />
    	
    	<TextView
-        android:id="@+id/twothree" 
+        android:id="@+id/r2c3Text" 
         android:layout_width="152px"
         android:layout_height="43px"
         android:layout_marginLeft="491px"
@@ -238,7 +245,7 @@
         android:textColor="#000000" />
    	
    	<TextView
-        android:id="@+id/threeone" 
+        android:id="@+id/r3c1Text" 
         android:layout_width="152px"
         android:layout_height="43px"
         android:layout_marginLeft="157px"
@@ -249,7 +256,7 @@
         android:textColor="#000000" />
    	
    	<TextView
-        android:id="@+id/threetwo" 
+        android:id="@+id/r3c2Text" 
         android:layout_width="152px"
         android:layout_height="43px"
         android:layout_marginLeft="324px"
@@ -260,7 +267,7 @@
         android:textColor="#000000" />
    	
    	<TextView
-        android:id="@+id/threethree" 
+        android:id="@+id/r3c3Text" 
         android:layout_width="152px"
         android:layout_height="43px"
         android:layout_marginLeft="491px"
@@ -271,7 +278,7 @@
         android:textColor="#000000" />
    	
    	<TextView
-        android:id="@+id/fourone" 
+        android:id="@+id/r4c1Text" 
         android:layout_width="152px"
         android:layout_height="43px"
         android:layout_marginLeft="157px"
@@ -282,7 +289,7 @@
         android:textColor="#000000" />
    	
    	<TextView
-        android:id="@+id/fourtwo" 
+        android:id="@+id/r4c2Text" 
         android:layout_width="152px"
         android:layout_height="43px"
         android:layout_marginLeft="324px"
@@ -293,7 +300,7 @@
         android:textColor="#000000" />
    	
    	<TextView
-        android:id="@+id/fourthree" 
+        android:id="@+id/r4c3Text" 
         android:layout_width="152px"
         android:layout_height="43px"
         android:layout_marginLeft="491px"
@@ -304,7 +311,7 @@
         android:textColor="#000000" />
 
    	<TextView
-        android:id="@+id/fiveone" 
+        android:id="@+id/r5c1Text" 
         android:layout_width="152px"
         android:layout_height="43px"
         android:layout_marginLeft="157px"
@@ -315,7 +322,7 @@
         android:textColor="#000000" />
    	
    	<TextView
-        android:id="@+id/fivetwo" 
+        android:id="@+id/r5c2Text" 
         android:layout_width="152px"
         android:layout_height="43px"
         android:layout_marginLeft="324px"
@@ -326,7 +333,7 @@
         android:textColor="#000000" />
    	
    	<TextView
-        android:id="@+id/fivethree" 
+        android:id="@+id/r5c3Text" 
         android:layout_width="152px"
         android:layout_height="43px"
         android:layout_marginLeft="491px"
@@ -337,7 +344,7 @@
         android:textColor="#000000" />   	
    	
    	<TextView
-        android:id="@+id/sixone" 
+        android:id="@+id/r6c1Text" 
         android:layout_width="152px"
         android:layout_height="43px"
         android:layout_marginLeft="157px"
@@ -348,7 +355,7 @@
         android:textColor="#000000" />
    	
    	<TextView
-        android:id="@+id/sixtwo" 
+        android:id="@+id/r6c2Text" 
         android:layout_width="152px"
         android:layout_height="43px"
         android:layout_marginLeft="324px"
@@ -359,7 +366,7 @@
         android:textColor="#000000" />
    	
    	<TextView
-        android:id="@+id/sixthree" 
+        android:id="@+id/r6c3Text" 
         android:layout_width="152px"
         android:layout_height="43px"
         android:layout_marginLeft="491px"
@@ -370,7 +377,7 @@
         android:textColor="#000000" />   	
    	
     <Button
-        android:id="@+id/scanbtn"
+        android:id="@+id/scanBtn"
         android:layout_width="129px"
         android:layout_height="57px"
         android:layout_marginLeft="661px"
@@ -383,38 +390,69 @@
         android:textColor="#565656"
         android:background="@drawable/btn_selector5" />
     
-	<ImageView 
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="706px"
-        android:layout_marginTop="166px"
-        android:src="@drawable/cal_thb" />
+	<TextView
+        android:id="@+id/rst1TtlText" 
+        android:layout_width="36px"
+        android:layout_height="40px"
+        android:layout_marginLeft="654px"
+        android:layout_marginTop="165px"
+		android:gravity="center"
+        android:typeface="sans"
+        android:textSize="24px"
+        android:textColor="#565656" />
 	
 	<TextView
-        android:id="@+id/tHbText" 
-        android:layout_width="105px"
+        android:id="@+id/rst1Text" 
+        android:layout_width="85px"
         android:layout_height="40px"
-        android:layout_marginLeft="673px"
-        android:layout_marginTop="189px"
+        android:layout_marginLeft="693px"
+        android:layout_marginTop="165px"
         android:gravity="center" 
         android:typeface="sans"
         android:textSize="24px"
         android:textColor="#FFFFFF"
         android:background="#000000" />
    	
-	<ImageView 
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="691px"
-        android:layout_marginTop="236px"
-        android:src="@drawable/cal_hba1c" />
+	<TextView
+        android:id="@+id/rst2TtlText"
+        android:layout_width="36px"
+        android:layout_height="40px"
+        android:layout_marginLeft="654px"
+        android:layout_marginTop="216px"
+		android:gravity="center"
+        android:typeface="sans"
+        android:textSize="24px"
+        android:textColor="#565656" />
 		
    	<TextView
-        android:id="@+id/HbA1cText" 
-        android:layout_width="105px"
+        android:id="@+id/rst2Text" 
+        android:layout_width="85px"
         android:layout_height="40px"
-        android:layout_marginLeft="673px"
-        android:layout_marginTop="258px"
+        android:layout_marginLeft="693px"
+        android:layout_marginTop="216px"
+        android:gravity="center" 
+        android:typeface="sans"
+        android:textSize="24px"
+        android:textColor="#FFFFFF"
+        android:background="#000000" />
+   	
+   	<TextView
+        android:id="@+id/rst3TtlText"
+        android:layout_width="36px"
+        android:layout_height="40px"
+        android:layout_marginLeft="654px"
+        android:layout_marginTop="268px"
+		android:gravity="center"
+        android:typeface="sans"
+        android:textSize="24px"
+        android:textColor="#565656" />
+		
+   	<TextView
+        android:id="@+id/rst3Text" 
+        android:layout_width="85px"
+        android:layout_height="40px"
+        android:layout_marginLeft="693px"
+        android:layout_marginTop="268px"
         android:gravity="center" 
         android:typeface="sans"
         android:textSize="24px"
@@ -422,7 +460,7 @@
         android:background="#000000" />
    	
    	<Button
-        android:id="@+id/fullbtn"
+        android:id="@+id/fullBtn"
         android:layout_width="129px"
         android:layout_height="114px"
         android:layout_marginLeft="660px"

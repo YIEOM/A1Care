@@ -14,6 +14,7 @@ import isens.hba1c_analyzer.Model.CaptureScreen;
 import isens.hba1c_analyzer.Model.CustomTextView;
 import isens.hba1c_analyzer.Model.Hardware;
 import isens.hba1c_analyzer.Model.LanguageModel;
+import isens.hba1c_analyzer.Model.MainTimer;
 import isens.hba1c_analyzer.View.FunctionalTestActivity;
 import android.app.Activity;
 import android.content.Context;
@@ -43,9 +44,9 @@ public class BlankActivity extends Activity {
 
 	public SerialPort mSerialPort;
 	public ErrorPopup mErrorPopup;
-	public TimerDisplay mTimerDisplay;
+	public MainTimer mMainTimer;
 	public ActivityChange mActivityChange;
-	public Temperature mTemperature;
+	public Hardware mHardware;
 	private LanguageModel mLanguageModel;
 	
 	public Handler runHandler = new Handler();
@@ -163,7 +164,7 @@ public class BlankActivity extends Activity {
 				case R.id.escicon		:
 					ESC();
 					break;
-						
+				
 				case R.id.snapshotBtn		:
 					CaptureScreen mCaptureScreen = new CaptureScreen();
 					bitmapBytes = mCaptureScreen.captureScreen(activity);
@@ -210,11 +211,10 @@ public class BlankActivity extends Activity {
 		RunActivity.IsError = false;
 		ActionActivity.IsEnablePopup = false;
 		
-		mTimerDisplay = new TimerDisplay();
-		mTimerDisplay.ActivityParm(this, R.id.blanklayout);
+		mMainTimer = new MainTimer(this, R.id.blanklayout);
 				
 		mSerialPort = new SerialPort();
-		mTemperature = new Temperature();
+		mHardware = new Hardware();
 		
 		blankState = RunActivity.AnalyzerState.InitPosition;
 		photoCheck = 0;
@@ -257,17 +257,6 @@ public class BlankActivity extends Activity {
 			GpioPort.DoorActState = false;
 			GpioPort.CartridgeActState = false;
 			
-			new Thread(new Runnable() {
-				public void run() {
-					runOnUiThread(new Runnable(){
-						public void run() {
-
-							enabledAllBtn(activity);
-						}
-					});
-				}
-			}).start();
-			
 			ChamberTmpCheck mChamberTmpCheck = new ChamberTmpCheck();
 			mChamberTmpCheck.start();
 		}
@@ -282,14 +271,25 @@ public class BlankActivity extends Activity {
 			
 			for(i = 0; i < 4; i++) {
 				
-				tmp += mTemperature.CellTmpRead();
+				tmp += mHardware.getChamTmp();
 				
 				SerialPort.Sleep(500);
 			}
 			
-			if(((Temperature.InitTmp - 1) < tmp/4) & (tmp/4 < (Temperature.InitTmp + 1))) {
+			if(((Hardware.InitTmp - 1) < tmp/4) & (tmp/4 < (Hardware.InitTmp + 1))) {
 				
 				ChamberTmp = tmp/4;
+				
+				new Thread(new Runnable() {
+					public void run() {
+						runOnUiThread(new Runnable(){
+							public void run() {
+
+								enabledAllBtn(activity);
+							}
+						});
+					}
+				}).start();
 				
 				BlankStep mBlankStep = new BlankStep();
 				mBlankStep.start();
@@ -435,9 +435,9 @@ public class BlankActivity extends Activity {
 	
 	public void MotionInstruct(String str, SerialPort.CtrTarget target) { // Motion of system instruction
 		
-		while(TimerDisplay.RXBoardFlag) SerialPort.Sleep(10);
+		while(MainTimer.RXBoardFlag) SerialPort.Sleep(10);
 		
-		TimerDisplay.RXBoardFlag = true;
+		MainTimer.RXBoardFlag = true;
 		mSerialPort.BoardTx(str, target);
 	}
 	
@@ -446,9 +446,9 @@ public class BlankActivity extends Activity {
 		int time = 0;
 		String rawValue;
 		double douValue = 0;
-		while(TimerDisplay.RXBoardFlag) SerialPort.Sleep(10);
+		while(MainTimer.RXBoardFlag) SerialPort.Sleep(10);
 		
-		TimerDisplay.RXBoardFlag = true;
+		MainTimer.RXBoardFlag = true;
 		mSerialPort.BoardTx("VH", SerialPort.CtrTarget.NormalSet);
 		
 		do {
@@ -477,7 +477,7 @@ public class BlankActivity extends Activity {
 			checkError = R.string.e241;
 		}
 		
-		TimerDisplay.RXBoardFlag = false;
+		MainTimer.RXBoardFlag = false;
 		
 		return (douValue - RunActivity.BlankValue[0]);
 	}
@@ -550,7 +550,7 @@ public class BlankActivity extends Activity {
 			SerialPort.Sleep(100);
 		}
 		
-		TimerDisplay.RXBoardFlag = false;
+		MainTimer.RXBoardFlag = false;
 	}
 	
 	public void checkMode() {
@@ -740,7 +740,7 @@ public class BlankActivity extends Activity {
 				
 				nextIntent = new Intent(context, FileSaveActivity.class);
 				nextIntent.putExtra("snapshot", true);
-				nextIntent.putExtra("datetime", TimerDisplay.rTime);
+				nextIntent.putExtra("datetime", MainTimer.rTime);
 				nextIntent.putExtra("bitmap", bitmapBytes);	
 			}
 			break;
@@ -768,7 +768,7 @@ public class BlankActivity extends Activity {
 		
 		nextIntent = new Intent(context, FileSaveActivity.class);
 		nextIntent.putExtra("snapshot", true);
-		nextIntent.putExtra("datetime", TimerDisplay.rTime);
+		nextIntent.putExtra("datetime", MainTimer.rTime);
 		nextIntent.putExtra("bitmap", bitmapBytes);
 		
 		activity.startActivity(nextIntent);

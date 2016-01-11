@@ -1,7 +1,6 @@
 package isens.hba1c_analyzer.Model;
 
 import isens.hba1c_analyzer.SerialPort;
-import isens.hba1c_analyzer.TimerDisplay;
 
 import java.text.DecimalFormat;
 import java.util.Calendar;

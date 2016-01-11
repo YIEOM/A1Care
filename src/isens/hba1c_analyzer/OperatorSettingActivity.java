@@ -7,6 +7,7 @@ import java.util.List;
 
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
 import isens.hba1c_analyzer.Model.CaptureScreen;
+import isens.hba1c_analyzer.Model.MainTimer;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -39,7 +40,7 @@ public class OperatorSettingActivity extends Activity {
 	
 	public OperatorPopup mOperatorPopup;
 	public DatabaseHander mDatabaseHander;
-	public TimerDisplay mTimerDisplay;
+	public MainTimer mMainTimer;
 	
 	public Activity activity;
 	private Context context;
@@ -288,8 +289,7 @@ public class OperatorSettingActivity extends Activity {
 		setButtonId();
 		setImageButtonId();
 		
-		mTimerDisplay = new TimerDisplay();
-		mTimerDisplay.ActivityParm(this, R.id.operatorlayout);
+		mMainTimer = new MainTimer(this, R.id.operatorlayout);
 		
 		mOperatorPopup = new OperatorPopup(this, getApplicationContext(), R.id.operatorlayout);
 		count = mOperatorPopup.OperatorCount();
@@ -488,7 +488,7 @@ public class OperatorSettingActivity extends Activity {
 			
 			nextIntent = new Intent(context, FileSaveActivity.class);
 			nextIntent.putExtra("snapshot", true);
-			nextIntent.putExtra("datetime", TimerDisplay.rTime);
+			nextIntent.putExtra("datetime", MainTimer.rTime);
 			nextIntent.putExtra("bitmap", bitmapBytes);
 			break;
 			
@@ -506,7 +506,7 @@ public class OperatorSettingActivity extends Activity {
 		
 		nextIntent = new Intent(context, FileSaveActivity.class);
 		nextIntent.putExtra("snapshot", true);
-		nextIntent.putExtra("datetime", TimerDisplay.rTime);
+		nextIntent.putExtra("datetime", MainTimer.rTime);
 		nextIntent.putExtra("bitmap", bitmapBytes);
 		
 		activity.startActivity(nextIntent);

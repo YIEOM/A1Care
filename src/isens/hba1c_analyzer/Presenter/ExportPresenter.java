@@ -35,8 +35,8 @@ public class ExportPresenter {
 	private Context context;
 	private int layout;
 	
-	private int type,
-				state = 0;
+	private int state = 0;
+	private TargetIntent target;
 	
 	private boolean isExporting = true;
 	
@@ -64,13 +64,13 @@ public class ExportPresenter {
 		
 		mActivityChange.setIntent();
 		hwSN = mActivityChange.getStringIntent("HWSN");
-		type = mActivityChange.getIntIntent("Type", 0);
+		target = mActivityChange.getTrgIntent("TargetIntent");
 		testNum = mActivityChange.getIntIntent("DataCnt", 0);
 		
 		AniExportData mAniExportData = new AniExportData();
 		mAniExportData.start();
 		
-		ExportFile mExportFile = new ExportFile(hwSN, type, testNum);
+		ExportFile mExportFile = new ExportFile(hwSN, target, testNum);
 		mExportFile.start();
 	}
 	
@@ -78,19 +78,19 @@ public class ExportPresenter {
 		
 		String data = "",
 			   hwSN;
-		int type,
-			testNum;
+		int	testNum;
+		TargetIntent target;
 		
-		public ExportFile(String hwSN, int type, int testNum) {
+		public ExportFile(String hwSN, TargetIntent target, int testNum) {
 			
 			this.hwSN = hwSN;
-			this.type = type;
+			this.target = target;
 			this.testNum = testNum;
 		}
 		
 		public void run() {
 			
-			if(!mExportModel.exportFile(hwSN, type, testNum)) state = R.string.e341;	
+			if(!mExportModel.exportFile(hwSN, target, testNum)) state = R.string.e341;	
 			
 			try {
 				
@@ -151,21 +151,21 @@ public class ExportPresenter {
 		
 		int dataPage = mActivityChange.getIntIntent("DataPage", 0);
 		
-		switch(type) {
+		switch(target) {
 		
-		case 1	:
+		case ControlFileLoad	:
 			mActivityChange.whichIntent(TargetIntent.ControlFileLoad);
 			mActivityChange.putIntIntent("DataCnt", FileSaveActivity.DataCnt);
 			mActivityChange.putIntIntent("DataPage", dataPage);
-			mActivityChange.putIntIntent("Type", type);
+			mActivityChange.putTrgIntent("TargetIntent", target);
 			mActivityChange.putIntIntent("System Check State", state);
 			break;
 			
-		case 2	:
+		case PatientFileLoad	:
 			mActivityChange.whichIntent(TargetIntent.PatientFileLoad);
 			mActivityChange.putIntIntent("DataCnt", FileSaveActivity.DataCnt);
 			mActivityChange.putIntIntent("DataPage", dataPage);
-			mActivityChange.putIntIntent("Type", type);
+			mActivityChange.putTrgIntent("TargetIntent", target);
 			mActivityChange.putIntIntent("System Check State", state);
 			break;
 		}
