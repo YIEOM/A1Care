@@ -9,7 +9,6 @@ import isens.hba1c_analyzer.Model.ActivityChange;
 import isens.hba1c_analyzer.Model.CaptureScreen;
 import isens.hba1c_analyzer.Model.LanguageModel;
 import isens.hba1c_analyzer.Model.SoundModel;
-import isens.hba1c_analyzer.Model.MainTimer;
 import isens.hba1c_analyzer.View.FunctionalTestActivity;
 import android.app.Activity;
 import android.content.Context;
@@ -44,7 +43,7 @@ public class ActionActivity extends Activity {
 	public GpioPort mGpioPort;
 	public SerialPort mSerialPort;
 	public ErrorPopup mErrorPopup;
-	public MainTimer mMainTimer;
+	public TimerDisplay mTimerDisplay;
 	public ActivityChange mActivityChange;
 	public SoundModel mSoundModel;
 	private LanguageModel mLanguageModel;
@@ -217,7 +216,8 @@ public class ActionActivity extends Activity {
 		unenabledAllBtn(activity);
 		setButtonClick();
 		
-		mMainTimer = new MainTimer(this, R.id.actionlayout);
+		mTimerDisplay = new TimerDisplay();
+		mTimerDisplay.ActivityParm(this, R.id.actionlayout);
 		
 		BarcodeQCCheckFlag = false;
 		
@@ -676,6 +676,7 @@ public class ActionActivity extends Activity {
 		GpioPort.DoorActState = false;
 		IsEnablePopup = false;
 		
+		
 		mGpioPort = new GpioPort();
 		mGpioPort.TriggerHigh();
 		
@@ -696,7 +697,7 @@ public class ActionActivity extends Activity {
 			} else {
 				nextIntent = new Intent(context, FileSaveActivity.class);
 				nextIntent.putExtra("snapshot", true);
-				nextIntent.putExtra("datetime", MainTimer.rTime);
+				nextIntent.putExtra("datetime", TimerDisplay.rTime);
 				nextIntent.putExtra("bitmap", bitmapBytes);
 			}
 			break;
@@ -711,7 +712,7 @@ public class ActionActivity extends Activity {
 				
 				nextIntent = new Intent(context, FileSaveActivity.class);
 				nextIntent.putExtra("snapshot", true);
-				nextIntent.putExtra("datetime", MainTimer.rTime);
+				nextIntent.putExtra("datetime", TimerDisplay.rTime);
 				nextIntent.putExtra("bitmap", bitmapBytes);
 			}			
 			break;
@@ -736,7 +737,7 @@ public class ActionActivity extends Activity {
 		
 		nextIntent = new Intent(context, FileSaveActivity.class);
 		nextIntent.putExtra("snapshot", true);
-		nextIntent.putExtra("datetime", MainTimer.rTime);
+		nextIntent.putExtra("datetime", TimerDisplay.rTime);
 		nextIntent.putExtra("bitmap", bitmapBytes);
 		
 		activity.startActivity(nextIntent);

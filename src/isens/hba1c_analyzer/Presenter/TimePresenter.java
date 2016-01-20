@@ -9,12 +9,12 @@ import android.content.Context;
 import android.os.Handler;
 import isens.hba1c_analyzer.R;
 import isens.hba1c_analyzer.SerialPort;
+import isens.hba1c_analyzer.TimerDisplay;
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
 import isens.hba1c_analyzer.Model.ActivityChange;
 import isens.hba1c_analyzer.Model.CaptureScreen;
 import isens.hba1c_analyzer.Model.DateModel;
 import isens.hba1c_analyzer.Model.TimeModel;
-import isens.hba1c_analyzer.Model.MainTimer;
 import isens.hba1c_analyzer.View.DateIView;
 import isens.hba1c_analyzer.View.DisplayIView;
 import isens.hba1c_analyzer.View.TimeIView;
@@ -23,7 +23,7 @@ public class TimePresenter {
 	
 	private TimeIView mTimeIView;
 	private TimeModel mTimeModel;
-	private MainTimer mMainTimer;
+	private TimerDisplay mTimerDisplay;
 	private ActivityChange mActivityChange;
 	
 	private Activity activity;
@@ -38,7 +38,7 @@ public class TimePresenter {
 		
 		mTimeIView = view;
 		mTimeModel = new TimeModel(activity);
-		mMainTimer = new MainTimer(activity, layout);
+		mTimerDisplay = new TimerDisplay();
 		mActivityChange = new ActivityChange(activity, context);
 		
 		this.activity = activity;
@@ -56,6 +56,8 @@ public class TimePresenter {
 		
 		mTimeModel.getCurrTime();
 		display();
+		
+		mTimerDisplay.ActivityParm(activity, layout);
 		
 		SerialPort.Sleep(500);
 		
@@ -219,13 +221,14 @@ public class TimePresenter {
 		switch(btn) {
 		
 		case R.id.backBtn	:
-			MainTimer.FiftymsPeriod.cancel();
+			TimerDisplay.FiftymsPeriod.cancel();
 			mTimeModel.arrangeTime();
 			mTimeModel.setTime();
-			mMainTimer.initTimer();
+			mTimerDisplay.TimerInit();
 			mTimeModel.savingTime();
 			
 			mActivityChange.whichIntent(TargetIntent.SystemSetting);
+			mActivityChange.finish();
 			break;
 		
 		case R.id.snapshotBtn	:
@@ -234,14 +237,13 @@ public class TimePresenter {
 			
 			mActivityChange.whichIntent(TargetIntent.SnapShot);
 			mActivityChange.putBooleanIntent("snapshot", true);
-			mActivityChange.putStringsIntent("datetime", MainTimer.rTime);
+			mActivityChange.putStringsIntent("datetime", TimerDisplay.rTime);
 			mActivityChange.putBytesIntent("bitmap", bitmapBytes);
+			mActivityChange.finish();
 			break;
 			
 		default	:
 			break;
 		}
-		
-		mActivityChange.finish();
 	}
 }

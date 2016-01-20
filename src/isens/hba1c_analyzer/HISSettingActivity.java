@@ -1,6 +1,5 @@
 package isens.hba1c_analyzer;
 
-import isens.hba1c_analyzer.Model.MainTimer;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
@@ -151,7 +150,7 @@ public class HISSettingActivity extends Activity {
 		            public void run() {
 		            	
 //		            	Log.w("SettingTimeDisplay", "run");
-		            	TimeText.setText(MainTimer.rTime[3] + " " + MainTimer.rTime[4] + ":" + MainTimer.rTime[5]);
+		            	TimeText.setText(TimerDisplay.rTime[3] + " " + TimerDisplay.rTime[4] + ":" + TimerDisplay.rTime[5]);
 		            }
 		        });
 		    }

@@ -1,6 +1,5 @@
 package isens.hba1c_analyzer;
 
-import isens.hba1c_analyzer.Model.MainTimer;
 import isens.hba1c_analyzer.SerialPort.CtrTarget;
 import android.util.Log;
 
@@ -63,55 +62,55 @@ public class GpioPort {
 		
 		String tmpData;
 		
-		while(MainTimer.RXBoardFlag) SerialPort.Sleep(10);
+		while(TimerDisplay.RXBoardFlag) SerialPort.Sleep(10);
 		
-		MainTimer.RXBoardFlag = true;
+		TimerDisplay.RXBoardFlag = true;
 		
 		mSerialPort = new SerialPort();
 		mSerialPort.BoardTx(DOOR_SENSOR, SerialPort.CtrTarget.NormalSet);
 		
 		tmpData = BoardMessage("D");
 		
-		MainTimer.RXBoardFlag = false;
-		
+		TimerDisplay.RXBoardFlag = false;
+//		Log.w("DoorCheck", "end = " + tmpData);
 		return (byte) Integer.parseInt(tmpData.substring(2));
 	}
 
 	public void DoorSensorScan() { // State code of door sensor
 		
-		DoorSensorScan mDoorSensorScan = new DoorSensorScan();
-		mDoorSensorScan.start();
+		if(DoorActState) {
+//			Log.w("DoorSensorScan", "start");
+			DoorSensorScan mDoorSensorScan = new DoorSensorScan();
+			mDoorSensorScan.start();
+		}
 	}
 	
 	public class DoorSensorScan extends Thread {
 		
 		public void run() {
 			
-			if(DoorActState) {
-				
-				switch(DoorSensorState) {		
-				
-				case InitialState	:
-					DoorInitState = DoorCheck();
-					DoorSensorState = SensorScan.DebounceState;
-					break;
-				
-				case DebounceState	:	
-					DoorSensorState = (DoorCheck() == DoorInitState) ? SensorScan.StableState : SensorScan.InitialState;
-					break;
-											
-				case StableState	:
-					if(DoorCheck() == DoorInitState) {
-						
-						ActionActivity.DoorCheckFlag = DoorInitState;
-						
-					} else DoorSensorState = SensorScan.DebounceState;
-					break;
-											
-				default :
-					DoorSensorState = SensorScan.InitialState;
-					break;
-				}
+			switch(DoorSensorState) {		
+			
+			case InitialState	:
+				DoorInitState = DoorCheck();
+				DoorSensorState = SensorScan.DebounceState;
+				break;
+			
+			case DebounceState	:	
+				DoorSensorState = (DoorCheck() == DoorInitState) ? SensorScan.StableState : SensorScan.InitialState;
+				break;
+										
+			case StableState	:
+				if(DoorCheck() == DoorInitState) {
+					
+					ActionActivity.DoorCheckFlag = DoorInitState;
+					
+				} else DoorSensorState = SensorScan.DebounceState;
+				break;
+										
+			default :
+				DoorSensorState = SensorScan.InitialState;
+				break;
 			}
 		}
 	}
@@ -120,33 +119,34 @@ public class GpioPort {
 		
 		String tmpData;
 		
-		while(MainTimer.RXBoardFlag) SerialPort.Sleep(10);
+		while(TimerDisplay.RXBoardFlag) SerialPort.Sleep(10);
 		
-		MainTimer.RXBoardFlag = true;
+		TimerDisplay.RXBoardFlag = true;
 		
 		mSerialPort = new SerialPort();
 		mSerialPort.BoardTx(CARTRIDGE_SENSOR, SerialPort.CtrTarget.NormalSet);
 		
 		tmpData = BoardMessage("C");
 		
-		MainTimer.RXBoardFlag = false;
-		
+		TimerDisplay.RXBoardFlag = false;
+//		Log.w("CartridgeCheck", "end = " + tmpData);	
 		return (byte) Integer.parseInt(tmpData.substring(2));
 	}
 	
 	public void CartridgeSensorScan() { // State code of door sensor
 		
-		CartridgeSensorScan mCartridgeSensorScan = new CartridgeSensorScan();
-		mCartridgeSensorScan.start();
+		if(CartridgeActState) {
+//			Log.w("CartridgeSensorScan", "start");
+			CartridgeSensorScan mCartridgeSensorScan = new CartridgeSensorScan();
+			mCartridgeSensorScan.start();
+		}
 	}
 	
 	public class CartridgeSensorScan extends Thread {
-		
+
 		public void run() {
 			
-			if(CartridgeActState) {
-				
-				switch(CartridgeSensorState) {
+			switch(CartridgeSensorState) {
 				
 				case InitialState	:
 					CartridgeInitState = CartridgeCheck();
@@ -168,7 +168,6 @@ public class GpioPort {
 				default :
 					CartridgeSensorState = SensorScan.InitialState;
 					break;
-				}
 			}
 			
 			DoorSensorScan();
@@ -181,14 +180,20 @@ public class GpioPort {
 		String temp = "";
 		
 		mSerialPort = new SerialPort();
-		
+//		Log.w("BoardMessage", "time = 0");
 		while(true) {
 			
 			temp = mSerialPort.SensorMessageOutput();
+
+			if(time++ == 20) {
+//				Log.w("BoardMessage", "temp = " + temp + " time = " + time);
+				return "NR2";
+			}
 			
-			if(time++ == 20) return "NR2";
-			
-			if(temp.substring(1, 2).equals(sensorMsg)) return temp;
+			if(temp.substring(1, 2).equals(sensorMsg)) {
+//				Log.w("BoardMessage", "temp = " + temp + " time = " + time);
+				return temp;
+			}
 			
 			SerialPort.Sleep(10);
 		}

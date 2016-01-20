@@ -14,13 +14,13 @@ import isens.hba1c_analyzer.FileSaveActivity;
 import isens.hba1c_analyzer.HomeActivity;
 import isens.hba1c_analyzer.R;
 import isens.hba1c_analyzer.SerialPort;
+import isens.hba1c_analyzer.TimerDisplay;
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
 import isens.hba1c_analyzer.Model.ActivityChange;
 import isens.hba1c_analyzer.Model.CaptureScreen;
 import isens.hba1c_analyzer.Model.ConvertModel;
 import isens.hba1c_analyzer.Model.DateModel;
 import isens.hba1c_analyzer.Model.LanguageModel;
-import isens.hba1c_analyzer.Model.MainTimer;
 import isens.hba1c_analyzer.View.ConvertIView;
 import isens.hba1c_analyzer.View.DateIView;
 import isens.hba1c_analyzer.View.DisplayIView;
@@ -30,7 +30,7 @@ import isens.hba1c_analyzer.View.LanguageIView;
 public class FunctionalTestPresenter {
 	
 	private FunctionalTestIView mFunctionalTestIView;
-	private MainTimer mMainTimer;
+	private TimerDisplay mTimerDisplay;
 	private ActivityChange mActivityChange;
 	private ErrorPopup mErrorPopup;
 	
@@ -41,7 +41,7 @@ public class FunctionalTestPresenter {
 	public FunctionalTestPresenter(FunctionalTestIView view, Activity activity, Context context, int layout) {
 		
 		mFunctionalTestIView = view;
-		mMainTimer = new MainTimer(activity, layout);
+		mTimerDisplay = new TimerDisplay();
 		mActivityChange = new ActivityChange(activity, context);
 		
 		this.activity = activity;
@@ -56,6 +56,8 @@ public class FunctionalTestPresenter {
 		mFunctionalTestIView.setTextId();
 		mFunctionalTestIView.setText();
 		mFunctionalTestIView.setButtonId();
+		
+		mTimerDisplay.ActivityParm(activity, layout);
 		
 		state = mFunctionalTestIView.getIntentData();
 		
@@ -90,15 +92,18 @@ public class FunctionalTestPresenter {
 		
 		case R.id.backBtn	:
 			mActivityChange.whichIntent(TargetIntent.Setting);
+			mActivityChange.finish();
 			break;
 		
 		case R.id.homeBtn	:
 			mActivityChange.whichIntent(TargetIntent.Home);
+			mActivityChange.finish();
 			break;
 		
 		case R.id.qcBtn	:
 			HomeActivity.MEASURE_MODE = HomeActivity.A1C_QC;
 			mActivityChange.whichIntent(TargetIntent.Blank);
+			mActivityChange.finish();
 			break;
 		
 		case R.id.snapshotBtn	:
@@ -107,14 +112,13 @@ public class FunctionalTestPresenter {
 			
 			mActivityChange.whichIntent(TargetIntent.SnapShot);
 			mActivityChange.putBooleanIntent("snapshot", true);
-			mActivityChange.putStringsIntent("datetime", MainTimer.rTime);
+			mActivityChange.putStringsIntent("datetime", TimerDisplay.rTime);
 			mActivityChange.putBytesIntent("bitmap", bitmapBytes);
+			mActivityChange.finish();
 			break;
 			
 		default	:
 			break;
 		}
-		
-		mActivityChange.finish();
 	}
 }

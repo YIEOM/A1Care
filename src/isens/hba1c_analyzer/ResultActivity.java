@@ -5,9 +5,7 @@ import isens.hba1c_analyzer.Model.AboutModel;
 import isens.hba1c_analyzer.Model.CaptureScreen;
 import isens.hba1c_analyzer.Model.ConvertModel;
 import isens.hba1c_analyzer.Model.LanguageModel;
-import isens.hba1c_analyzer.Model.RecordDataModel;
 import isens.hba1c_analyzer.Model.SoundModel;
-import isens.hba1c_analyzer.Model.MainTimer;
 import isens.hba1c_analyzer.View.ConvertActivity;
 
 import java.text.DecimalFormat;
@@ -52,12 +50,11 @@ public class ResultActivity extends Activity {
 	
 	private SerialPort mSerialPort;
 	private ErrorPopup mErrorPopup;
-	private MainTimer mMainTimer;
+	private TimerDisplay mTimerDisplay;
 	private DatabaseHander mDatabaseHander;
 	private RunActivity mRunActivity;
 	private SoundModel mSoundModel;
 	private LanguageModel mLanguageModel;
-	private RecordDataModel mRecordDataModel;
 	
 	private Activity activity;
 	private Context context;
@@ -303,7 +300,8 @@ public class ResultActivity extends Activity {
 		setButtonId(activity);
 		setButtonClick();
 		
-		mMainTimer = new MainTimer(this, R.id.resultlayout);
+		mTimerDisplay = new TimerDisplay();
+		mTimerDisplay.ActivityParm(this, R.id.resultlayout);
 		
 		GetCurrTime();
 		GetDataCnt();		
@@ -322,15 +320,15 @@ public class ResultActivity extends Activity {
 				switch(rem) {
 				
 				case 0	:
-					RunActivity.HbA1cValue = 5.5f;
+					RunActivity.HbA1cValue = 5.5;
 					break;
 					
 				case 1	:
-					RunActivity.HbA1cValue = 6.7f;
+					RunActivity.HbA1cValue = 6.7;
 					break;
 				
 				case 2	:
-					RunActivity.HbA1cValue = 8.3f;
+					RunActivity.HbA1cValue = 8.3;
 					break;
 					
 				default	:
@@ -363,8 +361,8 @@ public class ResultActivity extends Activity {
 			mErrorPopup.ErrorBtnDisplay(ItnData);
 		}
 		
-		dateText.setText(MainTimer.rTime[0] + "." + MainTimer.rTime[1] + "." + MainTimer.rTime[2] + "   " + MainTimer.rTime[4] + ":" + MainTimer.rTime[5]);
-		amPmText.setText(MainTimer.rTime[3]);
+		dateText.setText(TimerDisplay.rTime[0] + "." + TimerDisplay.rTime[1] + "." + TimerDisplay.rTime[2] + "   " + TimerDisplay.rTime[4] + ":" + TimerDisplay.rTime[5]);
+		amPmText.setText(TimerDisplay.rTime[3]);
 		refText.setText(Barcode.RefNum);
 		
 		mDatabaseHander = new DatabaseHander(this);
@@ -389,12 +387,12 @@ public class ResultActivity extends Activity {
 	
 	public void GetCurrTime() { // getting the current date and time
 		
-		getTime[0] = MainTimer.rTime[0];
-		getTime[1] = MainTimer.rTime[1];
-		getTime[2] = MainTimer.rTime[2];
-		getTime[3] = MainTimer.rTime[3];		
-		getTime[4] = MainTimer.rTime[4];
-		getTime[5] = MainTimer.rTime[5];			
+		getTime[0] = TimerDisplay.rTime[0];
+		getTime[1] = TimerDisplay.rTime[1];
+		getTime[2] = TimerDisplay.rTime[2];
+		getTime[3] = TimerDisplay.rTime[3];		
+		getTime[4] = TimerDisplay.rTime[4];
+		getTime[5] = TimerDisplay.rTime[5];			
 	}
 	
 	public void GetDataCnt() {
@@ -407,7 +405,7 @@ public class ResultActivity extends Activity {
 		
 		if(ItnData == RunActivity.NORMAL_OPERATION) {
 			
-			ArrayList<String> dataList = new ArrayList<String>();
+			StringBuffer txData = new StringBuffer();
 			DecimalFormat dfm = new DecimalFormat("0000"),
 						  pIDLenDfm = new DecimalFormat("00");
 			
@@ -416,26 +414,53 @@ public class ResultActivity extends Activity {
 			tempDataCnt = dataCnt % 9999;
 			if(tempDataCnt == 0) tempDataCnt = 9999; 
 			
-			dataList.add(0, dfm.format(tempDataCnt));
-			dataList.add(1, getTime[0] + getTime[1] + getTime[2] + getTime[3] + getTime[4] + getTime[5]);
-			dataList.add(2, Barcode.Type);
-			dataList.add(3, hbA1cCurr);
-			dataList.add(4, Integer.toString((int) primaryByte));
-			dataList.add(5, Barcode.RefNum);
-			dataList.add(6, PatientIDText.getText().toString());
-			dataList.add(7, operator);
+			txData.delete(0, txData.capacity());
+			
+			txData.append(getTime[0]);
+			txData.append(getTime[1]);
+			txData.append(getTime[2]);
+			txData.append(getTime[3]);
+			txData.append(getTime[4]);
+			txData.append(getTime[5]);
+			txData.append(dfm.format(tempDataCnt));
+			txData.append(Barcode.Type);
+			txData.append(Barcode.RefNum);
+			txData.append(pIDLenDfm.format(PatientIDText.getText().toString().length()));
+			txData.append(PatientIDText.getText().toString());
+			txData.append(pIDLenDfm.format(operator.length()));
+			txData.append(operator);
+			txData.append(Integer.toString((int) primaryByte)); // primary
+			txData.append(hbA1cCurr);
 			
 			mSerialPort = new SerialPort();
-			mSerialPort.PrinterTxStart(activity, context, SerialPort.PRINT_RESULT, dataList);
+			mSerialPort.PrinterTxStart(activity, context, SerialPort.PRINT_RESULT, txData);
 			
 			SerialPort.Sleep(100);
 		
 		} else if(ItnData == RunActivity.DEMO_OPERATION) {
 			
-			mRecordDataModel = new RecordDataModel(activity, context);
+			StringBuffer txData = new StringBuffer();
+			
+			txData.delete(0, txData.capacity());
+			
+			txData.append("2015");
+			txData.append("03");
+			txData.append("05");
+			txData.append("AM");
+			txData.append("09");
+			txData.append("30");
+			txData.append("0003");
+			txData.append("D");
+			txData.append("DBANA");
+			txData.append("07");
+			txData.append("Patient");
+			txData.append("08");
+			txData.append("Operator");
+			txData.append("0"); // primary
+			txData.append("8.3");
 			
 			mSerialPort = new SerialPort();
-			mSerialPort.PrinterTxStart(activity, context, SerialPort.PRINT_RESULT, mRecordDataModel.getRawData(0, TargetIntent.PatientFileLoad));
+			mSerialPort.PrinterTxStart(activity, context, SerialPort.PRINT_RESULT, txData);
 			
 			SerialPort.Sleep(100);
 		}
@@ -561,7 +586,7 @@ public class ResultActivity extends Activity {
 		
 		if(Itn != TargetIntent.SnapShot) {
 			
-			nextIntent = new Intent(context, FileSaveActivity.class);
+			nextIntent = new Intent(getApplicationContext(), FileSaveActivity.class);
 			DecimalFormat photoDfm = new DecimalFormat("0.0"),
 						  absorbDfm = new DecimalFormat("0.0000"),
 						  pIDLenDfm = new DecimalFormat("00");
@@ -641,7 +666,7 @@ public class ResultActivity extends Activity {
 			
 			nextIntent = new Intent(context, FileSaveActivity.class);
 			nextIntent.putExtra("snapshot", true);
-			nextIntent.putExtra("datetime", MainTimer.rTime);
+			nextIntent.putExtra("datetime", TimerDisplay.rTime);
 			nextIntent.putExtra("bitmap", bitmapBytes);
 		}
 			
@@ -655,7 +680,7 @@ public class ResultActivity extends Activity {
 		
 		nextIntent = new Intent(context, FileSaveActivity.class);
 		nextIntent.putExtra("snapshot", true);
-		nextIntent.putExtra("datetime", MainTimer.rTime);
+		nextIntent.putExtra("datetime", TimerDisplay.rTime);
 		nextIntent.putExtra("bitmap", bitmapBytes);
 		
 		activity.startActivity(nextIntent);

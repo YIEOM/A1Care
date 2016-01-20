@@ -5,17 +5,17 @@ import android.content.Context;
 import isens.hba1c_analyzer.R;
 import isens.hba1c_analyzer.RunActivity;
 import isens.hba1c_analyzer.SerialPort;
+import isens.hba1c_analyzer.TimerDisplay;
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
 import isens.hba1c_analyzer.Model.ActivityChange;
 import isens.hba1c_analyzer.Model.FactorModel;
-import isens.hba1c_analyzer.Model.MainTimer;
 import isens.hba1c_analyzer.View.FactorIView;
 
 public class Correction1Presenter {
 	
 	private FactorIView mFactorIView;
 	private FactorModel mFactorModel;
-	private MainTimer mMainTimer;
+	private TimerDisplay mTimerDisplay;
 	private ActivityChange mActivityChange;
 	
 	private Activity activity;
@@ -26,7 +26,7 @@ public class Correction1Presenter {
 		
 		mFactorIView = view;
 		mFactorModel = new FactorModel(activity);
-		mMainTimer = new MainTimer(activity, layout);
+		mTimerDisplay = new TimerDisplay();
 		mActivityChange = new ActivityChange(activity, context);
 		
 		this.activity = activity;
@@ -42,6 +42,8 @@ public class Correction1Presenter {
 		mFactorIView.setEditTextId();
 		
 		display();
+		
+		mTimerDisplay.ActivityParm(activity, layout);
 		
 		SerialPort.Sleep(500);
 		

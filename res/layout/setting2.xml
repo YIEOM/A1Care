@@ -9,7 +9,7 @@
         android:id="@+id/backBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/back_selector" />
+        android:background="#00000000" />
     
     <ImageView
         android:layout_width="wrap_content"
@@ -18,7 +18,7 @@
         android:src="@drawable/title" />
     
     <ImageView
-        android:id="@+id/titleImage"
+        android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="128px"
@@ -58,6 +58,13 @@
 	        android:layout_height="wrap_content" />
 	   	    
    	</RelativeLayout>
+   	
+   	<Button
+        android:id="@+id/escBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="728px"
+        android:background="#00000000" />
    	
    	<RelativeLayout 
    	    android:layout_width="180px"

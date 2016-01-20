@@ -8,8 +8,8 @@ import isens.hba1c_analyzer.CustomKeyboard;
 import isens.hba1c_analyzer.HomeActivity;
 import isens.hba1c_analyzer.R;
 import isens.hba1c_analyzer.SystemSettingActivity;
+import isens.hba1c_analyzer.TimerDisplay;
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
-import isens.hba1c_analyzer.Model.MainTimer;
 import isens.hba1c_analyzer.Presenter.AdjustmentPresenter;
 import isens.hba1c_analyzer.Presenter.ConvertPresenter;
 import isens.hba1c_analyzer.Presenter.CorrelationPresenter;
@@ -71,7 +71,7 @@ public class AdjustmentActivity extends Activity implements FactorIView{
 	
 	public void setImageId() {
 		
-		titleImage = (ImageView) findViewById(R.id.titleImage);
+		titleImage = (ImageView) findViewById(R.id.title);
 		iconImage = (ImageView) findViewById(R.id.icon);
 		fct1stImage = (ImageView) findViewById(R.id.fct1st);
 		fct2ndImage = (ImageView) findViewById(R.id.fct2nd);
@@ -100,6 +100,7 @@ public class AdjustmentActivity extends Activity implements FactorIView{
 	public void setButtonId() {
 		
 		backBtn = (Button)findViewById(R.id.backBtn);
+		backBtn.setBackgroundResource(R.drawable.back_selector);
 	}
 	
 	public void setButtonClick() {

@@ -1,7 +1,5 @@
 package isens.hba1c_analyzer;
 
-import isens.hba1c_analyzer.HomeActivity.TargetIntent;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -41,18 +39,18 @@ public class DataStorage extends Activity {
 		}
 	}
 	
-	public synchronized void DataSave(StringBuffer sData, TargetIntent target) { // Save data to uSD card
+	public synchronized void DataSave(byte type, StringBuffer sData) { // Save data to uSD card
 				
 		String sdPath = SDCardState();
 		
 		File dir = new File(sdPath + SAVE_DIRECTORY), // File directory
 			 file = null;
 		
-		if(target == TargetIntent.ControlFileLoad) {
+		if(type == FileSaveActivity.CONTROL_TEST) {
 		
 			file = new File(sdPath + SAVE_DIRECTORY + SAVE_CONTROL_FILENAME + FileSaveActivity.TempDataCnt + ".txt"); // File
 		
-		} else if(target == TargetIntent.PatientFileLoad) {
+		} else if(type == FileSaveActivity.PATIENT_TEST) {
 			
 			file = new File(sdPath + SAVE_DIRECTORY + SAVE_PATIENT_FILENAME + FileSaveActivity.TempDataCnt + ".txt");
 		}
@@ -65,8 +63,8 @@ public class DataStorage extends Activity {
 				file.createNewFile();
 			}
 			
-			FileOutputStream fos = new FileOutputStream(file, true);
-			
+			FileOutputStream fos = new FileOutputStream(file, false);
+
 			fos.write(sData.toString().getBytes());
 			fos.write("\r\n".getBytes());
 			fos.flush();
@@ -127,16 +125,16 @@ public class DataStorage extends Activity {
 		}		
 	}
 	
-	public String createUSBFile(String hwSN, TargetIntent target) {
+	public String createUSBFile(String hwSN, byte type) {
 		
 		File dir = new File(SAVE_USB_DIRECTORY),
 			 file = null;
-//		Log.w("createUSBFile", "" + target);
-		if(target == TargetIntent.ControlFileLoad) {
+		
+		if(type == FileSaveActivity.CONTROL_TEST) {
 			
 			file = new File(SAVE_USB_DIRECTORY + SAVE_CONTROL_FILENAME + "_" + hwSN + ".txt");
 		
-		} else if(target == TargetIntent.PatientFileLoad) {
+		} else if(type == FileSaveActivity.PATIENT_TEST) {
 			
 			file = new File(SAVE_USB_DIRECTORY + SAVE_PATIENT_FILENAME + "_" + hwSN + ".txt");
 		}
@@ -211,15 +209,15 @@ public class DataStorage extends Activity {
 		}		
 	}
 	
-	public String checkUSBFile(String hwSN, TargetIntent target) {
+	public String checkUSBFile(String hwSN, byte type) {
 		
 		File file = null;
 		
-		if(target == TargetIntent.ControlFileLoad) {
+		if(type == FileSaveActivity.CONTROL_TEST) {
 			
 			file = new File(SAVE_USB_DIRECTORY + SAVE_CONTROL_FILENAME + "_" + hwSN + ".txt");
 		
-		} else if(target == TargetIntent.PatientFileLoad) {
+		} else if(type == FileSaveActivity.PATIENT_TEST) {
 			
 			file = new File(SAVE_USB_DIRECTORY + SAVE_PATIENT_FILENAME + "_" + hwSN + ".txt");
 		}
@@ -273,21 +271,21 @@ public class DataStorage extends Activity {
 		}		
 	}
 	
-	public String FileCheck(int num, TargetIntent target) { // Checking specific file
+	public String FileCheck(int num, int type) { // Checking specific file
 		
 		String sdPath = SDCardState(),
 			   filePath = null;
 		
 		int dataCnt;
-		Log.w("file", "" + target);
+		
 		dataCnt = (FileSaveActivity.DataCnt - num) % 9999;
 		if(dataCnt == 0) dataCnt = 9999;
 		
-		if(target == TargetIntent.ControlFileLoad) {
+		if(type == (int) FileSaveActivity.CONTROL_TEST) {
 			
 			filePath = sdPath + SAVE_DIRECTORY + SAVE_CONTROL_FILENAME + dataCnt +".txt"; // File number : the latest data - number
 		
-		} else if(target == TargetIntent.PatientFileLoad) {
+		} else if(type == (int) FileSaveActivity.PATIENT_TEST) {
 			
 			filePath = sdPath + SAVE_DIRECTORY + SAVE_PATIENT_FILENAME + dataCnt +".txt"; // File number : the latest data - number
 		}

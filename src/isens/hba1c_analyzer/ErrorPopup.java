@@ -4,7 +4,6 @@ import isens.hba1c_analyzer.HomeActivity.TargetIntent;
 import isens.hba1c_analyzer.Model.ActivityChange;
 import isens.hba1c_analyzer.Model.CaptureScreen;
 import isens.hba1c_analyzer.Model.SoundModel;
-import isens.hba1c_analyzer.Model.MainTimer;
 import isens.hba1c_analyzer.Presenter.FunctionalTestPresenter;
 import isens.hba1c_analyzer.View.FunctionalTestActivity;
 import isens.hba1c_analyzer.View.LampActivity;
@@ -30,6 +29,7 @@ public class ErrorPopup {
 	public ResultActivity mResultActivity;
 	public OperatorPopup mOperatorPopup;
 	public SystemSettingActivity mSystemSettingActivity;
+	public LampCopyActivity mLampCopyActivity;
 	public EngineerActivity mEngineerActivity;
 	public SoundModel mSoundModel;
 	public OperatorSettingActivity mOperatorSettingActivity;
@@ -253,7 +253,9 @@ public class ErrorPopup {
 			
 		case R.id.lampLayout	:
 			ErrorPopupClose();
-			break;
+			mLampCopyActivity = new LampCopyActivity();
+			mLampCopyActivity.cancelTest();
+			mLampCopyActivity.enabledAllBtn();
 			
 		case R.id.resultlayout	:
 			ErrorPopupClose();
@@ -509,7 +511,7 @@ public class ErrorPopup {
 			mActivityChange = new ActivityChange(activity, context);
 			mActivityChange.whichIntent(TargetIntent.SnapShot);
 			mActivityChange.putBooleanIntent("snapshot", true);
-			mActivityChange.putStringsIntent("datetime", MainTimer.rTime);
+			mActivityChange.putStringsIntent("datetime", TimerDisplay.rTime);
 			mActivityChange.putBytesIntent("bitmap", bitmapBytes);
 			mActivityChange.finish();
 			break;

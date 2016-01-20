@@ -14,7 +14,6 @@ import isens.hba1c_analyzer.Model.CaptureScreen;
 import isens.hba1c_analyzer.Model.CustomTextView;
 import isens.hba1c_analyzer.Model.Hardware;
 import isens.hba1c_analyzer.Model.LanguageModel;
-import isens.hba1c_analyzer.Model.MainTimer;
 import isens.hba1c_analyzer.View.FunctionalTestActivity;
 import android.app.Activity;
 import android.content.Context;
@@ -44,9 +43,9 @@ public class BlankActivity extends Activity {
 
 	public SerialPort mSerialPort;
 	public ErrorPopup mErrorPopup;
-	public MainTimer mMainTimer;
+	public TimerDisplay mTimerDisplay;
 	public ActivityChange mActivityChange;
-	public Hardware mHardware;
+	public Temperature mTemperature;
 	private LanguageModel mLanguageModel;
 	
 	public Handler runHandler = new Handler();
@@ -164,7 +163,7 @@ public class BlankActivity extends Activity {
 				case R.id.escicon		:
 					ESC();
 					break;
-				
+						
 				case R.id.snapshotBtn		:
 					CaptureScreen mCaptureScreen = new CaptureScreen();
 					bitmapBytes = mCaptureScreen.captureScreen(activity);
@@ -211,10 +210,11 @@ public class BlankActivity extends Activity {
 		RunActivity.IsError = false;
 		ActionActivity.IsEnablePopup = false;
 		
-		mMainTimer = new MainTimer(this, R.id.blanklayout);
+		mTimerDisplay = new TimerDisplay();
+		mTimerDisplay.ActivityParm(this, R.id.blanklayout);
 				
 		mSerialPort = new SerialPort();
-		mHardware = new Hardware();
+		mTemperature = new Temperature();
 		
 		blankState = RunActivity.AnalyzerState.InitPosition;
 		photoCheck = 0;
@@ -257,6 +257,17 @@ public class BlankActivity extends Activity {
 			GpioPort.DoorActState = false;
 			GpioPort.CartridgeActState = false;
 			
+			new Thread(new Runnable() {
+				public void run() {
+					runOnUiThread(new Runnable(){
+						public void run() {
+
+							enabledAllBtn(activity);
+						}
+					});
+				}
+			}).start();
+			
 			ChamberTmpCheck mChamberTmpCheck = new ChamberTmpCheck();
 			mChamberTmpCheck.start();
 		}
@@ -271,33 +282,30 @@ public class BlankActivity extends Activity {
 			
 			for(i = 0; i < 4; i++) {
 				
-				tmp += mHardware.getChamTmp();
+				tmp += mTemperature.CellTmpRead();
 				
 				SerialPort.Sleep(500);
 			}
 			
-			if(((Hardware.InitTmp - 1) < tmp/4) & (tmp/4 < (Hardware.InitTmp + 1))) {
+			if(HomeActivity.ANALYZER_SW != HomeActivity.DEMO) {
 				
-				ChamberTmp = tmp/4;
-				
-				new Thread(new Runnable() {
-					public void run() {
-						runOnUiThread(new Runnable(){
-							public void run() {
-
-								enabledAllBtn(activity);
-							}
-						});
-					}
-				}).start();
-				
-				BlankStep mBlankStep = new BlankStep();
-				mBlankStep.start();
+				if(((Temperature.InitTmp - 1) < tmp/4) & (tmp/4 < (Temperature.InitTmp + 1))) {
+					
+					ChamberTmp = tmp/4;
+					
+					BlankStep mBlankStep = new BlankStep();
+					mBlankStep.start();
+					
+				} else {
+					
+					checkError = R.string.e222;
+					changeActivity();
+				}
 				
 			} else {
 				
-				checkError = R.string.e222;
-				changeActivity();
+				BlankStep mBlankStep = new BlankStep();
+				mBlankStep.start();
 			}
 		}
 	}
@@ -435,9 +443,9 @@ public class BlankActivity extends Activity {
 	
 	public void MotionInstruct(String str, SerialPort.CtrTarget target) { // Motion of system instruction
 		
-		while(MainTimer.RXBoardFlag) SerialPort.Sleep(10);
+		while(TimerDisplay.RXBoardFlag) SerialPort.Sleep(10);
 		
-		MainTimer.RXBoardFlag = true;
+		TimerDisplay.RXBoardFlag = true;
 		mSerialPort.BoardTx(str, target);
 	}
 	
@@ -446,9 +454,9 @@ public class BlankActivity extends Activity {
 		int time = 0;
 		String rawValue;
 		double douValue = 0;
-		while(MainTimer.RXBoardFlag) SerialPort.Sleep(10);
+		while(TimerDisplay.RXBoardFlag) SerialPort.Sleep(10);
 		
-		MainTimer.RXBoardFlag = true;
+		TimerDisplay.RXBoardFlag = true;
 		mSerialPort.BoardTx("VH", SerialPort.CtrTarget.NormalSet);
 		
 		do {
@@ -477,8 +485,9 @@ public class BlankActivity extends Activity {
 			checkError = R.string.e241;
 		}
 		
-		MainTimer.RXBoardFlag = false;
+		TimerDisplay.RXBoardFlag = false;
 		
+//		Log.w("AbsorbanceMeasure", "douValue : " + douValue + " max : " + max + " min : " + min + " errBits : " + photoCheck);
 		return (douValue - RunActivity.BlankValue[0]);
 	}
 	
@@ -550,7 +559,7 @@ public class BlankActivity extends Activity {
 			SerialPort.Sleep(100);
 		}
 		
-		MainTimer.RXBoardFlag = false;
+		TimerDisplay.RXBoardFlag = false;
 	}
 	
 	public void checkMode() {
@@ -578,7 +587,7 @@ public class BlankActivity extends Activity {
 			
 			GpioPort.DoorActState = false;			
 			GpioPort.CartridgeActState = false;
-			
+						
 			mErrorPopup.ErrorDisplay(R.string.wait);
 			
 			CartDump mCartDump = new CartDump();
@@ -740,7 +749,7 @@ public class BlankActivity extends Activity {
 				
 				nextIntent = new Intent(context, FileSaveActivity.class);
 				nextIntent.putExtra("snapshot", true);
-				nextIntent.putExtra("datetime", MainTimer.rTime);
+				nextIntent.putExtra("datetime", TimerDisplay.rTime);
 				nextIntent.putExtra("bitmap", bitmapBytes);	
 			}
 			break;
@@ -768,7 +777,7 @@ public class BlankActivity extends Activity {
 		
 		nextIntent = new Intent(context, FileSaveActivity.class);
 		nextIntent.putExtra("snapshot", true);
-		nextIntent.putExtra("datetime", MainTimer.rTime);
+		nextIntent.putExtra("datetime", TimerDisplay.rTime);
 		nextIntent.putExtra("bitmap", bitmapBytes);
 		
 		activity.startActivity(nextIntent);

@@ -4,7 +4,6 @@ import isens.hba1c_analyzer.HomeActivity.TargetIntent;
 import isens.hba1c_analyzer.Model.ActivityChange;
 import isens.hba1c_analyzer.Model.CaptureScreen;
 import isens.hba1c_analyzer.Model.CustomTextView;
-import isens.hba1c_analyzer.Model.MainTimer;
 
 import java.text.DecimalFormat;
 
@@ -692,7 +691,7 @@ public class OperatorPopup {
 						
 						if(aPW.equals(cPW)) {
 							 
-							mDatabaseHander.AddOperator(id, MainTimer.rTime[0] + MainTimer.rTime[1] + MainTimer.rTime[2] + MainTimer.rTime[7] + MainTimer.rTime[5], aPW);
+							mDatabaseHander.AddOperator(id, TimerDisplay.rTime[0] + TimerDisplay.rTime[1] + TimerDisplay.rTime[2] + TimerDisplay.rTime[7] + TimerDisplay.rTime[5], aPW);
 							
 							PopupClose();
 							

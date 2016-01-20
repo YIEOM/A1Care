@@ -11,6 +11,7 @@ import android.util.Log;
 import isens.hba1c_analyzer.EngineerActivity;
 import isens.hba1c_analyzer.RunActivity;
 import isens.hba1c_analyzer.SerialPort;
+import isens.hba1c_analyzer.TimerDisplay;
 import isens.hba1c_analyzer.SerialPort.CtrTarget;
 
 public class AboutModel {
@@ -117,9 +118,9 @@ public class AboutModel {
 			String temp = "NR";
 			int cnt = 0;
 			
-			while(MainTimer.RXBoardFlag) SerialPort.Sleep(10);
+			while(TimerDisplay.RXBoardFlag) SerialPort.Sleep(10);
 			
-			MainTimer.RXBoardFlag = true;
+			TimerDisplay.RXBoardFlag = true;
 			
 			mSerialPort = new SerialPort();
 			mSerialPort.BoardTx(FW_VERSION, CtrTarget.NormalSet);
@@ -138,7 +139,7 @@ public class AboutModel {
 			
 			} while(temp.equals("NR"));
 			
-			MainTimer.RXBoardFlag = false;
+			TimerDisplay.RXBoardFlag = false;
 			
 			version = temp;
 		}

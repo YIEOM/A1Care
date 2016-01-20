@@ -58,13 +58,13 @@ public class FileDeleteActivity extends Activity {
 			
 			for(int i = 1; i < pDataCnt; i++) {
 				
-				filePath = mDataStorage.FileCheck(i, TargetIntent.PatientFileLoad);
+				filePath = mDataStorage.FileCheck(i, FileLoadActivity.PATIENT);
 				if(filePath != null) mDataStorage.FileDelete(filePath);
 			}
 			
 			for(int i = 1; i < cDataCnt; i++) {
 				
-				filePath = mDataStorage.FileCheck(i, TargetIntent.ControlFileLoad);
+				filePath = mDataStorage.FileCheck(i, FileLoadActivity.CONTROL);
 				if(filePath != null) mDataStorage.FileDelete(filePath);
 			}
 			

@@ -5,7 +5,6 @@ import isens.hba1c_analyzer.Model.CaptureScreen;
 import isens.hba1c_analyzer.Model.ConvertModel;
 import isens.hba1c_analyzer.Model.Hardware;
 import isens.hba1c_analyzer.Model.LanguageModel;
-import isens.hba1c_analyzer.Model.MainTimer;
 import isens.hba1c_analyzer.View.FunctionalTestActivity;
 
 import java.text.DecimalFormat;
@@ -59,7 +58,7 @@ public class RunActivity extends Activity {
 	public static boolean MotorShakeFlag = false;
 	
 	public ErrorPopup mErrorPopup;
-	public MainTimer mTimerDisplay;
+	public TimerDisplay mTimerDisplay;
 	public SerialPort mSerialPort;
 	private LanguageModel mLanguageModel;
 	
@@ -100,9 +99,9 @@ public class RunActivity extends Activity {
 						  IsStop,
 						  IsError;
 	
-	public static float tHbDbl,
-						HbA1cValue,
-						DouValue;
+	public static double tHbDbl,
+						 HbA1cValue,
+						 DouValue;
 	
 	public static float AF_Slope,
 						AF_Offset,
@@ -121,7 +120,7 @@ public class RunActivity extends Activity {
 	
 	private int languageIdx;
 	
-	public float A;
+	public double A;
 
 	public byte runSec,
 				runMin;
@@ -1323,7 +1322,8 @@ public class RunActivity extends Activity {
 		runState = AnalyzerState.InitPosition;
 		checkError = NORMAL_OPERATION;
 		
-		mTimerDisplay = new MainTimer(this, R.id.runlayout);
+		mTimerDisplay = new TimerDisplay();
+		mTimerDisplay.ActivityParm(this, R.id.runlayout);
 		
 		mSerialPort = new SerialPort();
 		
@@ -1373,9 +1373,9 @@ public class RunActivity extends Activity {
 	
 	public void MotionInstruct(String str, SerialPort.CtrTarget target) { // Motion of system instruction
 		
-		while(MainTimer.RXBoardFlag) SerialPort.Sleep(10);
+		while(TimerDisplay.RXBoardFlag) SerialPort.Sleep(10);
 		
-		MainTimer.RXBoardFlag = true;
+		TimerDisplay.RXBoardFlag = true;
 		
 		mSerialPort = new SerialPort();
 		mSerialPort.BoardTx(str, target);
@@ -1420,7 +1420,7 @@ public class RunActivity extends Activity {
 			SerialPort.Sleep(100);
 		}
 		
-		MainTimer.RXBoardFlag = false;
+		TimerDisplay.RXBoardFlag = false;
 	}
 	
 	public synchronized double AbsorbanceMeasure() { // Absorbance measurement
@@ -1428,9 +1428,9 @@ public class RunActivity extends Activity {
 		int time = 0;
 		String rawValue;
 		
-		while(MainTimer.RXBoardFlag) SerialPort.Sleep(10);
+		while(TimerDisplay.RXBoardFlag) SerialPort.Sleep(10);
 		
-		MainTimer.RXBoardFlag = true;
+		TimerDisplay.RXBoardFlag = true;
 		
 		mSerialPort.BoardTx("VH", SerialPort.CtrTarget.NormalSet);
 		
@@ -1448,24 +1448,24 @@ public class RunActivity extends Activity {
 		
 		try {
 			
-			DouValue = Float.parseFloat(rawValue);
+			DouValue = Double.parseDouble(rawValue);
 		
 		} catch(NumberFormatException e) {
 			
-			DouValue = 0.0f;
+			DouValue = 0.0;
 			
 			runState = AnalyzerState.NoResponse;
 			checkError = R.string.e241;	
 		}
 		
-		MainTimer.RXBoardFlag = false;
+		TimerDisplay.RXBoardFlag = false;
 		
 		return (DouValue - BlankValue[0]);
 	}
 	
 	public int tHbCalculate() {
 		
-		A = (float) Absorb1stHandling()*RF1_Slope + RF1_Offset;
+		A = Absorb1stHandling()*RF1_Slope + RF1_Offset;
 		
 		/* TEST Mode */
 		if(HomeActivity.ANALYZER_SW != HomeActivity.NORMAL) return NORMAL_OPERATION;
@@ -1480,19 +1480,21 @@ public class RunActivity extends Activity {
 	
 	public int HbA1cCalculate() { // Calculation for HbA1c percentage
 		
-		float B, St, Bt, C1, C2, SLA, SMA, SHA, BLA, BMA, BHA, SLV, SMV, SHV, BLV, BMV, BHV, SV, SA, BV, BA, a3, b3, a32, b32, a4, b4;
+		double B, St, Bt, C1, C2, SLA, SMA, SHA, BLA, BMA, BHA, SLV, SMV, SHV, BLV, BMV, BHV, SV, SA, BV, BA, a3, b3, a32, b32, a4, b4;
 					
 		if(HomeActivity.ANALYZER_SW == HomeActivity.NORMAL) {
 			
-			B = (float) Absorb2ndHandling()*RF2_Slope + RF2_Offset;
+			B = Absorb2ndHandling()*RF2_Slope + RF2_Offset;
 			
 		} else {
 			
-			A = 0.45f;
-			B = 0.15f;
+			B = Absorb2ndHandling()*RF2_Slope + RF2_Offset;
+			A = 0.45;
+			B = 0.15;
 		}
 		
 		St = (A - Barcode.b1)/Barcode.a1;
+		tHbDbl = St;
 		Bt = (A - Barcode.b1)/Barcode.a1 + 1;
 		
 		C1 = St * (Barcode.Asm + Barcode.Ass) + Barcode.Aim + Barcode.Ais;
@@ -1515,34 +1517,24 @@ public class RunActivity extends Activity {
 		SV = (SLV + SMV + SHV) / 3;
 		SA = (SLA + SMA + SHA) / 3;
 		
-		a3 = (float) SlopeCalculate(SA, SV, SLA, SLV, SMA, SMV, SHA, SHV);
+		a3 = SlopeCalculate(SA, SV, SLA, SLV, SMA, SMV, SHA, SHV);
 		b3 = SV - a3*SA;
 		
 		BV = (BLV + BMV + BHV) / 3;
 		BA = (BLA + BMA + BHA) / 3;
 		
-		a32 = (float) SlopeCalculate(BA, BV, BLA, BLV, BMA, BMV, BHA, BHV);
+		a32 = SlopeCalculate(BA, BV, BLA, BLV, BMA, BMV, BHA, BHV);
 		b32 = BV - a32*BA;
 		
 		a4 = (b32 - b3) / (Bt - St);
 		b4 = b3 - (a4 * St);
 		
 		HbA1cValue = (C2 - (St * a4 + b4)) / a3 / St * 100; // %-HbA1c(%)
-//		Log.w("HbA1cCalculate", "HbA1c : " + HbA1cValue);
+		
 		HbA1cValue = (Barcode.Sm + Barcode.Ss) * HbA1cValue + (Barcode.Im + Barcode.Is);
-//		Log.w("HbA1cCalculate", "HbA1c : " + HbA1cValue);
+		
 		HbA1cValue = CF_Slope * (AF_Slope * HbA1cValue + AF_Offset) + CF_Offset;
 		
-//		Log.w("HbA1cCalculate", "Asm : " + Barcode.Asm);
-//		Log.w("HbA1cCalculate", "Ass : " + Barcode.Ass);
-//		Log.w("HbA1cCalculate", "Aim : " + Barcode.Aim);
-//		Log.w("HbA1cCalculate", "Ais : " + Barcode.Ais);
-//		Log.w("HbA1cCalculate", "Sm : " + Barcode.Sm);
-//		Log.w("HbA1cCalculate", "Ss : " + Barcode.Ss);
-//		Log.w("HbA1cCalculate", "Im : " + Barcode.Im);
-//		Log.w("HbA1cCalculate", "Is : " + Barcode.Is);
-//		Log.w("HbA1cCalculate", "HbA1c : " + HbA1cValue);
-
 		/* TEST Mode */
 		if(HomeActivity.ANALYZER_SW != HomeActivity.NORMAL) return NORMAL_OPERATION;
 		else {
@@ -1556,7 +1548,7 @@ public class RunActivity extends Activity {
 	
 	public int ACRCalculate() { // Calculation for HbA1c percentage
 		
-		HbA1cValue = 0.0f;
+		HbA1cValue = 0.0;
 		
 		return NORMAL_OPERATION;
 	}
@@ -1731,7 +1723,7 @@ public class RunActivity extends Activity {
 		
 		if(MotorShakeFlag) {
 			
-			MainTimer.RXBoardFlag = false;
+			TimerDisplay.RXBoardFlag = false;
 			MotionInstruct(MOTOR_STOP, SerialPort.CtrTarget.NormalSet);
 		
 		} else IsStop = true;
@@ -1812,7 +1804,7 @@ public class RunActivity extends Activity {
 				
 				nextIntent = new Intent(context, FileSaveActivity.class);
 				nextIntent.putExtra("snapshot", true);
-				nextIntent.putExtra("datetime", MainTimer.rTime);
+				nextIntent.putExtra("datetime", TimerDisplay.rTime);
 				nextIntent.putExtra("bitmap", bitmapBytes);
 			}
 			break;
@@ -1831,7 +1823,7 @@ public class RunActivity extends Activity {
 		
 		nextIntent = new Intent(context, FileSaveActivity.class);
 		nextIntent.putExtra("snapshot", true);
-		nextIntent.putExtra("datetime", MainTimer.rTime);
+		nextIntent.putExtra("datetime", TimerDisplay.rTime);
 		nextIntent.putExtra("bitmap", bitmapBytes);
 		
 		activity.startActivity(nextIntent);

@@ -5,7 +5,7 @@
     android:background="@drawable/background" >
     
     <Button
-        android:id="@+id/backBtn"
+        android:id="@+id/backicon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/back_selector" />
@@ -59,7 +59,7 @@
         android:layout_marginTop="15px" />
    		
    	<Button
-        android:id="@+id/homeBtn"
+        android:id="@+id/homeicon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="728px"
@@ -178,14 +178,14 @@
 			        android:gravity="center" >
             	
 	            	<ImageButton
-	            	    android:id="@+id/checkBox1IBtn"          
+	            	    android:id="@+id/chdckbox1"          
 	                    android:layout_width="50px"
 	                    android:layout_height="50px"
 	                    android:background="@drawable/checkbox" />
                 
                 </RelativeLayout>
                 <TextView                    
-                    android:id="@+id/testNum1Text" 
+                    android:id="@+id/testNum1" 
 	            	android:typeface="sans" 
 	          	    android:textSize="18px"
                     android:layout_width="120px"
@@ -193,7 +193,7 @@
 	            	android:textColor="#565656"
 	            	android:gravity="center" />
                 <TextView
-                    android:id="@+id/type1Text" 
+                    android:id="@+id/type1" 
 	            	android:typeface="sans" 
 	            	android:textSize="18px"
                     android:layout_width="140px"
@@ -205,7 +205,7 @@
 			        android:gravity="center" >
             	
 	            	<TextView
-	                	android:id="@+id/result1Text" 
+	                	android:id="@+id/result1" 
 		            	android:layout_width="wrap_content"
                     	android:layout_height="53px"
 	            		android:typeface="sans" 
@@ -213,19 +213,19 @@
 		           		android:textColor="#565656" />
 	            	
 	            	<TextView
-	                	android:id="@+id/unit1Text"
+	                	android:id="@+id/unit1"
 	                	android:layout_width="wrap_content" 
                     	android:layout_height="53px"
 		            	android:typeface="sans" 
 		            	android:textSize="12px"
 		           		android:textColor="#565656"
-				        android:layout_toRightOf="@id/result1Text"
-				        android:layout_alignBaseline="@id/result1Text"
+				        android:layout_toRightOf="@id/result1"
+				        android:layout_alignBaseline="@id/result1"
 	                    android:layout_marginLeft="3px" />
                 
                 </RelativeLayout>
                	<TextView
-                    android:id="@+id/dateTime1Text"
+                    android:id="@+id/dateTime1" 
 	            	android:typeface="sans" 
 	            	android:textSize="18px"
                    	android:layout_width="230px"
@@ -248,21 +248,21 @@
 			        android:gravity="center" >
             	
 	            	<ImageButton
-	            	    android:id="@+id/checkBox2IBtn"          
+	            	    android:id="@+id/chdckbox2"          
 	                    android:layout_width="50px"
 	                    android:layout_height="50px"
 	                    android:background="@drawable/checkbox" />
                 
                 </RelativeLayout>
                 <TextView                    
-                    android:id="@+id/testNum2Text" 
+                    android:id="@+id/testNum2" 
 	            	android:typeface="sans" 
 	            	android:textSize="18px"
                     android:layout_height="53px"
 		            android:textColor="#565656"
 		            android:gravity="center" />
                	<TextView
-                	android:id="@+id/type2Text"
+                	android:id="@+id/type2" 
 	            	android:typeface="sans" 
 	            	android:textSize="18px"
                     android:textColor="#565656"
@@ -271,7 +271,7 @@
 			        android:gravity="center" >
             	
 	            	<TextView
-	                	android:id="@+id/result2Text" 
+	                	android:id="@+id/result2" 
 		            	android:layout_width="wrap_content"
                     	android:layout_height="53px"
                     	android:typeface="sans" 
@@ -279,19 +279,19 @@
 		           		android:textColor="#565656" />
 	            	
 	            	<TextView
-	                	android:id="@+id/unit2Text"
+	                	android:id="@+id/unit2"
 	                	android:layout_width="wrap_content" 
                     	android:layout_height="53px"
 		            	android:typeface="sans" 
 		            	android:textSize="12px"
 		           		android:textColor="#565656"
-				        android:layout_toRightOf="@id/result2Text"
-				        android:layout_alignBaseline="@id/result2Text"
+				        android:layout_toRightOf="@id/result2"
+				        android:layout_alignBaseline="@id/result2"
 	                    android:layout_marginLeft="3px" />
                 
                 </RelativeLayout>
                 <TextView
-                	android:id="@+id/dateTime2Text"
+                	android:id="@+id/dateTime2" 
 	            	android:typeface="sans" 
 	            	android:textSize="18px"
                    	android:textColor="#565656"
@@ -313,21 +313,21 @@
 			        android:gravity="center" >
             	
 	            	<ImageButton
-	            	    android:id="@+id/checkBox3IBtn"          
+	            	    android:id="@+id/chdckbox3"          
 	                    android:layout_width="50px"
 	                    android:layout_height="50px"
 	                    android:background="@drawable/checkbox" />
                 
                 </RelativeLayout>
                 <TextView                    
-                    android:id="@+id/testNum3Text"
+                    android:id="@+id/testNum3" 
 	            	android:typeface="sans" 
 	            	android:textSize="18px"
                    	android:layout_height="53px"
 	            	android:textColor="#565656"
 	            	android:gravity="center" />
                	<TextView
-                   	android:id="@+id/type3Text" 
+                   	android:id="@+id/type3" 
 	            	android:typeface="sans" 
 	            	android:textSize="18px"
                    	android:textColor="#565656"
@@ -336,7 +336,7 @@
 			        android:gravity="center" >
             	
 	            	<TextView
-	                	android:id="@+id/result3Text" 
+	                	android:id="@+id/result3" 
 		            	android:layout_width="wrap_content"
                     	android:layout_height="53px"
                     	android:typeface="sans" 
@@ -344,19 +344,19 @@
 		           		android:textColor="#565656" />
 	            	
 	            	<TextView
-	                	android:id="@+id/unit3Text"
+	                	android:id="@+id/unit3"
 	                	android:layout_width="wrap_content" 
                     	android:layout_height="53px"
 		            	android:typeface="sans" 
 		            	android:textSize="12px"
 		           		android:textColor="#565656"
-				        android:layout_toRightOf="@id/result3Text"
-				        android:layout_alignBaseline="@id/result3Text"
+				        android:layout_toRightOf="@id/result3"
+				        android:layout_alignBaseline="@id/result3"
 	                    android:layout_marginLeft="3px" />
                 
                 </RelativeLayout>
                	<TextView
-                   	android:id="@+id/dateTime3Text" 
+                   	android:id="@+id/dateTime3" 
 	            	android:typeface="sans" 
 	            	android:textSize="18px"
                    	android:textColor="#565656"
@@ -378,21 +378,21 @@
 			        android:gravity="center" >
             	
 	            	<ImageButton
-	            	    android:id="@+id/checkBox4IBtn"          
+	            	    android:id="@+id/chdckbox4"          
 	                    android:layout_width="50px"
 	                    android:layout_height="50px"
 	                    android:background="@drawable/checkbox" />
                 
                 </RelativeLayout>
                	<TextView                    
-                   	android:id="@+id/testNum4Text" 
+                   	android:id="@+id/testNum4" 
 	            	android:typeface="sans" 
 	            	android:textSize="18px"
                    	android:layout_height="53px"
 	            	android:textColor="#565656"
 	            	android:gravity="center" />
                	<TextView
-                   	android:id="@+id/type4Text"
+                   	android:id="@+id/type4" 
 	            	android:typeface="sans" 
 	            	android:textSize="18px"
                    	android:textColor="#565656"
@@ -401,7 +401,7 @@
 			        android:gravity="center" >
             	
 	            	<TextView
-	                	android:id="@+id/result4Text" 
+	                	android:id="@+id/result4" 
 		            	android:layout_width="wrap_content"
                     	android:layout_height="53px"
                     	android:typeface="sans" 
@@ -409,19 +409,19 @@
 		           		android:textColor="#565656" />
 	            	
 	            	<TextView
-	                	android:id="@+id/unit4Text"
+	                	android:id="@+id/unit4"
 	                	android:layout_width="wrap_content" 
                     	android:layout_height="53px"
 		            	android:typeface="sans" 
 		            	android:textSize="12px"
 		           		android:textColor="#565656"
-				        android:layout_toRightOf="@id/result4Text"
-				        android:layout_alignBaseline="@id/result4Text"
+				        android:layout_toRightOf="@id/result4"
+				        android:layout_alignBaseline="@id/result4"
 	                    android:layout_marginLeft="3px" />
                 
                 </RelativeLayout>
                	<TextView
-                   	android:id="@+id/dateTime4Text"
+                   	android:id="@+id/dateTime4" 
 	            	android:typeface="sans" 
 	            	android:textSize="18px"
                    	android:textColor="#565656"
@@ -443,21 +443,21 @@
 			        android:gravity="center" >
             	
 	            	<ImageButton
-	            	    android:id="@+id/checkBox5IBtn"          
+	            	    android:id="@+id/chdckbox5"          
 	                    android:layout_width="50px"
 	                    android:layout_height="50px"
 	                    android:background="@drawable/checkbox" />
                 
                 </RelativeLayout>
                	<TextView                    
-                   	android:id="@+id/testNum5Text"
+                   	android:id="@+id/testNum5" 
 	            	android:typeface="sans" 
 	            	android:textSize="18px"
                    	android:layout_height="53px"
 	            	android:textColor="#565656"
 	            	android:gravity="center" />
                	<TextView
-                   	android:id="@+id/type5Text"
+                   	android:id="@+id/type5" 
 	            	android:typeface="sans" 
 	            	android:textSize="18px"
                    	android:textColor="#565656"
@@ -466,7 +466,7 @@
 			        android:gravity="center" >
             	
 	            	<TextView
-	                	android:id="@+id/result5Text"
+	                	android:id="@+id/result5" 
 		            	android:layout_width="wrap_content"
                     	android:layout_height="53px"
                     	android:typeface="sans" 
@@ -474,19 +474,19 @@
 		           		android:textColor="#565656" />
 	            	
 	            	<TextView
-	                	android:id="@+id/unit5Text"
+	                	android:id="@+id/unit5"
 	                	android:layout_width="wrap_content" 
                     	android:layout_height="53px"
 		            	android:typeface="sans" 
 		            	android:textSize="12px"
 		           		android:textColor="#565656"
-				        android:layout_toRightOf="@id/result5Text"
-				        android:layout_alignBaseline="@id/result5Text"
+				        android:layout_toRightOf="@id/result5"
+				        android:layout_alignBaseline="@id/result5"
 	                    android:layout_marginLeft="3px" />
                 
                 </RelativeLayout>
                	<TextView
-                   	android:id="@+id/dateTime5Text"
+                   	android:id="@+id/dateTime5" 
 	            	android:typeface="sans" 
 	            	android:textSize="18px"
                    	android:textColor="#565656"
@@ -505,7 +505,7 @@
         android:layout_marginTop="403px" >
    	    
    	    <Button
-	        android:id="@+id/exportBtn"
+	        android:id="@+id/exportbtn"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:background="@drawable/pdr_btn_selector" />
@@ -525,7 +525,7 @@
         android:layout_marginTop="403px" >
    	    
    	    <Button
-	        android:id="@+id/preViewBtn"
+	        android:id="@+id/previousviewbtn"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:background="@drawable/pdr_btn_selector" />
@@ -545,7 +545,7 @@
         android:layout_marginTop="403px" >
    	    
    	    <Button
-	        android:id="@+id/detailViewBtn"
+	        android:id="@+id/detailviewbtn"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:background="@drawable/pdr_btn_selector" />
@@ -565,7 +565,7 @@
         android:layout_marginTop="403px" >
    	    
    	    <Button
-	        android:id="@+id/nextViewBtn"
+	        android:id="@+id/nextviewbtn"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:background="@drawable/pdr_btn_selector" />
@@ -579,7 +579,7 @@
    	</RelativeLayout>
    	
 	<TextView
-        android:id="@+id/pageText" 
+        android:id="@+id/pagetext" 
         android:layout_width="80px"
         android:layout_height="30px"
         android:typeface="sans"

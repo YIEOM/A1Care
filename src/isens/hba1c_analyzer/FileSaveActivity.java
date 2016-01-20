@@ -42,9 +42,6 @@ public class FileSaveActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.file);
-		
-		Text = (TextView) findViewById(R.id.text);
 		
 		DataInit();
 	}
@@ -61,8 +58,8 @@ public class FileSaveActivity extends Activity {
 		
 			if(itn.getIntExtra("RunState", 0) == (int) NORMAL_RESULT) {
 		
-				if(dataType.equals("W") || dataType.equals("X") || dataType.equals("Y") || dataType.equals("Z")) SaveData.DataSave(overallData, TargetIntent.ControlFileLoad);
-				else SaveData.DataSave(overallData, TargetIntent.PatientFileLoad); // if HbA1c test is normal, the Result data is saved
+				if(dataType.equals("W") || dataType.equals("X") || dataType.equals("Y") || dataType.equals("Z")) SaveData.DataSave(CONTROL_TEST, overallData);
+				else SaveData.DataSave(PATIENT_TEST, overallData); // if HbA1c test is normal, the Result data is saved
 			}
 			
 			SaveData.DataHistorySave(overallData, historyData); // the History data is saved
@@ -139,6 +136,34 @@ public class FileSaveActivity extends Activity {
 		historyData.append(itn.getStringExtra("SWVersion") + "\t");
 		historyData.append(itn.getStringExtra("FWVersion") + "\t");
 		historyData.append(itn.getStringExtra("OSVersion"));
+		
+//		Log.w("DataArray", "Chamber Tmp : " + itn.getStringExtra("Chamber Tmp"));
+//		Log.w("DataArray", "BlankVal0 : " + itn.getStringExtra("BlankVal0"));
+//		Log.w("DataArray", "BlankVal1 : " + itn.getStringExtra("BlankVal1"));
+//		Log.w("DataArray", "BlankVal2 : " + itn.getStringExtra("BlankVal2"));
+//		Log.w("DataArray", "BlankVal3 : " + itn.getStringExtra("BlankVal3"));
+//		Log.w("DataArray", "St1Abs1by0 : " + itn.getStringExtra("St1Abs1by0"));
+//		Log.w("DataArray", "St1Abs1by1 : " + itn.getStringExtra("St1Abs1by1"));
+//		Log.w("DataArray", "St1Abs1by2 : " + itn.getStringExtra("St1Abs1by2"));
+//		Log.w("DataArray", "St1Abs2by0 : " + itn.getStringExtra("St1Abs2by0"));
+//		Log.w("DataArray", "St1Abs2by1 : " + itn.getStringExtra("St1Abs2by1"));
+//		Log.w("DataArray", "St1Abs2by2 : " + itn.getStringExtra("St1Abs2by2"));
+//		Log.w("DataArray", "St1Abs3by0 : " + itn.getStringExtra("St1Abs3by0"));
+//		Log.w("DataArray", "St1Abs3by1 : " + itn.getStringExtra("St1Abs3by1"));
+//		Log.w("DataArray", "St1Abs3by2 : " + itn.getStringExtra("St1Abs3by2"));
+//		Log.w("DataArray", "St2Abs1by0 : " + itn.getStringExtra("St2Abs1by0"));
+//		Log.w("DataArray", "St2Abs1by1 : " + itn.getStringExtra("St2Abs1by1"));
+//		Log.w("DataArray", "St2Abs1by2 : " + itn.getStringExtra("St2Abs1by2"));
+//		Log.w("DataArray", "St2Abs2by0 : " + itn.getStringExtra("St2Abs2by0"));
+//		Log.w("DataArray", "St2Abs2by1 : " + itn.getStringExtra("St2Abs2by1"));
+//		Log.w("DataArray", "St2Abs2by2 : " + itn.getStringExtra("St2Abs2by2"));
+//		Log.w("DataArray", "St2Abs3by0 : " + itn.getStringExtra("St2Abs3by0"));
+//		Log.w("DataArray", "St2Abs3by1 : " + itn.getStringExtra("St2Abs3by1"));
+//		Log.w("DataArray", "St2Abs3by2 : " + itn.getStringExtra("St2Abs3by2"));
+//		Log.w("DataArray", "HWSN : " + itn.getStringExtra("HWSN"));
+//		Log.w("DataArray", "SWVersion : " + itn.getStringExtra("SWVersion"));
+//		Log.w("DataArray", "FWVersion : " + itn.getStringExtra("FWVersion"));
+//		Log.w("DataArray", "OSVersion : " + itn.getStringExtra("OSVersion"));
 	}
 	
 //	public void DataInit() {

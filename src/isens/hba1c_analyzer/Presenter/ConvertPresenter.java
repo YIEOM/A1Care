@@ -11,13 +11,13 @@ import android.widget.Button;
 import isens.hba1c_analyzer.HomeActivity;
 import isens.hba1c_analyzer.R;
 import isens.hba1c_analyzer.SerialPort;
+import isens.hba1c_analyzer.TimerDisplay;
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
 import isens.hba1c_analyzer.Model.ActivityChange;
 import isens.hba1c_analyzer.Model.CaptureScreen;
 import isens.hba1c_analyzer.Model.ConvertModel;
 import isens.hba1c_analyzer.Model.DateModel;
 import isens.hba1c_analyzer.Model.LanguageModel;
-import isens.hba1c_analyzer.Model.MainTimer;
 import isens.hba1c_analyzer.View.ConvertIView;
 import isens.hba1c_analyzer.View.DateIView;
 import isens.hba1c_analyzer.View.DisplayIView;
@@ -27,7 +27,7 @@ public class ConvertPresenter {
 	
 	private ConvertIView mConvertIView;
 	private ConvertModel mConvertModel;
-	private MainTimer mMainTimer;
+	private TimerDisplay mTimerDisplay;
 	private ActivityChange mActivityChange;
 	
 	private Activity activity;
@@ -38,7 +38,7 @@ public class ConvertPresenter {
 		
 		mConvertIView = view;
 		mConvertModel = new ConvertModel(activity);
-		mMainTimer = new MainTimer(activity, layout);
+		mTimerDisplay = new TimerDisplay();
 		mActivityChange = new ActivityChange(activity, context);
 		
 		this.activity = activity;
@@ -56,10 +56,23 @@ public class ConvertPresenter {
 		mConvertModel.initPrimary();
 		display();
 		
+		mTimerDisplay.ActivityParm(activity, layout);
+		
 		SerialPort.Sleep(500);
 		
 		mConvertIView.setButtonClick();
 	}
+	
+	public class SetButton extends Thread {
+		
+		public void run() {
+			
+			SerialPort.Sleep(500);
+			
+			mConvertIView.setButtonClick();
+		}
+	}
+	/* v1.3.31-B */
 	
 	public void changePrimaryUp() {
 		
@@ -109,6 +122,7 @@ public class ConvertPresenter {
 			mConvertModel.setPrimary();
 			
 			mActivityChange.whichIntent(TargetIntent.SystemSetting);
+			mActivityChange.finish();			
 			break;
 		
 		case R.id.snapshotBtn	:
@@ -117,14 +131,13 @@ public class ConvertPresenter {
 			
 			mActivityChange.whichIntent(TargetIntent.SnapShot);
 			mActivityChange.putBooleanIntent("snapshot", true);
-			mActivityChange.putStringsIntent("datetime", MainTimer.rTime);
+			mActivityChange.putStringsIntent("datetime", TimerDisplay.rTime);
 			mActivityChange.putBytesIntent("bitmap", bitmapBytes);
+			mActivityChange.finish();
 			break;
 			
 		default	:
 			break;
 		}
-		
-		mActivityChange.finish();
 	}
 }

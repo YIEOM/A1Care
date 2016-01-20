@@ -3,8 +3,6 @@ package isens.hba1c_analyzer;
 import isens.hba1c_analyzer.Model.CaptureScreen;
 import isens.hba1c_analyzer.Model.CustomTextView;
 import isens.hba1c_analyzer.Model.SoundModel;
-import isens.hba1c_analyzer.Model.MainTimer;
-import isens.hba1c_analyzer.View.RecordActivity;
 import android.media.SoundPool;
 import android.os.Bundle;
 import android.util.Log;
@@ -42,7 +40,7 @@ public class HomeActivity extends Activity {
 	public DatabaseHander mDatabaseHander;
 	public OperatorPopup mOperatorController;
 	public ErrorPopup mErrorPopup;
-	public MainTimer mMainTimer;
+	public TimerDisplay mTimerDisplay;
 	public ShutDownPopup mShutDownPopup;
 	public SoundModel mSoundModel;
 	
@@ -65,7 +63,7 @@ public class HomeActivity extends Activity {
 	
 	public CustomTextView customTextView;
 	
-	public enum TargetIntent {Home, HbA1c, NA, Action, ActionQC, Run, RunQC, Blank, BlankQC, Record, Result, ResultQC, Remove, Image, Date, Setting, SystemSetting, DataSetting, OperatorSetting, FunctionalTest, Time, Display, HIS, HISSetting, Export, Engineer, FileSave, ControlFileLoad, PatientFileLoad, NextFile, PreFile, Adjustment, Sound, A1CCal, Language, Correlation, About, Delete, Temperature, Lamp, Convert, ACRCal, ShutDown, ScanTemp, f535, f660, SystemCheck, SnapShot}
+	public enum TargetIntent {Home, HbA1c, NA, Action, ActionQC, Run, RunQC, Blank, BlankQC, Record, Result, ResultQC, Remove, Image, Date, Setting, SystemSetting, DataSetting, OperatorSetting, FunctionalTest, Time, Display, HIS, HISSetting, Export, Engineer, FileSave, ControlFileLoad, PatientFileLoad, NextFile, PreFile, Adjustment, Sound, Calibration, Language, Correlation, About, Delete, Temperature, Lamp, Convert, tHb, ShutDown, ScanTemp, f535, f660, SystemCheck, SnapShot}
 	
 	public static boolean LoginFlag = true,
 						  CheckFlag;
@@ -196,7 +194,7 @@ public class HomeActivity extends Activity {
 		setText();
 		setButtonId(activity);
 		unenabledAllBtn(activity);
-			
+		
 		Intent itn = getIntent();
 		int state = itn.getIntExtra("System Check State", 0);
 		
@@ -210,13 +208,24 @@ public class HomeActivity extends Activity {
 			Login(activity, context, R.id.homelayout);
 		}
 		
-		mMainTimer = new MainTimer(this, R.id.homelayout);
+		mTimerDisplay = new TimerDisplay();
+		mTimerDisplay.ActivityParm(this, R.id.homelayout);
 		
+		setDataNumber();
 		DisplayDemo();
 		
-		SerialPort.Sleep(500);
+		SetButton mSetButton = new SetButton();
+		mSetButton.start();
+	}
+	
+	public class SetButton extends Thread {
 		
-		setButtonClick();
+		public void run() {
+			
+			SerialPort.Sleep(500);
+			
+			setButtonClick();
+		}
 	}
 	
 	public void Login(Activity activity, Context context, int layoutid) {
@@ -230,6 +239,16 @@ public class HomeActivity extends Activity {
 			mSoundModel.playSound(R.raw.booting_bgm);
 			
 		} else OperatorDisplay(activity, context);
+	}
+	
+	private void setDataNumber() {
+		
+		if(LoginFlag) {
+			
+			Intent itn = getIntent();
+			RemoveActivity.PatientDataCnt = itn.getIntExtra("pDataCnt", 1);
+			RemoveActivity.ControlDataCnt = itn.getIntExtra("cDataCnt", 1);
+		}
 	}
 	
 	public void OperatorDisplay(Activity activity, Context context) {
@@ -254,12 +273,12 @@ public class HomeActivity extends Activity {
 		
 		if(ANALYZER_SW == DEMO) {
 			
-			demoVersion = "A1Care_v1.3.05-D";
+			demoVersion = "v1.3.31-D";
 			DisplayDemoVersion(demoVersion);	
 		
 		} else if(ANALYZER_SW == DEVEL) {
 			
-			demoVersion = "A1Care_v1.3-devel";
+			demoVersion = "v1.3-devel";
 			DisplayDemoVersion(demoVersion);
 		}
 	}
@@ -281,9 +300,9 @@ public class HomeActivity extends Activity {
 		AniShutDown mAniShutDown = new AniShutDown(activity, context, layoutid);
 		mAniShutDown.start();
 		
-		MainTimer.ExtDeviceBarcode = MainTimer.FILE_CLOSE;
+		TimerDisplay.ExternalDeviceBarcode = TimerDisplay.FILE_CLOSE;
 		
-		MainTimer.FiftymsPeriod.cancel();
+		TimerDisplay.FiftymsPeriod.cancel();
 		
 		isShutDown = true;
 	}
@@ -363,7 +382,7 @@ public class HomeActivity extends Activity {
 			
 			nextIntent = new Intent(context, FileSaveActivity.class);
 			nextIntent.putExtra("snapshot", true);
-			nextIntent.putExtra("datetime", MainTimer.rTime);
+			nextIntent.putExtra("datetime", TimerDisplay.rTime);
 			nextIntent.putExtra("bitmap", bitmapBytes);
 			break;
 			
@@ -381,7 +400,7 @@ public class HomeActivity extends Activity {
 		
 		nextIntent = new Intent(context, FileSaveActivity.class);
 		nextIntent.putExtra("snapshot", true);
-		nextIntent.putExtra("datetime", MainTimer.rTime);
+		nextIntent.putExtra("datetime", TimerDisplay.rTime);
 		nextIntent.putExtra("bitmap", bitmapBytes);
 		
 		activity.startActivity(nextIntent);

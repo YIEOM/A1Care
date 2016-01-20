@@ -5,14 +5,14 @@
     android:background="@drawable/login_bg" >
    	
     <Button
-        android:id="@+id/dSnapshotBtn"
+        android:id="@+id/snapshotBtn2"
         android:layout_width="180px"
         android:layout_height="60px"
         android:layout_marginLeft="120px"
         android:background="#00000000" />
     
     <isens.hba1c_analyzer.Model.CustomTextView
-        android:id="@+id/dTitleText"
+        android:id="@+id/detailViewText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="164px"
@@ -40,7 +40,7 @@
         android:shadowRadius="1.2" />
     
     <TextView
-        android:id="@+id/dTestNumText"
+        android:id="@+id/testno"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="242px"
@@ -68,7 +68,7 @@
         android:shadowRadius="1.2" />
     
     <TextView
-        android:id="@+id/dTestDateText"
+        android:id="@+id/testdate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="242px"
@@ -96,7 +96,7 @@
         android:shadowRadius="1.2" />
     
     <TextView
-        android:id="@+id/dTypeText"
+        android:id="@+id/type"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="242px"
@@ -124,7 +124,7 @@
         android:shadowRadius="1.2" />
     
     <TextView
-        android:id="@+id/dPrimaryText"
+        android:id="@+id/primary"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="242px"
@@ -152,7 +152,7 @@
         android:shadowRadius="1.2" />
    	
     <TextView
-        android:id="@+id/dRangeText"
+        android:id="@+id/range"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="242px"
@@ -180,7 +180,7 @@
         android:shadowRadius="1.2" />
     
     <TextView
-        android:id="@+id/dLotText"
+        android:id="@+id/ref"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="456px"
@@ -208,7 +208,7 @@
         android:shadowRadius="1.2" />
     
     <TextView
-        android:id="@+id/dPIDText"
+        android:id="@+id/patient"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="456px"
@@ -236,7 +236,7 @@
         android:shadowRadius="1.2" />
     
     <TextView
-        android:id="@+id/dOIDText"
+        android:id="@+id/operator"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="456px"
@@ -264,7 +264,7 @@
         android:shadowRadius="1.2" />
     
     <TextView
-        android:id="@+id/dRstText"
+        android:id="@+id/result"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="456px"
@@ -278,7 +278,7 @@
         android:shadowRadius="1.2" />
     
     <Button
-        android:id="@+id/dPrintBtn"
+        android:id="@+id/printbtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="554px"
@@ -295,7 +295,7 @@
         android:background="@drawable/os_done_btn_selector" />
     
    	<Button
-        android:id="@+id/dCancelBtn"
+        android:id="@+id/cancelbtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="552px"

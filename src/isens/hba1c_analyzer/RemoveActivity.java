@@ -5,7 +5,6 @@ import java.lang.annotation.Target;
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
 import isens.hba1c_analyzer.Model.CaptureScreen;
 import isens.hba1c_analyzer.Model.LanguageModel;
-import isens.hba1c_analyzer.Model.MainTimer;
 import isens.hba1c_analyzer.View.FunctionalTestActivity;
 import android.app.Activity;
 import android.content.Context;
@@ -23,7 +22,7 @@ import android.widget.TextView;
 public class RemoveActivity extends Activity {
 
 	public SerialPort mSerialPort;
-	public MainTimer mTimerDisplay;
+	public TimerDisplay mTimerDisplay;
 	private LanguageModel mLanguageModel;
 	
 	private Activity activity;
@@ -145,7 +144,8 @@ public class RemoveActivity extends Activity {
 		setButtonId(activity);
 		setButtonClick();
 		
-		mTimerDisplay = new MainTimer(this, R.id.removelayout);
+		mTimerDisplay = new TimerDisplay();
+		mTimerDisplay.ActivityParm(this, R.id.removelayout);
 		
 		UserAction UserActionObj = new UserAction();
 		UserActionObj.start();
@@ -162,7 +162,7 @@ public class RemoveActivity extends Activity {
 			GpioPort.DoorActState = true;
 			GpioPort.CartridgeActState = true;
 	
-			SerialPort.Sleep(1500);
+			SerialPort.Sleep(2000);
 			
 			while(ActionActivity.CartridgeCheckFlag != 0) SerialPort.Sleep(100);
 			
@@ -263,7 +263,7 @@ public class RemoveActivity extends Activity {
 				
 				nextIntent = new Intent(context, FileSaveActivity.class);
 				nextIntent.putExtra("snapshot", true);
-				nextIntent.putExtra("datetime", MainTimer.rTime);
+				nextIntent.putExtra("datetime", TimerDisplay.rTime);
 				nextIntent.putExtra("bitmap", bitmapBytes);
 			}
 			break;

@@ -10,12 +10,12 @@ import android.os.Handler;
 import android.widget.Button;
 import isens.hba1c_analyzer.R;
 import isens.hba1c_analyzer.SerialPort;
+import isens.hba1c_analyzer.TimerDisplay;
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
 import isens.hba1c_analyzer.Model.ActivityChange;
 import isens.hba1c_analyzer.Model.CaptureScreen;
 import isens.hba1c_analyzer.Model.DateModel;
 import isens.hba1c_analyzer.Model.LanguageModel;
-import isens.hba1c_analyzer.Model.MainTimer;
 import isens.hba1c_analyzer.View.DateIView;
 import isens.hba1c_analyzer.View.DisplayIView;
 import isens.hba1c_analyzer.View.LanguageIView;
@@ -24,7 +24,7 @@ public class LanguagePresenter {
 	
 	private LanguageIView mLanguageIView;
 	private LanguageModel mLanguageModel;
-	private MainTimer mMainTimer;
+	private TimerDisplay mTimerDisplay;
 	private ActivityChange mActivityChange;
 	
 	private Activity activity;
@@ -35,7 +35,7 @@ public class LanguagePresenter {
 		
 		mLanguageIView = view;
 		mLanguageModel = new LanguageModel(activity);
-		mMainTimer = new MainTimer(activity, layout);
+		mTimerDisplay = new TimerDisplay();
 		mActivityChange = new ActivityChange(activity, context);
 		
 		this.activity = activity;
@@ -52,6 +52,8 @@ public class LanguagePresenter {
 		
 		mLanguageModel.getSettingLanguage();
 		display();
+		
+		mTimerDisplay.ActivityParm(activity, layout);
 		
 		SerialPort.Sleep(500);
 		
@@ -110,6 +112,7 @@ public class LanguagePresenter {
 			mLanguageModel.setLocale();
 			
 			mActivityChange.whichIntent(TargetIntent.SystemSetting);
+			mActivityChange.finish();
 			break;
 		
 		case R.id.snapshotBtn	:
@@ -118,14 +121,13 @@ public class LanguagePresenter {
 			
 			mActivityChange.whichIntent(TargetIntent.SnapShot);
 			mActivityChange.putBooleanIntent("snapshot", true);
-			mActivityChange.putStringsIntent("datetime", MainTimer.rTime);
+			mActivityChange.putStringsIntent("datetime", TimerDisplay.rTime);
 			mActivityChange.putBytesIntent("bitmap", bitmapBytes);
+			mActivityChange.finish();
 			break;
 			
 		default	:
 			break;
 		}
-		
-		mActivityChange.finish();
 	}
 }

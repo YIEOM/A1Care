@@ -10,11 +10,11 @@ import android.os.Handler;
 import android.widget.Button;
 import isens.hba1c_analyzer.R;
 import isens.hba1c_analyzer.SerialPort;
+import isens.hba1c_analyzer.TimerDisplay;
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
 import isens.hba1c_analyzer.Model.ActivityChange;
 import isens.hba1c_analyzer.Model.CaptureScreen;
 import isens.hba1c_analyzer.Model.DateModel;
-import isens.hba1c_analyzer.Model.MainTimer;
 import isens.hba1c_analyzer.View.DateIView;
 import isens.hba1c_analyzer.View.DisplayIView;
 
@@ -22,7 +22,7 @@ public class DatePresenter {
 	
 	private DateIView mDateIView;
 	private DateModel mDateModel;
-	private MainTimer mMainTimer;
+	private TimerDisplay mTimerDisplay;
 	private ActivityChange mActivityChange;
 	
 	private Activity activity;
@@ -37,7 +37,7 @@ public class DatePresenter {
 		
 		mDateIView = view;
 		mDateModel = new DateModel(activity);
-		mMainTimer = new MainTimer(activity, layout);
+		mTimerDisplay = new TimerDisplay();
 		mActivityChange = new ActivityChange(activity, context);
 		
 		this.activity = activity;
@@ -54,6 +54,8 @@ public class DatePresenter {
 		mDateIView.setButtonId();
 		
 		display();
+		
+		mTimerDisplay.ActivityParm(activity, layout);
 		
 		SerialPort.Sleep(500);
 		
@@ -244,12 +246,13 @@ public class DatePresenter {
 		switch(btn) {
 		
 		case R.id.backBtn	:
-			MainTimer.FiftymsPeriod.cancel();
+			TimerDisplay.FiftymsPeriod.cancel();
 			mDateModel.setDate();
-			mMainTimer.initTimer();
+			mTimerDisplay.TimerInit();
 			mDateModel.savingDate();
 			
 			mActivityChange.whichIntent(TargetIntent.SystemSetting);
+			mActivityChange.finish();
 			break;
 		
 		case R.id.snapshotBtn	:
@@ -258,14 +261,13 @@ public class DatePresenter {
 			
 			mActivityChange.whichIntent(TargetIntent.SnapShot);
 			mActivityChange.putBooleanIntent("snapshot", true);
-			mActivityChange.putStringsIntent("datetime", MainTimer.rTime);
+			mActivityChange.putStringsIntent("datetime", TimerDisplay.rTime);
 			mActivityChange.putBytesIntent("bitmap", bitmapBytes);
+			mActivityChange.finish();
 			break;
 			
 		default	:
 			break;
 		}
-		
-		mActivityChange.finish();
 	}
 }

@@ -8,7 +8,7 @@ import java.util.Calendar;
 
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
 import isens.hba1c_analyzer.Model.CaptureScreen;
-import isens.hba1c_analyzer.Model.MainTimer;
+import isens.hba1c_analyzer.SettingActivity.SetButton;
 import isens.hba1c_analyzer.View.ConvertActivity;
 import isens.hba1c_analyzer.View.CorrelationActivity;
 import isens.hba1c_analyzer.View.DateActivity;
@@ -40,7 +40,7 @@ public class SystemSettingActivity extends Activity {
 	
 	final static byte NONE = 0;					  
 	
-	public MainTimer mTimerDisplay;
+	public TimerDisplay mTimerDisplay;
 	public ErrorPopup mErrorPopup;
 	
 	private Activity activity;
@@ -229,11 +229,21 @@ public class SystemSettingActivity extends Activity {
 		setText();
 		setButtonId();
 		
-		mTimerDisplay = new MainTimer(this, R.id.systemsettinglayout);
+		mTimerDisplay = new TimerDisplay();
+		mTimerDisplay.ActivityParm(this, R.id.systemsettinglayout);
 		
-		SerialPort.Sleep(500);
+		SetButton mSetButton = new SetButton();
+		mSetButton.start();
+	}
+	
+	public class SetButton extends Thread {
 		
-		setButtonClick();
+		public void run() {
+			
+			SerialPort.Sleep(500);
+			
+			setButtonClick();
+		}
 	}
 	
 	public void SettingParameterInit() {
@@ -298,7 +308,7 @@ public class SystemSettingActivity extends Activity {
 			
 			nextIntent = new Intent(context, FileSaveActivity.class);
 			nextIntent.putExtra("snapshot", true);
-			nextIntent.putExtra("datetime", MainTimer.rTime);
+			nextIntent.putExtra("datetime", TimerDisplay.rTime);
 			nextIntent.putExtra("bitmap", bitmapBytes);
 			startActivity(nextIntent);
 			finish();

@@ -7,12 +7,11 @@ import java.text.DecimalFormat;
 import java.util.Calendar;
 
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
-import isens.hba1c_analyzer.Model.MainTimer;
 import isens.hba1c_analyzer.SerialPort.CtrTarget;
+import isens.hba1c_analyzer.Temperature.CellTmpRead;
 import isens.hba1c_analyzer.View.AboutActivity;
+import isens.hba1c_analyzer.View.tHbActivity;
 import isens.hba1c_analyzer.View.AdjustmentActivity;
-import isens.hba1c_analyzer.View.CalActivity;
-import isens.hba1c_analyzer.View.TemperatureActivity;
 import isens.hba1c_analyzer.View.f535Activity;
 import isens.hba1c_analyzer.View.f660Activity;
 import isens.hba1c_analyzer.View.CorrelationActivity;
@@ -36,7 +35,7 @@ import android.widget.TimePicker;
 
 public class EngineerActivity extends Activity {
 	
-	public MainTimer mTimerDisplay;
+	public TimerDisplay mTimerDisplay;
 	public SerialPort mSerialPort;
 	public DataStorage mDataStorage;
 	public ErrorPopup mErrorPopup;
@@ -47,9 +46,9 @@ public class EngineerActivity extends Activity {
 	public Button escBtn,
 	  			  lampBtn,
 	  			  adjustBtn,
-	  			  a1CCalBtn,
+	  			  calibrationBtn,
 	  			  tempBtn,
-	  			  aCRCalBtn,
+	  			  tHbBtn,
 	  			  f535Btn,
 	  			  f660Btn,
 	  			  collelationBtn,
@@ -71,17 +70,17 @@ public class EngineerActivity extends Activity {
 
 		swVersionText = (TextView)findViewById(R.id.swVersionText);
 		fwVersionText = (TextView)findViewById(R.id.fwVersionText);
-		osVersionText = (TextView)findViewById(R.id.osVersionText);		
+		osVersionText = (TextView)findViewById(R.id.osVersionText);
 	}
 	
 	public void setButtonId(Activity activity) {
 		
 		escBtn = (Button)activity.findViewById(R.id.escBtn);
 		adjustBtn = (Button)activity.findViewById(R.id.adjustBtn);
-		a1CCalBtn = (Button)activity.findViewById(R.id.a1CCalBtn);
+		calibrationBtn = (Button)activity.findViewById(R.id.calibrationBtn);
 		tempBtn = (Button)activity.findViewById(R.id.tempBtn);
 		lampBtn = (Button)activity.findViewById(R.id.lampBtn);
-		aCRCalBtn = (Button)activity.findViewById(R.id.aCRCalBtn);
+		tHbBtn = (Button)activity.findViewById(R.id.tHbBtn);
 		f535Btn = (Button)activity.findViewById(R.id.f535Btn);
 		f660Btn = (Button)activity.findViewById(R.id.f660Btn);
 		collelationBtn = (Button)activity.findViewById(R.id.collelationBtn);
@@ -93,10 +92,10 @@ public class EngineerActivity extends Activity {
 		
 		escBtn.setOnTouchListener(mTouchListener);
 		adjustBtn.setOnTouchListener(mTouchListener);
-		a1CCalBtn.setOnTouchListener(mTouchListener);
+		calibrationBtn.setOnTouchListener(mTouchListener);
 		tempBtn.setOnTouchListener(mTouchListener);
 		lampBtn.setOnTouchListener(mTouchListener);
-		aCRCalBtn.setOnTouchListener(mTouchListener);
+		tHbBtn.setOnTouchListener(mTouchListener);
 		f535Btn.setOnTouchListener(mTouchListener);
 		f660Btn.setOnTouchListener(mTouchListener);
 		collelationBtn.setOnTouchListener(mTouchListener);
@@ -130,8 +129,8 @@ public class EngineerActivity extends Activity {
 					WhichIntent(activity, TargetIntent.Adjustment);
 					break;
 				
-				case R.id.a1CCalBtn	:
-					WhichIntent(activity, TargetIntent.A1CCal);
+				case R.id.calibrationBtn	:
+					WhichIntent(activity, TargetIntent.Calibration);
 					break;
 				
 				case R.id.tempBtn	:
@@ -142,8 +141,8 @@ public class EngineerActivity extends Activity {
 					WhichIntent(activity, TargetIntent.Lamp);
 					break;
 					
-				case R.id.aCRCalBtn	:
-					WhichIntent(activity, TargetIntent.ACRCal);
+				case R.id.tHbBtn	:
+					WhichIntent(activity, TargetIntent.tHb);
 					break;
 				
 				case R.id.f535Btn	:
@@ -182,10 +181,10 @@ public class EngineerActivity extends Activity {
 
 		setButtonState(R.id.escBtn, true, activtiy);
 		setButtonState(R.id.adjustBtn, true, activtiy);
-		setButtonState(R.id.a1CCalBtn, true, activtiy);
+		setButtonState(R.id.calibrationBtn, true, activtiy);
 		setButtonState(R.id.tempBtn, true, activtiy);
 		setButtonState(R.id.lampBtn, true, activtiy);
-		setButtonState(R.id.aCRCalBtn, true, activtiy);
+		setButtonState(R.id.tHbBtn, true, activtiy);
 		setButtonState(R.id.f535Btn, true, activtiy);
 		setButtonState(R.id.f660Btn, true, activtiy);
 		setButtonState(R.id.collelationBtn, true, activtiy);
@@ -197,10 +196,10 @@ public class EngineerActivity extends Activity {
 		
 		setButtonState(R.id.escBtn, false, activtiy);
 		setButtonState(R.id.adjustBtn, false, activtiy);
-		setButtonState(R.id.a1CCalBtn, false, activtiy);
+		setButtonState(R.id.calibrationBtn, false, activtiy);
 		setButtonState(R.id.tempBtn, false, activtiy);
 		setButtonState(R.id.lampBtn, false, activtiy);
-		setButtonState(R.id.aCRCalBtn, false, activtiy);
+		setButtonState(R.id.tHbBtn, false, activtiy);
 		setButtonState(R.id.f535Btn, false, activtiy);
 		setButtonState(R.id.f660Btn, false, activtiy);
 		setButtonState(R.id.collelationBtn, false, activtiy);
@@ -217,7 +216,8 @@ public class EngineerActivity extends Activity {
 		setButtonId(activity);
 		setButtonClick();
 		
-		mTimerDisplay = new MainTimer(this, R.id.engineerlayout);
+		mTimerDisplay = new TimerDisplay();
+		mTimerDisplay.ActivityParm(this, R.id.engineerlayout);
 	}
 	
 	public void WhichIntent(Activity activity, TargetIntent Itn) { // Activity conversion
@@ -231,25 +231,23 @@ public class EngineerActivity extends Activity {
 			break;
 						
 		case Lamp		:				
-			nextIntent = new Intent(activity.getApplicationContext(), LampActivity.class);
+			nextIntent = new Intent(activity.getApplicationContext(), LampCopyActivity.class);
 			break;
 			
 		case Adjustment		:				
 			nextIntent = new Intent(activity.getApplicationContext(), AdjustmentActivity.class);
 			break;
 
-		case A1CCal	:				
-			nextIntent = new Intent(activity.getApplicationContext(), CalActivity.class);
-			nextIntent.putExtra("TargetIntent", TargetIntent.A1CCal);
+		case Calibration	:				
+			nextIntent = new Intent(activity.getApplicationContext(), CalibrationActivity.class);
 			break;
 			
 		case Temperature	:				
 			nextIntent = new Intent(activity.getApplicationContext(), TemperatureActivity.class);
 			break;
 		
-		case ACRCal		:				
-			nextIntent = new Intent(activity.getApplicationContext(), CalActivity.class);
-			nextIntent.putExtra("TargetIntent", TargetIntent.ACRCal);
+		case tHb		:				
+			nextIntent = new Intent(activity.getApplicationContext(), tHbActivity.class);
 			break;
 					
 		case f535		:				
