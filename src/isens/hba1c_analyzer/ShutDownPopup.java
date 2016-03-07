@@ -45,7 +45,7 @@ public class ShutDownPopup {
 		
 	public void setButtonClick() {
 		
-		if(HomeActivity.ANALYZER_SW == HomeActivity.DEVEL) snapshotBtn.setOnTouchListener(mTouchListener);
+		if(HomeActivity.ANALYZER_SW == RunActivity.DEVEL_OPERATION) snapshotBtn.setOnTouchListener(mTouchListener);
 	}
 	
 	public void setButtonState(int btnId, boolean state) {

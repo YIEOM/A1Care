@@ -1,0 +1,98 @@
+import org.apache.tools.ant.taskdefs.condition.Os
+
+def getNdkBuildPath(){
+    Properties properties = new Properties()
+    properties.load(project.rootProject.file('local.properties').newDataInputStream())
+
+    def command = properties.getProperty('ndk.dir')
+    if(Os.isFamily(Os.FAMILY_WINDOWS)){
+        command += "\\ndk-build.cmd"
+    }else{
+        command += "/ndk-build"
+    }
+    return command
+}
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:1.5.0'
+    }
+}
+apply plugin: 'com.android.application'
+
+dependencies {
+    compile fileTree(include: '*.jar', dir: 'libs')
+}
+
+android {
+
+    ext {
+        nativeDebuggable = true
+    }
+
+    task buildNative(type: Exec, description: 'Compile JNI source via NDK'){
+        if(nativeDebuggable){
+          commandLine getNdkBuildPath(), 'NDK_DEBUG=1', '-C', file('src').absolutePath
+        }else
+        {
+          commandLine getNdkBuildPath(), '-C', file('src').absolutePath
+        }
+    }
+
+    tasks.withType(JavaCompile) {
+      compileTask -> compileTask.dependsOn buildNative
+    }
+    task cleanNative(type: Exec, description: 'Clean native objs and lib') {
+        commandLine getNdkBuildPath(), '-C', file('src').absolutePath, 'clean'
+    }
+    clean.dependsOn 'cleanNative'
+
+    signingConfigs {
+        AndroidDebugKey {
+            keyAlias 'androiddebugkey'
+            keyPassword 'android'
+            storeFile file('C:/Users/admin/AppData/Local/Android/sdk/platform.jks')
+            storePassword 'android'
+        }
+    }
+
+    compileSdkVersion 17
+    buildToolsVersion "23.0.2"
+    sourceSets {
+        main {
+            manifest.srcFile 'AndroidManifest.xml'
+            java.srcDirs = ['src']
+            resources.srcDirs = ['src']
+            aidl.srcDirs = ['src']
+            renderscript.srcDirs = ['src']
+            res.srcDirs = ['res']
+            assets.srcDirs = ['assets']
+            jniLibs.srcDir 'libs'
+            jni.srcDirs = []
+        }
+
+        // Move the tests to tests/java, tests/res, etc...
+        instrumentTest.setRoot('tests')
+
+        // Move the build types to build-types/<type>
+        // For instance, build-types/debug/java, build-types/debug/AndroidManifest.xml, ...
+        // This moves them out of them default location under src/<type>/... which would
+        // conflict with src/ being used by the main source set.
+        // Adding new build types or product flavors should be accompanied
+        // by a similar customization.
+        debug.setRoot('build-types/debug')
+        release.setRoot('build-types/release')
+    }
+    buildTypes {
+        debug {
+            jniDebuggable true
+            signingConfig signingConfigs.AndroidDebugKey
+        }
+        release {
+            signingConfig signingConfigs.AndroidDebugKey
+        }
+    }
+}

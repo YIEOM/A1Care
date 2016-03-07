@@ -7,6 +7,8 @@ import isens.hba1c_analyzer.R.anim;
 import isens.hba1c_analyzer.R.id;
 import isens.hba1c_analyzer.R.layout;
 import isens.hba1c_analyzer.Presenter.DisplayPresenter;
+import isens.hba1c_analyzer.RunActivity;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Paint;
@@ -78,7 +80,7 @@ public class DisplayActivity extends Activity implements DisplayIView {
 		backBtn.setOnTouchListener(mTouchListener);
 		minusBtn.setOnTouchListener(mTouchListener);
 		plusBtn.setOnTouchListener(mTouchListener);
-		if(HomeActivity.ANALYZER_SW == HomeActivity.DEVEL) snapshotBtn.setOnTouchListener(mTouchListener);
+		if(HomeActivity.ANALYZER_SW == RunActivity.DEVEL_OPERATION) snapshotBtn.setOnTouchListener(mTouchListener);
 	}
 	
 	public void setButtonState(int btnId, boolean state) {

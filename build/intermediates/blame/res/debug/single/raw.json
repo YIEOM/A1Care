@@ -1,0 +1,22 @@
+[
+    {
+        "merged": "D:\\01.Research_Project\\01.A1Care_Analyzer\\01.Android_Studio_Project\\A1Care_analyzer\\build\\intermediates\\res\\merged\\debug\\raw\\insert_bgm.wav",
+        "source": "D:\\01.Research_Project\\01.A1Care_Analyzer\\01.Android_Studio_Project\\A1Care_analyzer\\res\\raw\\insert_bgm.wav"
+    },
+    {
+        "merged": "D:\\01.Research_Project\\01.A1Care_Analyzer\\01.Android_Studio_Project\\A1Care_analyzer\\build\\intermediates\\res\\merged\\debug\\raw\\booting_bgm.wav",
+        "source": "D:\\01.Research_Project\\01.A1Care_Analyzer\\01.Android_Studio_Project\\A1Care_analyzer\\res\\raw\\booting_bgm.wav"
+    },
+    {
+        "merged": "D:\\01.Research_Project\\01.A1Care_Analyzer\\01.Android_Studio_Project\\A1Care_analyzer\\build\\intermediates\\res\\merged\\debug\\raw\\beep.wav",
+        "source": "D:\\01.Research_Project\\01.A1Care_Analyzer\\01.Android_Studio_Project\\A1Care_analyzer\\res\\raw\\beep.wav"
+    },
+    {
+        "merged": "D:\\01.Research_Project\\01.A1Care_Analyzer\\01.Android_Studio_Project\\A1Care_analyzer\\build\\intermediates\\res\\merged\\debug\\raw\\win.wav",
+        "source": "D:\\01.Research_Project\\01.A1Care_Analyzer\\01.Android_Studio_Project\\A1Care_analyzer\\res\\raw\\win.wav"
+    },
+    {
+        "merged": "D:\\01.Research_Project\\01.A1Care_Analyzer\\01.Android_Studio_Project\\A1Care_analyzer\\build\\intermediates\\res\\merged\\debug\\raw\\result_bgm.wav",
+        "source": "D:\\01.Research_Project\\01.A1Care_Analyzer\\01.Android_Studio_Project\\A1Care_analyzer\\res\\raw\\result_bgm.wav"
+    }
+]

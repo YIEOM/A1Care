@@ -51,9 +51,9 @@ public class ExportModel {
 		String primary = "", unit = "", refRange = "", type ="", tmp="";
 
 		try {
-			
-			pIdx = 24 + 2;
-			pLen = Integer.parseInt(data.substring(24, pIdx));
+			Log.i("getHandlingData", "" + data.toString());
+			pIdx = 25 + 2;
+			pLen = Integer.parseInt(data.substring(25, pIdx));
 			oIdx = pIdx + pLen + 2;
 			oLen = Integer.parseInt(data.substring(pIdx + pLen, oIdx));
 
@@ -83,7 +83,7 @@ public class ExportModel {
 			handlingData.append(data.substring(oIdx + oLen + 1) + unit + "\t"); // HbA1c
 			handlingData.append(primary + "\t"); // Primary
 			handlingData.append(refRange + "\t"); // Reference Range
-			handlingData.append(data.substring(19, 24) + "\t"); // Reference Number
+			handlingData.append(data.substring(19, 25) + "\t"); // Reference Number
 			handlingData.append(data.substring(pIdx, pIdx + pLen) + "\t"); // Patient ID
 			handlingData.append(data.substring(oIdx, oIdx + oLen)); // Operator ID
 			
@@ -134,7 +134,7 @@ public class ExportModel {
 			if(data.length() > 3) {
 		
 				if(Integer.parseInt(data.substring(0, 4)) == testNum) isEquals = true;
-			
+
 			} else if(data.equals("")) break;
 		}
 		

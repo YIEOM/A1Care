@@ -125,10 +125,10 @@ public class AboutModel {
 			mSerialPort = new SerialPort();
 			mSerialPort.BoardTx(FW_VERSION, CtrTarget.NormalSet);
 			
-			do {	
+			do {
 			
 				temp = mSerialPort.BoardMessageOutput();
-				
+
 				if(cnt++ == 20) {
 					
 					temp = "Nothing";
@@ -174,8 +174,6 @@ public class AboutModel {
 		public void run() {
 			
 			try {
-				
-				int cnt = 0;
 				
 				Process shell = Runtime.getRuntime().exec("getprop ro.build.version.os");
 

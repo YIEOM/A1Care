@@ -48,9 +48,7 @@ public class FactorModel {
 			RunActivity.RF2_Offset = value2;
 			break;
 			
-		case ABSORBANCE_FACTOR	:
-			RunActivity.SF_F1 = value1;
-			RunActivity.SF_F2 = value2;
+		default :
 			break;
 		}
 		

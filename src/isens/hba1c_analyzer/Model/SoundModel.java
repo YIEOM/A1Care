@@ -75,7 +75,7 @@ public class SoundModel {
 	}
 	
 	public int getSoundVolume() {
-		
+
 		return audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
 	}
 
@@ -88,7 +88,6 @@ public class SoundModel {
 			playSound(R.raw.beep);
 			
 		} catch(Exception e) {
-		
 		}
 	}
 	

@@ -90,7 +90,7 @@ public class RemoveActivity extends Activity {
 	
 	public void setButtonClick() {
 		
-		if(HomeActivity.ANALYZER_SW == HomeActivity.DEVEL) snapshotBtn.setOnTouchListener(mTouchListener);
+		if(HomeActivity.ANALYZER_SW == RunActivity.DEVEL_OPERATION) snapshotBtn.setOnTouchListener(mTouchListener);
 	}
 	
 	public void setButtonState(int btnId, boolean state, Activity activity) {
@@ -151,59 +151,106 @@ public class RemoveActivity extends Activity {
 		UserActionObj.start();
 	}
 
+//	public class UserAction extends Thread {
+//
+//		public void run() {
+//
+//			int whichIntent;
+//
+//			User1stAction();
+//
+//			GpioPort.DoorActState = true;
+//			GpioPort.CartridgeActState = true;
+//
+//			SerialPort.Sleep(2000);
+//
+//			while(ActionActivity.CartridgeCheckFlag != 0) SerialPort.Sleep(100);
+//
+//			while((ActionActivity.DoorCheckFlag != 1) | (ActionActivity.CartridgeCheckFlag != 0)) SerialPort.Sleep(100);
+//
+//			GpioPort.DoorActState = false;
+//			GpioPort.CartridgeActState = false;
+//
+//			Intent itn = getIntent();
+//			whichIntent = itn.getIntExtra("WhichIntent", 0);
+//
+//			if(whichIntent != ResultActivity.COVER_ACTION_ESC) {
+//
+//				if(Barcode.Type.equals("W") || Barcode.Type.equals("X") || Barcode.Type.equals("Y") || Barcode.Type.equals("Z")) ControlDataCnt = itn.getIntExtra("DataCnt", 0);
+//				else PatientDataCnt = itn.getIntExtra("DataCnt", 0);
+//
+//				DataCntSave();
+//			}
+//
+//			removeAni.stop();
+//
+//			switch(whichIntent) {
+//
+//			case ResultActivity.ACTION_ACTIVITY	:
+//				WhichIntent(activity, context, TargetIntent.Blank);
+//				break;
+//
+//			case ResultActivity.HOME_ACTIVITY		:
+//				changeActivity(activity, context);
+//				break;
+//
+//			case ResultActivity.COVER_ACTION_ESC	:
+//				changeActivity(activity, context);
+//				break;
+//
+//			default	:
+//				break;
+//			}
+//		}
+//	}
+
+	/* v1.3.33-B */
 	public class UserAction extends Thread {
-		
+
 		public void run() {
-			
+
 			int whichIntent;
-			
+
 			User1stAction();
-			
+
 			GpioPort.DoorActState = true;
 			GpioPort.CartridgeActState = true;
-	
+
 			SerialPort.Sleep(2000);
-			
+
 			while(ActionActivity.CartridgeCheckFlag != 0) SerialPort.Sleep(100);
-			
+
 			while((ActionActivity.DoorCheckFlag != 1) | (ActionActivity.CartridgeCheckFlag != 0)) SerialPort.Sleep(100);
-			
+
 			GpioPort.DoorActState = false;
 			GpioPort.CartridgeActState = false;
-			
+
 			Intent itn = getIntent();
 			whichIntent = itn.getIntExtra("WhichIntent", 0);
-			
-			if(whichIntent != ResultActivity.COVER_ACTION_ESC) {
-					
-				if(Barcode.Type.equals("W") || Barcode.Type.equals("X") || Barcode.Type.equals("Y") || Barcode.Type.equals("Z")) ControlDataCnt = itn.getIntExtra("DataCnt", 0);
-				else PatientDataCnt = itn.getIntExtra("DataCnt", 0);
-					
-				DataCntSave();			
-			}
-						
+
 			removeAni.stop();
-			
+
 			switch(whichIntent) {
-			
-			case ResultActivity.ACTION_ACTIVITY	:
-				WhichIntent(activity, context, TargetIntent.Blank);
-				break;
-			
-			case ResultActivity.HOME_ACTIVITY		:	
-				changeActivity(activity, context);
-				break;
-				
-			case ResultActivity.COVER_ACTION_ESC	:
-				changeActivity(activity, context);
-				break;
-				
-			default	:
-				break;
+
+				case ResultActivity.ACTION_ACTIVITY	:
+					WhichIntent(activity, context, TargetIntent.Blank);
+					break;
+
+				case ResultActivity.HOME_ACTIVITY		:
+					changeActivity(activity, context);
+					break;
+
+				case ResultActivity.COVER_ACTION_ESC	:
+					changeActivity(activity, context);
+					break;
+
+				default	:
+					break;
 			}
 		}
 	}
-	
+
+
 	public void User1stAction() { // Cartridge remove animation start
 		
 		removeImage = (ImageView)findViewById(R.id.removeAct1);
@@ -220,18 +267,22 @@ public class RemoveActivity extends Activity {
 		    }
 		}).start();	
 	}
-	
-	public void DataCntSave() { // Saving data number
-		
-		SharedPreferences DcntPref = getSharedPreferences("Data Counter", MODE_PRIVATE);
-		SharedPreferences.Editor edit = DcntPref.edit();
-		
-		edit.putInt("PatientDataCnt", PatientDataCnt);
-		edit.putInt("ControlDataCnt", ControlDataCnt);
-		
-		edit.commit();
-	}
-	
+
+	/* v1.3.33-B */
+//	public void DataCntSave() { // Saving data number
+//
+//		SharedPreferences DcntPref = getSharedPreferences("Data Counter", MODE_PRIVATE);
+//		SharedPreferences.Editor edit = DcntPref.edit();
+//
+//		edit.putInt("PatientDataCnt", PatientDataCnt);
+//		edit.putInt("ControlDataCnt", ControlDataCnt);
+//
+//		edit.commit();
+//	}
+	/* v1.3.33-B */
+
+
+
 	private void changeActivity(Activity activity, Context context) {
 		
 		if(HomeActivity.MEASURE_MODE == HomeActivity.A1C) {

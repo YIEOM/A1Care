@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="isens.hba1c_analyzer"
+    android:sharedUserId="android.uid.system"
+    android:versionCode="1"
+    android:versionName="v1.4.01-R" >
+
+    <uses-sdk
+        android:minSdkVersion="12"
+        android:targetSdkVersion="16" />
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.SET_TIME" />
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+
+    <application
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:largeHeap="true"
+        android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
+        <activity
+            android:name="isens.hba1c_analyzer.SystemCheckActivity"
+            android:configChanges="keyboard|keyboardHidden"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.HOME" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="isens.hba1c_analyzer.RemoveActivity"
+            android:configChanges="keyboard|keyboardHidden" >
+            <intent-filter>
+                <action android:name="RemoveActivity" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="isens.hba1c_analyzer.ActionActivity"
+            android:configChanges="keyboard|keyboardHidden" >
+        </activity>
+        <activity
+            android:name="isens.hba1c_analyzer.RunActivity"
+            android:configChanges="keyboard|keyboardHidden" >
+        </activity>
+        <activity
+            android:name="isens.hba1c_analyzer.BlankActivity"
+            android:configChanges="keyboard|keyboardHidden" >
+        </activity>
+        <activity
+            android:name="isens.hba1c_analyzer.ResultActivity"
+            android:configChanges="keyboard|keyboardHidden" >
+        </activity>
+        <activity android:name="isens.hba1c_analyzer.RecordActivity" />
+        <activity android:name="isens.hba1c_analyzer.SettingActivity" />
+        <activity android:name="isens.hba1c_analyzer.SystemSettingActivity" />
+        <activity android:name="isens.hba1c_analyzer.PatientTestActivity" >
+            <intent-filter>
+                <action android:name="PatientTestActivity" />
+            </intent-filter>
+        </activity>
+        <activity android:name="isens.hba1c_analyzer.ControlTestActivity" >
+            <intent-filter>
+                <action android:name="ControlTestActivity" />
+            </intent-filter>
+        </activity>
+        <activity android:name="isens.hba1c_analyzer.OperatorSettingActivity" />
+        <activity android:name="isens.hba1c_analyzer.View.TimeActivity" />
+        <activity
+            android:name="isens.hba1c_analyzer.FileSaveActivity"
+            android:process="com.android.phone" />
+        <activity
+            android:name="isens.hba1c_analyzer.FileLoadActivity"
+            android:process="com.android.phone" >
+            <intent-filter>
+                <action android:name="FileLoadActivity" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="isens.hba1c_analyzer.FileDeleteActivity"
+            android:process="com.android.phone" />
+        <activity android:name="isens.hba1c_analyzer.HISSettingActivity" />
+        <activity android:name="isens.hba1c_analyzer.HISActivity" />
+        <activity android:name="isens.hba1c_analyzer.View.DisplayActivity" />
+        <activity android:name="isens.hba1c_analyzer.View.SoundActivity" />
+        <activity android:name="isens.hba1c_analyzer.View.DateActivity" />
+        <activity
+            android:name="isens.hba1c_analyzer.HomeActivity"
+            android:configChanges="keyboard|keyboardHidden" >
+            <intent-filter>
+                <action android:name="HomeActivity" />
+            </intent-filter>
+        </activity>
+        <activity android:name="isens.hba1c_analyzer.CalibrationActivity" />
+        <activity android:name="isens.hba1c_analyzer.View.LanguageActivity" />
+        <activity android:name="isens.hba1c_analyzer.View.ConvertActivity" />
+        <activity android:name="isens.hba1c_analyzer.EngineerActivity" >
+            <intent-filter>
+                <action android:name="EngineerActivity" />
+            </intent-filter>
+        </activity>
+        <activity android:name="isens.hba1c_analyzer.LampCopyActivity" />
+        <activity android:name="isens.hba1c_analyzer.View.CorrelationActivity" />
+        <activity android:name="isens.hba1c_analyzer.View.AdjustmentActivity" />
+        <activity android:name="isens.hba1c_analyzer.View.f535Activity" />
+        <activity android:name="isens.hba1c_analyzer.View.f660Activity" />
+        <activity android:name="isens.hba1c_analyzer.View.FunctionalTestActivity" />
+        <activity android:name="isens.hba1c_analyzer.View.AboutActivity" />
+        <activity
+            android:name="isens.hba1c_analyzer.View.ExportActivity"
+            android:process="com.android.phone" />
+        <activity android:name="isens.hba1c_analyzer.View.LocationActivity" />
+        <activity android:name="isens.hba1c_analyzer.View.TemperatureActivity" />
+    </application>
+
+</manifest>

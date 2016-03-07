@@ -78,7 +78,7 @@ public class RecordActivity extends Activity {
 		patientBtn.setOnTouchListener(mTouchListener);
 		controlBtn.setOnTouchListener(mTouchListener);
 		backIcon.setOnTouchListener(mTouchListener);
-		if(HomeActivity.ANALYZER_SW == HomeActivity.DEVEL) snapshotBtn.setOnTouchListener(mTouchListener);
+		if(HomeActivity.ANALYZER_SW == RunActivity.DEVEL_OPERATION) snapshotBtn.setOnTouchListener(mTouchListener);
 	}
 	
 	public void setButtonState(int btnId, boolean state, Activity activity) {

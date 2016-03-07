@@ -7,13 +7,14 @@ import isens.hba1c_analyzer.HomeActivity.TargetIntent;
 import isens.hba1c_analyzer.RunActivity.AnalyzerState;
 import isens.hba1c_analyzer.RunActivity.CartDump;
 import isens.hba1c_analyzer.RunActivity.CheckCoverError;
-import isens.hba1c_analyzer.SystemCheckActivity.InsideTmpCheck;
+import isens.hba1c_analyzer.SystemCheckActivity.InnerTmpCheck;
 import isens.hba1c_analyzer.SystemCheckActivity.MotorCheck;
 import isens.hba1c_analyzer.Model.ActivityChange;
 import isens.hba1c_analyzer.Model.CaptureScreen;
 import isens.hba1c_analyzer.Model.CustomTextView;
 import isens.hba1c_analyzer.Model.Hardware;
 import isens.hba1c_analyzer.Model.LanguageModel;
+import isens.hba1c_analyzer.Model.TemperatureModel;
 import isens.hba1c_analyzer.View.FunctionalTestActivity;
 import android.app.Activity;
 import android.content.Context;
@@ -45,7 +46,7 @@ public class BlankActivity extends Activity {
 	public ErrorPopup mErrorPopup;
 	public TimerDisplay mTimerDisplay;
 	public ActivityChange mActivityChange;
-	public Temperature mTemperature;
+	public TemperatureModel mTemperatureModel;
 	private LanguageModel mLanguageModel;
 	
 	public Handler runHandler = new Handler();
@@ -140,7 +141,7 @@ public class BlankActivity extends Activity {
 	public void setButtonClick() {
 		
 		escIcon.setOnTouchListener(mTouchListener);
-		if(HomeActivity.ANALYZER_SW == HomeActivity.DEVEL) snapshotBtn.setOnTouchListener(mTouchListener);
+		if(HomeActivity.ANALYZER_SW == RunActivity.DEVEL_OPERATION) snapshotBtn.setOnTouchListener(mTouchListener);
 	}
 	
 	public void setButtonState(int btnId, boolean state, Activity activity) {
@@ -214,7 +215,7 @@ public class BlankActivity extends Activity {
 		mTimerDisplay.ActivityParm(this, R.id.blanklayout);
 				
 		mSerialPort = new SerialPort();
-		mTemperature = new Temperature();
+		mTemperatureModel = new TemperatureModel(activity);
 		
 		blankState = RunActivity.AnalyzerState.InitPosition;
 		photoCheck = 0;
@@ -282,14 +283,14 @@ public class BlankActivity extends Activity {
 			
 			for(i = 0; i < 4; i++) {
 				
-				tmp += mTemperature.CellTmpRead();
+				tmp += mTemperatureModel.getChambTmp();
 				
 				SerialPort.Sleep(500);
 			}
 			
-			if(HomeActivity.ANALYZER_SW != HomeActivity.DEMO) {
+			if(HomeActivity.ANALYZER_SW != RunActivity.DEMO_OPERATION) {
 				
-				if(((Temperature.InitTmp - 1) < tmp/4) & (tmp/4 < (Temperature.InitTmp + 1))) {
+				if(((TemperatureModel.InitChambTmp - 1) < tmp/4) & (tmp/4 < (TemperatureModel.InitChambTmp + 1))) {
 					
 					ChamberTmp = tmp/4;
 					
@@ -339,7 +340,7 @@ public class BlankActivity extends Activity {
 					RunActivity.BlankValue[0] = AbsorbanceMeasure(SystemCheckActivity.MinDark, SystemCheckActivity.MaxDark, SystemCheckActivity.ERROR_DARK); // Dark Absorbance
 
 					/* TEST Mode */
-					if(HomeActivity.ANALYZER_SW == HomeActivity.NORMAL)
+					if(HomeActivity.ANALYZER_SW == RunActivity.NORMAL_OPERATION)
 						
 					PhotoErrorCheck();
 					break;
@@ -363,7 +364,7 @@ public class BlankActivity extends Activity {
 					RunActivity.BlankValue[3] = AbsorbanceMeasure(SystemCheckActivity.Min750, SystemCheckActivity.Max750, SystemCheckActivity.ERROR_750nm); // Dark Absorbance
 				
 					/* TEST Mode */
-					if(HomeActivity.ANALYZER_SW == HomeActivity.NORMAL)
+					if(HomeActivity.ANALYZER_SW == RunActivity.NORMAL_OPERATION)
 					
 					PhotoErrorCheck();
 					break;
@@ -461,8 +462,8 @@ public class BlankActivity extends Activity {
 		
 		do {
 		
-			rawValue = mSerialPort.BoardMessageOutput();			
-			
+			rawValue = mSerialPort.BoardMessageOutput();
+
 			if(time++ > 50)	break;
 			
 			if(RunActivity.IsError || RunActivity.IsStop) break;
@@ -486,8 +487,7 @@ public class BlankActivity extends Activity {
 		}
 		
 		TimerDisplay.RXBoardFlag = false;
-		
-//		Log.w("AbsorbanceMeasure", "douValue : " + douValue + " max : " + max + " min : " + min + " errBits : " + photoCheck);
+
 		return (douValue - RunActivity.BlankValue[0]);
 	}
 	
@@ -535,7 +535,7 @@ public class BlankActivity extends Activity {
 		while(true) {
 			
 			temp = mSerialPort.BoardMessageOutput();
-			
+
 			if(colRsp.equals(temp)) {
 				
 				blankState = nextState;
@@ -548,7 +548,7 @@ public class BlankActivity extends Activity {
 			}
 			
 			if(time++ > rspTime) {
-				
+
 				blankState = AnalyzerState.NoResponse;
 				checkError = R.string.e241;
 				break;

@@ -75,7 +75,7 @@ public class DatabaseHander extends SQLiteOpenHelper {
 	}
 	
 	public void UpdateLastLogIn(String id) {
-		
+
 		UpdateField(COLUMN4, "false", COLUMN4, "true");
 		UpdateField(COLUMN4, "true", COLUMN1, id);
 	}
@@ -121,18 +121,32 @@ public class DatabaseHander extends SQLiteOpenHelper {
 		return password;
 	}
 	
+//	public String GetLastLoginID() {
+//
+//		String value[] = new String[4];
+//		String id;
+//
+//		value = GetRowWithField(COLUMN4, "true");
+//
+//		id = value[0];
+//
+//		return id;
+//	}
+
 	public String GetLastLoginID() {
-		
+
 		String value[] = new String[4];
 		String id;
-		
+
 		value = GetRowWithField(COLUMN4, "true");
-		
+
 		id = value[0];
-		
+
+		if(id == null) id = "Guest";
+
 		return id;
 	}
-	
+
 	public boolean CheckIDDuplication(String id) {
 		
 		boolean isDuplicated = false;
@@ -160,6 +174,7 @@ public class DatabaseHander extends SQLiteOpenHelper {
 			for(int i = 1; i < cursor.getColumnCount(); i++) {
 			
 				value[i-1] = cursor.getString(i);
+				Log.i("GetRowWithField", "" + value[i-1]);
 			}
 		}
 		

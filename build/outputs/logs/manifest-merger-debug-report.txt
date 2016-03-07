@@ -1,0 +1,267 @@
+-- Merging decision tree log ---
+manifest
+ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:2:1-110:12
+	package
+		ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:3:5-35
+	android:sharedUserId
+		ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:6:5-46
+	android:versionName
+		ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:5:5-36
+		INJECTED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml
+		INJECTED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml
+	android:versionCode
+		ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:4:5-28
+		INJECTED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml
+		INJECTED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml
+	xmlns:android
+		ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:2:11-69
+uses-sdk
+ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:8:5-10:41
+	android:targetSdkVersion
+		ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:10:9-38
+	android:minSdkVersion
+		ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:9:9-35
+uses-permission#android.permission.WRITE_EXTERNAL_STORAGE
+ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:12:5-80
+	android:name
+		ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:12:22-78
+uses-permission#android.permission.READ_EXTERNAL_STORAGE
+ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:13:5-79
+	android:name
+		ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:13:22-77
+uses-permission#android.permission.SET_TIME
+ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:14:5-66
+	android:name
+		ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:14:22-64
+uses-permission#android.permission.WRITE_SETTINGS
+ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:15:5-72
+	android:name
+		ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:15:22-70
+application
+ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:17:4-108:19
+	android:label
+		ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:18:9-41
+	android:icon
+		ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:17:17-53
+	android:largeHeap
+		ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:20:9-33
+	android:theme
+		ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:19:9-67
+activity#isens.hba1c_analyzer.SystemCheckActivity
+ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:22:6-31:20
+	android:label
+		ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:24:13-45
+	android:configChanges
+		ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:25:10-57
+	android:name
+		ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:23:13-68
+intent-filter#android.intent.action.MAIN+android.intent.category.DEFAULT+android.intent.category.HOME
+ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:26:13-30:29
+action#android.intent.action.MAIN
+ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:27:17-69
+	android:name
+		ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:27:25-66
+category#android.intent.category.HOME
+ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:28:17-73
+	android:name
+		ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:28:27-70
+category#android.intent.category.DEFAULT
+ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:29:10-69
+	android:name
+		ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:29:20-66
+activity#isens.hba1c_analyzer.RemoveActivity
+ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:32:9-38:20
+	android:configChanges
+		ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:34:13-60
+	android:name
+		ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:33:13-42
+intent-filter#RemoveActivity
+ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:35:13-37:29
+action#RemoveActivity
+ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:36:17-56
+	android:name
+		ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:36:25-54
+activity#isens.hba1c_analyzer.ActionActivity
+ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:39:9-42:20
+	android:configChanges
+		ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:41:13-60
+	android:name
+		ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:40:13-42
+activity#isens.hba1c_analyzer.RunActivity
+ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:43:9-46:20
+	android:configChanges
+		ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:45:13-60
+	android:name
+		ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:44:13-39
+activity#isens.hba1c_analyzer.BlankActivity
+ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:47:9-50:20
+	android:configChanges
+		ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:49:13-60
+	android:name
+		ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:48:13-41
+activity#isens.hba1c_analyzer.ResultActivity
+ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:51:9-54:20
+	android:configChanges
+		ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:53:13-60
+	android:name
+		ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:52:13-42
+activity#isens.hba1c_analyzer.RecordActivity
+ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:55:6-57
+	android:name
+		ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:55:16-45
+activity#isens.hba1c_analyzer.SettingActivity
+ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:56:6-58
+	android:name
+		ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:56:16-46
+activity#isens.hba1c_analyzer.SystemSettingActivity
+ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:57:6-64
+	android:name
+		ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:57:16-52
+activity#isens.hba1c_analyzer.PatientTestActivity
+ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:58:6-62:17
+	android:name
+		ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:58:16-50
+intent-filter#PatientTestActivity
+ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:59:10-61:29
+action#PatientTestActivity
+ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:60:17-61
+	android:name
+		ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:60:25-59
+activity#isens.hba1c_analyzer.ControlTestActivity
+ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:63:6-67:17
+	android:name
+		ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:63:16-50
+intent-filter#ControlTestActivity
+ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:64:10-66:29
+action#ControlTestActivity
+ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:65:17-61
+	android:name
+		ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:65:25-59
+activity#isens.hba1c_analyzer.OperatorSettingActivity
+ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:68:6-66
+	android:name
+		ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:68:16-54
+activity#isens.hba1c_analyzer.View.TimeActivity
+ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:69:6-81
+	android:name
+		ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:69:16-69
+activity#isens.hba1c_analyzer.FileSaveActivity
+ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:70:6-95
+	android:process
+		ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:70:48-83
+	android:name
+		ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:70:16-47
+activity#isens.hba1c_analyzer.FileLoadActivity
+ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:71:6-75:17
+	android:process
+		ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:71:48-83
+	android:name
+		ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:71:16-47
+intent-filter#FileLoadActivity
+ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:72:10-74:29
+action#FileLoadActivity
+ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:73:17-58
+	android:name
+		ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:73:25-56
+activity#isens.hba1c_analyzer.FileDeleteActivity
+ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:76:3-94
+	android:process
+		ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:76:47-82
+	android:name
+		ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:76:13-46
+activity#isens.hba1c_analyzer.HISSettingActivity
+ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:77:3-58
+	android:name
+		ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:77:13-46
+activity#isens.hba1c_analyzer.HISActivity
+ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:78:3-51
+	android:name
+		ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:78:13-39
+activity#isens.hba1c_analyzer.View.DisplayActivity
+ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:79:3-81
+	android:name
+		ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:79:13-69
+activity#isens.hba1c_analyzer.View.SoundActivity
+ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:80:6-82
+	android:name
+		ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:80:16-70
+activity#isens.hba1c_analyzer.View.DateActivity
+ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:81:3-78
+	android:name
+		ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:81:13-66
+activity#isens.hba1c_analyzer.HomeActivity
+ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:82:3-88:14
+	android:configChanges
+		ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:84:10-57
+	android:name
+		ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:83:7-34
+intent-filter#HomeActivity
+ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:85:7-87:29
+action#HomeActivity
+ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:86:17-54
+	android:name
+		ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:86:25-52
+activity#isens.hba1c_analyzer.CalibrationActivity
+ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:89:3-59
+	android:name
+		ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:89:13-47
+activity#isens.hba1c_analyzer.View.LanguageActivity
+ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:90:3-82
+	android:name
+		ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:90:13-70
+activity#isens.hba1c_analyzer.View.ConvertActivity
+ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:91:3-81
+	android:name
+		ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:91:13-69
+activity#isens.hba1c_analyzer.EngineerActivity
+ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:92:3-96:17
+	android:name
+		ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:92:13-44
+intent-filter#EngineerActivity
+ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:93:10-95:29
+action#EngineerActivity
+ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:94:17-58
+	android:name
+		ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:94:25-56
+activity#isens.hba1c_analyzer.LampCopyActivity
+ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:97:3-56
+	android:name
+		ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:97:13-44
+activity#isens.hba1c_analyzer.View.CorrelationActivity
+ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:98:3-85
+	android:name
+		ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:98:13-73
+activity#isens.hba1c_analyzer.View.AdjustmentActivity
+ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:99:3-84
+	android:name
+		ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:99:13-72
+activity#isens.hba1c_analyzer.View.f535Activity
+ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:100:3-78
+	android:name
+		ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:100:13-66
+activity#isens.hba1c_analyzer.View.f660Activity
+ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:101:3-78
+	android:name
+		ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:101:13-66
+activity#isens.hba1c_analyzer.View.FunctionalTestActivity
+ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:102:6-91
+	android:name
+		ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:102:16-79
+activity#isens.hba1c_analyzer.View.AboutActivity
+ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:103:6-82
+	android:name
+		ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:103:16-70
+activity#isens.hba1c_analyzer.View.ExportActivity
+ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:104:6-119
+	android:process
+		ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:104:72-107
+	android:name
+		ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:104:16-71
+activity#isens.hba1c_analyzer.View.LocationActivity
+ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:105:6-85
+	android:name
+		ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:105:16-73
+activity#isens.hba1c_analyzer.View.TemperatureActivity
+ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:106:6-88
+	android:name
+		ADDED from D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\AndroidManifest.xml:106:16-76

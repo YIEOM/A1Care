@@ -35,13 +35,13 @@ public class FileDeleteActivity extends Activity {
 		
 		pDataCnt = itn.getIntExtra("PatientDataCnt", 1);
 		cDataCnt = itn.getIntExtra("ControlDataCnt", 1);
-		
+
 		mDataStorage = new DataStorage();
 		
 		DeleteData mDeleteData = new DeleteData(pDataCnt, cDataCnt);
 		mDeleteData.start();
 	}
-	
+
 	public class DeleteData extends Thread {
 		
 		int pDataCnt, cDataCnt;
@@ -55,16 +55,20 @@ public class FileDeleteActivity extends Activity {
 		public void run() {
 			
 			String filePath = null;
-			
+
+			FileSaveActivity.DataCnt = pDataCnt;
+
 			for(int i = 1; i < pDataCnt; i++) {
-				
-				filePath = mDataStorage.FileCheck(i, FileLoadActivity.PATIENT);
+
+				filePath = mDataStorage.FileCheck(i, FileSaveActivity.PATIENT_TEST);
 				if(filePath != null) mDataStorage.FileDelete(filePath);
 			}
-			
+
+			FileSaveActivity.DataCnt = cDataCnt;
+
 			for(int i = 1; i < cDataCnt; i++) {
 				
-				filePath = mDataStorage.FileCheck(i, FileLoadActivity.CONTROL);
+				filePath = mDataStorage.FileCheck(i, FileSaveActivity.CONTROL_TEST);
 				if(filePath != null) mDataStorage.FileDelete(filePath);
 			}
 			
@@ -73,7 +77,7 @@ public class FileDeleteActivity extends Activity {
 			WhichIntent();
 		}
 	}
-	
+
 	public void WhichIntent() {
 	
 		Intent nextIntent = null;

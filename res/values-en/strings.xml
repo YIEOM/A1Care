@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="ExtraTranslation">
 
     <string name="app_name">HbA1c_analyzer</string> 
     <string name="action_settings">Settings</string>
@@ -68,7 +70,7 @@
    	<string name="factor660">660 FACTOR</string>
    	<string name="correlationfactor">CORRELATION\nFACTOR</string>
    	<string name="adjustmentfactor">ADJUSTMENT\nFACTOR</string>
-   	<string name="thbfactor">tHb FACTOR</string>
+   	<string name="location">LOCATION</string>
    	<string name="temperature">TEMPERATURE</string>
    	<string name="calibration">CALIBRATION</string>
    	<string name="abouta1care">ABOUT A1Care</string>
@@ -99,6 +101,7 @@
     <string name="e311">E311</string>
     <string name="e312">E312</string>
     <string name="e313">E313</string>
+    <string name="e314">E314</string>
     <string name="e321">E321</string>
     <string name="e322">E322</string>
     <string name="e341">E341</string>

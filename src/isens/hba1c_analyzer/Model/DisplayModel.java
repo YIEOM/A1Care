@@ -69,7 +69,7 @@ public class DisplayModel {
 		try {
 			
 			brightnessValue = android.provider.Settings.System.getInt(activity.getContentResolver(), android.provider.Settings.System.SCREEN_BRIGHTNESS);
-			
+
 		} catch(Exception e) {
 			
 			brightnessValue = 153;

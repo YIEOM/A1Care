@@ -1,8 +1,13 @@
 package isens.hba1c_analyzer;
 
+import isens.hba1c_analyzer.Model.AboutModel;
 import isens.hba1c_analyzer.Model.CaptureScreen;
 import isens.hba1c_analyzer.Model.CustomTextView;
+import isens.hba1c_analyzer.Model.FileSystem;
+import isens.hba1c_analyzer.Model.LocationModel;
 import isens.hba1c_analyzer.Model.SoundModel;
+import isens.hba1c_analyzer.Model.TemperatureModel;
+
 import android.media.SoundPool;
 import android.os.Bundle;
 import android.util.Log;
@@ -23,10 +28,7 @@ import android.graphics.Paint;
 
 public class HomeActivity extends Activity {
 	
-	public static final byte NORMAL = 0,
-							 DEVEL = 1, // Development
-							 DEMO = 2,
-							 ANALYZER_SW = NORMAL;
+	public static final byte ANALYZER_SW = RunActivity.NORMAL_OPERATION;
 
 	final static byte PP = 1,
 			          ES = 2,
@@ -43,6 +45,7 @@ public class HomeActivity extends Activity {
 	public TimerDisplay mTimerDisplay;
 	public ShutDownPopup mShutDownPopup;
 	public SoundModel mSoundModel;
+	private FileSystem mFileSystem;
 	
 	public Activity activity;
 	public Context context;
@@ -51,7 +54,8 @@ public class HomeActivity extends Activity {
 					settingText,
 					recordText,
 					idText,
-					demoVerText;
+					demoVerText,
+					swVersionText;
 	
 	public SoundPool mPool;
 	
@@ -63,7 +67,7 @@ public class HomeActivity extends Activity {
 	
 	public CustomTextView customTextView;
 	
-	public enum TargetIntent {Home, HbA1c, NA, Action, ActionQC, Run, RunQC, Blank, BlankQC, Record, Result, ResultQC, Remove, Image, Date, Setting, SystemSetting, DataSetting, OperatorSetting, FunctionalTest, Time, Display, HIS, HISSetting, Export, Engineer, FileSave, ControlFileLoad, PatientFileLoad, NextFile, PreFile, Adjustment, Sound, Calibration, Language, Correlation, About, Delete, Temperature, Lamp, Convert, tHb, ShutDown, ScanTemp, f535, f660, SystemCheck, SnapShot}
+	public enum TargetIntent {Home, HbA1c, NA, Action, ActionQC, Run, RunQC, Blank, BlankQC, Record, Result, ResultQC, Remove, Image, Date, Setting, SystemSetting, DataSetting, OperatorSetting, FunctionalTest, Time, Display, HIS, HISSetting, Export, Engineer, FileSave, ControlFileLoad, PatientFileLoad, NextFile, PreFile, Adjustment, Sound, Calibration, Language, Correlation, About, Delete, Temperature, Lamp, Convert, Location, ShutDown, ScanTemp, f535, f660, SystemCheck, SnapShot}
 	
 	public static boolean LoginFlag = true,
 						  CheckFlag;
@@ -89,6 +93,7 @@ public class HomeActivity extends Activity {
 		runText = (TextView) findViewById(R.id.runText);
 		settingText = (TextView) findViewById(R.id.settingText);
 		recordText = (TextView) findViewById(R.id.recordText);
+		swVersionText = (TextView) findViewById(R.id.swVersionText);
 	}
 	
 	private void setText() {
@@ -99,6 +104,7 @@ public class HomeActivity extends Activity {
 		settingText.setText(R.string.setting);
 		recordText.setPaintFlags(recordText.getPaintFlags()|Paint.FAKE_BOLD_TEXT_FLAG);
 		recordText.setText(R.string.record);
+		swVersionText.setText(AboutModel.SWVersion + "(" + Character.valueOf(LocationModel.LocationCode) + (TemperatureModel.TmpSensorCode-48) + ")");
 	}
 	
 	public void setButtonId(Activity activity) {
@@ -116,7 +122,7 @@ public class HomeActivity extends Activity {
 		settingBtn.setOnTouchListener(mTouchListener);
 		recordBtn.setOnTouchListener(mTouchListener);
 		escIcon.setOnTouchListener(mTouchListener);
-		if(ANALYZER_SW == DEVEL) snapshotBtn.setOnTouchListener(mTouchListener);
+		if(ANALYZER_SW == RunActivity.DEVEL_OPERATION) snapshotBtn.setOnTouchListener(mTouchListener);
 	}
 	
 	public void setButtonState(int btnId, boolean state, Activity activity) {
@@ -184,40 +190,40 @@ public class HomeActivity extends Activity {
 		setButtonState(R.id.settingbtn, false, activity);
 		setButtonState(R.id.recordbtn, false, activity);
 	}
-	
+
 	public void HomeInit() {
-		
+
 		activity = this;
 		context = this;
-		
+
 		setTextId();
 		setText();
 		setButtonId(activity);
 		unenabledAllBtn(activity);
-		
+
 		Intent itn = getIntent();
 		int state = itn.getIntExtra("System Check State", 0);
-		
+		setDataNumber(itn.getIntExtra("data cnt", 0), itn.getIntExtra("test type", 0));
+
 		if(state != RunActivity.NORMAL_OPERATION) {
-			
+
 			mErrorPopup = new ErrorPopup(activity, context, R.id.homelayout, null, 0);
 			mErrorPopup.ErrorBtnDisplay(state);
-		
+
 		} else {
-			
+
 			Login(activity, context, R.id.homelayout);
 		}
-		
+
 		mTimerDisplay = new TimerDisplay();
 		mTimerDisplay.ActivityParm(this, R.id.homelayout);
-		
-		setDataNumber();
+
 		DisplayDemo();
-		
+
 		SetButton mSetButton = new SetButton();
 		mSetButton.start();
 	}
-	
+
 	public class SetButton extends Thread {
 		
 		public void run() {
@@ -241,13 +247,28 @@ public class HomeActivity extends Activity {
 		} else OperatorDisplay(activity, context);
 	}
 	
-	private void setDataNumber() {
-		
+	private void setDataNumber(int dataCnt, int testType) {
+
+		mFileSystem = new FileSystem(activity);
+		mFileSystem.setPreferences("Data Counter", MODE_PRIVATE);
+
 		if(LoginFlag) {
-			
-			Intent itn = getIntent();
-			RemoveActivity.PatientDataCnt = itn.getIntExtra("pDataCnt", 1);
-			RemoveActivity.ControlDataCnt = itn.getIntExtra("cDataCnt", 1);
+
+			if(testType == RecordActivity.CONTROL) {
+
+				RemoveActivity.PatientDataCnt = mFileSystem.getIntPref("PatientDataCnt", 1);
+				RemoveActivity.ControlDataCnt = dataCnt;
+
+			} else if(testType == RecordActivity.PATIENT) {
+
+				RemoveActivity.PatientDataCnt = dataCnt;
+				RemoveActivity.ControlDataCnt = mFileSystem.getIntPref("ControlDataCnt", 1);
+
+			} else {
+
+				RemoveActivity.PatientDataCnt = mFileSystem.getIntPref("PatientDataCnt", 1);
+				RemoveActivity.ControlDataCnt = mFileSystem.getIntPref("ControlDataCnt", 1);
+			}
 		}
 	}
 	
@@ -271,12 +292,12 @@ public class HomeActivity extends Activity {
 		
 		String demoVersion;
 		
-		if(ANALYZER_SW == DEMO) {
+		if(ANALYZER_SW == RunActivity.DEMO_OPERATION) {
 			
 			demoVersion = "v1.3.31-D";
-			DisplayDemoVersion(demoVersion);	
+			DisplayDemoVersion(demoVersion);
 		
-		} else if(ANALYZER_SW == DEVEL) {
+		} else if(ANALYZER_SW == RunActivity.DEVEL_OPERATION) {
 			
 			demoVersion = "v1.3-devel";
 			DisplayDemoVersion(demoVersion);
@@ -362,8 +383,8 @@ public class HomeActivity extends Activity {
 			nextIntent = new Intent(context, BlankActivity.class); // Change to BLANK Activity
 			nextIntent.putExtra("Mode", (int) HomeActivity.A1C);
 			break;
-			
-		case Record		:			
+
+		case Record		:
 			nextIntent = new Intent(context, RecordActivity.class); // Change to MEMORY Activity
 			break;
 			

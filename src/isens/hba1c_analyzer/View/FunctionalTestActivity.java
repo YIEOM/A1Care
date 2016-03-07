@@ -5,6 +5,8 @@ import isens.hba1c_analyzer.R;
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
 import isens.hba1c_analyzer.Presenter.ConvertPresenter;
 import isens.hba1c_analyzer.Presenter.FunctionalTestPresenter;
+import isens.hba1c_analyzer.RunActivity;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Paint;
@@ -64,7 +66,7 @@ public class FunctionalTestActivity extends Activity implements FunctionalTestIV
 		backBtn.setOnTouchListener(mTouchListener);
 		homeBtn.setOnTouchListener(mTouchListener);
 		qcBtn.setOnTouchListener(mTouchListener);
-		if(HomeActivity.ANALYZER_SW == HomeActivity.DEVEL) snapshotBtn.setOnTouchListener(mTouchListener);
+		if(HomeActivity.ANALYZER_SW == RunActivity.DEVEL_OPERATION) snapshotBtn.setOnTouchListener(mTouchListener);
 	}
 	
 	public void setButtonState(int btnId, boolean state) {

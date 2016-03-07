@@ -1,0 +1,150 @@
+[
+    {
+        "merged": "D:\\01.Research_Project\\01.A1Care_Analyzer\\01.Android_Studio_Project\\A1Care_analyzer\\build\\intermediates\\res\\merged\\release\\layout\\result.xml",
+        "source": "D:\\01.Research_Project\\01.A1Care_Analyzer\\01.Android_Studio_Project\\A1Care_analyzer\\res\\layout\\result.xml"
+    },
+    {
+        "merged": "D:\\01.Research_Project\\01.A1Care_Analyzer\\01.Android_Studio_Project\\A1Care_analyzer\\build\\intermediates\\res\\merged\\release\\layout\\numkeyboard.xml",
+        "source": "D:\\01.Research_Project\\01.A1Care_Analyzer\\01.Android_Studio_Project\\A1Care_analyzer\\res\\layout\\numkeyboard.xml"
+    },
+    {
+        "merged": "D:\\01.Research_Project\\01.A1Care_Analyzer\\01.Android_Studio_Project\\A1Care_analyzer\\build\\intermediates\\res\\merged\\release\\layout\\functionaltest.xml",
+        "source": "D:\\01.Research_Project\\01.A1Care_Analyzer\\01.Android_Studio_Project\\A1Care_analyzer\\res\\layout\\functionaltest.xml"
+    },
+    {
+        "merged": "D:\\01.Research_Project\\01.A1Care_Analyzer\\01.Android_Studio_Project\\A1Care_analyzer\\build\\intermediates\\res\\merged\\release\\layout\\operatorpopup.xml",
+        "source": "D:\\01.Research_Project\\01.A1Care_Analyzer\\01.Android_Studio_Project\\A1Care_analyzer\\res\\layout\\operatorpopup.xml"
+    },
+    {
+        "merged": "D:\\01.Research_Project\\01.A1Care_Analyzer\\01.Android_Studio_Project\\A1Care_analyzer\\build\\intermediates\\res\\merged\\release\\layout\\record.xml",
+        "source": "D:\\01.Research_Project\\01.A1Care_Analyzer\\01.Android_Studio_Project\\A1Care_analyzer\\res\\layout\\record.xml"
+    },
+    {
+        "merged": "D:\\01.Research_Project\\01.A1Care_Analyzer\\01.Android_Studio_Project\\A1Care_analyzer\\build\\intermediates\\res\\merged\\release\\layout\\about.xml",
+        "source": "D:\\01.Research_Project\\01.A1Care_Analyzer\\01.Android_Studio_Project\\A1Care_analyzer\\res\\layout\\about.xml"
+    },
+    {
+        "merged": "D:\\01.Research_Project\\01.A1Care_Analyzer\\01.Android_Studio_Project\\A1Care_analyzer\\build\\intermediates\\res\\merged\\release\\layout\\lamp.xml",
+        "source": "D:\\01.Research_Project\\01.A1Care_Analyzer\\01.Android_Studio_Project\\A1Care_analyzer\\res\\layout\\lamp.xml"
+    },
+    {
+        "merged": "D:\\01.Research_Project\\01.A1Care_Analyzer\\01.Android_Studio_Project\\A1Care_analyzer\\build\\intermediates\\res\\merged\\release\\layout\\temperature.xml",
+        "source": "D:\\01.Research_Project\\01.A1Care_Analyzer\\01.Android_Studio_Project\\A1Care_analyzer\\res\\layout\\temperature.xml"
+    },
+    {
+        "merged": "D:\\01.Research_Project\\01.A1Care_Analyzer\\01.Android_Studio_Project\\A1Care_analyzer\\build\\intermediates\\res\\merged\\release\\layout\\errorpopup.xml",
+        "source": "D:\\01.Research_Project\\01.A1Care_Analyzer\\01.Android_Studio_Project\\A1Care_analyzer\\res\\layout\\errorpopup.xml"
+    },
+    {
+        "merged": "D:\\01.Research_Project\\01.A1Care_Analyzer\\01.Android_Studio_Project\\A1Care_analyzer\\build\\intermediates\\res\\merged\\release\\layout\\his.xml",
+        "source": "D:\\01.Research_Project\\01.A1Care_Analyzer\\01.Android_Studio_Project\\A1Care_analyzer\\res\\layout\\his.xml"
+    },
+    {
+        "merged": "D:\\01.Research_Project\\01.A1Care_Analyzer\\01.Android_Studio_Project\\A1Care_analyzer\\build\\intermediates\\res\\merged\\release\\layout\\setting.xml",
+        "source": "D:\\01.Research_Project\\01.A1Care_Analyzer\\01.Android_Studio_Project\\A1Care_analyzer\\res\\layout\\setting.xml"
+    },
+    {
+        "merged": "D:\\01.Research_Project\\01.A1Care_Analyzer\\01.Android_Studio_Project\\A1Care_analyzer\\build\\intermediates\\res\\merged\\release\\layout\\hissetting.xml",
+        "source": "D:\\01.Research_Project\\01.A1Care_Analyzer\\01.Android_Studio_Project\\A1Care_analyzer\\res\\layout\\hissetting.xml"
+    },
+    {
+        "merged": "D:\\01.Research_Project\\01.A1Care_Analyzer\\01.Android_Studio_Project\\A1Care_analyzer\\build\\intermediates\\res\\merged\\release\\layout\\calibration.xml",
+        "source": "D:\\01.Research_Project\\01.A1Care_Analyzer\\01.Android_Studio_Project\\A1Care_analyzer\\res\\layout\\calibration.xml"
+    },
+    {
+        "merged": "D:\\01.Research_Project\\01.A1Care_Analyzer\\01.Android_Studio_Project\\A1Care_analyzer\\build\\intermediates\\res\\merged\\release\\layout\\setting4.xml",
+        "source": "D:\\01.Research_Project\\01.A1Care_Analyzer\\01.Android_Studio_Project\\A1Care_analyzer\\res\\layout\\setting4.xml"
+    },
+    {
+        "merged": "D:\\01.Research_Project\\01.A1Care_Analyzer\\01.Android_Studio_Project\\A1Care_analyzer\\build\\intermediates\\res\\merged\\release\\layout\\oxpopup.xml",
+        "source": "D:\\01.Research_Project\\01.A1Care_Analyzer\\01.Android_Studio_Project\\A1Care_analyzer\\res\\layout\\oxpopup.xml"
+    },
+    {
+        "merged": "D:\\01.Research_Project\\01.A1Care_Analyzer\\01.Android_Studio_Project\\A1Care_analyzer\\build\\intermediates\\res\\merged\\release\\layout\\location.xml",
+        "source": "D:\\01.Research_Project\\01.A1Care_Analyzer\\01.Android_Studio_Project\\A1Care_analyzer\\res\\layout\\location.xml"
+    },
+    {
+        "merged": "D:\\01.Research_Project\\01.A1Care_Analyzer\\01.Android_Studio_Project\\A1Care_analyzer\\build\\intermediates\\res\\merged\\release\\layout\\systemcheck.xml",
+        "source": "D:\\01.Research_Project\\01.A1Care_Analyzer\\01.Android_Studio_Project\\A1Care_analyzer\\res\\layout\\systemcheck.xml"
+    },
+    {
+        "merged": "D:\\01.Research_Project\\01.A1Care_Analyzer\\01.Android_Studio_Project\\A1Care_analyzer\\build\\intermediates\\res\\merged\\release\\layout\\remove.xml",
+        "source": "D:\\01.Research_Project\\01.A1Care_Analyzer\\01.Android_Studio_Project\\A1Care_analyzer\\res\\layout\\remove.xml"
+    },
+    {
+        "merged": "D:\\01.Research_Project\\01.A1Care_Analyzer\\01.Android_Studio_Project\\A1Care_analyzer\\build\\intermediates\\res\\merged\\release\\layout\\file.xml",
+        "source": "D:\\01.Research_Project\\01.A1Care_Analyzer\\01.Android_Studio_Project\\A1Care_analyzer\\res\\layout\\file.xml"
+    },
+    {
+        "merged": "D:\\01.Research_Project\\01.A1Care_Analyzer\\01.Android_Studio_Project\\A1Care_analyzer\\build\\intermediates\\res\\merged\\release\\layout\\operatorsetting.xml",
+        "source": "D:\\01.Research_Project\\01.A1Care_Analyzer\\01.Android_Studio_Project\\A1Care_analyzer\\res\\layout\\operatorsetting.xml"
+    },
+    {
+        "merged": "D:\\01.Research_Project\\01.A1Care_Analyzer\\01.Android_Studio_Project\\A1Care_analyzer\\build\\intermediates\\res\\merged\\release\\layout\\setting3.xml",
+        "source": "D:\\01.Research_Project\\01.A1Care_Analyzer\\01.Android_Studio_Project\\A1Care_analyzer\\res\\layout\\setting3.xml"
+    },
+    {
+        "merged": "D:\\01.Research_Project\\01.A1Care_Analyzer\\01.Android_Studio_Project\\A1Care_analyzer\\build\\intermediates\\res\\merged\\release\\layout\\detailviewpopup.xml",
+        "source": "D:\\01.Research_Project\\01.A1Care_Analyzer\\01.Android_Studio_Project\\A1Care_analyzer\\res\\layout\\detailviewpopup.xml"
+    },
+    {
+        "merged": "D:\\01.Research_Project\\01.A1Care_Analyzer\\01.Android_Studio_Project\\A1Care_analyzer\\build\\intermediates\\res\\merged\\release\\layout\\convert.xml",
+        "source": "D:\\01.Research_Project\\01.A1Care_Analyzer\\01.Android_Studio_Project\\A1Care_analyzer\\res\\layout\\convert.xml"
+    },
+    {
+        "merged": "D:\\01.Research_Project\\01.A1Care_Analyzer\\01.Android_Studio_Project\\A1Care_analyzer\\build\\intermediates\\res\\merged\\release\\layout\\export.xml",
+        "source": "D:\\01.Research_Project\\01.A1Care_Analyzer\\01.Android_Studio_Project\\A1Care_analyzer\\res\\layout\\export.xml"
+    },
+    {
+        "merged": "D:\\01.Research_Project\\01.A1Care_Analyzer\\01.Android_Studio_Project\\A1Care_analyzer\\build\\intermediates\\res\\merged\\release\\layout\\setting2.xml",
+        "source": "D:\\01.Research_Project\\01.A1Care_Analyzer\\01.Android_Studio_Project\\A1Care_analyzer\\res\\layout\\setting2.xml"
+    },
+    {
+        "merged": "D:\\01.Research_Project\\01.A1Care_Analyzer\\01.Android_Studio_Project\\A1Care_analyzer\\build\\intermediates\\res\\merged\\release\\layout\\action.xml",
+        "source": "D:\\01.Research_Project\\01.A1Care_Analyzer\\01.Android_Studio_Project\\A1Care_analyzer\\res\\layout\\action.xml"
+    },
+    {
+        "merged": "D:\\01.Research_Project\\01.A1Care_Analyzer\\01.Android_Studio_Project\\A1Care_analyzer\\build\\intermediates\\res\\merged\\release\\layout\\home.xml",
+        "source": "D:\\01.Research_Project\\01.A1Care_Analyzer\\01.Android_Studio_Project\\A1Care_analyzer\\res\\layout\\home.xml"
+    },
+    {
+        "merged": "D:\\01.Research_Project\\01.A1Care_Analyzer\\01.Android_Studio_Project\\A1Care_analyzer\\build\\intermediates\\res\\merged\\release\\layout\\run.xml",
+        "source": "D:\\01.Research_Project\\01.A1Care_Analyzer\\01.Android_Studio_Project\\A1Care_analyzer\\res\\layout\\run.xml"
+    },
+    {
+        "merged": "D:\\01.Research_Project\\01.A1Care_Analyzer\\01.Android_Studio_Project\\A1Care_analyzer\\build\\intermediates\\res\\merged\\release\\layout\\record2.xml",
+        "source": "D:\\01.Research_Project\\01.A1Care_Analyzer\\01.Android_Studio_Project\\A1Care_analyzer\\res\\layout\\record2.xml"
+    },
+    {
+        "merged": "D:\\01.Research_Project\\01.A1Care_Analyzer\\01.Android_Studio_Project\\A1Care_analyzer\\build\\intermediates\\res\\merged\\release\\layout\\modoperatorpopup.xml",
+        "source": "D:\\01.Research_Project\\01.A1Care_Analyzer\\01.Android_Studio_Project\\A1Care_analyzer\\res\\layout\\modoperatorpopup.xml"
+    },
+    {
+        "merged": "D:\\01.Research_Project\\01.A1Care_Analyzer\\01.Android_Studio_Project\\A1Care_analyzer\\build\\intermediates\\res\\merged\\release\\layout\\addoperatorpopup.xml",
+        "source": "D:\\01.Research_Project\\01.A1Care_Analyzer\\01.Android_Studio_Project\\A1Care_analyzer\\res\\layout\\addoperatorpopup.xml"
+    },
+    {
+        "merged": "D:\\01.Research_Project\\01.A1Care_Analyzer\\01.Android_Studio_Project\\A1Care_analyzer\\build\\intermediates\\res\\merged\\release\\layout\\shutdownpopup.xml",
+        "source": "D:\\01.Research_Project\\01.A1Care_Analyzer\\01.Android_Studio_Project\\A1Care_analyzer\\res\\layout\\shutdownpopup.xml"
+    },
+    {
+        "merged": "D:\\01.Research_Project\\01.A1Care_Analyzer\\01.Android_Studio_Project\\A1Care_analyzer\\build\\intermediates\\res\\merged\\release\\layout\\blank.xml",
+        "source": "D:\\01.Research_Project\\01.A1Care_Analyzer\\01.Android_Studio_Project\\A1Care_analyzer\\res\\layout\\blank.xml"
+    },
+    {
+        "merged": "D:\\01.Research_Project\\01.A1Care_Analyzer\\01.Android_Studio_Project\\A1Care_analyzer\\build\\intermediates\\res\\merged\\release\\layout\\engineer.xml",
+        "source": "D:\\01.Research_Project\\01.A1Care_Analyzer\\01.Android_Studio_Project\\A1Care_analyzer\\res\\layout\\engineer.xml"
+    },
+    {
+        "merged": "D:\\01.Research_Project\\01.A1Care_Analyzer\\01.Android_Studio_Project\\A1Care_analyzer\\build\\intermediates\\res\\merged\\release\\layout\\systemsetting.xml",
+        "source": "D:\\01.Research_Project\\01.A1Care_Analyzer\\01.Android_Studio_Project\\A1Care_analyzer\\res\\layout\\systemsetting.xml"
+    },
+    {
+        "merged": "D:\\01.Research_Project\\01.A1Care_Analyzer\\01.Android_Studio_Project\\A1Care_analyzer\\build\\intermediates\\res\\merged\\release\\layout\\loginpopup.xml",
+        "source": "D:\\01.Research_Project\\01.A1Care_Analyzer\\01.Android_Studio_Project\\A1Care_analyzer\\res\\layout\\loginpopup.xml"
+    },
+    {
+        "merged": "D:\\01.Research_Project\\01.A1Care_Analyzer\\01.Android_Studio_Project\\A1Care_analyzer\\build\\intermediates\\res\\merged\\release\\layout\\setting5.xml",
+        "source": "D:\\01.Research_Project\\01.A1Care_Analyzer\\01.Android_Studio_Project\\A1Care_analyzer\\res\\layout\\setting5.xml"
+    }
+]

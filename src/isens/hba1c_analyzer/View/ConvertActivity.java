@@ -6,6 +6,7 @@ import java.util.Locale;
 
 import isens.hba1c_analyzer.HomeActivity;
 import isens.hba1c_analyzer.R;
+import isens.hba1c_analyzer.RunActivity;
 import isens.hba1c_analyzer.SystemSettingActivity;
 import isens.hba1c_analyzer.TimerDisplay;
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
@@ -93,7 +94,7 @@ public class ConvertActivity extends Activity implements ConvertIView{
 		backBtn.setOnTouchListener(mTouchListener);
 		leftBtn.setOnTouchListener(mTouchListener);
 		rightBtn.setOnTouchListener(mTouchListener);
-		if(HomeActivity.ANALYZER_SW == HomeActivity.DEVEL) snapshotBtn.setOnTouchListener(mTouchListener);
+		if(HomeActivity.ANALYZER_SW == RunActivity.DEVEL_OPERATION) snapshotBtn.setOnTouchListener(mTouchListener);
 	}
 	
 	public void setButtonState(int btnId, boolean state) {

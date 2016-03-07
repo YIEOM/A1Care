@@ -151,7 +151,7 @@ public class ControlTestActivity extends Activity {
 		cancleBtn.setOnTouchListener(mTouchListener);
 		exportBtn.setOnTouchListener(mTouchListener);
 		
-		if(HomeActivity.ANALYZER_SW == HomeActivity.DEVEL) {
+		if(HomeActivity.ANALYZER_SW == RunActivity.DEVEL_OPERATION) {
 			
 			snapshotBtn.setOnTouchListener(mTouchListener);
 			snapshotBtn2.setOnTouchListener(mTouchListener);
@@ -364,7 +364,7 @@ public class ControlTestActivity extends Activity {
 	
 	public void GetItnData() { // getting the intent data
 		
-		if(HomeActivity.ANALYZER_SW != HomeActivity.DEMO) {
+		if(HomeActivity.ANALYZER_SW != RunActivity.DEMO_OPERATION) {
 			
 			Intent itn = getIntent();
 			
@@ -381,7 +381,7 @@ public class ControlTestActivity extends Activity {
 			
 			dateTime[0] = "20150305AM0900";
 			testNum [0] = "0001";
-			refNum  [0] = "DBANA";
+			refNum  [0] = "DBANAA";
 			hbA1c   [0] = "5.5";
 			pID     [0] = "Patient";
 			oID     [0] = "Operator";
@@ -590,7 +590,7 @@ public class ControlTestActivity extends Activity {
 				Intent NextFileIntent = new Intent(getApplicationContext(), FileLoadActivity.class);
 				NextFileIntent.putExtra("DataCnt", RemoveActivity.ControlDataCnt);
 				NextFileIntent.putExtra("DataPage", ++RecordActivity.DataPage);
-				NextFileIntent.putExtra("Mode", (int) FileLoadActivity.CONTROL);
+				NextFileIntent.putExtra("Mode", (int) FileSaveActivity.CONTROL_TEST);
 				NextFileIntent.putExtra("System Check State", RunActivity.NORMAL_OPERATION);
 				startActivity(NextFileIntent);
 				finish();
@@ -604,7 +604,7 @@ public class ControlTestActivity extends Activity {
 				Intent PreFileIntent = new Intent(getApplicationContext(), FileLoadActivity.class);
 				PreFileIntent.putExtra("DataCnt", RemoveActivity.ControlDataCnt);
 				PreFileIntent.putExtra("DataPage", --RecordActivity.DataPage);
-				PreFileIntent.putExtra("Mode", (int) FileLoadActivity.CONTROL);
+				PreFileIntent.putExtra("Mode", (int) FileSaveActivity.CONTROL_TEST);
 				PreFileIntent.putExtra("System Check State", RunActivity.NORMAL_OPERATION);
 				startActivity(PreFileIntent);
 				finish();
@@ -631,7 +631,7 @@ public class ControlTestActivity extends Activity {
 				exportIntent.putExtra("HWSN", AboutModel.HWSN);
 				exportIntent.putExtra("DataCnt", RemoveActivity.ControlDataCnt);
 				exportIntent.putExtra("DataPage", RecordActivity.DataPage);
-				exportIntent.putExtra("Mode", (int) FileLoadActivity.CONTROL);
+				exportIntent.putExtra("Mode", (int) FileSaveActivity.CONTROL_TEST);
 				exportIntent.putExtra("System Check State", RunActivity.NORMAL_OPERATION);
 				startActivity(exportIntent);
 				finish();

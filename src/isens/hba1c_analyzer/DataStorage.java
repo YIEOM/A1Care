@@ -2,14 +2,12 @@ package isens.hba1c_analyzer;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 
 import android.app.Activity;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.os.Environment;
@@ -38,54 +36,54 @@ public class DataStorage extends Activity {
 			return sdPath = Environment.MEDIA_UNMOUNTED;
 		}
 	}
-	
-	public synchronized void DataSave(byte type, StringBuffer sData) { // Save data to uSD card
-				
+
+	public synchronized void DataSave(byte type, int tempDataCnt, StringBuffer sData) { // Save data to uSD card
+
 		String sdPath = SDCardState();
-		
+
 		File dir = new File(sdPath + SAVE_DIRECTORY), // File directory
-			 file = null;
-		
+				file = null;
+
 		if(type == FileSaveActivity.CONTROL_TEST) {
-		
-			file = new File(sdPath + SAVE_DIRECTORY + SAVE_CONTROL_FILENAME + FileSaveActivity.TempDataCnt + ".txt"); // File
-		
+
+			file = new File(sdPath + SAVE_DIRECTORY + SAVE_CONTROL_FILENAME + tempDataCnt + ".txt"); // File
+
 		} else if(type == FileSaveActivity.PATIENT_TEST) {
-			
-			file = new File(sdPath + SAVE_DIRECTORY + SAVE_PATIENT_FILENAME + FileSaveActivity.TempDataCnt + ".txt");
+
+			file = new File(sdPath + SAVE_DIRECTORY + SAVE_PATIENT_FILENAME + tempDataCnt + ".txt");
 		}
-		
+
 		try {
-			
-			if(!dir.isDirectory()) { // if directory doesn't exist 
+
+			if(!dir.isDirectory()) { // if directory doesn't exist
 
 				dir.mkdirs();
 				file.createNewFile();
 			}
-			
+
 			FileOutputStream fos = new FileOutputStream(file, false);
 
 			fos.write(sData.toString().getBytes());
 			fos.write("\r\n".getBytes());
 			fos.flush();
 			fos.close();
-			
+			fos.flush();
+			fos.close();
+
 			while(!file.exists()); // Wait until file is created
-			
-			FileSaveActivity.DataCnt++; // increasing the count of the data stored
-			
+
 		} catch(FileNotFoundException e) {
-			
-			e.printStackTrace();					
-			return;
-			
-		} catch (IOException e) {
-			
+
 			e.printStackTrace();
 			return;
-		}		
+
+		} catch (IOException e) {
+
+			e.printStackTrace();
+			return;
+		}
 	}
-	
+
 	public synchronized void DataHistorySave(StringBuffer sData1, StringBuffer sData2) { // Save data to uSD card
 		
 		String sdPath = SDCardState();
@@ -110,7 +108,9 @@ public class DataStorage extends Activity {
 			fos.write("\r\n".getBytes());
 			fos.flush();
 			fos.close();
-			
+			fos.flush();
+			fos.close();
+
 			while(!file.exists()); // Wait until file is created
 			
 		} catch(FileNotFoundException e) {
@@ -129,11 +129,11 @@ public class DataStorage extends Activity {
 		
 		File dir = new File(SAVE_USB_DIRECTORY),
 			 file = null;
-		
+
 		if(type == FileSaveActivity.CONTROL_TEST) {
 			
 			file = new File(SAVE_USB_DIRECTORY + SAVE_CONTROL_FILENAME + "_" + hwSN + ".txt");
-		
+
 		} else if(type == FileSaveActivity.PATIENT_TEST) {
 			
 			file = new File(SAVE_USB_DIRECTORY + SAVE_PATIENT_FILENAME + "_" + hwSN + ".txt");
@@ -229,7 +229,7 @@ public class DataStorage extends Activity {
 	public boolean checkUSBDirs() {
 		
 		File file = new File(SAVE_USB_DIRECTORY);
-		
+
 		if(file.exists()) return true;
 		else return false;
 	}
@@ -275,12 +275,10 @@ public class DataStorage extends Activity {
 		
 		String sdPath = SDCardState(),
 			   filePath = null;
-		
-		int dataCnt;
-		
-		dataCnt = (FileSaveActivity.DataCnt - num) % 9999;
+
+		int dataCnt = (FileSaveActivity.DataCnt - num) % 9999;
 		if(dataCnt == 0) dataCnt = 9999;
-		
+
 		if(type == (int) FileSaveActivity.CONTROL_TEST) {
 			
 			filePath = sdPath + SAVE_DIRECTORY + SAVE_CONTROL_FILENAME + dataCnt +".txt"; // File number : the latest data - number
@@ -289,17 +287,11 @@ public class DataStorage extends Activity {
 			
 			filePath = sdPath + SAVE_DIRECTORY + SAVE_PATIENT_FILENAME + dataCnt +".txt"; // File number : the latest data - number
 		}
-		
+
 		File file = new File(filePath);
 
-		if(file.exists()) {
-			
-			return filePath;
-			
-		} else {
-			
-			return null;			
-		}
+		if(file.exists()) return filePath;
+		else return null;
 	}
 	
 	public synchronized String DataLoad(String filePath) { // Loading to specific file
@@ -329,7 +321,7 @@ public class DataStorage extends Activity {
 			e.printStackTrace();					
 			return line;
 		}
-		
+
 		return line;
 	}
 	

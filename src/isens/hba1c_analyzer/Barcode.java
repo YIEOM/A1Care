@@ -1,6 +1,8 @@
 package isens.hba1c_analyzer;
 
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
+import isens.hba1c_analyzer.Model.LocationModel;
+import isens.hba1c_analyzer.View.LocationActivity;
 
 import java.text.DecimalFormat;
 
@@ -9,13 +11,6 @@ import android.os.Looper;
 import android.util.Log;
 
 public class Barcode {
-
-	final static double a1ref  = 0.01, 
-						b1ref  = -0.07, 
-						a21ref = 0.05, 
-						b21ref = 0.03, 
-						a22ref = 0.035, 
-						b22ref = 0.04;
 	
 	public static String RefNum, Type;
 	
@@ -34,13 +29,13 @@ public class Barcode {
 						 AbnorMean = 0;
 	
 	public static double Sm, Im, Ss, Is, Asm, Aim, Ass, Ais;
-
+	
 	public void BarcodeCheck(StringBuffer buffer) { // Check a barcode data
 		
-		int len; 
+		int len;
 		
 		len = buffer.length();
-		
+
 		if(HomeActivity.MEASURE_MODE == HomeActivity.A1C) {
 			
 			if(len == SerialPort.A1C_MAX_BUFFER_INDEX) BarcodeHbA1C(buffer);
@@ -65,13 +60,13 @@ public class Barcode {
 		
 		try {
 			
-			String type; 
-			
+			String type;
+
 			if(HomeActivity.MEASURE_MODE == HomeActivity.A1C) Type = buffer.substring(0, 1);
-			
-			RefNum = buffer.substring(0, 5);
+
+			RefNum = buffer.substring(0, 6);
 			type = RefNum.substring(0, 1);
-			
+
 			if(type.equals("D") && (Type.equals("D") || Type.equals("W") || Type.equals("X"))) {
 			
 				Sm = 0.0237 * (((int) buffer.charAt(6) - 42) - 1) + 0.1;
@@ -83,7 +78,7 @@ public class Barcode {
 				Aim = 0.00237 * (((int) buffer.charAt(11) - 42) - 1) - 0.1;
 				Ass = 0.000004 * (((int) buffer.charAt(12) - 42) - 1);
 				Ais = 0.00003 * (((int) buffer.charAt(13) - 42) - 1);
-				
+
 				CheckSum(buffer);
 			
 			} else if(type.equals("E") && (Type.equals("E") || Type.equals("Y") || Type.equals("Z"))) CheckSum(buffer); 
@@ -105,7 +100,7 @@ public class Barcode {
 				
 				NorMean = 0.1 * ((int) buffer.charAt(6) - 42) + 2.9;
 				AbnorMean = 0.1 * ((int) buffer.charAt(7) - 42) + 7.9;
-				
+
 				CheckSum(buffer);
 				
 			} else BarcodeStop(false);
@@ -135,12 +130,13 @@ public class Barcode {
 			line   = (int) buffer.charAt(4) - 64;
 			locate = (int) buffer.charAt(5) - 42;
 			check  = (int) buffer.charAt(index) - 48;
-			
+
 			sum = (test + year + month + day + line + locate) % 10; // Checksum bit
-			
+
+			checkLocationCode((int) buffer.charAt(5));
 			checkExpirationDate((year + 13), month, day);
 			
-			if( sum == check ) { // Whether or not the correct barcode code
+			if(sum == check) { // Whether or not the correct barcode code
 				
 				BarcodeStop(true);
 					
@@ -155,6 +151,16 @@ public class Barcode {
 		}
 	}
 	
+	private void checkLocationCode(int locate) {
+
+		if(LocationModel.LocationCode == 'A' || locate == 'A') ActionActivity.ISCorrectLocation = true;
+		else {
+			
+			if(LocationModel.LocationCode == locate) ActionActivity.ISCorrectLocation = true;
+			else ActionActivity.ISCorrectLocation = false;
+		}
+	}
+	
 	private void checkExpirationDate(int year, int month, int day) {
 		
 		int sYear, sMonth, sDay, diffYear, diffMonth, diffDay;
@@ -164,8 +170,8 @@ public class Barcode {
 		sYear = Integer.parseInt(TimerDisplay.rTime[0]) % 100;
 		sMonth = Integer.parseInt(TimerDisplay.rTime[1]);
 		sDay = Integer.parseInt(TimerDisplay.rTime[2]);
-		
-		diffYear = sYear - year;	
+
+		diffYear = sYear - year;
 		diffMonth = sMonth - month;
 		diffDay = sDay - day;
 		

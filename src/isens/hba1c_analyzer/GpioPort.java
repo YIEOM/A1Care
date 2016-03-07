@@ -72,14 +72,14 @@ public class GpioPort {
 		tmpData = BoardMessage("D");
 		
 		TimerDisplay.RXBoardFlag = false;
-//		Log.w("DoorCheck", "end = " + tmpData);
+
 		return (byte) Integer.parseInt(tmpData.substring(2));
 	}
 
 	public void DoorSensorScan() { // State code of door sensor
 		
 		if(DoorActState) {
-//			Log.w("DoorSensorScan", "start");
+
 			DoorSensorScan mDoorSensorScan = new DoorSensorScan();
 			mDoorSensorScan.start();
 		}
@@ -104,7 +104,7 @@ public class GpioPort {
 				if(DoorCheck() == DoorInitState) {
 					
 					ActionActivity.DoorCheckFlag = DoorInitState;
-					
+
 				} else DoorSensorState = SensorScan.DebounceState;
 				break;
 										
@@ -127,16 +127,16 @@ public class GpioPort {
 		mSerialPort.BoardTx(CARTRIDGE_SENSOR, SerialPort.CtrTarget.NormalSet);
 		
 		tmpData = BoardMessage("C");
-		
+
 		TimerDisplay.RXBoardFlag = false;
-//		Log.w("CartridgeCheck", "end = " + tmpData);	
+
 		return (byte) Integer.parseInt(tmpData.substring(2));
 	}
 	
 	public void CartridgeSensorScan() { // State code of door sensor
-		
+
 		if(CartridgeActState) {
-//			Log.w("CartridgeSensorScan", "start");
+
 			CartridgeSensorScan mCartridgeSensorScan = new CartridgeSensorScan();
 			mCartridgeSensorScan.start();
 		}
@@ -161,7 +161,7 @@ public class GpioPort {
 					if(CartridgeCheck() == CartridgeInitState) {
 						
 						ActionActivity.CartridgeCheckFlag = CartridgeInitState;
-						
+
 					} else CartridgeSensorState = SensorScan.DebounceState;
 					break;
 											
@@ -180,18 +180,18 @@ public class GpioPort {
 		String temp = "";
 		
 		mSerialPort = new SerialPort();
-//		Log.w("BoardMessage", "time = 0");
+
 		while(true) {
 			
 			temp = mSerialPort.SensorMessageOutput();
 
 			if(time++ == 20) {
-//				Log.w("BoardMessage", "temp = " + temp + " time = " + time);
+
 				return "NR2";
 			}
 			
 			if(temp.substring(1, 2).equals(sensorMsg)) {
-//				Log.w("BoardMessage", "temp = " + temp + " time = " + time);
+
 				return temp;
 			}
 			

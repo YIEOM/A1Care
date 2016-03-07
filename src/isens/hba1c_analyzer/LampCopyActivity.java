@@ -437,7 +437,7 @@ public class LampCopyActivity extends Activity {
 				else isOn = true;
 				
 				while(isMeasured) SerialPort.Sleep(100);
-				
+
 				adc = AbsorbanceMeasure();
 						
 				if(adc != -1.0) {
@@ -538,7 +538,7 @@ public class LampCopyActivity extends Activity {
 					if(cdn[5] != 0) {
 						
 						range = (float) 250/(cdn[5]*12);
-						
+
 						for(int i = (f535nmValue.length-(numofSample-1)); i < (f535nmValue.length-1); i++) {
 							
 							canvas.drawLine(2*i, (float) (250-((f535nmValue[i]-cdn[4])*range)), 2*(i+1), (float) (250-((f535nmValue[i+1]-cdn[4])*range)), pnt);
@@ -596,7 +596,7 @@ public class LampCopyActivity extends Activity {
 		
 		adcMax = max;
 		adcMin = min;
-		
+
 		return num;
 	}
 	
@@ -623,7 +623,7 @@ public class LampCopyActivity extends Activity {
 		yCdn[3] = adcMax - 7*diff;
 		yCdn[4] = adcMax - 10*diff;
 		yCdn[5] = diff;
-		
+
 		return yCdn;
 	}
 

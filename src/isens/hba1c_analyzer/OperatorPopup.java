@@ -142,7 +142,7 @@ public class OperatorPopup {
 		loginBtn.setOnTouchListener(mLoginTouchListener);
 		guestBtn.setOnTouchListener(mLoginTouchListener);
 		checkBtn.setOnTouchListener(mLoginTouchListener);
-		if(HomeActivity.ANALYZER_SW == HomeActivity.DEVEL) snapshotBtn2.setOnTouchListener(mLoginTouchListener);
+		if(HomeActivity.ANALYZER_SW == RunActivity.DEVEL_OPERATION) snapshotBtn2.setOnTouchListener(mLoginTouchListener);
 	}
 	
 	public void setButtonState(int btnId, boolean state, View popupView) {
@@ -238,7 +238,7 @@ public class OperatorPopup {
 		loginBtn.setOnTouchListener(mOperatorTouchListener);
 		guestBtn.setOnTouchListener(mOperatorTouchListener);
 		checkBtn.setOnTouchListener(mOperatorTouchListener);
-		if(HomeActivity.ANALYZER_SW == HomeActivity.DEVEL) snapshotBtn2.setOnTouchListener(mOperatorTouchListener);
+		if(HomeActivity.ANALYZER_SW == RunActivity.DEVEL_OPERATION) snapshotBtn2.setOnTouchListener(mOperatorTouchListener);
 	}
 
 	Button.OnTouchListener mOperatorTouchListener = new View.OnTouchListener() {
@@ -405,7 +405,6 @@ public class OperatorPopup {
 			
 				id = mDatabaseHander.GetLastLoginID();
 				password = mDatabaseHander.GetPassword(id);
-				
 				oIDEText.setText(id);
 				passEText.setText(password);
 			}
@@ -509,7 +508,7 @@ public class OperatorPopup {
 		
 		if(id.equals("ENGINEER")) {
 	
-			if(HomeActivity.ANALYZER_SW != HomeActivity.DEVEL) {
+			if(HomeActivity.ANALYZER_SW != RunActivity.DEVEL_OPERATION) {
 			
 				if(password.equals("entry")) {
 					
@@ -597,7 +596,7 @@ public class OperatorPopup {
 		
 		doneBtn.setOnTouchListener(mAddTouchListener);
 		cancelBtn.setOnTouchListener(mAddTouchListener);
-		if(HomeActivity.ANALYZER_SW == HomeActivity.DEVEL) snapshotBtn2.setOnTouchListener(mAddTouchListener);
+		if(HomeActivity.ANALYZER_SW == RunActivity.DEVEL_OPERATION) snapshotBtn2.setOnTouchListener(mAddTouchListener);
 	}
 	
 	Button.OnTouchListener mAddTouchListener = new View.OnTouchListener() {
@@ -737,7 +736,7 @@ public class OperatorPopup {
 		
 		doneBtn.setOnTouchListener(mModTouchListener);
 		cancelBtn.setOnTouchListener(mModTouchListener);
-		if(HomeActivity.ANALYZER_SW == HomeActivity.DEVEL) snapshotBtn2.setOnTouchListener(mModTouchListener);
+		if(HomeActivity.ANALYZER_SW == RunActivity.DEVEL_OPERATION) snapshotBtn2.setOnTouchListener(mModTouchListener);
 	}
 	
 	Button.OnTouchListener mModTouchListener = new View.OnTouchListener() {
@@ -871,7 +870,7 @@ public class OperatorPopup {
 		
 		delOkBtn.setOnTouchListener(mDelTouchListener);
 		delCancelBtn.setOnTouchListener(mDelTouchListener);
-		if(HomeActivity.ANALYZER_SW == HomeActivity.DEVEL) snapshotBtn2.setOnTouchListener(mDelTouchListener);
+		if(HomeActivity.ANALYZER_SW == RunActivity.DEVEL_OPERATION) snapshotBtn2.setOnTouchListener(mDelTouchListener);
 	}
 	
 	Button.OnTouchListener mDelTouchListener = new View.OnTouchListener() {
@@ -1004,7 +1003,7 @@ public class OperatorPopup {
 		for(int i = 0; i < dataCnt; i++) {
 			
 			rowData = mDatabaseHander.GetRowWithNumber(last - (i + 1));
-				
+
 			tempDate = rowData[1];
 			tempPassword = rowData[2];
 				

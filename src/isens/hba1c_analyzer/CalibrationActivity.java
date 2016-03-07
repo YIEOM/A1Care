@@ -28,14 +28,16 @@ import isens.hba1c_analyzer.RunActivity.Cart2ndShaking;
 import isens.hba1c_analyzer.RunActivity.CartDump;
 import isens.hba1c_analyzer.RunActivity.ShakingAniThread;
 import isens.hba1c_analyzer.SerialPort.CtrTarget;
-import isens.hba1c_analyzer.TemperatureActivity.TmpDisplay;
+import isens.hba1c_analyzer.Model.TemperatureModel;
 
 public class CalibrationActivity extends Activity{
 
 	public SerialPort mSerialPort;
 	public ActionActivity mActionActivity;
 	public TimerDisplay mTimerDisplay;
-	public Temperature mTemperature;
+	public TemperatureModel mTemperatureModel;
+	
+	private Activity activity;
 	
 	public Button backBtn,
 				  blankBtn,
@@ -199,6 +201,8 @@ public class CalibrationActivity extends Activity{
 	}
 	
 	public void CalibrationInit() {
+		
+		activity = this;
 		
 		setTextId();
 		setButtonId();
@@ -1262,11 +1266,11 @@ public class CalibrationActivity extends Activity{
 			
 			final DecimalFormat tmpdfm = new DecimalFormat("0.0");
 			final double chamTmp,
-						 ambTmp;
+						 innerTmp;
 			
-			mTemperature = new Temperature();
-			chamTmp = mTemperature.CellTmpRead();
-			ambTmp = mTemperature.AmbTmpRead(); 
+			mTemperatureModel = new TemperatureModel(activity);
+			chamTmp = mTemperatureModel.getChambTmp();
+			innerTmp = mTemperatureModel.getInnerTmp(); 
 			
 			new Thread(new Runnable() {
 				public void run() {    
@@ -1274,7 +1278,7 @@ public class CalibrationActivity extends Activity{
 						public void run(){
 
 							chamberTmpText.setText(tmpdfm.format(chamTmp));
-							innerTmpText.setText(tmpdfm.format(ambTmp));
+							innerTmpText.setText(tmpdfm.format(innerTmp));
 						}
 					});
 				}
@@ -1345,7 +1349,7 @@ public class CalibrationActivity extends Activity{
 		
 		double A, B, St, Bt, C1, C2, SLA, SMA, SHA, BLA, BMA, BHA, SLV, SMV, SHV, BLV, BMV, BHV, SV, SA, BV, BA, a3, b3, a32, b32, a4, b4;
 		
-		if(HomeActivity.ANALYZER_SW == HomeActivity.NORMAL) {
+		if(HomeActivity.ANALYZER_SW == RunActivity.NORMAL_OPERATION) {
 			
 			A = Absorb1stHandling()*RunActivity.RF1_Slope + RunActivity.RF1_Offset;
 			B = Absorb2ndHandling()*RunActivity.RF2_Slope + RunActivity.RF2_Offset;

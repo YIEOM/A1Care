@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="isens.hba1c_analyzer"
     android:versionCode="1"
-    android:versionName="v1.3.06-R"
+    android:versionName="v1.3.33-B"
     android:sharedUserId="android.uid.system" >
     
     <uses-sdk
@@ -92,12 +92,7 @@
 		<activity android:name="isens.hba1c_analyzer.View.LanguageActivity"></activity>
 		<activity android:name="isens.hba1c_analyzer.View.ConvertActivity"></activity>
 		<activity android:name="TempFileSaveActivity" android:process="com.android.phone"></activity>
-		<activity android:name="TemperatureActivity">
-    	    <intent-filter >
-           	    <action android:name=""/>
-           	</intent-filter>
-    	</activity>
-    	<activity android:name="EngineerActivity">
+		<activity android:name="EngineerActivity">
     	    <intent-filter >
            	    <action android:name=""/>
            	</intent-filter>
@@ -112,9 +107,8 @@
     	<activity android:name="isens.hba1c_analyzer.View.FunctionalTestActivity"></activity>
     	<activity android:name="isens.hba1c_analyzer.View.AboutActivity"></activity>
     	<activity android:name="isens.hba1c_analyzer.View.ExportActivity" android:process="com.android.phone"></activity>
-    	<activity android:name="ActionTempActivity"></activity>
-		<activity android:name="BlankTempActivity"></activity>
-		<activity android:name="ScanTempActivity"></activity>
+    	<activity android:name="isens.hba1c_analyzer.View.LocationActivity"></activity>
+    	<activity android:name="isens.hba1c_analyzer.View.TemperatureActivity"></activity>
     	
     </application>
     

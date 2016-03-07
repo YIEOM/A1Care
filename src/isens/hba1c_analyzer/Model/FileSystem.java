@@ -36,7 +36,7 @@ public class FileSystem {
 	}
 	
 	public void putStringPref(String key, String value) {
-		
+
 		mEditor.putString(key, value);
 	}
 
@@ -44,9 +44,21 @@ public class FileSystem {
 		
 		mEditor.putFloat(key, value);
 	}
-	
+
+	public int getIntPref(String key, int value) {
+
+		return mSharedPreferences.getInt(key, value);
+	}
+
+	public String getStringPref(String key, String value) {
+
+		return mSharedPreferences.getString(key, value);
+	}
+
 	public void commitPref() {
 		
+		mEditor.commit();
+		mEditor.putBoolean("Dummy", true);
 		mEditor.commit();
 	}	
 }

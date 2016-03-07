@@ -63,7 +63,7 @@ public class TimerDisplay {
 					public void run() {
 						
 						if(cnt++ == 1000) cnt = 1;
-						
+
 						if(RXBoardFlag) {
 							
 							mSerialPort.BoardRxData();
@@ -74,7 +74,7 @@ public class TimerDisplay {
 							RealTimeSec();
 							
 							ExternalDeviceCheck();
-//							Log.w("TimerInit", "start");
+
 							mGpioPort.CartridgeSensorScan();
 							
 							if(Integer.parseInt(rTime[6]) == 0) { // Whenever 00 second
@@ -85,13 +85,13 @@ public class TimerDisplay {
 						} else if((cnt % PERIOD_250ms) == 0) {
 							
 							ExternalDeviceCheck();
-//							Log.w("TimerInit", "start");
+
 							mGpioPort.CartridgeSensorScan();
 						}
 					}
 				};
 				
-				handler.post(updater);		
+				handler.post(updater);
 			}
 		};
 		
@@ -100,7 +100,7 @@ public class TimerDisplay {
 	}
 	
 	public void ExternalDeviceCheck() {
-		
+
 		try {
 			
 		    int lineNum = 0;		    
@@ -134,7 +134,7 @@ public class TimerDisplay {
 	}
 	
 	public void RealTimeSec() {
-		
+
 		Calendar c = Calendar.getInstance();
 		
 		DecimalFormat dfm = new DecimalFormat("00");
@@ -173,7 +173,7 @@ public class TimerDisplay {
 	}
 	
 	public void CurrTimeDisplay() {
-		
+
 		if(layoutid != R.id.systemchecklayout) {
 			
 			RealTime();
@@ -187,7 +187,7 @@ public class TimerDisplay {
 	private boolean getExternalBarcode(String line) {
 		
 		boolean isConnect = false;
-		
+
 		if(line.substring(23).equals("0483:5740")) isConnect = true;
 		
 		return isConnect;
@@ -224,7 +224,7 @@ public class TimerDisplay {
 						
 						mShellCommand.setCommand("ssu -c mount -t vfat /dev/block/sda1 /mnt/usb");
 						ExternalDeviceBarcode = FILE_USB_OPEN;
-						
+
 						ExternalDeviceDisplay();
 					}
 				}
@@ -251,7 +251,7 @@ public class TimerDisplay {
 	}
 	
 	public void ExternalDeviceDisplay() {
-		
+
 		if(layoutid != R.id.systemchecklayout) {
 			
 			deviceImage = (ImageView) activity.findViewById(R.id.device);

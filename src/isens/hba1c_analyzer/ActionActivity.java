@@ -73,8 +73,10 @@ public class ActionActivity extends Activity {
 
 	public static boolean IsCorrectBarcode = false,
 						  IsExpirationDate = false,
+						  ISCorrectLocation = false,
 			  			  BarcodeCheckFlag = false, 
 						  BarcodeQCCheckFlag = false;
+	
 	public static boolean IsEnablePopup = false,
 						  ESCButtonFlag = false;
 	
@@ -154,7 +156,7 @@ public class ActionActivity extends Activity {
 	public void setButtonClick() {
 		
 		escBtn.setOnTouchListener(mTouchListener);
-		if(HomeActivity.ANALYZER_SW == HomeActivity.DEVEL) snapshotBtn.setOnTouchListener(mTouchListener);
+		if(HomeActivity.ANALYZER_SW == RunActivity.DEVEL_OPERATION) snapshotBtn.setOnTouchListener(mTouchListener);
 	}
 	
 	public void setButtonState(int btnId, boolean state, Activity activity) {
@@ -252,6 +254,7 @@ public class ActionActivity extends Activity {
 		BarcodeCheckFlag = false;
 		IsCorrectBarcode = false;
 		IsExpirationDate = false;
+		ISCorrectLocation = false;
 		SerialPort.BarcodeReadStart = false;
 		ESCButtonFlag = false;
 		waitCnt = 0;
@@ -336,7 +339,7 @@ public class ActionActivity extends Activity {
 			}
 		}
 	}
-	
+
 	public class BarcodeScan extends Thread {
 		
 		public void run () {
@@ -354,7 +357,7 @@ public class ActionActivity extends Activity {
 			
 			while(!BarcodeCheckFlag) {
 				
-				if((waitCnt++ == 5999) || ESCButtonFlag) break; 
+				if((waitCnt++ == 5999) || ESCButtonFlag) break;
 				SerialPort.Sleep(100);
 			}
 
@@ -366,15 +369,23 @@ public class ActionActivity extends Activity {
 					
 					if(IsCorrectBarcode) {
 						
-						if(!IsExpirationDate) {
-							
-							mErrorPopup = new ErrorPopup(activity, context, layoutId, null, 0);
-							mErrorPopup.ErrorBtnDisplay(R.string.e131);						
+						if(ISCorrectLocation) {
 						
-						} else {
+							if(!IsExpirationDate) {
+								
+								mErrorPopup = new ErrorPopup(activity, context, layoutId, null, 0);
+								mErrorPopup.ErrorBtnDisplay(R.string.e131);						
 							
-							DoorOpen mDoorOpen = new DoorOpen();
-							mDoorOpen.start();
+							} else {
+								
+								DoorOpen mDoorOpen = new DoorOpen();
+								mDoorOpen.start();
+							}
+							
+						} else {
+
+							mErrorPopup = new ErrorPopup(activity, context, layoutId, null, 0);
+							mErrorPopup.ErrorBtnDisplay(R.string.e314);						
 						}
 						
 					} else {
@@ -610,7 +621,7 @@ public class ActionActivity extends Activity {
 	
 	public void startWarningSound(int cnt) {
 		
-		if(HomeActivity.ANALYZER_SW == HomeActivity.NORMAL) {
+		if(HomeActivity.ANALYZER_SW == RunActivity.NORMAL_OPERATION) {
 		
 			switch(cnt) {
 
@@ -629,7 +640,7 @@ public class ActionActivity extends Activity {
 				break;
 			}
 		
-		} else if(HomeActivity.ANALYZER_SW == HomeActivity.DEVEL) {
+		} else if(HomeActivity.ANALYZER_SW == RunActivity.DEVEL_OPERATION) {
 		
 			switch(cnt) {
 			

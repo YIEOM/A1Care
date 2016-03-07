@@ -108,7 +108,7 @@ public class SettingActivity extends Activity {
 		backIcon.setOnTouchListener(mTouchListener);
 		cheat1Btn.setOnTouchListener(mTouchListener);
 		cheat2Btn.setOnTouchListener(mTouchListener);
-		if(HomeActivity.ANALYZER_SW == HomeActivity.DEVEL) snapshotBtn.setOnTouchListener(mTouchListener);
+		if(HomeActivity.ANALYZER_SW == RunActivity.DEVEL_OPERATION) snapshotBtn.setOnTouchListener(mTouchListener);
 	}
 	
 	public void setButtonState(int btnId, boolean state, Activity activity) {

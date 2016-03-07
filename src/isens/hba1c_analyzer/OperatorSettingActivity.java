@@ -38,7 +38,6 @@ public class OperatorSettingActivity extends Activity {
 					  MODIFY = 4;
 	
 	public OperatorPopup mOperatorPopup;
-	public DatabaseHander mDatabaseHander;
 	public TimerDisplay mTimerDisplay;
 	
 	public Activity activity;
@@ -121,7 +120,7 @@ public class OperatorSettingActivity extends Activity {
 		delOperatorBtn.setOnTouchListener(mTouchListener);
 		nextViewBtn.setOnTouchListener(mTouchListener);
 		backIcon.setOnTouchListener(mTouchListener);
-		if(HomeActivity.ANALYZER_SW == HomeActivity.DEVEL) snapshotBtn.setOnTouchListener(mTouchListener);
+		if(HomeActivity.ANALYZER_SW == RunActivity.DEVEL_OPERATION) snapshotBtn.setOnTouchListener(mTouchListener);
 	}
 	
 	public void setButtonState(int btnId, boolean state, Activity activity) {

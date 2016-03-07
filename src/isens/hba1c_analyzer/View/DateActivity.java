@@ -3,6 +3,8 @@ package isens.hba1c_analyzer.View;
 import isens.hba1c_analyzer.HomeActivity;
 import isens.hba1c_analyzer.R;
 import isens.hba1c_analyzer.Presenter.DatePresenter;
+import isens.hba1c_analyzer.RunActivity;
+
 import android.app.Activity;
 import android.graphics.Paint;
 import android.os.Bundle;
@@ -91,7 +93,7 @@ public class DateActivity extends Activity implements DateIView {
 		monthMBtn.setOnTouchListener(mTouchListener);
 		dayPBtn.setOnTouchListener(mTouchListener);
 		dayMBtn.setOnTouchListener(mTouchListener);
-		if(HomeActivity.ANALYZER_SW == HomeActivity.DEVEL) snapshotBtn.setOnTouchListener(mTouchListener);
+		if(HomeActivity.ANALYZER_SW == RunActivity.DEVEL_OPERATION) snapshotBtn.setOnTouchListener(mTouchListener);
 	}
 	
 	public void setButtonLongClick() {

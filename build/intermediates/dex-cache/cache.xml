@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        jar="D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\libs\android-support-v4.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="48c94ae70fa65718b382098237806a5909bb096e">
+        <dex dex="D:\01.Research_Project\01.A1Care_Analyzer\01.Android_Studio_Project\A1Care_analyzer\build\intermediates\pre-dexed\release\android-support-v4_a2b7a9306a34a649f0038bb4c5fb803e795edffc.jar" />
+    </item>
+
+</items>

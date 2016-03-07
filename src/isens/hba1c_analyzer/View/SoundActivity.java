@@ -2,6 +2,7 @@ package isens.hba1c_analyzer.View;
 
 import isens.hba1c_analyzer.HomeActivity;
 import isens.hba1c_analyzer.R;
+import isens.hba1c_analyzer.RunActivity;
 import isens.hba1c_analyzer.SystemSettingActivity;
 import isens.hba1c_analyzer.TimerDisplay;
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
@@ -87,7 +88,7 @@ public class SoundActivity extends Activity implements SoundIView {
 		backBtn.setOnTouchListener(mTouchListener);
 		minusBtn.setOnTouchListener(mTouchListener);
 		plusBtn.setOnTouchListener(mTouchListener);
-		if(HomeActivity.ANALYZER_SW == HomeActivity.DEVEL) snapshotBtn.setOnTouchListener(mTouchListener);
+		if(HomeActivity.ANALYZER_SW == RunActivity.DEVEL_OPERATION) snapshotBtn.setOnTouchListener(mTouchListener);
 	}
 	
 	public void setButtonState(int btnId, boolean state) {

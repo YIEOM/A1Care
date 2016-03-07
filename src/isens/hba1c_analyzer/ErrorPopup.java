@@ -77,7 +77,7 @@ public class ErrorPopup {
 		
 		errorBtn.setBackgroundResource(R.drawable.popup_button_selector);
 		errorBtn.setOnTouchListener(mErrorTouchListener);
-		if(HomeActivity.ANALYZER_SW == HomeActivity.DEVEL) snapshotBtn.setOnTouchListener(mErrorTouchListener);
+		if(HomeActivity.ANALYZER_SW == RunActivity.DEVEL_OPERATION) snapshotBtn.setOnTouchListener(mErrorTouchListener);
 	}
 	
 	public void setButtonState(int btnId, boolean state) {
@@ -137,7 +137,7 @@ public class ErrorPopup {
 		yesBtn.setOnTouchListener(mOXTouchListener);
 		noBtn.setBackgroundResource(R.drawable.popup_button_selector);
 		noBtn.setOnTouchListener(mOXTouchListener);
-		if(HomeActivity.ANALYZER_SW == HomeActivity.DEVEL) snapshotBtn.setOnTouchListener(mErrorTouchListener);
+		if(HomeActivity.ANALYZER_SW == RunActivity.DEVEL_OPERATION) snapshotBtn.setOnTouchListener(mErrorTouchListener);
 	}
 	
 	Button.OnTouchListener mOXTouchListener = new View.OnTouchListener() {

@@ -127,9 +127,9 @@ public class SerialPort {
 				BoardFileOutputStream = new FileOutputStream(BoardFd);				
 
 				if (BoardFileOutputStream != null) {
-					
+
 					BoardFileOutputStream.write(STX);
-					
+
 					switch(target) {
 										
 					case MotorSet	: 	
@@ -192,15 +192,15 @@ public class SerialPort {
 			
 			mLanguageModel = new LanguageModel(activity);
 			charSet = getCharSet(mLanguageModel.getSettingLanguage());
-			
+
 			try {
 				
 				pFileOutputStream = new FileOutputStream(pFd);		
 				
 				if (pFileOutputStream != null) {
 					
-					pIdx = 24 + 2;
-					pLen = Integer.parseInt(txData.substring(24, pIdx));
+					pIdx = 25 + 2;
+					pLen = Integer.parseInt(txData.substring(25, pIdx));
 					oIdx = pIdx + pLen + 2;
 					oLen = Integer.parseInt(txData.substring(pIdx + pLen, oIdx));
 					
@@ -214,7 +214,7 @@ public class SerialPort {
 					/* A1Care */
 					pFileOutputStream.write(LF);
 					pFileOutputStream.write(CR);
-					pFileOutputStream.write(GS); 
+					pFileOutputStream.write(GS);
 					pFileOutputStream.write(0x21); // size of character 
 					pFileOutputStream.write(0x01); // 1 times of width and 2 times of height
 					pFileOutputStream.write("A1Care".getBytes());
@@ -232,12 +232,13 @@ public class SerialPort {
 						pFileOutputStream.write(LF);
 						pFileOutputStream.write(CR);
 						pFileOutputStream.write(context.getResources().getString(R.string.resultdata).getBytes(charSet));
-						
+
 					} else if(mode == PRINT_RECORD) {
 					
 						pFileOutputStream.write(LF);
 						pFileOutputStream.write(CR);
 						pFileOutputStream.write(context.getResources().getString(R.string.recorddata).getBytes(charSet));
+
 					}
 					
 					/* Test Date */
@@ -363,8 +364,8 @@ public class SerialPort {
 					
 					/* Lot number */
 					pFileOutputStream.write(CR);
-					pFileOutputStream.write(txData.substring(19, 24).getBytes());
-					
+					pFileOutputStream.write(txData.substring(19, 25).getBytes());
+
 					/* PID */
 					pFileOutputStream.write(LF);
 					pFileOutputStream.write(CR);
@@ -386,7 +387,7 @@ public class SerialPort {
 					/* Operator ID */
 					pFileOutputStream.write(CR);
 					pFileOutputStream.write(txData.substring(oIdx, oIdx + oLen).getBytes());
-					
+
 					/* End Line */
 					pFileOutputStream.write(LF);
 					pFileOutputStream.write(CR);
@@ -470,7 +471,7 @@ public class SerialPort {
 
 						BoardInputBuffer = new byte[BOARD_INPUT_BUFFER];
 						size = BoardFileInputStream.read(BoardInputBuffer);
-						
+//						Log.w("BoardRxThread", "" + new String(BoardInputBuffer));
 						BoardDataReceive(size);
 					}
 					
@@ -516,7 +517,7 @@ public class SerialPort {
 	}
 	
 	public void BoardRxData() {
-		
+
 		BoardRxData mBoardRxData = new BoardRxData();
 		mBoardRxData.start();
 	}
@@ -573,10 +574,11 @@ public class SerialPort {
 		} else if(tempStr.equals("S")) {
 			
 			SensorMessageBuffer(tempStrData);
+
 		} else {
 			
-			if(tempStrData.substring(0, 2).equals("ED")) { 
-			
+			if(tempStrData.substring(0, 2).equals("ED")) {
+
 				RunActivity.IsError = true;
 			}
 		}
@@ -632,7 +634,7 @@ public class SerialPort {
 		tempTail = SensorMsgTail + 1;
 		if(tempTail == UART_RX_MASK) tempTail = 0;
 		SensorMsgTail = tempTail;
-		
+
 		return SensorMsgBuffer[tempTail];
 	}
 	
@@ -650,7 +652,7 @@ public class SerialPort {
 						
 						BarcodeRxBuffer = new byte[BARCODE_RX_BUFFER_SIZE];
 						size = BarcodeFileInputStream.read(BarcodeRxBuffer);
-						
+
 						if(size > 0) {
 							
 							BarcodeDataReceive(size);
@@ -672,7 +674,7 @@ public class SerialPort {
 	public synchronized void BarcodeDataReceive(int size) { // making a buffer of received data from a barcode sensor
 		
 		byte maxIndex;
-		
+
 		if(BarcodeReadStart == false) {
 		
 			BarcodeReadStart = true;
@@ -683,12 +685,12 @@ public class SerialPort {
 		for(int i = 0; i < size; i++) {
 
 			BarcodeAppendBuffer[BarcodeBufCnt][BarcodeBufIndex++] = BarcodeRxBuffer[i]; // bufCnt : number of each buffer, bufIndex : bit index of one buffer
-		}	
+		}
 		
 		if(ActionActivity.BarcodeQCCheckFlag) maxIndex = A1C_MAX_BUFFER_INDEX;
 		else maxIndex = A1C_QC_MAX_BUFFER_INDEX;
-		
-		if(BarcodeBufIndex > maxIndex | BarcodeBufIndex < A1C_MIN_BUFFER_INDEX) {
+
+		if(BarcodeBufIndex > maxIndex || BarcodeBufIndex < A1C_MIN_BUFFER_INDEX) {
 			
 			ActionActivity.IsCorrectBarcode = false;
 			ActionActivity.BarcodeCheckFlag = true;
@@ -696,7 +698,7 @@ public class SerialPort {
 		
 		} else {
 			
-			if(BarcodeRxBuffer[size-2] == CR && BarcodeRxBuffer[size-1] == LF) { // Whether or not end bit
+			if(BarcodeAppendBuffer[BarcodeBufCnt][BarcodeBufIndex-2] == CR && BarcodeAppendBuffer[BarcodeBufCnt][BarcodeBufIndex-1] == LF) { // Whether or not end bit
 
 				BarcodeReadStart = false;
 				
@@ -713,9 +715,9 @@ public class SerialPort {
 		try {
 			
 			final StringBuffer barcodeReception = new StringBuffer();
-			
+
 			barcodeReception.append(new String(BarcodeAppendBuffer[num], 0, len));
-		
+
 			mBarcode = new Barcode();
 			mBarcode.BarcodeCheck(barcodeReception);
 			
@@ -835,7 +837,7 @@ public class SerialPort {
 	}
 	
 	public synchronized void BoardTx(String str, CtrTarget trg) {
-		
+
 		switch(trg) {
 
 		case MotorSet	:	

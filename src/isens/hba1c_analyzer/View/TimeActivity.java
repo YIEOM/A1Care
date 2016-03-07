@@ -7,6 +7,7 @@ import java.util.TimerTask;
 
 import isens.hba1c_analyzer.HomeActivity;
 import isens.hba1c_analyzer.R;
+import isens.hba1c_analyzer.RunActivity;
 import isens.hba1c_analyzer.SerialPort;
 import isens.hba1c_analyzer.SystemSettingActivity;
 import isens.hba1c_analyzer.TimerDisplay;
@@ -112,7 +113,7 @@ public class TimeActivity extends Activity implements TimeIView{
 		hourMBtn.setOnTouchListener(mTouchListener);
 		minutePBtn.setOnTouchListener(mTouchListener);
 		minuteMBtn.setOnTouchListener(mTouchListener);
-		if(HomeActivity.ANALYZER_SW == HomeActivity.DEVEL) snapshotBtn.setOnTouchListener(mTouchListener);
+		if(HomeActivity.ANALYZER_SW == RunActivity.DEVEL_OPERATION) snapshotBtn.setOnTouchListener(mTouchListener);
 	}
 	
 	public void setButtonLongClick() {

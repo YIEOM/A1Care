@@ -1,10 +1,13 @@
 package isens.hba1c_analyzer;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
 import isens.hba1c_analyzer.Model.CaptureScreen;
+import isens.hba1c_analyzer.Model.FileSystem;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -19,252 +22,168 @@ import android.widget.TextView;
 
 public class FileSaveActivity extends Activity {
 
-	public static byte NORMAL_RESULT = 0,
-					   CONTROL_TEST = 1,
-					   PATIENT_TEST = 2;
+	public static final byte NORMAL_RESULT = 0,
+					   		 CONTROL_TEST = 1,
+					   		 PATIENT_TEST = 2,
+					   		 SYSTEMCHECK = 8;
 	
-	private DataStorage SaveData;
-	
-	private TextView Text;
+	private DataStorage mDataStorage;
+
 	private Intent itn;
 	
-	private StringBuffer overallData = new StringBuffer(),
-						 historyData = new StringBuffer();
+	public static int DataCnt;
 
-	public static int DataCnt,
-					  TempDataCnt;
-	
-	private int runState,
-				whichState;
-	
-	private String dataType;
-	
+	private int whichState;
+
 	protected void onCreate(Bundle savedInstanceState) {
 		
 		super.onCreate(savedInstanceState);
 		
 		DataInit();
 	}
-	
+
 	public void DataInit() {
-		
-		DataArray();
-		
-		SaveData = new DataStorage();
-		
+
+		mDataStorage = new DataStorage();
+
 		itn = getIntent();
 	
-		if(!itn.getBooleanExtra("snapshot", false)) {
-		
-			if(itn.getIntExtra("RunState", 0) == (int) NORMAL_RESULT) {
-		
-				if(dataType.equals("W") || dataType.equals("X") || dataType.equals("Y") || dataType.equals("Z")) SaveData.DataSave(CONTROL_TEST, overallData);
-				else SaveData.DataSave(PATIENT_TEST, overallData); // if HbA1c test is normal, the Result data is saved
-			}
+		SaveFile mSaveFile = new SaveFile(itn.getStringArrayListExtra("MeasureStrData"), itn.getIntegerArrayListExtra("MeasureIntData"), itn.getStringArrayListExtra("HistoryStrData"));
+		mSaveFile.start();
+	}
+	
+	public class SaveFile extends Thread {
+
+		ArrayList<String> dataStrArrayList = new ArrayList<String>();
+		ArrayList<Integer> dataIntArrayList = new ArrayList<Integer>();
+		ArrayList<String> historyDataStrArrayList = new ArrayList<String>();
+
+		public SaveFile(ArrayList<String> dataStrArrayList, ArrayList<Integer> dataIntArrayList, ArrayList<String> historyDataStrArrayList) {
+
+			this.dataStrArrayList = dataStrArrayList;
+			this.dataIntArrayList = dataIntArrayList;
+			this.historyDataStrArrayList = historyDataStrArrayList;
+		}
+
+		public void run() {
+
+			DataCnt = dataIntArrayList.get(1);
+			whichState = itn.getIntExtra("WhichIntent", 0);
+
+			if(!itn.getBooleanExtra("snapshot", false)) {
 			
-			SaveData.DataHistorySave(overallData, historyData); // the History data is saved
-			
-			WhichIntent(false);
-			
-		} else {
-			
-			byte[] bytes = itn.getByteArrayExtra("bitmap");
-			String[] str = itn.getStringArrayExtra("datetime");
-	        Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-			
-	        SaveData.saveSnapShot(bmp, str);
-	        
-	        WhichIntent(true);
+				if(dataIntArrayList.get(0) == (int) NORMAL_RESULT) {
+
+					String dataType = dataStrArrayList.get(6);
+
+					if(dataType.equals("W") || dataType.equals("X") || dataType.equals("Y") || dataType.equals("Z")) mDataStorage.DataSave(CONTROL_TEST, getTempDataCnt(DataCnt), getLastData(dataStrArrayList, dataIntArrayList));
+					else mDataStorage.DataSave(PATIENT_TEST, getTempDataCnt(DataCnt), getLastData(dataStrArrayList, dataIntArrayList)); // if HbA1c test is normal, the Result data is saved
+				}
+
+				mDataStorage.DataHistorySave(getLastData(dataStrArrayList, dataIntArrayList), getLastHistoryData(historyDataStrArrayList)); // the History data is saved
+				
+				WhichIntent(false);
+				
+			} else {
+				
+				byte[] bytes = itn.getByteArrayExtra("bitmap");
+				String[] str = itn.getStringArrayExtra("datetime");
+		        Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+				
+		        mDataStorage.saveSnapShot(bmp, str);
+		        
+		        WhichIntent(true);
+			}	
 		}
 	}
-	
-	public void DataArray() { // Enumerating data
-		
-		DecimalFormat dfm = new DecimalFormat("0000");
 
+	public StringBuffer getLastData(ArrayList<String> dataStrArrayList, ArrayList<Integer> dataIntArrayList) {
+
+		DecimalFormat dfm = new DecimalFormat("0000");
+		int tempDataCnt = getTempDataCnt(dataIntArrayList.get(1));
+
+		StringBuffer overallData = new StringBuffer();
 		overallData.delete(0, overallData.capacity());
-		historyData.delete(0, historyData.capacity());
-		
-		itn = getIntent();
-		whichState = itn.getIntExtra("WhichIntent", 0);
-		DataCnt = itn.getIntExtra("DataCnt", 0);
-		TempDataCnt = DataCnt % 9999;
-		if(TempDataCnt == 0) TempDataCnt = 9999;
-		
-		dataType = itn.getStringExtra("Type");
-		
-		overallData.append(itn.getStringExtra("Year"));
-		overallData.append(itn.getStringExtra("Month"));
-		overallData.append(itn.getStringExtra("Day"));
-		overallData.append(itn.getStringExtra("AmPm"));
-		overallData.append(itn.getStringExtra("Hour"));
-		overallData.append(itn.getStringExtra("Minute"));
-		overallData.append(dfm.format(TempDataCnt));
-		overallData.append(itn.getStringExtra("Type"));
-		overallData.append(itn.getStringExtra("RefNumber"));
-		overallData.append(itn.getStringExtra("PatientIDLen"));
-		overallData.append(itn.getStringExtra("PatientID"));
-		overallData.append(itn.getStringExtra("OperatorLen"));
-		overallData.append(itn.getStringExtra("Operator"));
-		overallData.append(itn.getStringExtra("Primary"));
-		overallData.append(itn.getStringExtra("Hba1cPct"));
-		
-		historyData.append(itn.getStringExtra("Chamber Tmp") + "\t");
-		historyData.append(itn.getStringExtra("BlankVal0") + "\t");
-		historyData.append(itn.getStringExtra("BlankVal1") + "\t");
-		historyData.append(itn.getStringExtra("BlankVal2") + "\t");
-		historyData.append(itn.getStringExtra("BlankVal3") + "\t");
-		historyData.append(itn.getStringExtra("St1Abs1by0") + "\t");
-		historyData.append(itn.getStringExtra("St1Abs1by1") + "\t");
-		historyData.append(itn.getStringExtra("St1Abs1by2") + "\t");
-		historyData.append(itn.getStringExtra("St1Abs2by0") + "\t");
-		historyData.append(itn.getStringExtra("St1Abs2by1") + "\t");
-		historyData.append(itn.getStringExtra("St1Abs2by2") + "\t");
-		historyData.append(itn.getStringExtra("St1Abs3by0") + "\t");
-		historyData.append(itn.getStringExtra("St1Abs3by1") + "\t");
-		historyData.append(itn.getStringExtra("St1Abs3by2") + "\t");
-		historyData.append(itn.getStringExtra("St2Abs1by0") + "\t");
-		historyData.append(itn.getStringExtra("St2Abs1by1") + "\t");
-		historyData.append(itn.getStringExtra("St2Abs1by2") + "\t");
-		historyData.append(itn.getStringExtra("St2Abs2by0") + "\t");
-		historyData.append(itn.getStringExtra("St2Abs2by1") + "\t");
-		historyData.append(itn.getStringExtra("St2Abs2by2") + "\t");
-		historyData.append(itn.getStringExtra("St2Abs3by0") + "\t");
-		historyData.append(itn.getStringExtra("St2Abs3by1") + "\t");
-		historyData.append(itn.getStringExtra("St2Abs3by2") + "\t");
-		historyData.append(itn.getStringExtra("HWSN") + "\t");
-		historyData.append(itn.getStringExtra("SWVersion") + "\t");
-		historyData.append(itn.getStringExtra("FWVersion") + "\t");
-		historyData.append(itn.getStringExtra("OSVersion"));
-		
-//		Log.w("DataArray", "Chamber Tmp : " + itn.getStringExtra("Chamber Tmp"));
-//		Log.w("DataArray", "BlankVal0 : " + itn.getStringExtra("BlankVal0"));
-//		Log.w("DataArray", "BlankVal1 : " + itn.getStringExtra("BlankVal1"));
-//		Log.w("DataArray", "BlankVal2 : " + itn.getStringExtra("BlankVal2"));
-//		Log.w("DataArray", "BlankVal3 : " + itn.getStringExtra("BlankVal3"));
-//		Log.w("DataArray", "St1Abs1by0 : " + itn.getStringExtra("St1Abs1by0"));
-//		Log.w("DataArray", "St1Abs1by1 : " + itn.getStringExtra("St1Abs1by1"));
-//		Log.w("DataArray", "St1Abs1by2 : " + itn.getStringExtra("St1Abs1by2"));
-//		Log.w("DataArray", "St1Abs2by0 : " + itn.getStringExtra("St1Abs2by0"));
-//		Log.w("DataArray", "St1Abs2by1 : " + itn.getStringExtra("St1Abs2by1"));
-//		Log.w("DataArray", "St1Abs2by2 : " + itn.getStringExtra("St1Abs2by2"));
-//		Log.w("DataArray", "St1Abs3by0 : " + itn.getStringExtra("St1Abs3by0"));
-//		Log.w("DataArray", "St1Abs3by1 : " + itn.getStringExtra("St1Abs3by1"));
-//		Log.w("DataArray", "St1Abs3by2 : " + itn.getStringExtra("St1Abs3by2"));
-//		Log.w("DataArray", "St2Abs1by0 : " + itn.getStringExtra("St2Abs1by0"));
-//		Log.w("DataArray", "St2Abs1by1 : " + itn.getStringExtra("St2Abs1by1"));
-//		Log.w("DataArray", "St2Abs1by2 : " + itn.getStringExtra("St2Abs1by2"));
-//		Log.w("DataArray", "St2Abs2by0 : " + itn.getStringExtra("St2Abs2by0"));
-//		Log.w("DataArray", "St2Abs2by1 : " + itn.getStringExtra("St2Abs2by1"));
-//		Log.w("DataArray", "St2Abs2by2 : " + itn.getStringExtra("St2Abs2by2"));
-//		Log.w("DataArray", "St2Abs3by0 : " + itn.getStringExtra("St2Abs3by0"));
-//		Log.w("DataArray", "St2Abs3by1 : " + itn.getStringExtra("St2Abs3by1"));
-//		Log.w("DataArray", "St2Abs3by2 : " + itn.getStringExtra("St2Abs3by2"));
-//		Log.w("DataArray", "HWSN : " + itn.getStringExtra("HWSN"));
-//		Log.w("DataArray", "SWVersion : " + itn.getStringExtra("SWVersion"));
-//		Log.w("DataArray", "FWVersion : " + itn.getStringExtra("FWVersion"));
-//		Log.w("DataArray", "OSVersion : " + itn.getStringExtra("OSVersion"));
+
+		for(int i = 0; i < 6; i++) {
+
+			overallData.append(dataStrArrayList.get(i));
+		}
+
+		overallData.append(dfm.format(tempDataCnt));
+
+		for(int i = 0; i < 8; i++) {
+
+			overallData.append(dataStrArrayList.get(i+6));
+		}
+
+		return overallData;
 	}
-	
+
+	public StringBuffer getLastHistoryData(ArrayList<String> dataStrArrayList) {
+
+		StringBuffer historyData = new StringBuffer();
+		historyData.delete(0, historyData.capacity());
+
+		for(int i = 0; i < dataStrArrayList.size()-1; i++) {
+
+			historyData.append(dataStrArrayList.get(i) + "\t");
+		}
+
+		historyData.append(dataStrArrayList.get(dataStrArrayList.size()-1));
+
+		return historyData;
+	}
+
 //	public void DataInit() {
-//		
+//
 //		DataCnt = 1;
-//		
+//
 //		for(int i = 0; i < 9994; i++){
 //		DataArray();
-//		
+//
 //		SaveData = new DataStorage();
-//		
+//
 //		itn = getIntent();
-//	
+//
 //		if(dataType.equals("W") || dataType.equals("X") || dataType.equals("Y") || dataType.equals("Z")) SaveData.DataSave(CONTROL_TEST, overallData);
 //		else SaveData.DataSave(PATIENT_TEST, overallData); // if HbA1c test is normal, the Result data is saved
 //		}
 //
 //		WhichIntent(false);
 //	}
-//	
-//	public void DataArray() { // Enumerating data
-//		
-//		DecimalFormat dfm = new DecimalFormat("0000");
-//
-//		overallData.delete(0, overallData.capacity());
-//		historyData.delete(0, historyData.capacity());
-//		
-//		itn = getIntent();
-//		whichState = itn.getIntExtra("WhichIntent", 0);
-//		TempDataCnt = DataCnt % 9999;
-//		if(TempDataCnt == 0) TempDataCnt = 9999;
-//		
-//		dataType = itn.getStringExtra("Type");
-//		
-//		overallData.append("2015");
-//		overallData.append("09");
-//		overallData.append("09");
-//		overallData.append("PM");
-//		overallData.append("12");
-//		overallData.append("00");
-//		overallData.append(dfm.format(TempDataCnt));
-//		overallData.append("W");
-//		overallData.append("ABCDE");
-//		overallData.append("07");
-//		overallData.append("patient");
-//		overallData.append("08");
-//		overallData.append("operator");
-//		overallData.append("0");
-//		overallData.append("5.0");
-//		
-//		historyData.append(itn.getStringExtra("Chamber Tmp") + "\t");
-//		historyData.append(itn.getStringExtra("BlankVal0") + "\t");
-//		historyData.append(itn.getStringExtra("BlankVal1") + "\t");
-//		historyData.append(itn.getStringExtra("BlankVal2") + "\t");
-//		historyData.append(itn.getStringExtra("BlankVal3") + "\t");
-//		historyData.append(itn.getStringExtra("St1Abs1by0") + "\t");
-//		historyData.append(itn.getStringExtra("St1Abs1by1") + "\t");
-//		historyData.append(itn.getStringExtra("St1Abs1by2") + "\t");
-//		historyData.append(itn.getStringExtra("St1Abs2by0") + "\t");
-//		historyData.append(itn.getStringExtra("St1Abs2by1") + "\t");
-//		historyData.append(itn.getStringExtra("St1Abs2by2") + "\t");
-//		historyData.append(itn.getStringExtra("St1Abs3by0") + "\t");
-//		historyData.append(itn.getStringExtra("St1Abs3by1") + "\t");
-//		historyData.append(itn.getStringExtra("St1Abs3by2") + "\t");
-//		historyData.append(itn.getStringExtra("St2Abs1by0") + "\t");
-//		historyData.append(itn.getStringExtra("St2Abs1by1") + "\t");
-//		historyData.append(itn.getStringExtra("St2Abs1by2") + "\t");
-//		historyData.append(itn.getStringExtra("St2Abs2by0") + "\t");
-//		historyData.append(itn.getStringExtra("St2Abs2by1") + "\t");
-//		historyData.append(itn.getStringExtra("St2Abs2by2") + "\t");
-//		historyData.append(itn.getStringExtra("St2Abs3by0") + "\t");
-//		historyData.append(itn.getStringExtra("St2Abs3by1") + "\t");
-//		historyData.append(itn.getStringExtra("St2Abs3by2") + "\t");
-//		historyData.append(itn.getStringExtra("HWSN") + "\t");
-//		historyData.append(itn.getStringExtra("SWVersion") + "\t");
-//		historyData.append(itn.getStringExtra("FWVersion") + "\t");
-//		historyData.append(itn.getStringExtra("OSVersion"));
-//	}
-	
+
+	public int getTempDataCnt(int dataCnt) {
+
+		int tempDataCnt;
+
+		tempDataCnt = dataCnt % 9999;
+		if(tempDataCnt == 0) tempDataCnt = 9999;
+
+		return tempDataCnt;
+	}
+
 	public void WhichIntent(boolean isSnapshot) { // Activity conversion
-	
+
 		Intent nextIntent = null;
-		
+
 		if(!isSnapshot) {
-			
+
 			nextIntent = new Intent(getApplicationContext(), RemoveActivity.class);
 			nextIntent.putExtra("WhichIntent", whichState);
-			nextIntent.putExtra("DataCnt", DataCnt);
-		
+
 		} else {
-			
+
 			nextIntent = new Intent(getApplicationContext(), HomeActivity.class);
 			nextIntent.putExtra("System Check State", 0);
 		}
-		
+
 		startActivity(nextIntent);
 		finish();
 	}
-	
+
 	public void finish() {
-		
+
 		super.finish();
 	}
 }

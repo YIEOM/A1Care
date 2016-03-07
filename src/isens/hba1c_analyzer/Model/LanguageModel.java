@@ -9,6 +9,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.util.Log;
+
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
 import isens.hba1c_analyzer.R;
 import isens.hba1c_analyzer.SystemSettingActivity;
@@ -80,7 +82,7 @@ public class LanguageModel {
 			
 			if(languageTable[i].equals(language)) break;
 		}
-		
+
 		return idx;
 	}
 	

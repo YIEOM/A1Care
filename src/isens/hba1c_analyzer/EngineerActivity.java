@@ -7,11 +7,13 @@ import java.text.DecimalFormat;
 import java.util.Calendar;
 
 import isens.hba1c_analyzer.HomeActivity.TargetIntent;
+import isens.hba1c_analyzer.Model.ConvertModel;
+import isens.hba1c_analyzer.Model.FileSystem;
 import isens.hba1c_analyzer.SerialPort.CtrTarget;
-import isens.hba1c_analyzer.Temperature.CellTmpRead;
 import isens.hba1c_analyzer.View.AboutActivity;
-import isens.hba1c_analyzer.View.tHbActivity;
 import isens.hba1c_analyzer.View.AdjustmentActivity;
+import isens.hba1c_analyzer.View.LocationActivity;
+import isens.hba1c_analyzer.View.TemperatureActivity;
 import isens.hba1c_analyzer.View.f535Activity;
 import isens.hba1c_analyzer.View.f660Activity;
 import isens.hba1c_analyzer.View.CorrelationActivity;
@@ -37,8 +39,8 @@ public class EngineerActivity extends Activity {
 	
 	public TimerDisplay mTimerDisplay;
 	public SerialPort mSerialPort;
-	public DataStorage mDataStorage;
 	public ErrorPopup mErrorPopup;
+	private FileSystem mFileSystem;
 	
 	public Activity activity;
 	public Context context;
@@ -48,7 +50,7 @@ public class EngineerActivity extends Activity {
 	  			  adjustBtn,
 	  			  calibrationBtn,
 	  			  tempBtn,
-	  			  tHbBtn,
+	  			  locationBtn,
 	  			  f535Btn,
 	  			  f660Btn,
 	  			  collelationBtn,
@@ -80,7 +82,7 @@ public class EngineerActivity extends Activity {
 		calibrationBtn = (Button)activity.findViewById(R.id.calibrationBtn);
 		tempBtn = (Button)activity.findViewById(R.id.tempBtn);
 		lampBtn = (Button)activity.findViewById(R.id.lampBtn);
-		tHbBtn = (Button)activity.findViewById(R.id.tHbBtn);
+		locationBtn = (Button)activity.findViewById(R.id.locationBtn);
 		f535Btn = (Button)activity.findViewById(R.id.f535Btn);
 		f660Btn = (Button)activity.findViewById(R.id.f660Btn);
 		collelationBtn = (Button)activity.findViewById(R.id.collelationBtn);
@@ -95,7 +97,7 @@ public class EngineerActivity extends Activity {
 		calibrationBtn.setOnTouchListener(mTouchListener);
 		tempBtn.setOnTouchListener(mTouchListener);
 		lampBtn.setOnTouchListener(mTouchListener);
-		tHbBtn.setOnTouchListener(mTouchListener);
+		locationBtn.setOnTouchListener(mTouchListener);
 		f535Btn.setOnTouchListener(mTouchListener);
 		f660Btn.setOnTouchListener(mTouchListener);
 		collelationBtn.setOnTouchListener(mTouchListener);
@@ -141,8 +143,8 @@ public class EngineerActivity extends Activity {
 					WhichIntent(activity, TargetIntent.Lamp);
 					break;
 					
-				case R.id.tHbBtn	:
-					WhichIntent(activity, TargetIntent.tHb);
+				case R.id.locationBtn	:
+					WhichIntent(activity, TargetIntent.Location);
 					break;
 				
 				case R.id.f535Btn	:
@@ -184,7 +186,7 @@ public class EngineerActivity extends Activity {
 		setButtonState(R.id.calibrationBtn, true, activtiy);
 		setButtonState(R.id.tempBtn, true, activtiy);
 		setButtonState(R.id.lampBtn, true, activtiy);
-		setButtonState(R.id.tHbBtn, true, activtiy);
+		setButtonState(R.id.locationBtn, true, activtiy);
 		setButtonState(R.id.f535Btn, true, activtiy);
 		setButtonState(R.id.f660Btn, true, activtiy);
 		setButtonState(R.id.collelationBtn, true, activtiy);
@@ -199,7 +201,7 @@ public class EngineerActivity extends Activity {
 		setButtonState(R.id.calibrationBtn, false, activtiy);
 		setButtonState(R.id.tempBtn, false, activtiy);
 		setButtonState(R.id.lampBtn, false, activtiy);
-		setButtonState(R.id.tHbBtn, false, activtiy);
+		setButtonState(R.id.locationBtn, false, activtiy);
 		setButtonState(R.id.f535Btn, false, activtiy);
 		setButtonState(R.id.f660Btn, false, activtiy);
 		setButtonState(R.id.collelationBtn, false, activtiy);
@@ -219,7 +221,37 @@ public class EngineerActivity extends Activity {
 		mTimerDisplay = new TimerDisplay();
 		mTimerDisplay.ActivityParm(this, R.id.engineerlayout);
 	}
-	
+
+	/* v1.3.33-B */
+	private void saveData(Activity activity) {
+
+		mFileSystem = new FileSystem(activity);
+		mFileSystem.setPreferences("Measurement Data", MODE_PRIVATE);
+		mFileSystem.putIntPref("CheckError", (int) RunActivity.DEVEL_OPERATION);
+		mFileSystem.putStringPref("Year", "");
+		mFileSystem.putStringPref("Month", "");
+		mFileSystem.putStringPref("Day", "");
+		mFileSystem.putStringPref("AmPm"  , "");
+		mFileSystem.putStringPref("Hour"  ,	"");
+		mFileSystem.putStringPref("Minute", "");
+		mFileSystem.putIntPref("DataCnt", 0);
+		mFileSystem.putStringPref("Type", "");
+		mFileSystem.putStringPref("RefNumber", "");
+		mFileSystem.putStringPref("PatientIDLen", "00");
+		mFileSystem.putStringPref("PatientID", "");
+		mFileSystem.putStringPref("OperatorLen", "00");
+		mFileSystem.putStringPref("Operator", "");
+		mFileSystem.putStringPref("Primary", "");
+		mFileSystem.putStringPref("HbA1cPct", "");
+		mFileSystem.commitPref();
+
+		mFileSystem.setPreferences("Data Counter", MODE_PRIVATE);
+		mFileSystem.putIntPref("PatientDataCnt", 1);
+		mFileSystem.putIntPref("ControlDataCnt", 1);
+		mFileSystem.commitPref();
+	}
+	/* v1.3.33-B */
+
 	public void WhichIntent(Activity activity, TargetIntent Itn) { // Activity conversion
 		
 		Intent nextIntent = null;
@@ -246,8 +278,8 @@ public class EngineerActivity extends Activity {
 			nextIntent = new Intent(activity.getApplicationContext(), TemperatureActivity.class);
 			break;
 		
-		case tHb		:				
-			nextIntent = new Intent(activity.getApplicationContext(), tHbActivity.class);
+		case Location		:				
+			nextIntent = new Intent(activity.getApplicationContext(), LocationActivity.class);
 			break;
 					
 		case f535		:				
@@ -272,13 +304,7 @@ public class EngineerActivity extends Activity {
 			RemoveActivity.PatientDataCnt = 1;
 			RemoveActivity.ControlDataCnt = 1;
 			
-			SharedPreferences DcntPref = activity.getSharedPreferences("Data Counter", MODE_PRIVATE);
-			SharedPreferences.Editor edit = DcntPref.edit();
-			
-			edit.putInt("PatientDataCnt", 1);
-			edit.putInt("ControlDataCnt", 1);
-			
-			edit.commit();
+			saveData(activity);
 			
 			nextIntent = new Intent(activity.getApplicationContext(), FileDeleteActivity.class);
 			nextIntent.putExtra("PatientDataCnt", patientDataCnt);
